@@ -1,0 +1,10 @@
+*.class
+
+# Maven
+/target/
+
+# Eclipse
+.classpath
+.project
+.checkstyle
+.settings
