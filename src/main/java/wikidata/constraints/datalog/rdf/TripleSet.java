@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
@@ -22,7 +24,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 import wikidata.constraints.datalog.main.Main;
 
-public class TripleSet implements EntityDocumentProcessor {
+public abstract class TripleSet implements EntityDocumentProcessor {
 	
 	static final Logger logger = LoggerFactory.getLogger(TripleSet.class);
 	
@@ -38,11 +40,17 @@ public class TripleSet implements EntityDocumentProcessor {
 	
 	File referenceTripleSetFile;
 	
-	BufferedWriter writer;
+	CSVPrinter writer;
 	
-	BufferedWriter referenceWriter;
+	CSVPrinter referenceWriter;
 	
-	BufferedWriter qualifierWriter;
+	CSVPrinter qualifierWriter;
+	
+	boolean tripleNotEmpty = false;
+	
+	boolean qualifierNotEmpty = false;
+	
+	boolean referenceNotEmpty = false;
 	
 	public TripleSet(String property_, Map<String, String> quualifiers_) throws IOException {
 		property = property_;
@@ -58,17 +66,18 @@ public class TripleSet implements EntityDocumentProcessor {
 		referenceTripleSetFile.getParentFile().mkdirs();
 		referenceTripleSetFile.createNewFile();
 		
-		writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tripleSetFile, false)));
-		qualifierWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(qualifierTripleSetFile, false)));
-		referenceWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(referenceTripleSetFile, false)));
+		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tripleSetFile, false))), CSVFormat.DEFAULT);
+		qualifierWriter = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(qualifierTripleSetFile, false))), CSVFormat.DEFAULT);
+		referenceWriter = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(referenceTripleSetFile, false))), CSVFormat.DEFAULT);
 		
 		Main.registerProcessor(this);
 	}
 	
 	protected final void write(String id, String subject, String predicate, String object) {
 		try {
-			writer.append(listToCSV(Arrays.asList(id, subject, predicate, object)));
-			writer.newLine();
+			writer.printRecord(id, subject, predicate, object);
+			writer.flush();
+			tripleNotEmpty = true;
 		} catch (IOException e) {
 			logger.error("Could not write line to file " + tripleSetFile.getAbsolutePath(), e);
 		}
@@ -77,8 +86,9 @@ public class TripleSet implements EntityDocumentProcessor {
 	
 	protected final void writeQualifier(String id, String predicate, String object) {
 		try {
-			qualifierWriter.write(listToCSV(Arrays.asList(id, predicate, object)));
-			qualifierWriter.newLine();
+			qualifierWriter.printRecord(id, predicate, object);
+			qualifierWriter.flush();
+			qualifierNotEmpty = true;
 		} catch (IOException e) {
 			logger.error("Could not write line to file " + referenceTripleSetFile.getAbsolutePath(), e);
 		}
@@ -87,16 +97,17 @@ public class TripleSet implements EntityDocumentProcessor {
 	
 	protected final void writeReference(String id, String predicate, String object) {
 		try {
-			referenceWriter.write(listToCSV(Arrays.asList(id, predicate, object)));
-			referenceWriter.newLine();
+			referenceWriter.printRecord(id, predicate, object);
+			referenceWriter.flush();
+			referenceNotEmpty = true;
 		} catch (IOException e) {
 			logger.error("Could not write line to file " + qualifierTripleSetFile.getAbsolutePath(), e);
 		}
 		
 	}
 	
-	protected String getTripleSetType() {
-		return "base";
+	public boolean notEmpty() {
+		return tripleNotEmpty || qualifierNotEmpty || referenceNotEmpty;
 	}
 	
 	public File getTripleSetFile() throws IOException {
@@ -160,6 +171,8 @@ public class TripleSet implements EntityDocumentProcessor {
 	public void processPropertyDocument(PropertyDocument propertyDocument) {
 		
 	}
+	
+	protected abstract String getTripleSetType();
 	
 	public void close() throws IOException {
 		writer.close();
