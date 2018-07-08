@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.Wikidata_Constraints_Datalog;
+package wikidata.constraints.datalog.experiment;
 
 import java.io.IOException;
 
@@ -91,55 +91,6 @@ public class App
     		while (iterator.hasNext()) {
     			System.out.println(iterator.next());
     		}
-    	}
-    	
-    	// Testing
-/*    	final Predicate parent = Expressions.makePredicate("parent", 2);
-    	final Predicate ancestor = Expressions.makePredicate("ancestor", 2);
-    	
-    	final Constant john = Expressions.makeConstant("john");
-    	final Constant douglas = Expressions.makeConstant("douglas");
-    	final Constant bob = Expressions.makeConstant("bob");
-    	final Constant ebon = Expressions.makeConstant("ebon");
-    	final Constant marrow = Expressions.makeConstant("marrow");
-    	final Constant zenith = Expressions.makeConstant("zenith");
-    	
-    	final Atom atom1 = Expressions.makeAtom(parent, john, douglas);
-    	final Atom atom2 = Expressions.makeAtom(parent, douglas, bob);
-    	final Atom atom3 = Expressions.makeAtom(parent, bob, ebon);
-    	final Atom atom4 = Expressions.makeAtom(parent, john, marrow);
-    	final Atom atom5 = Expressions.makeAtom(parent, marrow, zenith);
-    	
-    	final Variable parent1 = Expressions.makeVariable("parent1");
-    	final Variable parent2 = Expressions.makeVariable("parent2");
-    	final Variable parent3 = Expressions.makeVariable("parent3");
-    	
-    	final Atom ancestor12 = Expressions.makeAtom(ancestor, parent1, parent2);
-    	final Atom ancestor32 = Expressions.makeAtom(ancestor, parent3, parent2);
-    	final Atom parent12 = Expressions.makeAtom(parent, parent1, parent2);
-    	final Atom parent13 = Expressions.makeAemtom(parent, parent1, parent3);
-    	
-    	final Rule rule1 = Expressions.makeRule(ancestor12, parent12);
-    	
-    	final Rule rule2 = Expressions.makeRule(Expressions.makeConjunction(ancestor12), Expressions.makeConjunction(parent13, ancestor32));
-    	
-    	final Atom query = Expressions.makeAtom(ancestor, john, parent2);
-    	
-    	final Reasoner reasoner = Reasoner.getInstance();
-    	
-    	reasoner.addRules(rule1, rule2);
-    	
-    	reasoner.addFacts(atom1, atom2, atom3, atom4, atom5);
-    	
-    	reasoner.load();
-    	
-    	reasoner.reason();
-    	
-    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
-    		while (iterator.hasNext()) {
-    			System.out.println(iterator.next());
-    		}
-    	}*/
-    	
+    	}    	
     }
 }
