@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 public class ScopeConstraintChecker extends ConstraintChecker {
 	
@@ -21,6 +22,15 @@ public class ScopeConstraintChecker extends ConstraintChecker {
 	}
 
 	@Override
+	public String violations() throws ReasonerStateException, IOException {
+		String result = "";
+		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
+			result += propertyConstraintChecker.violations() + "\n";
+		}
+		return result;
+	}
+
+	@Override
 	PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException {
 		return new ScopePropertyConstraintChecker(property, qualifiers);
 	}
@@ -31,5 +41,4 @@ public class ScopeConstraintChecker extends ConstraintChecker {
 		result.put(SCOPE, "P5314");
 		return result;
 	}
-
 }

@@ -21,6 +21,7 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.log4j.Logger;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import wikidata.constraints.datalog.rdf.TripleSet;
 
@@ -91,6 +92,10 @@ public abstract class ConstraintChecker {
 		while (results.hasNext()) {
 			QuerySolution solution = results.next();
 			String property = solution.get("item").asResource().getLocalName();
+			
+			// To limit testing
+			if (!property.equals("P31"))
+				continue;
 			Map<String, String> qualifiers = new HashMap<String, String>();
 			for (String variableName : additionalQualifiers.keySet()) {
 				RDFNode node = solution.get(variableName);
@@ -108,6 +113,8 @@ public abstract class ConstraintChecker {
 		qexec.close() ;
 	}
 	
+	public abstract String violations() throws ReasonerStateException, IOException;
+	
 	abstract Map<String, String> additionalQualifiers();
 	
 	abstract PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException;
@@ -121,8 +128,11 @@ public abstract class ConstraintChecker {
 	@Override
 	public String toString() {
 		String result = "Constraint id: " + constraint + "\n";
-		for (PropertyConstraintChecker property : propertyCheckers)
-			result += "  " + property + "\n";
+		for (PropertyConstraintChecker property : propertyCheckers) {
+			if (!property.equals(""))
+				result += "  " + property + "\n";
+		}
+			
 		return result;
 	}
 	

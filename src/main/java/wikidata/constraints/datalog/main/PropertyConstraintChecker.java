@@ -12,6 +12,7 @@ import java.util.Map;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import wikidata.constraints.datalog.rdf.TripleSet;
 
@@ -44,6 +45,8 @@ public abstract class PropertyConstraintChecker {
 		qualifiers = qualifiers_;
 		tripleSets = getRequiredTripleSets(property, qualifiers);
 	}
+	
+	public abstract String violations() throws ReasonerStateException, IOException;
 	
 	abstract Map<String, TripleSet> getRequiredTripleSets(String property, Map<String, String> qualifiers) throws IOException;
 	

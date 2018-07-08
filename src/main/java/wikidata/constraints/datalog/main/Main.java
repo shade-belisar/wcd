@@ -11,6 +11,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
@@ -24,6 +25,8 @@ public class Main {
 	final static Logger logger = Logger.getLogger(Main.class);
 	
 	final static String DUMP_FILE = "./resources/sample-dump-20150815.json.gz";
+	
+	public final static String BASE_URI = "http://www.wikidata.org/entity/";
 	
 	static DumpProcessingController dumpProcessingController;
 	
@@ -56,6 +59,17 @@ public class Main {
 			checker.close();
 		} catch (IOException e) {
 			logger.error("Could not close a file, see the rror message for details.", e);
+			return;
+		}
+		
+		try {
+			System.out.println(checker.violations());
+		} catch (ReasonerStateException e) {
+			logger.error("Reasoner was called in the wrong state.", e);
+			return;
+		} catch (IOException e) {
+			logger.error("Could not open a file", e);
+			return;
 		}
 
 	}
