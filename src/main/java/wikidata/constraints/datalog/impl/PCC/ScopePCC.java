@@ -1,7 +1,7 @@
 /**
  * 
  */
-package wikidata.constraints.datalog.main;
+package wikidata.constraints.datalog.impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +28,9 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
+import wikidata.constraints.datalog.impl.ScopeConstraintChecker;
+import wikidata.constraints.datalog.main.Main;
+import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 import wikidata.constraints.datalog.rdf.ScopeTripleSet;
 import wikidata.constraints.datalog.rdf.TripleSet;
 
@@ -35,37 +38,14 @@ import wikidata.constraints.datalog.rdf.TripleSet;
  * @author adrian
  *
  */
-public class ScopePropertyConstraintChecker extends PropertyConstraintChecker {
+public class ScopePCC extends PropertyConstraintChecker {
 	
-	final static Logger logger = Logger.getLogger(ScopePropertyConstraintChecker.class);
-	
-	final static String TRIPLE = "triple";
-	final static String QUALIFIER = "qualifier";
-	final static String REFERENCE = "reference";
-	
-	final static String STATEMENT = "statement";
-	final static String VIOLATION_SHORT = "violation_short";
-	final static String VIOLATION_LONG = "violation_long";
-	
-	final static String X = "x";
-	final static String Y = "y";
+	final static Logger logger = Logger.getLogger(ScopePCC.class);
 	
 	final String TRIPLE_SET = "triple_set";
 	
-	final Predicate tripleEDB = Expressions.makePredicate(TRIPLE, 4);
-	final Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
-	final Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 3);
-	
-	final Variable statement = Expressions.makeVariable(STATEMENT);
-	final Predicate violation_short = Expressions.makePredicate(VIOLATION_SHORT, 3);
-	final Predicate violation_long = Expressions.makePredicate(VIOLATION_LONG, 4);
-	
-	
-	final Variable x = Expressions.makeVariable(X);
-	final Variable y = Expressions.makeVariable(Y);
-	
-	public ScopePropertyConstraintChecker(String constraint_, Map<String, String> qualifiers_) throws IOException {
-		super(constraint_, qualifiers_);
+	public ScopePCC(String property_, Map<String, String> qualifiers_) throws IOException {
+		super(property_, qualifiers_);
 	}
 	
 	public String violations() throws IOException {
@@ -73,9 +53,6 @@ public class ScopePropertyConstraintChecker extends PropertyConstraintChecker {
 		
 		if (!tripleSet.notEmpty())
 			return "";
-		
-		final Reasoner reasoner = Reasoner.getInstance();
-		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
 		
 		final DataSource tripleEDBPath = new CsvFileDataSource(tripleSet.getTripleSetFile());
 		final DataSource qualifierEDBPath = new CsvFileDataSource(tripleSet.getQualifierTripleSetFile());
@@ -114,14 +91,14 @@ public class ScopePropertyConstraintChecker extends PropertyConstraintChecker {
 		rules.add(notQualifier);
 		rules.add(notReference);
 		
-		for (String allowed : qualifiers.get(ScopeConstraintChecker.SCOPE).split(",")) {
-			if (allowed.equals(Main.BASE_URI + ScopeConstraintChecker.AS_MAIN_VALUE))
-				rules.remove(notTriple);
-			if (allowed.equals(Main.BASE_URI + ScopeConstraintChecker.AS_QUALIFIER))
-				rules.remove(notQualifier);
-			if (allowed.equals(Main.BASE_URI + ScopeConstraintChecker.AS_REFERENCE))
-				rules.remove(notReference);
-		}
+		if (allowedAs(ScopeConstraintChecker.AS_MAIN_VALUE))
+			rules.remove(notTriple);
+		
+		if (allowedAs(ScopeConstraintChecker.AS_QUALIFIER))
+			rules.remove(notQualifier);
+		
+		if (allowedAs(ScopeConstraintChecker.AS_REFERENCE))
+			rules.remove(notReference);
 		
 		try {
 			reasoner.addRules(rules);
@@ -163,6 +140,15 @@ public class ScopePropertyConstraintChecker extends PropertyConstraintChecker {
     	return result;
 	}
 	
+	protected boolean allowedAs(String qualifier) {
+		boolean result = false;
+		for (String allowed : qualifiers.get(ScopeConstraintChecker.SCOPE).split(",")) {
+			if (allowed.equals(Main.BASE_URI + qualifier))
+				result = true;
+		}
+		return result;
+	}
+
 	String result(QueryResultIterator queryResultIterator) {
 		String result = ""; 
 		while (queryResultIterator.hasNext()) {
@@ -178,7 +164,7 @@ public class ScopePropertyConstraintChecker extends PropertyConstraintChecker {
 	}
 
 	@Override
-	Map<String, TripleSet> getRequiredTripleSets(String property, Map<String, String> qualifiers) throws IOException {
+	protected Map<String, TripleSet> getRequiredTripleSets(String property, Map<String, String> qualifiers) throws IOException {
 		Map<String, TripleSet> result = new HashMap<String, TripleSet>();
 		result.put(TRIPLE_SET, new ScopeTripleSet(property, qualifiers));
 		return result;

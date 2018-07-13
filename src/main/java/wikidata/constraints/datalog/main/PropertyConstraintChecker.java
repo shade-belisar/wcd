@@ -12,6 +12,8 @@ import java.util.Map;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
+import org.semanticweb.vlog4j.core.reasoner.Algorithm;
+import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import wikidata.constraints.datalog.rdf.TripleSet;
@@ -22,33 +24,50 @@ import wikidata.constraints.datalog.rdf.TripleSet;
  */
 public abstract class PropertyConstraintChecker {
 	
-	final Variable x = Expressions.makeVariable("x");
-	final Variable y = Expressions.makeVariable("y");
-	final Variable z = Expressions.makeVariable("z");
+	protected final static String TRIPLE = "triple";
+	protected final static String QUALIFIER = "qualifier";
+	protected final static String REFERENCE = "reference";
 	
-	final static String TRIPLE = "triple";
-	final static String QUALIFIER_TRIPLE = "qualifierTriple";
-	final static String REFERENCE_TRIPLE = "referenceTriple";
+	protected final static String STATEMENT = "statement";
+	protected final static String VIOLATION_SHORT = "violation_short";
+	protected final static String VIOLATION_LONG = "violation_long";
 	
-	final Predicate tripleEDB = Expressions.makePredicate(TRIPLE, 4);
-	final Predicate qualifierTripleEDB = Expressions.makePredicate(QUALIFIER_TRIPLE, 3);
-	final Predicate referenceTripleEDB = Expressions.makePredicate(REFERENCE_TRIPLE, 3);
+	protected final static String X = "x";
+	protected final static String Y = "y";
+	protected final static String Z = "z";
 	
-	String property;
+	protected final Variable x = Expressions.makeVariable(X);
+	protected final Variable y = Expressions.makeVariable(Y);
+	protected final Variable z = Expressions.makeVariable(Z);
 	
-	Map<String, String> qualifiers;
+	protected final Predicate tripleEDB = Expressions.makePredicate(TRIPLE, 4);
+	protected final Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
+	protected final Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 3);
 	
-	Map<String, TripleSet> tripleSets = new HashMap<String, TripleSet>();
+	protected final Variable statement = Expressions.makeVariable(STATEMENT);
+	protected final Predicate violation_short = Expressions.makePredicate(VIOLATION_SHORT, 3);
+	protected final Predicate violation_long = Expressions.makePredicate(VIOLATION_LONG, 4);
+	
+	protected final Reasoner reasoner = Reasoner.getInstance();
+	
+	protected String property;
+	
+	protected Map<String, String> qualifiers;
+	
+	protected Map<String, TripleSet> tripleSets = new HashMap<String, TripleSet>();
 	
 	public PropertyConstraintChecker(String property_, Map<String, String> qualifiers_) throws IOException {
 		property = property_;
 		qualifiers = qualifiers_;
 		tripleSets = getRequiredTripleSets(property, qualifiers);
+		
+		
+		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
 	}
 	
 	public abstract String violations() throws ReasonerStateException, IOException;
 	
-	abstract Map<String, TripleSet> getRequiredTripleSets(String property, Map<String, String> qualifiers) throws IOException;
+	protected abstract Map<String, TripleSet> getRequiredTripleSets(String property, Map<String, String> qualifiers) throws IOException;
 	
 	public void close() throws IOException {
 		for (TripleSet tripleSet : tripleSets.values()) {

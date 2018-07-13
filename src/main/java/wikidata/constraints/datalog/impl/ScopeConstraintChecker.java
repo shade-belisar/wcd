@@ -1,11 +1,14 @@
-package wikidata.constraints.datalog.main;
+package wikidata.constraints.datalog.impl;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
+
+import wikidata.constraints.datalog.impl.PCC.ScopePCC;
+import wikidata.constraints.datalog.main.ConstraintChecker;
+import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 
 public class ScopeConstraintChecker extends ConstraintChecker {
 	
@@ -22,21 +25,12 @@ public class ScopeConstraintChecker extends ConstraintChecker {
 	}
 
 	@Override
-	public String violations() throws ReasonerStateException, IOException {
-		String result = "";
-		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
-			result += propertyConstraintChecker.violations() + "\n";
-		}
-		return result;
+	protected PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException {
+		return new ScopePCC(property, qualifiers);
 	}
 
 	@Override
-	PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException {
-		return new ScopePropertyConstraintChecker(property, qualifiers);
-	}
-
-	@Override
-	Map<String, String> additionalQualifiers() {
+	protected Map<String, String> additionalQualifiers() {
 		Map<String, String> result = new HashMap<String, String>();
 		result.put(SCOPE, "P5314");
 		return result;

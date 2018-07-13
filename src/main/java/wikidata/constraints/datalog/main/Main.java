@@ -4,7 +4,9 @@
 package wikidata.constraints.datalog.main;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.ConsoleAppender;
@@ -15,6 +17,8 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
+
+import wikidata.constraints.datalog.impl.ScopeConstraintChecker;
 
 /**
  * @author adrian
@@ -42,10 +46,11 @@ public class Main {
 		configureLogging();
 		
 		dumpProcessingController = new DumpProcessingController("wikidatawiki");
+
+		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
 		
-		ConstraintChecker checker;
 		try {
-			checker = new ScopeConstraintChecker();
+			checkers.add(new ScopeConstraintChecker());
 		} catch (IOException e) {
 			logger.error("Could not open a file, see the error message for details.", e);
 			return;
@@ -56,14 +61,16 @@ public class Main {
 		dumpProcessingController.processDump(mwDumpFile);
 		
 		try {
-			checker.close();
+			for(ConstraintChecker checker : checkers)
+				checker.close();
 		} catch (IOException e) {
-			logger.error("Could not close a file, see the rror message for details.", e);
+			logger.error("Could not close a file, see the error message for details.", e);
 			return;
 		}
 		
 		try {
-			System.out.println(checker.violations());
+			for(ConstraintChecker checker : checkers)
+				System.out.println(checker.violations());
 		} catch (ReasonerStateException e) {
 			logger.error("Reasoner was called in the wrong state.", e);
 			return;

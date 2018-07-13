@@ -35,7 +35,7 @@ public abstract class ConstraintChecker {
 	
 	String constraint;
 	
-	List<PropertyConstraintChecker> propertyCheckers;
+	protected List<PropertyConstraintChecker> propertyCheckers;
 	
 	Map<String, String> additionalQualifiers;
 	
@@ -113,11 +113,17 @@ public abstract class ConstraintChecker {
 		qexec.close() ;
 	}
 	
-	public abstract String violations() throws ReasonerStateException, IOException;
+	public String violations() throws ReasonerStateException, IOException {
+		String result = "";
+		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
+			result += propertyConstraintChecker.violations() + "\n";
+		}
+		return result;
+	}
 	
-	abstract Map<String, String> additionalQualifiers();
+	protected abstract Map<String, String> additionalQualifiers();
 	
-	abstract PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException;
+	protected abstract PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException;
 	
 	public void close() throws IOException {
 		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
