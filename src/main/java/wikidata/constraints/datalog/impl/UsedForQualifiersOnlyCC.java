@@ -10,8 +10,8 @@ import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 
 public class UsedForQualifiersOnlyCC extends ConstraintChecker {
 
-	public UsedForQualifiersOnlyCC(String constraint_) throws IOException {
-		super(constraint_);
+	public UsedForQualifiersOnlyCC() throws IOException {
+		super("Q21510863");
 	}
 
 	@Override

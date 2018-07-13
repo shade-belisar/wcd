@@ -3,7 +3,7 @@ package wikidata.constraints.datalog.impl.PCC;
 import java.io.IOException;
 import java.util.Map;
 
-import wikidata.constraints.datalog.impl.ScopeConstraintChecker;
+import wikidata.constraints.datalog.impl.ScopeCC;
 
 public class UsedForValuesOnlyPCC extends ScopePCC {
 
@@ -13,7 +13,7 @@ public class UsedForValuesOnlyPCC extends ScopePCC {
 	
 	@Override
 	protected boolean allowedAs(String qualifier) {
-		if (qualifier.equals(ScopeConstraintChecker.AS_MAIN_VALUE))
+		if (qualifier.equals(ScopeCC.AS_MAIN_VALUE))
 			return true;
 		return false;
 	}

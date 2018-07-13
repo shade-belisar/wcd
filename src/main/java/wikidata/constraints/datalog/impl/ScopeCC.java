@@ -10,9 +10,9 @@ import wikidata.constraints.datalog.impl.PCC.ScopePCC;
 import wikidata.constraints.datalog.main.ConstraintChecker;
 import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 
-public class ScopeConstraintChecker extends ConstraintChecker {
+public class ScopeCC extends ConstraintChecker {
 	
-	final static Logger logger = Logger.getLogger(ScopeConstraintChecker.class);
+	final static Logger logger = Logger.getLogger(ScopeCC.class);
 	
 	public final static String SCOPE = "scope";
 	
@@ -20,7 +20,7 @@ public class ScopeConstraintChecker extends ConstraintChecker {
 	public static final String AS_QUALIFIER = "Q54828449";
 	public static final String AS_REFERENCE = "Q54828450";
 
-	public ScopeConstraintChecker() throws IOException {
+	public ScopeCC() throws IOException {
 		super("Q53869507");
 	}
 

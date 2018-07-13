@@ -28,7 +28,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
-import wikidata.constraints.datalog.impl.ScopeConstraintChecker;
+import wikidata.constraints.datalog.impl.ScopeCC;
 import wikidata.constraints.datalog.main.Main;
 import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 import wikidata.constraints.datalog.rdf.ScopeTripleSet;
@@ -91,13 +91,13 @@ public class ScopePCC extends PropertyConstraintChecker {
 		rules.add(notQualifier);
 		rules.add(notReference);
 		
-		if (allowedAs(ScopeConstraintChecker.AS_MAIN_VALUE))
+		if (allowedAs(ScopeCC.AS_MAIN_VALUE))
 			rules.remove(notTriple);
 		
-		if (allowedAs(ScopeConstraintChecker.AS_QUALIFIER))
+		if (allowedAs(ScopeCC.AS_QUALIFIER))
 			rules.remove(notQualifier);
 		
-		if (allowedAs(ScopeConstraintChecker.AS_REFERENCE))
+		if (allowedAs(ScopeCC.AS_REFERENCE))
 			rules.remove(notReference);
 		
 		try {
@@ -142,7 +142,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 	
 	protected boolean allowedAs(String qualifier) {
 		boolean result = false;
-		for (String allowed : qualifiers.get(ScopeConstraintChecker.SCOPE).split(",")) {
+		for (String allowed : qualifiers.get(ScopeCC.SCOPE).split(",")) {
 			if (allowed.equals(Main.BASE_URI + qualifier))
 				result = true;
 		}

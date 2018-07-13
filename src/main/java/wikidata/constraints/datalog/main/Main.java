@@ -18,7 +18,7 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
-import wikidata.constraints.datalog.impl.ScopeConstraintChecker;
+import wikidata.constraints.datalog.impl.ScopeCC;
 
 /**
  * @author adrian
@@ -50,7 +50,7 @@ public class Main {
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
 		
 		try {
-			checkers.add(new ScopeConstraintChecker());
+			checkers.add(new ScopeCC());
 		} catch (IOException e) {
 			logger.error("Could not open a file, see the error message for details.", e);
 			return;

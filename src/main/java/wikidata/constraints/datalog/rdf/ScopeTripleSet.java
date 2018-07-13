@@ -3,7 +3,7 @@ package wikidata.constraints.datalog.rdf;
 import java.io.IOException;
 import java.util.Map;
 
-import wikidata.constraints.datalog.impl.ScopeConstraintChecker;
+import wikidata.constraints.datalog.impl.ScopeCC;
 import wikidata.constraints.datalog.main.Main;
 
 public class ScopeTripleSet extends TripleSet {

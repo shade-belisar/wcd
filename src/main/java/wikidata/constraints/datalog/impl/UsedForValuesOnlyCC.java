@@ -10,7 +10,7 @@ import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 
 public class UsedForValuesOnlyCC extends ConstraintChecker {
 
-	public UsedForValuesOnlyCC(String constraint) throws IOException {
+	public UsedForValuesOnlyCC() throws IOException {
 		super("Q21528958");
 	}
 
