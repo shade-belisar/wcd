@@ -1,8 +1,9 @@
 package wikidata.constraints.datalog.impl;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import wikidata.constraints.datalog.impl.PCC.UsedForQualifiersOnlyPCC;
 import wikidata.constraints.datalog.main.ConstraintChecker;
@@ -15,8 +16,8 @@ public class UsedForQualifiersOnlyCC extends ConstraintChecker {
 	}
 
 	@Override
-	protected Map<String, String> additionalQualifiers() {
-		return new HashMap<String, String>();
+	protected Set<String> additionalQualifiers() {
+		return new HashSet<String>();
 	}
 
 	@Override

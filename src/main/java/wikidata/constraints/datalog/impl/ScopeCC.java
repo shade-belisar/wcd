@@ -1,8 +1,9 @@
 package wikidata.constraints.datalog.impl;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -14,7 +15,7 @@ public class ScopeCC extends ConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(ScopeCC.class);
 	
-	public static final String SCOPE = "scope";
+	public static final String SCOPE = "P5314";
 	
 	public static final String AS_MAIN_VALUE = "Q54828448";
 	public static final String AS_QUALIFIER = "Q54828449";
@@ -25,9 +26,9 @@ public class ScopeCC extends ConstraintChecker {
 	}
 
 	@Override
-	protected Map<String, String> additionalQualifiers() {
-		Map<String, String> result = new HashMap<String, String>();
-		result.put(SCOPE, "P5314");
+	protected Set<String> additionalQualifiers() {
+		Set<String> result = new HashSet<String>();
+		result.add(SCOPE);
 		return result;
 	}
 	

@@ -1,26 +1,27 @@
 package wikidata.constraints.datalog.impl;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import wikidata.constraints.datalog.main.ConstraintChecker;
 import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 
 public class ConflictsWithCC extends ConstraintChecker {
 	
-	public static final String PROPERTY = "property";
-	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "itemOfPropertyConstraint";
+	public static final String PROPERTY = "P2306";
+	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "P2305";
 
 	public ConflictsWithCC() throws IOException {
 		super("Q21502838");
 	}
 
 	@Override
-	protected Map<String, String> additionalQualifiers() {
-		Map<String, String> result = new HashMap<String, String>();
-		result.put(PROPERTY, "P2306");
-		result.put(ITEM_OF_PROPERTY_CONSTRAINT, "P2305");
+	protected Set<String> additionalQualifiers() {
+		Set<String> result = new HashSet<String>();
+		result.add(PROPERTY);
+		result.add(ITEM_OF_PROPERTY_CONSTRAINT);
 		return result;	}
 
 	@Override

@@ -37,7 +37,7 @@ public abstract class ConstraintChecker {
 	
 	protected List<PropertyConstraintChecker> propertyCheckers;
 	
-	Map<String, String> additionalQualifiers;
+	Set<String> additionalQualifiers;
 	
 	public ConstraintChecker(String constraint_) throws IOException {
 		constraint = constraint_;
@@ -69,7 +69,7 @@ public abstract class ConstraintChecker {
 		"PREFIX ps: <http://www.wikidata.org/prop/statement/>\n"+
 		"PREFIX pq: <http://www.wikidata.org/prop/qualifier/>\n"+
 		"SELECT ?item";
-		for (String key : additionalQualifiers.keySet()) {
+		for (String key : additionalQualifiers) {
 			propertiesQuery += " (GROUP_CONCAT(DISTINCT (?var" + key + "); separator=',') as ?" + key + ")";
 		}
 		propertiesQuery += "\n"+
@@ -77,8 +77,8 @@ public abstract class ConstraintChecker {
 		"{\n"+
 		"  ?item p:P2302 ?s .\n"+
 		"  ?s ps:P2302 wd:" + constraint + ".\n";
-		for (Map.Entry<String, String> entry : additionalQualifiers.entrySet()) {
-			propertiesQuery += "  ?s pq:" + entry.getValue() + " ?var" + entry.getKey() + ".\n";
+		for (String entry : additionalQualifiers) {
+			propertiesQuery += "  ?s pq:" + entry + " ?var" + entry + ".\n";
 		}
 		propertiesQuery +=
 		"}\n"+
@@ -97,7 +97,7 @@ public abstract class ConstraintChecker {
 			if (!property.equals("P31"))
 				continue;
 			Map<String, String> qualifiers = new HashMap<String, String>();
-			for (String variableName : additionalQualifiers.keySet()) {
+			for (String variableName : additionalQualifiers) {
 				RDFNode node = solution.get(variableName);
 				if (node.isLiteral()) {
 					Literal literal = node.asLiteral();
@@ -121,7 +121,7 @@ public abstract class ConstraintChecker {
 		return result;
 	}
 	
-	protected abstract Map<String, String> additionalQualifiers();
+	protected abstract Set<String> additionalQualifiers();
 	
 	protected abstract PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException;
 	
