@@ -18,7 +18,7 @@ public class UsedForQualifiersOnlyCC extends ConstraintChecker {
 	
 	Set<String> properties = new HashSet<String>();
 
-	public UsedForQualifiersOnlyCC() throws IOException {
+	public UsedForQualifiersOnlyCC() {
 		super("Q21510863");
 	}
 

@@ -30,7 +30,7 @@ public class ScopeCC extends ConstraintChecker {
 	
 	Map<String, HashSet<String>> result = new HashMap<String, HashSet<String>>();
 
-	public ScopeCC() throws IOException {
+	public ScopeCC() {
 		super("Q53869507");
 	}
 

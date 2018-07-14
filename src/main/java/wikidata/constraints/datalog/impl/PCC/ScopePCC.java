@@ -66,7 +66,6 @@ public class ScopePCC extends PropertyConstraintChecker {
 			return "INTERNAL ERROR for property " + property + ".";
 		}
 
-		Constant propertyConstant = Expressions.makeConstant(Main.BASE_URI + property);
 		// violation_short(STATEMENT, propertyConstant, X)
 		Atom violation_short_SpX = Expressions.makeAtom(violation_short, statement, propertyConstant, x);
 		// violation_long(STATEMENT, X, propertyConstant, Y)

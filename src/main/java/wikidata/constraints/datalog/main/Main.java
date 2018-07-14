@@ -18,6 +18,7 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
+import wikidata.constraints.datalog.impl.ConflictsWithCC;
 import wikidata.constraints.datalog.impl.ScopeCC;
 
 /**
@@ -48,9 +49,11 @@ public class Main {
 		dumpProcessingController = new DumpProcessingController("wikidatawiki");
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
-		
+		checkers.add(new ConflictsWithCC());
 		try {
-			checkers.add(new ScopeCC());
+			for (ConstraintChecker constraintChecker : checkers) {
+				constraintChecker.init();
+			}
 		} catch (IOException e) {
 			logger.error("Could not open a file, see the error message for details.", e);
 			return;

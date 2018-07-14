@@ -37,15 +37,13 @@ public abstract class ConstraintChecker {
 	
 	protected List<PropertyConstraintChecker> propertyCheckers;
 	
-	public ConstraintChecker(String constraint_) throws IOException {
+	public ConstraintChecker(String constraint_) {
 		constraint = constraint_;
-		init();
-		propertyCheckers = propertyCheckers();
 	}
 
 	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
 
-	protected void init() throws IOException {
+	public void init() throws IOException {
 		// Fetching the properties with this constraint
 		/*
 		 * 	PREFIX wd: <http://www.wikidata.org/entity/>
@@ -103,31 +101,14 @@ public abstract class ConstraintChecker {
 		while (results.hasNext()) {
 			QuerySolution solution = results.next();
 			String property = solution.get("item").asResource().getLocalName();
-			
-			// To limit testing
-			if (!property.equals("P31"))
+			if (!property.equals("P3150"))
 				continue;
+
 			process(solution);
-			/*String property = solution.get("item").asResource().getLocalName();
-			
-			// To limit testing
-			if (!property.equals("P31"))
-				continue;
-			Map<String, String> qualifiers = new HashMap<String, String>();
-			for (String variableName : additionalQualifiers) {
-				RDFNode node = solution.get(variableName);
-				if (node.isLiteral()) {
-					Literal literal = node.asLiteral();
-					qualifiers.put(variableName, literal.getString());
-				} else {
-					logger.error("Node " + node + " is no a literal.");
-				}
-				
-			}
-			propertyCheckers.add(getPropertyChecker(property, qualifiers));*/
 		}       
 
-		qexec.close() ;
+		qexec.close();
+		propertyCheckers = propertyCheckers();
 	}
 	
 	public String violations() throws ReasonerStateException, IOException {

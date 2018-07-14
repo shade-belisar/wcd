@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
@@ -52,13 +53,16 @@ public abstract class PropertyConstraintChecker {
 	
 	protected final Reasoner reasoner = Reasoner.getInstance();
 	
-	protected String property;
+	protected final Constant propertyConstant;
+	
+	protected final String property;
 	
 	protected Map<String, TripleSet> tripleSets = new HashMap<String, TripleSet>();
 	
 	public PropertyConstraintChecker(String property_) throws IOException {
 		property = property_;
 		tripleSets = getRequiredTripleSets(property);
+		propertyConstant = Expressions.makeConstant(Main.BASE_URI + property);
 		
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
 	}

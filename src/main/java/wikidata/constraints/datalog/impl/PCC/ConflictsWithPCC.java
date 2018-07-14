@@ -38,6 +38,9 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
 			return "INTERNAL ERROR for property " + property + ".";
 		}
+		
+		
+		
 		reasoner.close();
 		return "not yet implemented";
 	}
