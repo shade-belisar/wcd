@@ -81,7 +81,7 @@ public abstract class ConstraintChecker {
 			propertiesQuery += "  ?s pq:" + entry.getValue() + " ?var" + entry.getKey() + ".\n";
 		}
 		propertiesQuery +=
-		"}"+
+		"}\n"+
 		"GROUP BY ?item";
 
 		Query query = QueryFactory.create(propertiesQuery);
