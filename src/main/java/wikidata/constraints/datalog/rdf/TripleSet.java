@@ -30,8 +30,6 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	
 	protected String property;
 	
-	protected Map<String, String> qualifiers;
-	
 	protected static String BASE_LOCATION = "./resources/tripleSets/";
 	
 	File tripleSetFile;
@@ -52,9 +50,8 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	
 	boolean referenceNotEmpty = false;
 	
-	public TripleSet(String property_, Map<String, String> quualifiers_) throws IOException {
+	public TripleSet(String property_) throws IOException {
 		property = property_;
-		qualifiers = quualifiers_;
 		
 		tripleSetFile = new File(BASE_LOCATION + getTripleSetType() + "/" + property + ".csv");
 		tripleSetFile.getParentFile().mkdirs();

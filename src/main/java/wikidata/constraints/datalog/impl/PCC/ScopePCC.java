@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
@@ -44,8 +46,11 @@ public class ScopePCC extends PropertyConstraintChecker {
 	
 	final String TRIPLE_SET = "triple_set";
 	
-	public ScopePCC(String property_, Map<String, String> qualifiers_) throws IOException {
-		super(property_, qualifiers_);
+	final Set<String> qualifiers;
+	
+	public ScopePCC(String property_, Set<String> qualifiers_) throws IOException {
+		super(property_);
+		qualifiers = qualifiers_;
 	}
 	
 	public String violations() throws IOException {
@@ -136,7 +141,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 	
 	protected boolean allowedAs(String qualifier) {
 		boolean result = false;
-		for (String allowed : qualifiers.get(ScopeCC.SCOPE).split(",")) {
+		for (String allowed : qualifiers) {
 			if (allowed.equals(Main.BASE_URI + qualifier))
 				result = true;
 		}
@@ -158,9 +163,9 @@ public class ScopePCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	protected Map<String, TripleSet> getRequiredTripleSets(String property, Map<String, String> qualifiers) throws IOException {
+	protected Map<String, TripleSet> getRequiredTripleSets(String property) throws IOException {
 		Map<String, TripleSet> result = new HashMap<String, TripleSet>();
-		result.put(TRIPLE_SET, new ScopeTripleSet(property, qualifiers));
+		result.put(TRIPLE_SET, new ScopeTripleSet(property));
 		return result;
 	}
 

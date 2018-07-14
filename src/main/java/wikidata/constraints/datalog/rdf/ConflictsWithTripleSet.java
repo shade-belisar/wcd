@@ -9,8 +9,8 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 public class ConflictsWithTripleSet extends TripleSet {
 
-	public ConflictsWithTripleSet(String property_, Map<String, String> quualifiers_) throws IOException {
-		super(property_, quualifiers_);
+	public ConflictsWithTripleSet(String property_) throws IOException {
+		super(property_);
 	}
 	
 	@Override
@@ -21,12 +21,10 @@ public class ConflictsWithTripleSet extends TripleSet {
 		for (StatementGroup sg : itemDocument.getStatementGroups()) {
 			if (foundProperty)
 				break;
-			for (Statement statement : sg) {
-				String predicate = sg.getProperty().getIri();
-				if (predicate.endsWith(property)) {
-					foundProperty = true;
-					break;
-				}
+			String predicate = sg.getProperty().getIri();
+			if (predicate.endsWith(property)) {
+				foundProperty = true;
+				break;
 			}
 		}
 		if (!foundProperty)

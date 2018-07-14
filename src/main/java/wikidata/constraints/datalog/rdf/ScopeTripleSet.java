@@ -8,8 +8,8 @@ import wikidata.constraints.datalog.main.Main;
 
 public class ScopeTripleSet extends TripleSet {
 
-	public ScopeTripleSet(String property_, Map<String, String> qualifiers_) throws IOException {
-		super(property_, qualifiers_);
+	public ScopeTripleSet(String property_) throws IOException {
+		super(property_);
 	}
 	
 	@Override

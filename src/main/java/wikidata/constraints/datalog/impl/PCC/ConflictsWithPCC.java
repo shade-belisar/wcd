@@ -2,6 +2,7 @@ package wikidata.constraints.datalog.impl.PCC;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -16,9 +17,12 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 	final static Logger logger = Logger.getLogger(ConflictsWithPCC.class);
 	
 	final String TRIPLE_SET = "triple_set";
+	
+	final Map<String, HashSet<String>> conflicts;
 
-	public ConflictsWithPCC(String property_, Map<String, String> qualifiers_) throws IOException {
-		super(property_, qualifiers_);
+	public ConflictsWithPCC(String property_, Map<String, HashSet<String>> qualifiers_) throws IOException {
+		super(property_);
+		conflicts = qualifiers_;
 	}
 
 	@Override
@@ -39,9 +43,9 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	protected Map<String, TripleSet> getRequiredTripleSets(String property, Map<String, String> qualifiers) throws IOException {
+	protected Map<String, TripleSet> getRequiredTripleSets(String property) throws IOException {
 		Map<String, TripleSet> result = new HashMap<String, TripleSet>();
-		result.put(TRIPLE_SET, new ConflictsWithTripleSet(property, qualifiers));
+		result.put(TRIPLE_SET, new ConflictsWithTripleSet(property));
 		return result;
 	}
 

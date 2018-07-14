@@ -54,15 +54,11 @@ public abstract class PropertyConstraintChecker {
 	
 	protected String property;
 	
-	protected Map<String, String> qualifiers;
-	
 	protected Map<String, TripleSet> tripleSets = new HashMap<String, TripleSet>();
 	
-	public PropertyConstraintChecker(String property_, Map<String, String> qualifiers_) throws IOException {
+	public PropertyConstraintChecker(String property_) throws IOException {
 		property = property_;
-		qualifiers = qualifiers_;
-		tripleSets = getRequiredTripleSets(property, qualifiers);
-		
+		tripleSets = getRequiredTripleSets(property);
 		
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
 	}
@@ -86,7 +82,7 @@ public abstract class PropertyConstraintChecker {
 	
 	public abstract String violations() throws ReasonerStateException, IOException;
 	
-	protected abstract Map<String, TripleSet> getRequiredTripleSets(String property, Map<String, String> qualifiers) throws IOException;
+	protected abstract Map<String, TripleSet> getRequiredTripleSets(String property) throws IOException;
 	
 	public void close() throws IOException {
 		for (TripleSet tripleSet : tripleSets.values()) {

@@ -1,14 +1,15 @@
 package wikidata.constraints.datalog.impl.PCC;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
 
 import wikidata.constraints.datalog.impl.ScopeCC;
 
 public class UsedForValuesOnlyPCC extends ScopePCC {
 
-	public UsedForValuesOnlyPCC(String property_, Map<String, String> qualifiers_) throws IOException {
-		super(property_, qualifiers_);
+	public UsedForValuesOnlyPCC(String property_) throws IOException {
+		super(property_, new HashSet<String>());
 	}
 	
 	@Override

@@ -37,16 +37,15 @@ public abstract class ConstraintChecker {
 	
 	protected List<PropertyConstraintChecker> propertyCheckers;
 	
-	Set<String> additionalQualifiers;
-	
 	public ConstraintChecker(String constraint_) throws IOException {
 		constraint = constraint_;
-		propertyCheckers = new ArrayList<PropertyConstraintChecker>();
-		additionalQualifiers = additionalQualifiers();
 		init();
+		propertyCheckers = propertyCheckers();
 	}
-	
-	void init() throws IOException {
+
+	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
+
+	protected void init() throws IOException {
 		// Fetching the properties with this constraint
 		/*
 		 * 	PREFIX wd: <http://www.wikidata.org/entity/>
@@ -63,13 +62,19 @@ public abstract class ConstraintChecker {
 			GROUP BY ?item
 		 */
 		
+		Set<String> qualifiers = qualifiers();
+		Set<String> concatQualifiers = concatQualifiers();
+		
 		String propertiesQuery =
 		"PREFIX wd: <http://www.wikidata.org/entity/>\n"+
 		"PREFIX p: <http://www.wikidata.org/prop/>\n"+
 		"PREFIX ps: <http://www.wikidata.org/prop/statement/>\n"+
 		"PREFIX pq: <http://www.wikidata.org/prop/qualifier/>\n"+
 		"SELECT ?item";
-		for (String key : additionalQualifiers) {
+		for (String key : qualifiers) {
+			propertiesQuery += " ?" + key + " ";
+		}
+		for (String key : concatQualifiers) {
 			propertiesQuery += " (GROUP_CONCAT(DISTINCT (?var" + key + "); separator=',') as ?" + key + ")";
 		}
 		propertiesQuery += "\n"+
@@ -77,12 +82,18 @@ public abstract class ConstraintChecker {
 		"{\n"+
 		"  ?item p:P2302 ?s .\n"+
 		"  ?s ps:P2302 wd:" + constraint + ".\n";
-		for (String entry : additionalQualifiers) {
+		for (String entry : qualifiers) {
+			propertiesQuery += "  ?s pq:" + entry + " ?" + entry + ".\n";
+		}
+		for (String entry : concatQualifiers) {
 			propertiesQuery += "  ?s pq:" + entry + " ?var" + entry + ".\n";
 		}
 		propertiesQuery +=
 		"}\n"+
 		"GROUP BY ?item";
+		for (String key : qualifiers) {
+			propertiesQuery += " ?" + key;
+		}
 
 		Query query = QueryFactory.create(propertiesQuery);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService("https://query.wikidata.org/sparql", query);
@@ -92,6 +103,12 @@ public abstract class ConstraintChecker {
 		while (results.hasNext()) {
 			QuerySolution solution = results.next();
 			String property = solution.get("item").asResource().getLocalName();
+			
+			// To limit testing
+			if (!property.equals("P31"))
+				continue;
+			process(solution);
+			/*String property = solution.get("item").asResource().getLocalName();
 			
 			// To limit testing
 			if (!property.equals("P31"))
@@ -107,7 +124,7 @@ public abstract class ConstraintChecker {
 				}
 				
 			}
-			propertyCheckers.add(getPropertyChecker(property, qualifiers));
+			propertyCheckers.add(getPropertyChecker(property, qualifiers));*/
 		}       
 
 		qexec.close() ;
@@ -120,10 +137,6 @@ public abstract class ConstraintChecker {
 		}
 		return result;
 	}
-	
-	protected abstract Set<String> additionalQualifiers();
-	
-	protected abstract PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException;
 	
 	public void close() throws IOException {
 		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
@@ -141,5 +154,11 @@ public abstract class ConstraintChecker {
 			
 		return result;
 	}
+	
+	protected abstract Set<String> qualifiers();
+	
+	protected abstract Set<String> concatQualifiers();
+
+	protected abstract void process(QuerySolution solution);
 	
 }
