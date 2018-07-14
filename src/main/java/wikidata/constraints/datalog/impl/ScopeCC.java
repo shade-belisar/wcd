@@ -14,7 +14,7 @@ public class ScopeCC extends ConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(ScopeCC.class);
 	
-	public final static String SCOPE = "scope";
+	public static final String SCOPE = "scope";
 	
 	public static final String AS_MAIN_VALUE = "Q54828448";
 	public static final String AS_QUALIFIER = "Q54828449";
@@ -25,14 +25,14 @@ public class ScopeCC extends ConstraintChecker {
 	}
 
 	@Override
-	protected PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException {
-		return new ScopePCC(property, qualifiers);
-	}
-
-	@Override
 	protected Map<String, String> additionalQualifiers() {
 		Map<String, String> result = new HashMap<String, String>();
 		result.put(SCOPE, "P5314");
 		return result;
+	}
+	
+	@Override
+	protected PropertyConstraintChecker getPropertyChecker(String property, Map<String, String> qualifiers) throws IOException {
+		return new ScopePCC(property, qualifiers);
 	}
 }
