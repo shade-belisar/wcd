@@ -13,8 +13,10 @@ import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.Algorithm;
+import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
+import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import wikidata.constraints.datalog.rdf.TripleSet;
 
@@ -63,6 +65,23 @@ public abstract class PropertyConstraintChecker {
 		
 		
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
+	}
+	
+	protected void loadTripleSets(TripleSet... sets) throws ReasonerStateException, IOException {
+		for (TripleSet tripleSet : sets) {
+			if (tripleSet.tripleNotEmpty()) {
+				final DataSource tripleEDBPath = new CsvFileDataSource(tripleSet.getTripleSetFile());
+				reasoner.addFactsFromDataSource(tripleEDB, tripleEDBPath);
+			}
+			if (tripleSet.qualifierNotEmpty()) {
+				final DataSource qualifierEDBPath = new CsvFileDataSource(tripleSet.getQualifierTripleSetFile());
+				reasoner.addFactsFromDataSource(qualifierEDB, qualifierEDBPath);
+			}
+			if (tripleSet.referenceNotEmpty()) {
+				final DataSource referenceEDBPath = new CsvFileDataSource(tripleSet.getReferenceTripleSetFile());
+				reasoner.addFactsFromDataSource(referenceEDB, referenceEDBPath);				
+			}
+		}
 	}
 	
 	public abstract String violations() throws ReasonerStateException, IOException;
