@@ -107,7 +107,19 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	}
 	
 	public boolean notEmpty() {
-		return tripleNotEmpty || qualifierNotEmpty || referenceNotEmpty;
+		return tripleNotEmpty() || qualifierNotEmpty() || referenceNotEmpty();
+	}
+	
+	public boolean tripleNotEmpty() {
+		return tripleNotEmpty;
+	}
+	
+	public boolean qualifierNotEmpty() {
+		return qualifierNotEmpty;
+	}
+	
+	public boolean referenceNotEmpty() {
+		return referenceNotEmpty;
 	}
 	
 	public File getTripleSetFile() throws IOException {
