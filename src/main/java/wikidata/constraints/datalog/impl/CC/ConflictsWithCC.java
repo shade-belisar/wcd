@@ -25,11 +25,10 @@ public class ConflictsWithCC extends ConstraintChecker {
 	public static final String PROPERTY = "P2306";
 	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "P2305";
 	
-	Map<String, HashMap<String, HashSet<String>>> configuration;
+	Map<String, HashMap<String, HashSet<String>>> configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
 
 	public ConflictsWithCC() {
 		super("Q21502838");
-		configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
 	}
 
 	@Override
@@ -72,6 +71,6 @@ public class ConflictsWithCC extends ConstraintChecker {
 			}
 		} else {
 			logger.error("Node " + node + " is no a literal.");
-		}		
+		}
 	}
 }
