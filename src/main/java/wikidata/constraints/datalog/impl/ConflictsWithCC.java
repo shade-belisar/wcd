@@ -63,10 +63,15 @@ public class ConflictsWithCC extends ConstraintChecker {
 			configuration.get(property).put(propQualifier, new HashSet<String>());
 		RDFNode node = solution.get(ITEM_OF_PROPERTY_CONSTRAINT);
 		if (node.isLiteral()) {
-				Literal literal = node.asLiteral();
-				configuration.get(property).get(propQualifier).add(literal.getString());
+			Literal literal = node.asLiteral();
+			String content = literal.getString();
+			if (content.equals(""))
+				return;
+			for (String value : literal.getString().split(",")) {
+				configuration.get(property).get(propQualifier).add(value);				
+			}
 		} else {
-				logger.error("Node " + node + " is no a literal.");
+			logger.error("Node " + node + " is no a literal.");
 		}		
 	}
 }
