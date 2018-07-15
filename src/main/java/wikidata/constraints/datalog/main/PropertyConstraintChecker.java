@@ -4,12 +4,12 @@
 package wikidata.constraints.datalog.main;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.QueryResult;
@@ -26,7 +26,6 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
-import wikidata.constraints.datalog.impl.PCC.ScopePCC;
 import wikidata.constraints.datalog.rdf.TripleSet;
 
 /**
@@ -65,6 +64,9 @@ public abstract class PropertyConstraintChecker {
 	protected final Variable statement = Expressions.makeVariable(STATEMENT);
 	protected final Variable otherStatement = Expressions.makeVariable(OTHER_STATEMENT);
 	
+	protected final Atom query_long = Expressions.makeAtom(violation_long, statement, x, y, z);
+	protected final Atom query_short = Expressions.makeAtom(violation_short, statement, y, z);
+	
 	protected final Reasoner reasoner = Reasoner.getInstance();
 	
 	protected final Constant propertyConstant;
@@ -102,7 +104,7 @@ public abstract class PropertyConstraintChecker {
 		}
 	}
 	
-	protected void prepareQueries(List<Rule> rules) throws IOException, PrepareQueriesException {
+	protected String prepareAndExecuteQueries(List<Rule> rules) throws IOException, PrepareQueriesException {
 		try {
 			reasoner.addRules(rules);
 		} catch (ReasonerStateException e) {
@@ -126,6 +128,22 @@ public abstract class PropertyConstraintChecker {
 			logger.error("Trying to reason in the wrong state for property " + property + ".", e);
 			throw new PrepareQueriesException("INTERNAL ERROR for property " + property + ".");
 		}
+		
+		String result = "";
+    	try (QueryResultIterator iterator = reasoner.answerQuery(query_long, true)) {
+    		result += result(iterator);
+    	} catch (ReasonerStateException e) {
+			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
+			throw new PrepareQueriesException("INTERNAL ERROR for property " + property + ".");
+		}
+    	try (QueryResultIterator iterator = reasoner.answerQuery(query_short, true)) {
+    		result += result(iterator);
+    	} catch (ReasonerStateException e) {
+			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
+			throw new PrepareQueriesException("INTERNAL ERROR for property " + property + ".");
+		}
+    	reasoner.close();
+    	return result;
 	}
 	
 	public abstract String violations() throws IOException;

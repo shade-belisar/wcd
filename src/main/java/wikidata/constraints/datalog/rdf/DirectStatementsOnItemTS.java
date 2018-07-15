@@ -7,9 +7,14 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
-public class ConflictsWithTripleSet extends TripleSet {
+/**
+ * A triple set limited to all direct statements of items with a statement containing the property as predicate.
+ * @author adrian
+ *
+ */
+public class DirectStatementsOnItemTS extends TripleSet {
 
-	public ConflictsWithTripleSet(String property_) throws IOException {
+	public DirectStatementsOnItemTS(String property_) throws IOException {
 		super(property_);
 	}
 	

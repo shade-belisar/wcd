@@ -5,36 +5,21 @@ package wikidata.constraints.datalog.impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.model.api.Constant;
-import org.semanticweb.vlog4j.core.model.api.Predicate;
-import org.semanticweb.vlog4j.core.model.api.QueryResult;
 import org.semanticweb.vlog4j.core.model.api.Rule;
-import org.semanticweb.vlog4j.core.model.api.Term;
-import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import org.semanticweb.vlog4j.core.reasoner.Algorithm;
-import org.semanticweb.vlog4j.core.reasoner.DataSource;
-import org.semanticweb.vlog4j.core.reasoner.Reasoner;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
-import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
-
 import wikidata.constraints.datalog.impl.CC.ScopeCC;
 import wikidata.constraints.datalog.main.Main;
 import wikidata.constraints.datalog.main.PrepareQueriesException;
 import wikidata.constraints.datalog.main.PropertyConstraintChecker;
-import wikidata.constraints.datalog.rdf.ScopeTripleSet;
+import wikidata.constraints.datalog.rdf.PropertyAsPredicateTS;
 import wikidata.constraints.datalog.rdf.TripleSet;
 
 /**
@@ -100,26 +85,10 @@ public class ScopePCC extends PropertyConstraintChecker {
 			rules.remove(notReference);
 		
 		try {
-			prepareQueries(rules);
+			return prepareAndExecuteQueries(rules);
 		} catch (PrepareQueriesException e1) {
 			return e1.getMessage();
 		}
-
-		String result = "";
-    	try (QueryResultIterator iterator = reasoner.answerQuery(violation_short_SpX, true)) {
-    		result += result(iterator);
-    	} catch (ReasonerStateException e) {
-			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
-			return "INTERNAL ERROR for property " + property + ".";
-		}
-    	try (QueryResultIterator iterator = reasoner.answerQuery(violation_long_SXpY, true)) {
-    		result += result(iterator);
-    	} catch (ReasonerStateException e) {
-			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
-			return "INTERNAL ERROR for property " + property + ".";
-		}
-    	reasoner.close();
-    	return result;
 	}
 	
 	protected boolean allowedAs(String qualifier) {
@@ -134,7 +103,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 	@Override
 	protected Map<String, TripleSet> getRequiredTripleSets(String property) throws IOException {
 		Map<String, TripleSet> result = new HashMap<String, TripleSet>();
-		result.put(TRIPLE_SET, new ScopeTripleSet(property));
+		result.put(TRIPLE_SET, new PropertyAsPredicateTS(property));
 		return result;
 	}
 

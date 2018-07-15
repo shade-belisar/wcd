@@ -6,9 +6,14 @@ import java.util.Map;
 import wikidata.constraints.datalog.impl.CC.ScopeCC;
 import wikidata.constraints.datalog.main.Main;
 
-public class ScopeTripleSet extends TripleSet {
+/**
+ * A triple set limited to all triples containing the property as predicate.
+ * @author adrian
+ *
+ */
+public class PropertyAsPredicateTS extends TripleSet {
 
-	public ScopeTripleSet(String property_) throws IOException {
+	public PropertyAsPredicateTS(String property_) throws IOException {
 		super(property_);
 	}
 	

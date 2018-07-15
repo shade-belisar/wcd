@@ -13,11 +13,10 @@ import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 import wikidata.constraints.datalog.main.PrepareQueriesException;
 import wikidata.constraints.datalog.main.PropertyConstraintChecker;
-import wikidata.constraints.datalog.rdf.ConflictsWithTripleSet;
+import wikidata.constraints.datalog.rdf.DirectStatementsOnItemTS;
 import wikidata.constraints.datalog.rdf.TripleSet;
 
 public class ConflictsWithPCC extends PropertyConstraintChecker {
@@ -83,28 +82,16 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 		}
 		
 		try {
-			prepareQueries(rules);
+			return prepareAndExecuteQueries(rules);
 		} catch (PrepareQueriesException e) {
 			return e.getMessage();
 		}
-		
-		String result = "";
-		
-    	try (QueryResultIterator iterator = reasoner.answerQuery(violation_long_SXpY, true)) {
-    		result += result(iterator);
-    	} catch (ReasonerStateException e) {
-			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
-			return "INTERNAL ERROR for property " + property + ".";
-		}
-		
-		reasoner.close();
-		return result;
 	}
 
 	@Override
 	protected Map<String, TripleSet> getRequiredTripleSets(String property) throws IOException {
 		Map<String, TripleSet> result = new HashMap<String, TripleSet>();
-		result.put(TRIPLE_SET, new ConflictsWithTripleSet(property));
+		result.put(TRIPLE_SET, new DirectStatementsOnItemTS(property));
 		return result;
 	}
 
