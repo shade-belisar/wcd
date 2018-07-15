@@ -10,3 +10,6 @@
 .project
 .checkstyle
 .settings
+
+#resources
+resources/
