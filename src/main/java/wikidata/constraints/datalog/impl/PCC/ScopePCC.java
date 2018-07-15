@@ -32,6 +32,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 import wikidata.constraints.datalog.impl.ScopeCC;
 import wikidata.constraints.datalog.main.Main;
+import wikidata.constraints.datalog.main.PrepareQueriesException;
 import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 import wikidata.constraints.datalog.rdf.ScopeTripleSet;
 import wikidata.constraints.datalog.rdf.TripleSet;
@@ -99,26 +100,9 @@ public class ScopePCC extends PropertyConstraintChecker {
 			rules.remove(notReference);
 		
 		try {
-			reasoner.addRules(rules);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to add rules in the wrong state for propery " + property + ".", e);
-		}
-		
-		try {
-			reasoner.load();
-		} catch (EdbIdbSeparationException e) {
-			logger.error("EDB rule occured in IDB for property " + property + ".", e);
-			return "INTERNAL ERROR for property " + property + ".";
-		} catch (IncompatiblePredicateArityException e) {
-			logger.error("Predicate does not match the datasource for property " + property + ".", e);
-			return "INTERNAL ERROR for property " + property + ".";
-		}
-		
-		try {
-			reasoner.reason();
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to reason in the wrong state for property " + property + ".", e);
-			return "INTERNAL ERROR for property " + property + ".";
+			prepareQueries(rules);
+		} catch (PrepareQueriesException e1) {
+			return e1.getMessage();
 		}
 
 		String result = "";
@@ -143,20 +127,6 @@ public class ScopePCC extends PropertyConstraintChecker {
 		for (String allowed : qualifiers) {
 			if (allowed.equals(Main.BASE_URI + qualifier))
 				result = true;
-		}
-		return result;
-	}
-
-	String result(QueryResultIterator queryResultIterator) {
-		String result = ""; 
-		while (queryResultIterator.hasNext()) {
-			QueryResult queryResult = queryResultIterator.next();
-			String triple = "";
-			for (Term term : queryResult.getTerms()) {
-				triple += term.getName() + "\t";
-			}
-			
-			result += triple.substring(0, triple.length() - 1) + "\n";
 		}
 		return result;
 	}
