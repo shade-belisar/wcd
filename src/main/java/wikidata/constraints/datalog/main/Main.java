@@ -19,6 +19,7 @@ import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
 import wikidata.constraints.datalog.impl.CC.ConflictsWithCC;
+import wikidata.constraints.datalog.impl.CC.NoneOfCC;
 import wikidata.constraints.datalog.impl.CC.ScopeCC;
 
 /**
@@ -49,7 +50,7 @@ public class Main {
 		dumpProcessingController = new DumpProcessingController("wikidatawiki");
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
-		checkers.add(new ConflictsWithCC());
+		checkers.add(new NoneOfCC());
 		try {
 			for (ConstraintChecker constraintChecker : checkers) {
 				constraintChecker.init();
