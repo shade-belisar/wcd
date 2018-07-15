@@ -1,7 +1,7 @@
 /**
  * 
  */
-package wikidata.constraints.datalog.main;
+package wikidata.constraints.datalog.impl.PCC;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -26,7 +26,9 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
-import wikidata.constraints.datalog.rdf.TripleSet;
+import wikidata.constraints.datalog.impl.TS.TripleSet;
+import wikidata.constraints.datalog.main.Main;
+import wikidata.constraints.datalog.utility.PrepareQueriesException;
 
 /**
  * @author adrian

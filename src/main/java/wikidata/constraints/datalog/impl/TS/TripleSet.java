@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.rdf;
+package wikidata.constraints.datalog.impl.TS;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,6 +23,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 import wikidata.constraints.datalog.main.Main;
+import wikidata.constraints.datalog.utility.OutputValueVisitor;
 
 public abstract class TripleSet implements EntityDocumentProcessor {
 	

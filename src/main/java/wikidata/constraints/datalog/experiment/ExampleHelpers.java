@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.rdf;
+package wikidata.constraints.datalog.experiment;
 
 /*
  * #%L

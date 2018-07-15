@@ -16,11 +16,10 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import wikidata.constraints.datalog.impl.CC.ScopeCC;
+import wikidata.constraints.datalog.impl.TS.PropertyAsPredicateTS;
+import wikidata.constraints.datalog.impl.TS.TripleSet;
 import wikidata.constraints.datalog.main.Main;
-import wikidata.constraints.datalog.main.PrepareQueriesException;
-import wikidata.constraints.datalog.main.PropertyConstraintChecker;
-import wikidata.constraints.datalog.rdf.PropertyAsPredicateTS;
-import wikidata.constraints.datalog.rdf.TripleSet;
+import wikidata.constraints.datalog.utility.PrepareQueriesException;
 
 /**
  * @author adrian

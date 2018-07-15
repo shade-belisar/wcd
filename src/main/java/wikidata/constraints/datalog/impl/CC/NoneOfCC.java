@@ -15,8 +15,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
 import wikidata.constraints.datalog.impl.PCC.NoneOfPCC;
-import wikidata.constraints.datalog.main.ConstraintChecker;
-import wikidata.constraints.datalog.main.PropertyConstraintChecker;
+import wikidata.constraints.datalog.impl.PCC.PropertyConstraintChecker;
 
 public class NoneOfCC extends ConstraintChecker {
 	

@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.rdf;
+package wikidata.constraints.datalog.experiment;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +17,8 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import org.wikidata.wdtk.datamodel.json.jackson.JacksonStatement;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
+
+import wikidata.constraints.datalog.utility.OutputValueVisitor;
 
 public class LocalDumpFilterer implements EntityDocumentProcessor {
 	

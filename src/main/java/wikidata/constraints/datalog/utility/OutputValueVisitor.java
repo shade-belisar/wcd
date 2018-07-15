@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.rdf;
+package wikidata.constraints.datalog.utility;
 
 import org.wikidata.wdtk.datamodel.interfaces.DatatypeIdValue;
 import org.wikidata.wdtk.datamodel.interfaces.EntityIdValue;

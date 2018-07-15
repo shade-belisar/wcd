@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.rdf;
+package wikidata.constraints.datalog.impl.TS;
 
 import java.io.IOException;
 import java.util.Map;
@@ -6,6 +6,8 @@ import java.util.Map;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+
+import wikidata.constraints.datalog.utility.OutputValueVisitor;
 
 /**
  * A triple set limited to all direct statements of items with a statement containing the property as predicate.

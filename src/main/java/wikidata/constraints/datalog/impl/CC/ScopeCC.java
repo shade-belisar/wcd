@@ -14,9 +14,8 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
+import wikidata.constraints.datalog.impl.PCC.PropertyConstraintChecker;
 import wikidata.constraints.datalog.impl.PCC.ScopePCC;
-import wikidata.constraints.datalog.main.ConstraintChecker;
-import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 
 public class ScopeCC extends ConstraintChecker {
 	

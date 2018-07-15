@@ -9,10 +9,9 @@ import java.util.Set;
 
 import org.apache.jena.query.QuerySolution;
 
+import wikidata.constraints.datalog.impl.PCC.PropertyConstraintChecker;
 import wikidata.constraints.datalog.impl.PCC.UsedForQualifiersOnlyPCC;
 import wikidata.constraints.datalog.impl.PCC.UsedForValuesOnlyPCC;
-import wikidata.constraints.datalog.main.ConstraintChecker;
-import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 
 public class UsedForQualifiersOnlyCC extends ConstraintChecker {
 	

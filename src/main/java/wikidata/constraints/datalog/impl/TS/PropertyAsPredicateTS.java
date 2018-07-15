@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.rdf;
+package wikidata.constraints.datalog.impl.TS;
 
 import java.io.IOException;
 import java.util.Map;

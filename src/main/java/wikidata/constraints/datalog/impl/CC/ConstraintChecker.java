@@ -1,7 +1,7 @@
 /**
  * 
  */
-package wikidata.constraints.datalog.main;
+package wikidata.constraints.datalog.impl.CC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
-import wikidata.constraints.datalog.rdf.TripleSet;
+import wikidata.constraints.datalog.impl.PCC.PropertyConstraintChecker;
 
 /**
  * @author adrian

@@ -19,6 +19,7 @@ import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
 import wikidata.constraints.datalog.impl.CC.ConflictsWithCC;
+import wikidata.constraints.datalog.impl.CC.ConstraintChecker;
 import wikidata.constraints.datalog.impl.CC.NoneOfCC;
 import wikidata.constraints.datalog.impl.CC.ScopeCC;
 

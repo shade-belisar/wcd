@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.main;
+package wikidata.constraints.datalog.utility;
 
 public class PrepareQueriesException extends Exception {
 	
