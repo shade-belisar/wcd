@@ -84,7 +84,7 @@ public abstract class ConstraintChecker {
 			propertiesQuery += "  ?s pq:" + entry + " ?" + entry + ".\n";
 		}
 		for (String entry : concatQualifiers) {
-			propertiesQuery += "  ?s pq:" + entry + " ?var" + entry + ".\n";
+			propertiesQuery += "  OPTIONAL {?s pq:" + entry + " ?var" + entry + "}.\n";
 		}
 		propertiesQuery +=
 		"}\n"+
