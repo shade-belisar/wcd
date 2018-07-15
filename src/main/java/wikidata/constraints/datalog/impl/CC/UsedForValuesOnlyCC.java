@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.impl;
+package wikidata.constraints.datalog.impl.CC;
 
 import java.io.IOException;
 import java.util.ArrayList;

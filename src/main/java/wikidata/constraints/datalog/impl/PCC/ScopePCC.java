@@ -30,7 +30,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
-import wikidata.constraints.datalog.impl.ScopeCC;
+import wikidata.constraints.datalog.impl.CC.ScopeCC;
 import wikidata.constraints.datalog.main.Main;
 import wikidata.constraints.datalog.main.PrepareQueriesException;
 import wikidata.constraints.datalog.main.PropertyConstraintChecker;

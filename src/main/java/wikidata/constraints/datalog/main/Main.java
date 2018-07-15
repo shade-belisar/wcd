@@ -18,8 +18,8 @@ import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
-import wikidata.constraints.datalog.impl.ConflictsWithCC;
-import wikidata.constraints.datalog.impl.ScopeCC;
+import wikidata.constraints.datalog.impl.CC.ConflictsWithCC;
+import wikidata.constraints.datalog.impl.CC.ScopeCC;
 
 /**
  * @author adrian

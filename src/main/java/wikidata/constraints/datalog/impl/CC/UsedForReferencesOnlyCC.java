@@ -1,4 +1,4 @@
-package wikidata.constraints.datalog.impl;
+package wikidata.constraints.datalog.impl.CC;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,17 +9,17 @@ import java.util.Set;
 
 import org.apache.jena.query.QuerySolution;
 
-import wikidata.constraints.datalog.impl.PCC.UsedForQualifiersOnlyPCC;
+import wikidata.constraints.datalog.impl.PCC.UsedForReferencesOnlyPCC;
 import wikidata.constraints.datalog.impl.PCC.UsedForValuesOnlyPCC;
 import wikidata.constraints.datalog.main.ConstraintChecker;
 import wikidata.constraints.datalog.main.PropertyConstraintChecker;
 
-public class UsedForQualifiersOnlyCC extends ConstraintChecker {
+public class UsedForReferencesOnlyCC extends ConstraintChecker {
 	
 	Set<String> properties = new HashSet<String>();
 
-	public UsedForQualifiersOnlyCC() {
-		super("Q21510863");
+	public UsedForReferencesOnlyCC() {
+		super("Q21528959");
 	}
 
 	@Override

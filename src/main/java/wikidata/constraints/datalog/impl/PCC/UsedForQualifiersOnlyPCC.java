@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 
-import wikidata.constraints.datalog.impl.ScopeCC;
+import wikidata.constraints.datalog.impl.CC.ScopeCC;
 
 public class UsedForQualifiersOnlyPCC extends ScopePCC {
 
