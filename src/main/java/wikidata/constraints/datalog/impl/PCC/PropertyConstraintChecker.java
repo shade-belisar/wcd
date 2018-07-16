@@ -29,6 +29,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 import wikidata.constraints.datalog.impl.TS.TripleSet;
 import wikidata.constraints.datalog.main.Main;
+import wikidata.constraints.datalog.utility.InequalityHelper;
 import wikidata.constraints.datalog.utility.PrepareQueriesException;
 import wikidata.constraints.datalog.utility.Utility;
 
@@ -129,7 +130,7 @@ public abstract class PropertyConstraintChecker {
 			throw new PrepareQueriesException(internalError);
 		}
 		
-		String result = "";
+		String result = "Property: " + property + "\n";
     	try (QueryResultIterator iterator = reasoner.answerQuery(query_long, true)) {
     		result += result(iterator);
     	} catch (ReasonerStateException e) {
@@ -142,7 +143,9 @@ public abstract class PropertyConstraintChecker {
 			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
+    	
     	reasoner.close();
+
     	return result;
 	}
 	
