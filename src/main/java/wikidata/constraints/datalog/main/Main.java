@@ -22,6 +22,7 @@ import wikidata.constraints.datalog.impl.CC.ConflictsWithCC;
 import wikidata.constraints.datalog.impl.CC.ConstraintChecker;
 import wikidata.constraints.datalog.impl.CC.NoneOfCC;
 import wikidata.constraints.datalog.impl.CC.ScopeCC;
+import wikidata.constraints.datalog.impl.CC.SingleValueCC;
 
 /**
  * @author adrian
@@ -34,11 +35,6 @@ public class Main {
 	final static String DUMP_FILE = "./resources/sample-dump-20150815.json.gz";
 	
 	static DumpProcessingController dumpProcessingController;
-	
-	// Just for testing
-	public static Set<String> properties = new HashSet<String>();
-	public static Set<String> qualifiers = new HashSet<String>();
-	public static Set<String> references = new HashSet<String>();
 
 	/**
 	 * @param args
@@ -49,7 +45,7 @@ public class Main {
 		dumpProcessingController = new DumpProcessingController("wikidatawiki");
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
-		checkers.add(new NoneOfCC());
+		checkers.add(new SingleValueCC());
 		try {
 			for (ConstraintChecker constraintChecker : checkers) {
 				constraintChecker.init();

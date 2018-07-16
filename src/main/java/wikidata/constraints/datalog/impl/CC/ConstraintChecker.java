@@ -99,7 +99,7 @@ public abstract class ConstraintChecker {
 		while (results.hasNext()) {
 			QuerySolution solution = results.next();
 			String property = solution.get("item").asResource().getLocalName();
-			if (!property.equals("P31"))
+			if (!(property.equals("P4962") || property.equals("P1067")))
 				continue;
 
 			process(solution);
