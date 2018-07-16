@@ -15,6 +15,7 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
+import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 import wikidata.constraints.datalog.impl.TS.PropertyAsPredicateWithQualifiersTS;
 import wikidata.constraints.datalog.impl.TS.TripleSet;
@@ -54,7 +55,7 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			logger.error("Trying to add unequal constants to reasoner in the wrong state for property " + property + ".", e);
 			return internalError;
 		}
-		
+		    	
 		List<Rule> rules = new ArrayList<Rule>();
 		
 		// violation_long(STATEMENT, X, propertyConstant, Y)
@@ -64,7 +65,7 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 		Atom tripleEDB_SXpY = Expressions.makeAtom(tripleEDB, statement, x, propertyConstant, y);
 		
 		// tripleEDB(OTHER_STATEMENT, X, propertyConstant, z)
-		Atom tripleEDB_PXpZ = Expressions.makeAtom(tripleEDB, otherStatement, x, propertyConstant, z);
+		Atom tripleEDB_PXpY = Expressions.makeAtom(tripleEDB, otherStatement, x, propertyConstant, y);
 		
 		// unequal (STATEMENT, OTHER_STATEMENT)
 		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal_IDB, statement, otherStatement);
@@ -73,14 +74,15 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			/*
 			 * violation_long(STATEMENT, X, propertyConstant, Y) :-
 			 * 	tripleEDB(STATEMENT, X, propertyConstant, Y),
-			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, z),
+			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Y),
 			 * 	unequal (STATEMENT, OTHER_STATEMENT)
 			 */
-			Rule conflict = Expressions.makeRule(violation_long_SXpY, tripleEDB_SXpY, tripleEDB_PXpZ, unequal_SO);
+			Rule conflict = Expressions.makeRule(violation_long_SXpY, tripleEDB_SXpY, tripleEDB_PXpY, unequal_SO);
 			
 			rules.add(conflict);
 			
-		} else {
+		}
+		else {
 			int i = 0;
 			
 			// violation_long(STATEMENT, X, propertyConstant, Y)
@@ -91,8 +93,8 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			// tripleEDB(STATEMENT, X, propertyConstant, Y)
 			forBody.add(tripleEDB_SXpY);
 			
-			// tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z)
-			forBody.add(tripleEDB_PXpZ);
+			// tripleEDB(OTHER_STATEMENT, X, propertyConstant, Y)
+			forBody.add(tripleEDB_PXpY);
 			
 			// unequal (STATEMENT, OTHER_STATEMENT)
 			forBody.add(unequal_SO);
@@ -107,7 +109,7 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 				forBody.add(qualifierEDB_Ssv);
 				
 				// qualifierEDB(OTHER_STATEMENT, <separator>, <separatorValue>)
-				Atom qualifierEDB_Osv = Expressions.makeAtom(qualifierEDB, statement, separatorConstant, separatorValueVariable);
+				Atom qualifierEDB_Osv = Expressions.makeAtom(qualifierEDB, otherStatement, separatorConstant, separatorValueVariable);
 				
 				forBody.add(qualifierEDB_Osv);
 				
@@ -119,12 +121,14 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			/*
 			 * violation_long(STATEMENT, X, propertyConstant, Y) :-
 			 * 	tripleEDB(STATEMENT, X, propertyConstant, Y),
-			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
+			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Y),
 			 * 	unequal (STATEMENT, OTHER_STATEMENT),
 			 * 	qualifierEDB(STATEMENT, <separator>, <separatorValue>),
 			 * 	qualifierEDB(OTHER_STATEMENT, <separator>, <separatorValue>) 
 			 */
 			Rule conflict = Expressions.makeRule(head, body);
+			
+			System.out.println(conflict);
 			
 			rules.add(conflict);
 		}
