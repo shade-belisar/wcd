@@ -20,6 +20,7 @@ import wikidata.constraints.datalog.impl.TS.PropertyAsPredicateTS;
 import wikidata.constraints.datalog.impl.TS.TripleSet;
 import wikidata.constraints.datalog.main.Main;
 import wikidata.constraints.datalog.utility.PrepareQueriesException;
+import wikidata.constraints.datalog.utility.Utility;
 
 /**
  * @author adrian
@@ -93,7 +94,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 	protected boolean allowedAs(String qualifier) {
 		boolean result = false;
 		for (String allowed : qualifiers) {
-			if (allowed.equals(Main.BASE_URI + qualifier))
+			if (allowed.equals(Utility.BASE_URI + qualifier))
 				result = true;
 		}
 		return result;

@@ -29,6 +29,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 import wikidata.constraints.datalog.impl.TS.TripleSet;
 import wikidata.constraints.datalog.main.Main;
 import wikidata.constraints.datalog.utility.PrepareQueriesException;
+import wikidata.constraints.datalog.utility.Utility;
 
 /**
  * @author adrian
@@ -80,13 +81,9 @@ public abstract class PropertyConstraintChecker {
 	public PropertyConstraintChecker(String property_) throws IOException {
 		property = property_;
 		tripleSets = getRequiredTripleSets(property);
-		propertyConstant = makeConstant(property);
+		propertyConstant = Utility.makeConstant(property);
 		
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
-	}
-	
-	protected Constant makeConstant(String id) {
-		return Expressions.makeConstant(Main.BASE_URI + id);
 	}
 	
 	protected void loadTripleSets(TripleSet... sets) throws ReasonerStateException, IOException {

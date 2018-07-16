@@ -17,6 +17,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import wikidata.constraints.datalog.impl.TS.DirectStatementsOnItemTS;
 import wikidata.constraints.datalog.impl.TS.TripleSet;
 import wikidata.constraints.datalog.utility.PrepareQueriesException;
+import wikidata.constraints.datalog.utility.Utility;
 
 public class ConflictsWithPCC extends PropertyConstraintChecker {
 	
@@ -55,7 +56,7 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 		
 		for (Map.Entry<String, HashSet<String>> entry : conflicts.entrySet()) {
 			String confProperty = entry.getKey();
-			Constant confPropertyConstant = makeConstant(confProperty);
+			Constant confPropertyConstant = Utility.makeConstant(confProperty);
 			HashSet<String> confValues = entry.getValue();
 			
 			if (confValues.size() == 0) {

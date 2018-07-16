@@ -33,8 +33,6 @@ public class Main {
 	
 	final static String DUMP_FILE = "./resources/sample-dump-20150815.json.gz";
 	
-	public final static String BASE_URI = "http://www.wikidata.org/entity/";
-	
 	static DumpProcessingController dumpProcessingController;
 	
 	// Just for testing
