@@ -45,7 +45,7 @@ public class InequalityHelper {
 		addUnequalConstantsToReasoner(reasoner, unequalConstantsSet);
 	}
 	
-	public static void addUnequalConstantsToReasoner(Reasoner reasoner, Set<String> unequalConstants) throws ReasonerStateException {
+	public static void addUnequalConstantsToReasoner(Reasoner reasoner, Set<String> unequalConstants) throws ReasonerStateException {		
 		int maxLength = 0;
 		for (String	string : unequalConstants) {
 			int length = string.length();
@@ -63,7 +63,7 @@ public class InequalityHelper {
 		Set<String> characters = new HashSet<String>();
 		
 		for (String string : unequalConstants) {
-			Constant constant = Utility.makeConstant(string);
+			Constant constant = Expressions.makeConstant(string);
 			for (int i = 0; i < string.length(); i++) {
 				String character = string.substring(i, i+1);
 				characters.add(character);
