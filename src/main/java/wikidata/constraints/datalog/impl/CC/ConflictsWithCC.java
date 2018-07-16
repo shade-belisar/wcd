@@ -31,15 +31,6 @@ public class ConflictsWithCC extends ConstraintChecker {
 	}
 
 	@Override
-	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
-		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
-		for (Map.Entry<String, HashMap<String, HashSet<String>>> entry : configuration.entrySet()) {
-			result.add(new ConflictsWithPCC(entry.getKey(), entry.getValue()));
-		}
-		return result;
-	}
-
-	@Override
 	protected Set<String> qualifiers() {
 		return new HashSet<String>(Arrays.asList(PROPERTY));
 	}
@@ -71,5 +62,14 @@ public class ConflictsWithCC extends ConstraintChecker {
 		} else {
 			logger.error("Node " + node + " is no a literal.");
 		}
+	}
+
+	@Override
+	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
+		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
+		for (Map.Entry<String, HashMap<String, HashSet<String>>> entry : configuration.entrySet()) {
+			result.add(new ConflictsWithPCC(entry.getKey(), entry.getValue()));
+		}
+		return result;
 	}
 }

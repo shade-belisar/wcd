@@ -30,15 +30,6 @@ public class NoneOfCC extends ConstraintChecker {
 	}
 
 	@Override
-	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
-		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
-		for (Map.Entry<String, HashSet<String>> entry : notAllowedValues.entrySet()) {
-			result.add(new NoneOfPCC(entry.getKey(), entry.getValue()));
-		}
-		return result;
-	}
-
-	@Override
 	protected Set<String> qualifiers() {
 		return new HashSet<String>();
 	}
@@ -69,4 +60,12 @@ public class NoneOfCC extends ConstraintChecker {
 		}
 	}
 
+	@Override
+	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
+		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
+		for (Map.Entry<String, HashSet<String>> entry : notAllowedValues.entrySet()) {
+			result.add(new NoneOfPCC(entry.getKey(), entry.getValue()));
+		}
+		return result;
+	}
 }

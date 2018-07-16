@@ -21,15 +21,6 @@ public class UsedForValuesOnlyCC extends ConstraintChecker {
 	}
 
 	@Override
-	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
-		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
-		for (String property : properties) {
-			result.add(new UsedForValuesOnlyPCC(property));
-		}
-		return result;
-	}
-
-	@Override
 	protected Set<String> qualifiers() {
 		return new HashSet<String>();
 	}
@@ -44,4 +35,12 @@ public class UsedForValuesOnlyCC extends ConstraintChecker {
 		properties.add(solution.get("item").asResource().getLocalName());
 	}
 
+	@Override
+	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
+		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
+		for (String property : properties) {
+			result.add(new UsedForValuesOnlyPCC(property));
+		}
+		return result;
+	}
 }

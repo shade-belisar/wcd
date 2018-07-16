@@ -41,8 +41,6 @@ public abstract class ConstraintChecker {
 		constraint = constraint_;
 	}
 
-	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
-
 	public void init() throws IOException {
 		// Fetching the properties with this constraint
 		/*
@@ -141,5 +139,7 @@ public abstract class ConstraintChecker {
 	protected abstract Set<String> concatQualifiers();
 
 	protected abstract void process(QuerySolution solution);
+	
+	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
 	
 }

@@ -33,6 +33,14 @@ public class ScopeCC extends ConstraintChecker {
 		super("Q53869507");
 	}
 
+	protected Set<String> qualifiers() {
+		return new HashSet<String>();
+	}
+
+	protected Set<String> concatQualifiers() {
+		return new HashSet<String>(Arrays.asList(SCOPE));
+	}
+	
 	protected void process(QuerySolution solution) {
 		String property = solution.get("item").asResource().getLocalName();
 		HashSet<String> qualifiers = new HashSet<String>();
@@ -55,13 +63,5 @@ public class ScopeCC extends ConstraintChecker {
 			checkers.add(new ScopePCC(entry.getKey(), entry.getValue()));
 		}
 		return checkers;
-	}
-
-	protected Set<String> qualifiers() {
-		return new HashSet<String>();
-	}
-
-	protected Set<String> concatQualifiers() {
-		return new HashSet<String>(Arrays.asList(SCOPE));
 	}
 }
