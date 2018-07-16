@@ -18,7 +18,6 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import wikidata.constraints.datalog.impl.TS.PropertyAsPredicateWithQualifiersTS;
 import wikidata.constraints.datalog.impl.TS.TripleSet;
-import wikidata.constraints.datalog.utility.CharacterNotAllowedException;
 import wikidata.constraints.datalog.utility.InequalityHelper;
 import wikidata.constraints.datalog.utility.PrepareQueriesException;
 import wikidata.constraints.datalog.utility.Utility;
@@ -53,9 +52,6 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			InequalityHelper.addUnequalConstantsToReasoner(reasoner, tripleSet.getStatementIDs());
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to add unequal constants to reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		} catch (CharacterNotAllowedException e) {
-			logger.error("Character in unequal constants that is not allowed for property " + property + ".", e);
 			return internalError;
 		}
 		

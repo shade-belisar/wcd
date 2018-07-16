@@ -17,8 +17,6 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 public class InequalityHelper {
 	
-	final static Set<String> ALLOWED_CHARACTERS = new HashSet<String>(Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Q", "P"));
-	
 	final static String X = "x";
 	final static String Y = "y";
 	
@@ -39,7 +37,7 @@ public class InequalityHelper {
 	public final static Predicate unequal_IDB = Expressions.makePredicate(UNEQUAL_IDB, 2);
 	final static List<Predicate> ith_letter = new ArrayList<Predicate>();
 	
-	public static void addUnequalConstantsToReasoner(Reasoner reasoner, String...unequalConstants) throws CharacterNotAllowedException, ReasonerStateException {
+	public static void addUnequalConstantsToReasoner(Reasoner reasoner, String...unequalConstants) throws ReasonerStateException {
 		Set<String> unequalConstantsSet = new HashSet<String>();
 		for (int i = 0; i < unequalConstants.length; i++) {
 			unequalConstantsSet.add(unequalConstants[i]);
@@ -47,7 +45,7 @@ public class InequalityHelper {
 		addUnequalConstantsToReasoner(reasoner, unequalConstantsSet);
 	}
 	
-	public static void addUnequalConstantsToReasoner(Reasoner reasoner, Set<String> unequalConstants) throws CharacterNotAllowedException, ReasonerStateException {
+	public static void addUnequalConstantsToReasoner(Reasoner reasoner, Set<String> unequalConstants) throws ReasonerStateException {
 		int maxLength = 0;
 		for (String	string : unequalConstants) {
 			int length = string.length();
@@ -62,19 +60,20 @@ public class InequalityHelper {
 		
 		List<Atom> letters = new ArrayList<Atom>();
 		
+		Set<String> characters = new HashSet<String>();
+		
 		for (String string : unequalConstants) {
 			Constant constant = Utility.makeConstant(string);
 			for (int i = 0; i < string.length(); i++) {
 				String character = string.substring(i, i+1);
+				characters.add(character);
 				Constant characterConstant = Expressions.makeConstant(character);;
-				if (!ALLOWED_CHARACTERS.contains(character))
-					throw new CharacterNotAllowedException("Character " + character + " is not allowed.");
 				Atom toAdd = Expressions.makeAtom(ith_letter.get(i), constant, characterConstant);
 				letters.add(toAdd);
 			}
 		}
 		
-		reasoner.addFacts(allAllowedCharactersInequal());
+		reasoner.addFacts(allCharactersUnequal(characters));
 		
 		reasoner.addFacts(letters);
 		
@@ -108,11 +107,11 @@ public class InequalityHelper {
 		}		
 	}
 	
-	static List<Atom> allAllowedCharactersInequal() {
+	static List<Atom> allCharactersUnequal(Set<String> characters) {
 		List<Atom> atoms = new ArrayList<Atom>();
 		
 		List<Constant> indentifierParts = new ArrayList<Constant>();
-		for (String allowedCharacter : ALLOWED_CHARACTERS) {
+		for (String allowedCharacter : characters) {
 			indentifierParts.add(Expressions.makeConstant(allowedCharacter));
 		}
 		
