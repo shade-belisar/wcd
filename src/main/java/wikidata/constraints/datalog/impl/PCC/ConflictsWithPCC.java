@@ -2,10 +2,12 @@ package wikidata.constraints.datalog.impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
@@ -23,19 +25,18 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(ConflictsWithPCC.class);
 	
-	final String TRIPLE_SET = "triple_set";
+	final TripleSet tripleSet;
 	
 	final Map<String, HashSet<String>> conflicts;
 
 	public ConflictsWithPCC(String property_, Map<String, HashSet<String>> qualifiers_) throws IOException {
 		super(property_);
 		conflicts = qualifiers_;
+		tripleSet = new DirectStatementsOnItemTS(property);
 	}
 
 	@Override
-	public String violations() throws IOException {
-		TripleSet tripleSet = tripleSets.get(TRIPLE_SET);
-		
+	public String violations() throws IOException {	
 		if (!tripleSet.notEmpty())
 			return "";
 		
@@ -89,10 +90,8 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	protected Map<String, TripleSet> getRequiredTripleSets(String property) throws IOException {
-		Map<String, TripleSet> result = new HashMap<String, TripleSet>();
-		result.put(TRIPLE_SET, new DirectStatementsOnItemTS(property));
-		return result;
+	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
+		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
 	}
 
 }

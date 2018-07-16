@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
@@ -76,11 +77,8 @@ public abstract class PropertyConstraintChecker {
 	
 	protected final String property;
 	
-	protected Map<String, TripleSet> tripleSets = new HashMap<String, TripleSet>();
-	
 	public PropertyConstraintChecker(String property_) throws IOException {
 		property = property_;
-		tripleSets = getRequiredTripleSets(property);
 		propertyConstant = Utility.makeConstant(property);
 		
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
@@ -147,10 +145,10 @@ public abstract class PropertyConstraintChecker {
 	
 	public abstract String violations() throws IOException;
 	
-	protected abstract Map<String, TripleSet> getRequiredTripleSets(String property) throws IOException;
+	protected abstract Set<TripleSet> getRequiredTripleSets() throws IOException;
 	
 	public void close() throws IOException {
-		for (TripleSet tripleSet : tripleSets.values()) {
+		for (TripleSet tripleSet : getRequiredTripleSets()) {
 			tripleSet.close();
 		}
 	}
@@ -172,8 +170,12 @@ public abstract class PropertyConstraintChecker {
 	@Override
 	public String toString() {
 		String result = "Property id: " + property + "\n";
-		for (TripleSet tripleSet : tripleSets.values()) {
-			result += "  " + tripleSet + "\n";
+		try {
+			for (TripleSet tripleSet : getRequiredTripleSets()) {
+				result += "  " + tripleSet + "\n";
+			}
+		} catch (IOException e) {
+			result += "INTERNAL ERROR: Could not get triple sets. " + e.getMessage();
 		}
 		return result;
 	}

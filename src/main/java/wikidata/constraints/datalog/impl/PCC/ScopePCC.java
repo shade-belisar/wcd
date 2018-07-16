@@ -5,7 +5,9 @@ package wikidata.constraints.datalog.impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,18 +32,17 @@ public class ScopePCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(ScopePCC.class);
 	
-	final String TRIPLE_SET = "triple_set";
+	final TripleSet tripleSet;
 	
 	final Set<String> qualifiers;
 	
 	public ScopePCC(String property_, Set<String> qualifiers_) throws IOException {
 		super(property_);
 		qualifiers = qualifiers_;
+		tripleSet = new PropertyAsPredicateTS(property);
 	}
 	
 	public String violations() throws IOException {
-		TripleSet tripleSet = tripleSets.get(TRIPLE_SET);
-		
 		if (!tripleSet.notEmpty())
 			return "";
 		
@@ -101,10 +102,8 @@ public class ScopePCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	protected Map<String, TripleSet> getRequiredTripleSets(String property) throws IOException {
-		Map<String, TripleSet> result = new HashMap<String, TripleSet>();
-		result.put(TRIPLE_SET, new PropertyAsPredicateTS(property));
-		return result;
+	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
+		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
 	}
 
 }
