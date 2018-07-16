@@ -77,8 +77,11 @@ public abstract class PropertyConstraintChecker {
 	
 	protected final String property;
 	
+	protected final String internalError;
+	
 	public PropertyConstraintChecker(String property_) throws IOException {
 		property = property_;
+		internalError = "INTERNAL_ERROR for property " + property + ".";
 		propertyConstant = Utility.makeConstant(property);
 		
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
@@ -106,24 +109,24 @@ public abstract class PropertyConstraintChecker {
 			reasoner.addRules(rules);
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to add rules in the wrong state for propery " + property + ".", e);
-			throw new PrepareQueriesException("INTERNAL ERROR for property " + property + ".");
+			throw new PrepareQueriesException(internalError);
 		}
 		
 		try {
 			reasoner.load();
 		} catch (EdbIdbSeparationException e) {
 			logger.error("EDB rule occured in IDB for property " + property + ".", e);
-			throw new PrepareQueriesException("INTERNAL ERROR for property " + property + ".");
+			throw new PrepareQueriesException(internalError);
 		} catch (IncompatiblePredicateArityException e) {
 			logger.error("Predicate does not match the datasource for property " + property + ".", e);
-			throw new PrepareQueriesException("INTERNAL ERROR for property " + property + ".");
+			throw new PrepareQueriesException(internalError);
 		}
 		
 		try {
 			reasoner.reason();
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to reason in the wrong state for property " + property + ".", e);
-			throw new PrepareQueriesException("INTERNAL ERROR for property " + property + ".");
+			throw new PrepareQueriesException(internalError);
 		}
 		
 		String result = "";
@@ -131,13 +134,13 @@ public abstract class PropertyConstraintChecker {
     		result += result(iterator);
     	} catch (ReasonerStateException e) {
 			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
-			throw new PrepareQueriesException("INTERNAL ERROR for property " + property + ".");
+			throw new PrepareQueriesException(internalError);
 		}
     	try (QueryResultIterator iterator = reasoner.answerQuery(query_short, true)) {
     		result += result(iterator);
     	} catch (ReasonerStateException e) {
 			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
-			throw new PrepareQueriesException("INTERNAL ERROR for property " + property + ".");
+			throw new PrepareQueriesException(internalError);
 		}
     	reasoner.close();
     	return result;

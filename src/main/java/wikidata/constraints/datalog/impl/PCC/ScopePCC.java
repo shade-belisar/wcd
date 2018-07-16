@@ -50,7 +50,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 			loadTripleSets(tripleSet);
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
-			return "INTERNAL ERROR for property " + property + ".";
+			return internalError;
 		}
 
 		// violation_short(STATEMENT, propertyConstant, X)

@@ -31,77 +31,34 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	
 	protected String property;
 	
-	protected static String BASE_LOCATION = "./resources/tripleSets/";
+	TripleSetFile tripleSetFile;
 	
-	File tripleSetFile;
+	TripleSetFile qualifierTripleSetFile;
 	
-	File qualifierTripleSetFile;
-	
-	File referenceTripleSetFile;
-	
-	CSVPrinter writer;
-	
-	CSVPrinter referenceWriter;
-	
-	CSVPrinter qualifierWriter;
-	
-	boolean tripleNotEmpty = false;
-	
-	boolean qualifierNotEmpty = false;
-	
-	boolean referenceNotEmpty = false;
+	TripleSetFile referenceTripleSetFile;
 	
 	public TripleSet(String property_) throws IOException {
 		property = property_;
 		
-		tripleSetFile = new File(BASE_LOCATION + getTripleSetType() + "/" + property + ".csv");
-		tripleSetFile.getParentFile().mkdirs();
-		tripleSetFile.createNewFile();
-		qualifierTripleSetFile = new File(BASE_LOCATION + getTripleSetType() + "/" + property + "_qualifier" + ".csv");
-		qualifierTripleSetFile.getParentFile().mkdirs();
-		qualifierTripleSetFile.createNewFile();
-		referenceTripleSetFile = new File(BASE_LOCATION + getTripleSetType() + "/" + property + "_reference" + ".csv");
-		referenceTripleSetFile.getParentFile().mkdirs();
-		referenceTripleSetFile.createNewFile();
-		
-		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tripleSetFile, false))), CSVFormat.DEFAULT);
-		qualifierWriter = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(qualifierTripleSetFile, false))), CSVFormat.DEFAULT);
-		referenceWriter = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(referenceTripleSetFile, false))), CSVFormat.DEFAULT);
+		tripleSetFile = new TripleSetFile(getTripleSetType(), property);
+		qualifierTripleSetFile = new TripleSetFile(getTripleSetType(), property + "qualifier");
+		referenceTripleSetFile = new TripleSetFile(getTripleSetType(), property + "reference");
 		
 		Main.registerProcessor(this);
 	}
 	
 	protected final void write(String id, String subject, String predicate, String object) {
-		try {
-			writer.printRecord(id, subject, predicate, object);
-			writer.flush();
-			tripleNotEmpty = true;
-		} catch (IOException e) {
-			logger.error("Could not write line to file " + tripleSetFile.getAbsolutePath(), e);
-		}
+		tripleSetFile.write(id, subject, predicate, object);
 		
 	}	
 	
 	protected final void writeQualifier(String id, String predicate, String object) {
-		try {
-			qualifierWriter.printRecord(id, predicate, object);
-			qualifierWriter.flush();
-			qualifierNotEmpty = true;
-		} catch (IOException e) {
-			logger.error("Could not write line to file " + referenceTripleSetFile.getAbsolutePath(), e);
-		}
+		qualifierTripleSetFile.write(id, predicate, object);
 		
 	}
 	
 	protected final void writeReference(String id, String predicate, String object) {
-		try {
-			referenceWriter.printRecord(id, predicate, object);
-			referenceWriter.flush();
-			referenceNotEmpty = true;
-		} catch (IOException e) {
-			logger.error("Could not write line to file " + qualifierTripleSetFile.getAbsolutePath(), e);
-		}
-		
+		referenceTripleSetFile.write(id, predicate, object);		
 	}
 	
 	public boolean notEmpty() {
@@ -109,30 +66,27 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	}
 	
 	public boolean tripleNotEmpty() {
-		return tripleNotEmpty;
+		return tripleSetFile.notEmpty();
 	}
 	
 	public boolean qualifierNotEmpty() {
-		return qualifierNotEmpty;
+		return qualifierTripleSetFile.notEmpty();
 	}
 	
 	public boolean referenceNotEmpty() {
-		return referenceNotEmpty;
+		return referenceTripleSetFile.notEmpty();
 	}
 	
 	public File getTripleSetFile() throws IOException {
-		writer.close();
-		return tripleSetFile;
+		return tripleSetFile.getFile();
 	}
 	
 	public File getReferenceTripleSetFile() throws IOException {
-		referenceWriter.close();
-		return referenceTripleSetFile;
+		return referenceTripleSetFile.getFile();
 	}
 	
 	public File getQualifierTripleSetFile() throws IOException {
-		qualifierWriter.close();
-		return qualifierTripleSetFile;
+		return qualifierTripleSetFile.getFile();
 	}
 	
 	protected void triple(String id, String subject, String predicate, String object) {
@@ -185,9 +139,9 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	protected abstract String getTripleSetType();
 	
 	public void close() throws IOException {
-		writer.close();
-		qualifierWriter.close();
-		referenceWriter.close();
+		tripleSetFile.close();
+		qualifierTripleSetFile.close();
+		referenceTripleSetFile.close();
 	}
 	
 	protected static String listToCSV(List<String> strings) {
