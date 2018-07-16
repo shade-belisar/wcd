@@ -19,7 +19,7 @@ public class PropertyAsPredicateTS extends TripleSet {
 	
 	@Override
 	protected String getTripleSetType() {
-		return "property";
+		return "PropertyAsPredicate";
 	}
 	
 	@Override

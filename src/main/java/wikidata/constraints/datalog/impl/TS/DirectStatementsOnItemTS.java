@@ -48,7 +48,7 @@ public class DirectStatementsOnItemTS extends TripleSet {
 
 	@Override
 	protected String getTripleSetType() {
-		return "ConflictsWith";
+		return "DirectStatementsOnItem";
 	}
 
 }
