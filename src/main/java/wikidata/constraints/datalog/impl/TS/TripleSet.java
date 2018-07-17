@@ -1,16 +1,9 @@
 package wikidata.constraints.datalog.impl.TS;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
@@ -31,34 +24,34 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	
 	protected String property;
 	
-	TripleSetFile tripleSetFile;
+	TripleSetFile triple;
 	
-	TripleSetFile qualifierTripleSetFile;
+	TripleSetFile qualifier;
 	
-	TripleSetFile referenceTripleSetFile;
+	TripleSetFile reference;
 	
 	public TripleSet(String property_) throws IOException {
 		property = property_;
 		
-		tripleSetFile = new TripleSetFile(getTripleSetType(), property);
-		qualifierTripleSetFile = new TripleSetFile(getTripleSetType(), property + "qualifier");
-		referenceTripleSetFile = new TripleSetFile(getTripleSetType(), property + "reference");
+		triple = new TripleSetFile(getTripleSetType(), property);
+		qualifier = new TripleSetFile(getTripleSetType(), property + "qualifier");
+		reference = new TripleSetFile(getTripleSetType(), property + "reference");
 		
 		Main.registerProcessor(this);
 	}
 	
 	protected final void write(String id, String subject, String predicate, String object) {
-		tripleSetFile.write(id, subject, predicate, object);
+		triple.write(id, subject, predicate, object);
 		
 	}	
 	
 	protected final void writeQualifier(String id, String predicate, String object) {
-		qualifierTripleSetFile.write(id, predicate, object);
+		qualifier.write(id, predicate, object);
 		
 	}
 	
 	protected final void writeReference(String id, String predicate, String object) {
-		referenceTripleSetFile.write(id, predicate, object);		
+		reference.write(id, predicate, object);		
 	}
 	
 	public boolean notEmpty() {
@@ -66,27 +59,27 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	}
 	
 	public boolean tripleNotEmpty() {
-		return tripleSetFile.notEmpty();
+		return triple.notEmpty();
 	}
 	
 	public boolean qualifierNotEmpty() {
-		return qualifierTripleSetFile.notEmpty();
+		return qualifier.notEmpty();
 	}
 	
 	public boolean referenceNotEmpty() {
-		return referenceTripleSetFile.notEmpty();
+		return reference.notEmpty();
 	}
 	
-	public File getTripleSetFile() throws IOException {
-		return tripleSetFile.getFile();
+	public File getTripleFile() throws IOException {
+		return triple.getFile();
 	}
 	
-	public File getReferenceTripleSetFile() throws IOException {
-		return referenceTripleSetFile.getFile();
+	public File getQualifierFile() throws IOException {
+		return qualifier.getFile();
 	}
 	
-	public File getQualifierTripleSetFile() throws IOException {
-		return qualifierTripleSetFile.getFile();
+	public File getReferenceFile() throws IOException {
+		return reference.getFile();
 	}
 	
 	protected void triple(String id, String subject, String predicate, String object) {
@@ -136,13 +129,13 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 		
 	}
 	
-	protected abstract String getTripleSetType();
-	
 	public void close() throws IOException {
-		tripleSetFile.close();
-		qualifierTripleSetFile.close();
-		referenceTripleSetFile.close();
+		triple.close();
+		qualifier.close();
+		reference.close();
 	}
+	
+	protected abstract String getTripleSetType();
 	
 	protected static String listToCSV(List<String> strings) {
 		String result = "";

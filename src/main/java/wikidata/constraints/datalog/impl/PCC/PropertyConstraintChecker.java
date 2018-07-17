@@ -91,15 +91,15 @@ public abstract class PropertyConstraintChecker {
 	protected void loadTripleSets(TripleSet... sets) throws ReasonerStateException, IOException {
 		for (TripleSet tripleSet : sets) {
 			if (tripleSet.tripleNotEmpty()) {
-				final DataSource tripleEDBPath = new CsvFileDataSource(tripleSet.getTripleSetFile());
+				final DataSource tripleEDBPath = new CsvFileDataSource(tripleSet.getTripleFile());
 				reasoner.addFactsFromDataSource(tripleEDB, tripleEDBPath);
 			}
 			if (tripleSet.qualifierNotEmpty()) {
-				final DataSource qualifierEDBPath = new CsvFileDataSource(tripleSet.getQualifierTripleSetFile());
+				final DataSource qualifierEDBPath = new CsvFileDataSource(tripleSet.getQualifierFile());
 				reasoner.addFactsFromDataSource(qualifierEDB, qualifierEDBPath);
 			}
 			if (tripleSet.referenceNotEmpty()) {
-				final DataSource referenceEDBPath = new CsvFileDataSource(tripleSet.getReferenceTripleSetFile());
+				final DataSource referenceEDBPath = new CsvFileDataSource(tripleSet.getReferenceFile());
 				reasoner.addFactsFromDataSource(referenceEDB, referenceEDBPath);				
 			}
 		}
