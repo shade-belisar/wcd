@@ -11,9 +11,9 @@ import wikidata.constraints.datalog.main.Main;
  * @author adrian
  *
  */
-public class PropertyAsPredicateTS extends TripleSet {
+public class PropertyPredicateTS extends TripleSet {
 
-	public PropertyAsPredicateTS(String property_) throws IOException {
+	public PropertyPredicateTS(String property_) throws IOException {
 		super(property_);
 	}
 	

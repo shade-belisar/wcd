@@ -14,9 +14,9 @@ import wikidata.constraints.datalog.utility.OutputValueVisitor;
  * @author adrian
  *
  */
-public class DirectStatementsOnItemTS extends TripleSet {
+public class StatementsItemTS extends TripleSet {
 
-	public DirectStatementsOnItemTS(String property_) throws IOException {
+	public StatementsItemTS(String property_) throws IOException {
 		super(property_);
 	}
 	

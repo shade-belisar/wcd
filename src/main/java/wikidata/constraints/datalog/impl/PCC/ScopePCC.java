@@ -18,7 +18,7 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import wikidata.constraints.datalog.impl.CC.ScopeCC;
-import wikidata.constraints.datalog.impl.TS.PropertyAsPredicateTS;
+import wikidata.constraints.datalog.impl.TS.PropertyPredicateTS;
 import wikidata.constraints.datalog.impl.TS.TripleSet;
 import wikidata.constraints.datalog.main.Main;
 import wikidata.constraints.datalog.utility.PrepareQueriesException;
@@ -39,7 +39,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 	public ScopePCC(String property_, Set<String> qualifiers_) throws IOException {
 		super(property_);
 		qualifiers = qualifiers_;
-		tripleSet = new PropertyAsPredicateTS(property);
+		tripleSet = new PropertyPredicateTS(property);
 	}
 	
 	public String violations() throws IOException {
