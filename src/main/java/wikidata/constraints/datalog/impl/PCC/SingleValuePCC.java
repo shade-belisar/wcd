@@ -64,8 +64,8 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 		// tripleEDB(STATEMENT, X, propertyConstant, Y)
 		Atom tripleEDB_SXpY = Expressions.makeAtom(tripleEDB, statement, x, propertyConstant, y);
 		
-		// tripleEDB(OTHER_STATEMENT, X, propertyConstant, z)
-		Atom tripleEDB_PXpY = Expressions.makeAtom(tripleEDB, otherStatement, x, propertyConstant, y);
+		// tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z)
+		Atom tripleEDB_PXpZ = Expressions.makeAtom(tripleEDB, otherStatement, x, propertyConstant, z);
 		
 		// unequal (STATEMENT, OTHER_STATEMENT)
 		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal_IDB, statement, otherStatement);
@@ -74,10 +74,10 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			/*
 			 * violation_long(STATEMENT, X, propertyConstant, Y) :-
 			 * 	tripleEDB(STATEMENT, X, propertyConstant, Y),
-			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Y),
+			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
 			 * 	unequal (STATEMENT, OTHER_STATEMENT)
 			 */
-			Rule conflict = Expressions.makeRule(violation_long_SXpY, tripleEDB_SXpY, tripleEDB_PXpY, unequal_SO);
+			Rule conflict = Expressions.makeRule(violation_long_SXpY, tripleEDB_SXpY, tripleEDB_PXpZ, unequal_SO);
 			
 			rules.add(conflict);
 			
@@ -93,8 +93,8 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			// tripleEDB(STATEMENT, X, propertyConstant, Y)
 			forBody.add(tripleEDB_SXpY);
 			
-			// tripleEDB(OTHER_STATEMENT, X, propertyConstant, Y)
-			forBody.add(tripleEDB_PXpY);
+			// tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z)
+			forBody.add(tripleEDB_PXpZ);
 			
 			// unequal (STATEMENT, OTHER_STATEMENT)
 			forBody.add(unequal_SO);
