@@ -26,6 +26,8 @@ public class TripleSetFile {
 	
 	CSVPrinter writer;
 	
+	boolean closed = true;
+	
 	boolean tripleNotEmpty = false;
 	
 	public TripleSetFile(String folder_, String name_) throws IOException {
@@ -35,6 +37,8 @@ public class TripleSetFile {
 		tripleSetFile = new File(BASE_LOCATION + folder + "/" + name + ".csv");
 		tripleSetFile.getParentFile().mkdirs();
 		tripleSetFile.createNewFile();
+		
+		closed = false;
 		
 		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tripleSetFile, false))), CSVFormat.DEFAULT);
 	}
@@ -60,6 +64,11 @@ public class TripleSetFile {
 	
 	public void close() throws IOException {
 		writer.close();
+		closed = true;
+	}
+	
+	public boolean isClosed() {
+		return closed;
 	}
 
 }
