@@ -17,6 +17,8 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 public class InequalityHelper {
 	
+	final static String NONE = "none";
+	
 	final static String X = "x";
 	final static String Y = "y";
 	
@@ -24,7 +26,7 @@ public class InequalityHelper {
 	final static String CON2 = "con2";
 	
 	final static String UNEQUAL_EDB = "unequal_EDB";
-	final static String UNEQUAL_IDB = "unequal_IDB";
+	final static String UNEQUAL = "unequal";
 	final static List<String> ITH_LETTER = new ArrayList<String>();
 	
 	final static Variable x = Expressions.makeVariable(X);
@@ -33,9 +35,23 @@ public class InequalityHelper {
 	final static Variable con1 = Expressions.makeVariable(CON1);
 	final static Variable con2 = Expressions.makeVariable(CON2);
 	
-	public final static Predicate unequal_EDB = Expressions.makePredicate(UNEQUAL_EDB, 2);
-	public final static Predicate unequal_IDB = Expressions.makePredicate(UNEQUAL_IDB, 2);
+	final static Predicate unequal_EDB = Expressions.makePredicate(UNEQUAL_EDB, 2);
+	public final static Predicate unequal = Expressions.makePredicate(UNEQUAL, 2);
 	final static List<Predicate> ith_letter = new ArrayList<Predicate>();
+	
+	//final static Set<String> characters = new HashSet<String>(Arrays.asList(NONE));
+	
+	// unequal(CON1, CON2)
+	final static Atom unequal_CC = Expressions.makeAtom(unequal, con1, con2);
+	
+	// unequal(X, Y)
+	final static Atom unequal_XY = Expressions.makeAtom(unequal, x, y);
+	
+	// unequal_IDB(X, Y) :- unequal_EDB(X, Y)
+	final static Rule unequal_IDB_EDB = Expressions.makeRule(Expressions.makeAtom(unequal, x, y), Expressions.makeAtom(unequal_EDB, x, y));
+			
+	// unequal_IDB(X, Y) :- unequal_IDB(Y, X)
+	final static Rule inverse = Expressions.makeRule(Expressions.makeAtom(unequal, x, y), Expressions.makeAtom(unequal, y, x));
 	
 	public static void addUnequalConstantsToReasoner(Reasoner reasoner, String...unequalConstants) throws ReasonerStateException {
 		Set<String> unequalConstantsSet = new HashSet<String>();
@@ -45,7 +61,7 @@ public class InequalityHelper {
 		addUnequalConstantsToReasoner(reasoner, unequalConstantsSet);
 	}
 	
-	public static void addUnequalConstantsToReasoner(Reasoner reasoner, Set<String> unequalConstants) throws ReasonerStateException {		
+	public static void addUnequalConstantsToReasoner(Reasoner reasoner, Set<String> unequalConstants) throws ReasonerStateException {
 		int maxLength = 0;
 		for (String	string : unequalConstants) {
 			int length = string.length();
@@ -53,45 +69,14 @@ public class InequalityHelper {
 				maxLength = length;
 		}
 		
-		for (int i = 0; i < maxLength; i++) {
-			ITH_LETTER.add("letter" + i);
-			ith_letter.add(Expressions.makePredicate(ITH_LETTER.get(i), 2));
-		}
-		
-		List<Atom> letters = new ArrayList<Atom>();
-		
-		Set<String> characters = new HashSet<String>();
-		
-		for (String string : unequalConstants) {
-			Constant constant = Expressions.makeConstant(string);
-			for (int i = 0; i < string.length(); i++) {
-				String character = string.substring(i, i+1);
-				characters.add(character);
-				Constant characterConstant = Expressions.makeConstant(character);;
-				Atom toAdd = Expressions.makeAtom(ith_letter.get(i), constant, characterConstant);
-				letters.add(toAdd);
-			}
-		}
-		
-		reasoner.addFacts(allCharactersUnequal(characters));
-		
-		reasoner.addFacts(letters);
-		
-		// unequal_IDB(X, Y) :- unequal_EDB(X, Y)
-		Rule unequal_IDB_EDB = Expressions.makeRule(Expressions.makeAtom(unequal_IDB, x, y), Expressions.makeAtom(unequal_EDB, x, y));
-		
-		// unequal_IDB(X, Y) :- unequal_IDB(Y, X)
-		Rule inverse = Expressions.makeRule(Expressions.makeAtom(unequal_IDB, x, y), Expressions.makeAtom(unequal_IDB, y, x));
-		
 		reasoner.addRules(unequal_IDB_EDB, inverse);
 		
-		// unequal(CON1, CON2)
-		Atom unequal_CC = Expressions.makeAtom(unequal_IDB, con1, con2);
-		
-		// unequal(X, Y)
-		Atom unequal_XY = Expressions.makeAtom(unequal_IDB, x, y);
-		
-		for (int i = 0; i < maxLength; i++) {
+		for (int i = ITH_LETTER.size(); i < maxLength; i++) {
+			// TODO Change to including the previous letters as conditions
+			
+			ITH_LETTER.add("letter" + i);
+			ith_letter.add(Expressions.makePredicate(ITH_LETTER.get(i), 2));
+			
 			Predicate letteri = ith_letter.get(i);
 			
 			// letteri(CON1, X)
@@ -104,7 +89,32 @@ public class InequalityHelper {
 			Rule unequal = Expressions.makeRule(unequal_CC, letteri_CX, letteri_CY, unequal_XY);
 			
 			reasoner.addRules(unequal);
-		}		
+		}
+		
+		List<Atom> letters = new ArrayList<Atom>();
+		
+		Set<String> characters = new HashSet<String>();
+		
+		for (String string : unequalConstants) {
+			Constant constant = Expressions.makeConstant(string);
+			for (int i = 0; i < maxLength; i++) {
+				String character;
+				if (i < string.length()) {
+					character = string.substring(i, i+1);
+				} else {
+					character = NONE;
+				}
+				
+				characters.add(character);
+				Constant characterConstant = Expressions.makeConstant(character);
+				Atom toAdd = Expressions.makeAtom(ith_letter.get(i), constant, characterConstant);
+				letters.add(toAdd);
+			}
+		}
+		
+		reasoner.addFacts(allCharactersUnequal(characters));
+		
+		reasoner.addFacts(letters);
 	}
 	
 	static List<Atom> allCharactersUnequal(Set<String> characters) {
