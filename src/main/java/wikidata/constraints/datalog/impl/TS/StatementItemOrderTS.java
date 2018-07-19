@@ -2,6 +2,12 @@ package wikidata.constraints.datalog.impl.TS;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class StatementItemOrderTS extends StatementsItemTS {
 	
@@ -14,6 +20,10 @@ public class StatementItemOrderTS extends StatementsItemTS {
 	String lastId;
 	
 	String lastSubject;
+	
+	Map<String, HashSet<String>> propertiesPerItem;
+	
+	Map<String, HashSet<String>> valuesPerProperty;
 
 	public StatementItemOrderTS(String property_) throws IOException {
 		super(property_);
@@ -21,6 +31,9 @@ public class StatementItemOrderTS extends StatementsItemTS {
 		first = new TripleSetFile(getTripleSetType(), property + "first");
 		next = new TripleSetFile(getTripleSetType(), property + "next");
 		last = new TripleSetFile(getTripleSetType(), property + "last");
+		
+		propertiesPerItem = new HashMap<String, HashSet<String>>();
+		valuesPerProperty = new HashMap<String, HashSet<String>>();
 	}
 	
 	protected final void writeFirst(String statement, String item) {
@@ -70,6 +83,16 @@ public class StatementItemOrderTS extends StatementsItemTS {
 	protected void triple(String id, String subject, String predicate, String object) {
 		super.triple(id, subject, predicate, object);
 		
+		if (!propertiesPerItem.containsKey(subject))
+			propertiesPerItem.put(subject, new HashSet<String>());
+		
+		propertiesPerItem.get(subject).add(predicate);
+		
+		if (!valuesPerProperty.containsKey(predicate))
+			valuesPerProperty.put(predicate, new HashSet<String>());
+		
+		valuesPerProperty.get(predicate).add(object);
+		
 		if (lastSubject == null) {
 			first(id, subject);
 		} else if (!lastSubject.equals(subject)) {
@@ -86,12 +109,24 @@ public class StatementItemOrderTS extends StatementsItemTS {
 		writeFirst(statement, item);
 	}
 	
-	protected void next(String statement, String otherStatement) {
-		writeNext(statement, otherStatement);
+	protected void next(String previousStatement, String nextStatement) {
+		writeNext(previousStatement, nextStatement);
 	}
 	
 	protected void last(String statement, String item) {
 		writeLast(statement, item);
+	}
+	
+	public List<Set<String>> getProperties() {
+		List<Set<String>> result = new ArrayList<Set<String>>();
+		for (Set<String> set : propertiesPerItem.values()) {
+			result.add(set);
+		}
+		return result;
+	}
+	
+	public Map<String, HashSet<String>> getValues() {
+		return valuesPerProperty;
 	}
 	
 	@Override
