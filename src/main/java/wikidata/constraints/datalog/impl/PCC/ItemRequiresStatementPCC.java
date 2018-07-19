@@ -93,12 +93,14 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 		
 		String inequalityError = "Trying to add unequal constants to reasoner in the wrong state for property " + property + ".";
 		
+		InequalityHelper.setOrReset(reasoner);
+		
 		for (Set<String> propertiesForOneItem : tripleSet.getProperties()) {
 			for(String requiredProperty : requirements.keySet()) {
 				propertiesForOneItem.add(Utility.BASE_URI + requiredProperty);
 			}
 			try {
-				InequalityHelper.addUnequalConstantsToReasoner(reasoner, propertiesForOneItem);
+				InequalityHelper.addUnequalConstantsToReasoner(propertiesForOneItem);
 			} catch (ReasonerStateException e) {
 				logger.error(inequalityError, e);
 				return internalError;
@@ -154,7 +156,7 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 			if (valuesForRequiredProperty != null) {
 				valuesForRequiredProperty.addAll(allowedValues);
 				try {
-					InequalityHelper.addUnequalConstantsToReasoner(reasoner, valuesForRequiredProperty);
+					InequalityHelper.addUnequalConstantsToReasoner(valuesForRequiredProperty);
 				} catch (ReasonerStateException e) {
 					logger.error(inequalityError, e);
 					return internalError;
@@ -209,7 +211,7 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 		
 		Constant nonconflictingValue = Utility.makeConstant("Q13789518");
 		
-		Atom query = Expressions.makeAtom(require, Utility.makeConstant("P131"), x);
+		Atom query = Expressions.makeAtom(InequalityHelper.unequal, Utility.makeConstant("P131"), x);
 		
 		try {
 			return prepareAndExecuteQueries(rules, Arrays.asList(violation_query));

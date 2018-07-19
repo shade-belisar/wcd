@@ -15,13 +15,11 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 import wikidata.constraints.datalog.impl.TS.PropertyPredicateQualifiersTS;
 import wikidata.constraints.datalog.impl.TS.TripleSet;
 import wikidata.constraints.datalog.utility.InequalityHelper;
 import wikidata.constraints.datalog.utility.PrepareQueriesException;
-import wikidata.constraints.datalog.utility.Utility;
 
 public class SingleValuePCC extends PropertyConstraintChecker {
 	
@@ -49,8 +47,10 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			return internalError;
 		}
 		
+		InequalityHelper.setOrReset(reasoner);
+		
 		try {
-			InequalityHelper.addUnequalConstantsToReasoner(reasoner, tripleSet.getStatementIDs());
+			InequalityHelper.addUnequalConstantsToReasoner(tripleSet.getStatementIDs());
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to add unequal constants to reasoner in the wrong state for property " + property + ".", e);
 			return internalError;

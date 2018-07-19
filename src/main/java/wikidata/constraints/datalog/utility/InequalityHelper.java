@@ -1,7 +1,6 @@
 package wikidata.constraints.datalog.utility;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,8 +38,6 @@ public class InequalityHelper {
 	public final static Predicate unequal = Expressions.makePredicate(UNEQUAL, 2);
 	final static List<Predicate> ith_letter = new ArrayList<Predicate>();
 	
-	//final static Set<String> characters = new HashSet<String>(Arrays.asList(NONE));
-	
 	// unequal(CON1, CON2)
 	final static Atom unequal_CC = Expressions.makeAtom(unequal, con1, con2);
 	
@@ -53,15 +50,24 @@ public class InequalityHelper {
 	// unequal_IDB(X, Y) :- unequal_IDB(Y, X)
 	final static Rule inverse = Expressions.makeRule(Expressions.makeAtom(unequal, x, y), Expressions.makeAtom(unequal, y, x));
 	
-	public static void addUnequalConstantsToReasoner(Reasoner reasoner, String...unequalConstants) throws ReasonerStateException {
+	static Reasoner reasoner;
+	
+	public static void setOrReset(Reasoner reasoner_) {
+		reasoner = reasoner_;
+		ITH_LETTER.clear();
+		ith_letter.clear();
+	}
+	
+	public static void addUnequalConstantsToReasoner(String...unequalConstants) throws ReasonerStateException {
 		Set<String> unequalConstantsSet = new HashSet<String>();
 		for (int i = 0; i < unequalConstants.length; i++) {
 			unequalConstantsSet.add(unequalConstants[i]);
 		}
-		addUnequalConstantsToReasoner(reasoner, unequalConstantsSet);
+		addUnequalConstantsToReasoner(unequalConstantsSet);
 	}
 	
-	public static void addUnequalConstantsToReasoner(Reasoner reasoner, Set<String> unequalConstants) throws ReasonerStateException {
+	public static void addUnequalConstantsToReasoner(Set<String> unequalConstants) throws ReasonerStateException {
+		System.out.println(unequalConstants);
 		int maxLength = 0;
 		for (String	string : unequalConstants) {
 			int length = string.length();
