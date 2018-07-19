@@ -69,8 +69,8 @@ public abstract class PropertyConstraintChecker {
 	protected final Variable statement = Expressions.makeVariable(STATEMENT);
 	protected final Variable otherStatement = Expressions.makeVariable(OTHER_STATEMENT);
 	
-	protected final Atom query_long = Expressions.makeAtom(violation_long, statement, x, y, z);
-	protected final Atom query_short = Expressions.makeAtom(violation_short, statement, y, z);
+	protected final Atom violation_long_query = Expressions.makeAtom(violation_long, statement, x, y, z);
+	protected final Atom violation_short_query = Expressions.makeAtom(violation_short, statement, y, z);
 	
 	protected final Reasoner reasoner = Reasoner.getInstance();
 	
@@ -105,7 +105,7 @@ public abstract class PropertyConstraintChecker {
 		}
 	}
 	
-	protected String prepareAndExecuteQueries(List<Rule> rules) throws IOException, PrepareQueriesException {
+	protected String prepareAndExecuteQueries(List<Rule> rules, List<Atom> queries) throws IOException, PrepareQueriesException {
 		try {
 			reasoner.addRules(rules);
 		} catch (ReasonerStateException e) {
@@ -131,17 +131,13 @@ public abstract class PropertyConstraintChecker {
 		}
 		
 		String result = "Property: " + property + "\n";
-    	try (QueryResultIterator iterator = reasoner.answerQuery(query_long, true)) {
-    		result += result(iterator);
-    	} catch (ReasonerStateException e) {
-			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
-			throw new PrepareQueriesException(internalError);
-		}
-    	try (QueryResultIterator iterator = reasoner.answerQuery(query_short, true)) {
-    		result += result(iterator);
-    	} catch (ReasonerStateException e) {
-			logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
-			throw new PrepareQueriesException(internalError);
+		for (Atom query : queries) {
+	    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
+	    		result += result(iterator);
+	    	} catch (ReasonerStateException e) {
+				logger.error("Trying to answer query in the wrong state for property " + property + ".", e);
+				throw new PrepareQueriesException(internalError);
+			}
 		}
     	
     	reasoner.close();

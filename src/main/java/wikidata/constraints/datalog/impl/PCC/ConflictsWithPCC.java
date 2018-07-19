@@ -83,7 +83,7 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 		}
 		
 		try {
-			return prepareAndExecuteQueries(rules);
+			return prepareAndExecuteQueries(rules, Arrays.asList(violation_long_query));
 		} catch (PrepareQueriesException e) {
 			return e.getMessage();
 		}

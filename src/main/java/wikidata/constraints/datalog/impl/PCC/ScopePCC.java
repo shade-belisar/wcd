@@ -86,7 +86,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 			rules.remove(notReference);
 		
 		try {
-			return prepareAndExecuteQueries(rules);
+			return prepareAndExecuteQueries(rules, Arrays.asList(violation_long_query, violation_short_query));
 		} catch (PrepareQueriesException e1) {
 			return e1.getMessage();
 		}

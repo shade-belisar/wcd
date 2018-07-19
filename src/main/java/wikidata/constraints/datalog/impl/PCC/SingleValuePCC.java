@@ -68,7 +68,7 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 		Atom tripleEDB_PXpZ = Expressions.makeAtom(tripleEDB, otherStatement, x, propertyConstant, z);
 		
 		// unequal (STATEMENT, OTHER_STATEMENT)
-		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal_IDB, statement, otherStatement);
+		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal, statement, otherStatement);
 		
 		if (separators.size() == 0) {
 			/*
@@ -134,7 +134,7 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 		}
 		
 		try {
-			return prepareAndExecuteQueries(rules);
+			return prepareAndExecuteQueries(rules, Arrays.asList(violation_long_query));
 		} catch (PrepareQueriesException e) {
 			return e.getMessage();
 		}
