@@ -67,7 +67,6 @@ public class InequalityHelper {
 	}
 	
 	public static void addUnequalConstantsToReasoner(Set<String> unequalConstants) throws ReasonerStateException {
-		System.out.println(unequalConstants);
 		int maxLength = 0;
 		for (String	string : unequalConstants) {
 			int length = string.length();

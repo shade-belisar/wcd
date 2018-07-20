@@ -58,7 +58,6 @@ public class SingleValueCC extends ConstraintChecker {
 		} else {
 			logger.error("Node " + node + " is no a literal.");
 		}
-
 	}
 	
 	@Override
