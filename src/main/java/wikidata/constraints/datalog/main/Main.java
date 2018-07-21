@@ -20,6 +20,7 @@ import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
 import wikidata.constraints.datalog.impl.CC.ConflictsWithCC;
 import wikidata.constraints.datalog.impl.CC.ConstraintChecker;
+import wikidata.constraints.datalog.impl.CC.DistinctValuesCC;
 import wikidata.constraints.datalog.impl.CC.ItemRequiresStatementCC;
 import wikidata.constraints.datalog.impl.CC.NoneOfCC;
 import wikidata.constraints.datalog.impl.CC.ScopeCC;
@@ -46,7 +47,7 @@ public class Main {
 		dumpProcessingController = new DumpProcessingController("wikidatawiki");
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
-		checkers.add(new ItemRequiresStatementCC());
+		checkers.add(new DistinctValuesCC());
 		try {
 			for (ConstraintChecker constraintChecker : checkers) {
 				constraintChecker.init();
@@ -69,8 +70,12 @@ public class Main {
 		}
 		
 		try {
-			for(ConstraintChecker checker : checkers)
-				System.out.println(checker.violations());
+			for(ConstraintChecker checker : checkers) {
+				String violations = checker.violations();
+				if (!violations.equals("")) {
+					System.out.println(violations);
+				}
+			}
 		} catch (ReasonerStateException e) {
 			logger.error("Reasoner was called in the wrong state.", e);
 			return;

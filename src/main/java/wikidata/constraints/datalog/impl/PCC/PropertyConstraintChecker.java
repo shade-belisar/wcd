@@ -129,8 +129,7 @@ public abstract class PropertyConstraintChecker {
 			logger.error("Trying to reason in the wrong state for property " + property + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
-		
-		String result = "Property: " + property + "\n";
+		String result = "";
 		for (Atom query : queries) {
 	    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
 	    		result += result(iterator);
@@ -141,6 +140,9 @@ public abstract class PropertyConstraintChecker {
 		}
     	
     	reasoner.close();
+    	
+    	if (!result.equals(""))
+    		result = "Property: " + property + "\n" + result;
 
     	return result;
 	}
