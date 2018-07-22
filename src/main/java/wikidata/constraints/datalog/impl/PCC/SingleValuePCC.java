@@ -121,10 +121,10 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			/*
 			 * violation_long(STATEMENT, X, propertyConstant, Y) :-
 			 * 	tripleEDB(STATEMENT, X, propertyConstant, Y),
-			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Y),
+			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
 			 * 	unequal (STATEMENT, OTHER_STATEMENT),
 			 * 	qualifierEDB(STATEMENT, <separator>, <separatorValue>),
-			 * 	qualifierEDB(OTHER_STATEMENT, <separator>, <separatorValue>) 
+			 * 	qualifierEDB(OTHER_STATEMENT, <separator>, <separatorValue>)
 			 */
 			Rule conflict = Expressions.makeRule(head, body);
 			
