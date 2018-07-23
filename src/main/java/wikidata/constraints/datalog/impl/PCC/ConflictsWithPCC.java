@@ -73,7 +73,9 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 					// tripleEDB(OTHER_STATEMENT, X, confPropertyConstant, confValueConstant)
 					Atom tripleEDB_OXcc = Expressions.makeAtom(tripleEDB, otherStatement, x, confPropertyConstant, confValueConstant);
 					
-					// violation_long(STATEMENT, X, propertyConstant, Y) :- tripleEDB(STATEMENT, X, propertyConstant, Y), tripleEDB(OTHER_STATEMENT, X, confPropertyConstant, confValueConstant)
+					// violation_long(STATEMENT, X, propertyConstant, Y) :-
+					//	tripleEDB(STATEMENT, X, propertyConstant, Y),
+					//	tripleEDB(OTHER_STATEMENT, X, confPropertyConstant, confValueConstant)
 					Rule conflicting = Expressions.makeRule(violation_long_SXpY, tripleEDB_SXpY, tripleEDB_OXcc);
 					
 					rules.add(conflicting);
