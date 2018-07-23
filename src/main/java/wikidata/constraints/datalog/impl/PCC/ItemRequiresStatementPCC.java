@@ -111,6 +111,8 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 			
 			String requiredProperty = entry.getKey();
 			
+			Set<String> allowedValues = entry.getValue();
+			
 			Constant requiredPropertyConstant = Utility.makeConstant(requiredProperty);
 			
 			// require(STATEMENT, requiredProperty)
@@ -145,49 +147,50 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 			
 			rules.add(require_next);
 			
-			Conjunction require_Sr_conjunction = Expressions.makeConjunction(require_Sr);
+			if (allowedValues.size() > 0) {
+				Conjunction require_Sr_conjunction = Expressions.makeConjunction(require_Sr);
 
-			// tripleEDB(STATEMENT, X, requiredProperty, Y)
-			Atom tripleEDB_SXrY = Expressions.makeAtom(tripleEDB, statement, x, requiredPropertyConstant, y);
-			
-			// setup values inequality
-			Set<String> allowedValues = entry.getValue();
-			Set<String> valuesForRequiredProperty = tripleSet.getValues().get(Utility.BASE_URI + requiredProperty);
-			if (valuesForRequiredProperty != null) {
-				valuesForRequiredProperty.addAll(allowedValues);
-				try {
-					InequalityHelper.addUnequalConstantsToReasoner(valuesForRequiredProperty);
-				} catch (ReasonerStateException e) {
-					logger.error(inequalityError, e);
-					return internalError;
+				// tripleEDB(STATEMENT, X, requiredProperty, Y)
+				Atom tripleEDB_SXrY = Expressions.makeAtom(tripleEDB, statement, x, requiredPropertyConstant, y);
+				
+				// setup values inequality
+				Set<String> valuesForRequiredProperty = tripleSet.getValues().get(Utility.BASE_URI + requiredProperty);
+				if (valuesForRequiredProperty != null) {
+					valuesForRequiredProperty.addAll(allowedValues);
+					try {
+						InequalityHelper.addUnequalConstantsToReasoner(valuesForRequiredProperty);
+					} catch (ReasonerStateException e) {
+						logger.error(inequalityError, e);
+						return internalError;
+					}
 				}
+				
+				List<Atom> unequal_vY = new ArrayList<Atom>();
+				// unequal(<values>, Y)
+				
+				for (String value : allowedValues) {
+					Constant valueConstant = Expressions.makeConstant(value);
+					unequal_vY.add(Expressions.makeAtom(InequalityHelper.unequal, valueConstant, y));
+				}
+				
+				// require(STATEMENT, requiredProperty) :- first(STATEMENT, X), tripleEDB(STATEMENT, X, requiredProperty, Y), unequal(<values>, Y)
+				List<Atom> bodyFirst = new ArrayList<Atom>(Arrays.asList(first_Sx, tripleEDB_SXrY));
+				bodyFirst.addAll(unequal_vY);
+				Rule require_first_values = Expressions.makeRule(require_Sr_conjunction, Expressions.makeConjunction(bodyFirst));
+				
+				rules.add(require_first_values);
+				
+				// require(STATEMENT, requiredProperty) :-
+				//	next(PREVIOUS_STATEMENT, STATEMENT),
+				//	require(PREVIOUS_STATEMENT, requiredProperty),
+				//	tripleEDB(STATEMENT, X, requiredProperty, Y),
+				//	unequal(<values>, Y)
+				List<Atom> bodyNext = new ArrayList<Atom>(Arrays.asList(next_PS, require_Pr, tripleEDB_SXrY));
+				bodyNext.addAll(unequal_vY);
+				Rule require_next_values = Expressions.makeRule(require_Sr_conjunction, Expressions.makeConjunction(bodyNext));
+				
+				rules.add(require_next_values);
 			}
-			
-			List<Atom> unequal_vY = new ArrayList<Atom>();
-			// unequal(<values>, Y)
-			
-			for (String value : allowedValues) {
-				Constant valueConstant = Expressions.makeConstant(value);
-				unequal_vY.add(Expressions.makeAtom(InequalityHelper.unequal, valueConstant, y));
-			}
-			
-			// require(STATEMENT, requiredProperty) :- first(STATEMENT, X), tripleEDB(STATEMENT, X, requiredProperty, Y), unequal(<values>, Y)
-			List<Atom> bodyFirst = new ArrayList<Atom>(Arrays.asList(first_Sx, tripleEDB_SXrY));
-			bodyFirst.addAll(unequal_vY);
-			Rule require_first_values = Expressions.makeRule(require_Sr_conjunction, Expressions.makeConjunction(bodyFirst));
-			
-			rules.add(require_first_values);
-			
-			// require(STATEMENT, requiredProperty) :-
-			//	next(PREVIOUS_STATEMENT, STATEMENT),
-			//	require(PREVIOUS_STATEMENT, requiredProperty),
-			//	tripleEDB(STATEMENT, X, requiredProperty, Y),
-			//	unequal(<values>, Y)
-			List<Atom> bodyNext = new ArrayList<Atom>(Arrays.asList(next_PS, require_Pr, tripleEDB_SXrY));
-			bodyNext.addAll(unequal_vY);
-			Rule require_next_values = Expressions.makeRule(require_Sr_conjunction, Expressions.makeConjunction(bodyNext));
-			
-			rules.add(require_next_values);
 			
 			// violation_item_property(X, requiredProperty)
 			Atom violation_Xr = Expressions.makeAtom(violation_item_property, x, requiredPropertyConstant);
