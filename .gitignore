@@ -2,6 +2,15 @@
 
 *.csv
 
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.pdf
+*.synctex.gz
+*.toc
+
 # Maven
 /target/
 
@@ -13,3 +22,5 @@
 
 #resources
 resources/
+
+
