@@ -1,0 +1,20 @@
+mandatory qualifier constraint (Q21510856) - statements with the constrained property as predicate must have a qualifier with a specific property as predicate
+
+Qualifier:
+	required qualifier - the property which must be used in a qualifier on every statement with the constrained property
+
+Violation:
+	statements without a qualifier using the requires property
+
+Dependencies:
+	all statements with the constrained property as predicate and all qualifiers on those
+
+The mandatory qualifier constraint requires that a statement using the constrained property as predicate has a qualifier using a specific property as predicate.
+The rules would require an adaptation of the require pattern to qualifiers. Unfortunately, since qualifiers do not have unique statement ids, they cannot be ordered (since the same qualifier could be added twice).
+Then again, if I said something like:
+	first(STATEMENT, QUALIFIER_PROPERTY, QUALIFIER_VALUE)
+	next(STATEMENT, QUALIFIER_PROPERTY, QUALIFIER_VALUE, OTHER_STATEMENT, OTHER_QUALIFIER_PROPERTY, OTHER_QUALIFIER_VALUE)
+	last(STATEMENT, QUALIFIER_PROPERTY, QUALIFIER_VALUE)
+it should allow me the same require pattern. If I add the same fact twice the content should be the same anyway.
+The rule would be
+	violation_long(STATEMENT, X, constrainedPropertyConstant, Y) :- tripleEDB(STATEMENT, X, constrainedPropertyConstant, Y), last(STATEMENT, QUALIFIER_PROPERTY, Z), require(STATEMENT, QUALIFIER_PROPERTY, Z, requiredPropertyConstant)

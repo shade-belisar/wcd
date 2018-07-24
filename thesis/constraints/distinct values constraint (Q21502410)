@@ -1,0 +1,11 @@
+distinct values constraint (Q21502410) - two distinct statements with the constrained property as predicate should never have the same value
+
+Violations:
+	two distinct statements <subject> <constrained property> <value> with same values
+
+Dependencies:
+	statements with the constrained property as predicate
+
+The distinct values constraint forbids the existence of two statements with the constrained property as predicate and the same value.
+The necessary rule is:
+	violation_long(STATEMENT, X, constrainedPropertyConstant, Y) :- tripleEDB(STATEMENT, X, constrainedPropertyConstant, Y), tripleEDB(OTHER_STATEMENT, Z, constrainedPropertyConstant, Y), unequal(STATEMENT, OTHER_STATEMENT)

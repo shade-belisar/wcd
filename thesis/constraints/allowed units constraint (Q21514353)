@@ -1,0 +1,15 @@
+allowed units constraint (Q21514353) - a statement with the constrained property as predicate should only have specific units
+
+Qualifiers:
+	allowed unit (P2305) - contains the units that the statement may have
+
+Violation:
+	statements with the constrained property as predicate and a unit unequal to all allowed units
+
+Dependencies:
+	all statements with the constrained property as predicate and all unit [qualifiers]? on those
+
+Allowed units constraint specifies that a statement with the constrained property as predicate may only have a unit that is in a set of specific units. Thus a violation is a statement with any other unit.
+The rules would be:
+	violation_long(STATEMENT, X, constrainedPropertyConstant, Y) :- tripleEDB(STATEMENT, X, constrainedPropertyConstant, Y), unit(STATEMENT, UNIT), unequal(<allowedUnit>, UNIT)
+with unequal(<allowedUnit, UNIT) for each allowed unit.

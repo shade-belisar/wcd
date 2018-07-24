@@ -1,0 +1,37 @@
+single value constraint (Q19474404) - constrained properties may only have one value per item unless they differ in values for specific qualifier properties
+Qualifiers:
+	separator (P4155) - optional - contains properties whose values differentiate same values of constrained property, thus allowing different values for the property per item
+
+Violations:
+	1) two distinct statements <subject> <constrained property> <value> with same subject but different values
+		Exception: if separators exist, 1)  does not apply if both statements have listed separators as qualifiers and qualifier values are different
+
+Dependencies:
+	1) without separators: all statements on one item with the constrained property as predicate
+	2) with separators: 1) plus all qualifiers on those triples with a separator as predicate
+
+The single value constraint constrains the values a property may take on a single item. A property marked with the single value constraint can have properties marked as separators, which define exceptions under specific circumstances.
+If no separators are specified, two triple form a violation of this constraint if they a) belong to the same item, b) have the same (constrained) property, and c) have the same value.
+If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values.
+The rule modeling for the case without separators is:
+	violation_long(STATEMENT, X, propertyConstant, Y) :-
+		tripleEDB(STATEMENT, X, propertyConstant, Y),
+		tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
+		unequal (STATEMENT, OTHER_STATEMENT)
+If separators were specified for the property, the rules are:
+	violation_long(STATEMENT, X, propertyConstant, Y) :-
+		tripleEDB(STATEMENT, X, propertyConstant, Y),
+		tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
+		unequal (STATEMENT, OTHER_STATEMENT),
+		qualifierEDB(STATEMENT, <separatorConstant>, <separatorValue>),
+		qualifierEDB(OTHER_STATEMENT, <separatorConstant>, <separatorValue>)
+where <separator> denotes that these atoms are added for each qualifier. Since this rule would only find violations where the main statements both have all separating qualifiers, the following rule would have to be added:
+	violation_long(STATEMENT, X, propertyConstant, Y :-
+		tripleEDB(STATEMENT, X, propertyConstant, Y),
+		tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
+		unequal(STATEMENT, OTHER_STATEMENT),
+		qualifierEDB(STATEMENT, <separatorConstant>, separatorValue>),
+		qualifierEDB(OTHER_STATEMENT, <separatorConstant, <separatorValue>,
+		require(<missingSeparatorConstant, STATEMENT, PROPERTY, VALUE),
+		last(STATEMENT, PROPERTY, VALUE)
+with all possible combinations of separators as separatorConstant and missingSeparatorConstant. Since inequality and a violation between two statements is symetric, it is not necessary to declare the same rule for OTHER_STATEMENT.

@@ -1,0 +1,21 @@
+property scope constraint (Q53869507) - constrained property may only occur in the allowed 'position'
+
+Qualifiers:
+	property scope (P5314) - contains the allowed 'positions' for the property (as main value (Q54828448), as qualifier (Q54828449) or as reference (Q54828450))
+
+Violations:
+	statements in a position that is not allowed
+
+Dependencies:
+	statements, qualifiers and references with the constrained property as predicate
+
+The property scope constraint specifies in which 'position' a property may be used as predicate. Since only three posibilities exist, this is equivalent to forbidding all other 'positions'.
+The rules are thus dependent on the property scope.
+If property scope does not contain as main value:
+	violation_long(STATEMENT, X, constrainedPropertyConstant, Y) :- tripleEDB(STATEMENT, X, constrainedPropertyConstant, Y)
+If property scope does not contain as qualifier:
+	violations_short(STATEMENT, constrainedPropertyConstant, X) :- qualifierEDB(STATEMENT, constrainedPropertyConstant, X)
+If property scope does not contain as reference:
+	violations_short(STATEMENT, constrainedPropertyConstant, X) :- referenceEDB(STATEMENT, constrainedPropertyConstant, X)
+
+

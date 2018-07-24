@@ -1,0 +1,13 @@
+inverse constraint (Q21510855) - values of a statement using the constrained property as predicate require a statement with another property on the same item with a specific property and the item of the original statement as value
+
+Qualifiers:
+	inverse property (P2306) - the inverse property with which a statement must exist on the value of the constrained property
+
+Violations:
+	values used for the constrained property with the required statement missing
+
+Dependencies:
+	statements using the constrained property as predicate and all statements of their values
+
+Pretty much covered by item requires statement constraint, just on another statement and with a specific statement.
+More complex preprocessing (need to go twice) since we need to find all statements using the constrained property and then all statements of their values.

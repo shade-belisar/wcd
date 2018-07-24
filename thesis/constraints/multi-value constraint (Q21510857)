@@ -1,0 +1,29 @@
+multi-value constraint (Q21510857) - items with a statement with the constrained property as predicate should have another statement with the constrained property
+
+Violations:
+	items with exactly one statement with the constrained property
+
+Dependencies
+		all statements on one item that has a statement with the constrained property as predicate
+
+The multi-value constraint specifies that the constrained property should appear in multiple statements of an item. A violation is thus an item with exactly one statement using the constrained property.
+The rules can be construced similar to the require pattern:
+	require(STATEMENT, constrainedProperty)
+for first and next as ususal, then:
+	require_second(STATEMENT, constrainedProperty) :-
+		next(PREVIOUS_STATEMENT, STATEMENT,
+		require(PREVIOUS_STATEMENT, constrainedProperty),
+		tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y),
+		unequal(constrainedProperty, OTHER_PROPERTY)
+and
+	require_second(STATEMENT, constrainedProperty) :-
+		next(PREVIOUS_STATEMENT, STATEMENT,
+		require_second(PREVIOUS_STATEMENT, constrainedProperty),
+		tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y),
+		unequal(constrainedProperty, OTHER_PROPERTY)
+which means the violations would be
+	violation(X, constrainedProperty) :- require_second(STATEMENT, constrainedProperty), last(STATEMENT, X)
+
+
+
+

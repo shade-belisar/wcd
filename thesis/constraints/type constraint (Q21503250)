@@ -1,0 +1,34 @@
+type constraint (Q21503250) - item with a statement using the constrained property must be in a relation to an entity using instanceOf (P31), subclassOf (P279) or both as specified
+Qualifiers:
+	class (P308) - the entities the item with the constrained property has to be in relation with
+	relation (P2309) - specifies the relation the item should have with the class (either instanceOf (Q21503252)(P31), subclassOf (Q21514624)(P279) or instance- or subclassOf (Q30208840); note that subclassOf counts repeatedly)
+
+Violations:
+	if an item using the constrained property as predicate does not have the specified relation to the classes
+
+Dependencies:
+	the statements of the item using P31 and P279
+	all statements with P279
+
+The type constraint requires the existence of either one of a specific statement (instanceOf <class>) or a chain of statements using subclassOf to connect directly (subclassOf* <class>)
+or via instanceOf (instanceOf/subclassOf* <class>) for all classes. An item violates the constraint if it has a statement using the constrained property as predicate but does not have the required relation.
+The rules for the instanceOf-case are straightforward, since they only require the existence of specific statements. This means we can use
+	require_instance(STATEMENT, <class>) :- first(STATEMENT, X), tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y), unequal(OTHER_PROPERTY, instanceOfConstant)
+	require_instance(STATEMENT, <class>) :- first(STATEMENT, X), tripleEDB(STATEMENT, X, instanceOfConstant, Y), unequal(<class>, Y)
+
+	require_instance(STATEMENT, <class>) :- next(PREVIOUS_STATEMENT, STATEMENT), require(PREVIOUS_STATEMENT, <class>), tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y), unequal(OTHER_PROPERTY, instanceOfConstant)
+	require_instance(STATEMENT, <class>) :- next(PREVIOUS_STATEMENT, STATEMENT), require(PREVIOUS_STATEMENT, <class>), tripleEDB(STATEMENT, X, instanceOfConstant, Y), unequal(Y, <class>)
+to find the violations:
+	violation(X, <class>) :- require(STATEMENT, <class>), last(STATEMENT, X)
+
+For subclass relations... good question.
+We could compute the top level classes by taking all items with a subclass relation towards them and using the require-pattern for subclassOf on them.
+Then all classes with require subclass on the last statement would be top-level classes.
+The next step is to expand the require-pattern to send a require_subclass_chase up the subclass relation tree if we are at a subclassOf-statement.
+The idea is to say a subclassOf-statement requires if the require_subclass_chase fact arrives at all the top-level classes. But it is not possible to check all top-level classes (equivalent to saying there is no top-level class).
+
+Another option might be to conclude the 'transitive hull'? of subclassOf. This would mean that we know about all classes an item belongs to.
+But since they are not in an order we cannot use the require-pattern to find out if one is missing.
+
+Since we consider preprocessing like the first, next and last statements we might consider postprocessing. It is after all pretty easy to conclude if an item fulfills the constraint.
+You would simply need the classes of everything and say: Item fulfills if it is class1, class2 etc. Then we output all items and all items that fulfill the constraint and subtract the latter from the former.

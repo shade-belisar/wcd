@@ -1,0 +1,16 @@
+allowed qualifiers constraint (Q21510851) - qualifiers on a statement with the constraint property as predicate may only use certain properties
+
+Qualifiers:
+	allowed qualifier (P2306) - contains all properties that may appear as predicate of a qualifier
+
+Violations:
+	statement with the constrained property as predicate and a qualifier with a predicate different from all allowed qualifiers
+
+Dependencies:
+	statements with the constrained property and all their qualifiers
+
+Allowed qualifiers constraint specifies that only a specific set of properties may be used as qualifiers on a statement with the constrained property.
+Thus all statements with the constrained property that have one or more qualifiers with a predicate different from all allowed qualifiers are a violation.
+The rule would be:
+	violation_long(STATEMENT, X, constrainedPropertyConstant, Y) :- tripleEDB(STATEMENT, X, constrainedPropertyConstant, Y), qualifier(STATEMENT, PROPERTY, Z), unequal(<allowedQualifier>, PROPERTY)
+with unequal(<allowedQualifier>, PROPERTY) for each allowed qualifier.

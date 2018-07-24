@@ -1,0 +1,48 @@
+item requires statement constraint (Q21503247) - items with a statement using the constrained property as predicate require a statement with another property on the same item; possibly with specific values
+Qualifiers:
+	required property (P2306) - property which the item of the constrained property is required to have in another statement
+	allowed value (P2305) - optional - contains the values the the required statement must have
+
+Violations:
+	an item with a statement with the constrained property without a statement with the required property; or with a statement with the required property but without any of the allowed values (P2305)
+
+Dependencies:
+	all statements on one item that has a statement with the constrained property as predicate
+
+The item requires statement constraint requires an additional statement on an item with a statement using the constrained property, possibly also using a specific value from the list of allowed values.
+An item violates the constraint if it a) has a statement using constrained property as predicate, b) has no statement using the required property as predicate,
+or (if allowed values are specified) b) has no statement using required property as predicate and one of the allowed values as value.
+To conclude nonexistance with datalog additional preprocessing besides the triples is necessary. To this end we leverage the fact that each statement has a unique statement id.
+We mark the first statement using the predicate
+	first(STATEMENT, ITEM),
+the last statement as
+	last(STATEMENT, ITEM),
+and the order with
+	next(PREVIOUS_STATEMENT, STATEMENT).
+These facts have to be precomputed during extraction. This allows us to check if a statement requires (but does not have) a specific property (possibly with specific values).
+The rule
+	require(STATEMENT, requiredProperty) :- first(STATEMENT, X), tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y), unequal(requiredProperty, OTHER_PROPERTY)
+marks the first statement as required and
+	require(STATEMENT, requiredProperty) :-
+		next(PREVIOUS_STATEMENT, STATEMENT,
+		require(PREVIOUS_STATEMENT, requiredProperty),
+		tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y),
+		unequal(requiredProperty, OTHER_PROPERTY)
+marks all following statements as required.
+
+If separators have been specified, the rules for marking the first and next statements have to be amended with
+	unequal(<value>, Y)
+for each allowed value, thus requiring that the value is different from all allowed values.
+The rules are then:
+	require(STATEMENT, requiredProperty) :- first(STATEMENT, X), tripleEDB(STATEMENT, X, requiredProperty, Y), unequal(<values>, Y)
+and
+	require(STATEMENT, requiredProperty) :-
+		next(PREVIOUS_STATEMENT, STATEMENT),
+		require(PREVIOUS_STATEMENT, requiredProperty),
+		tripleEDB(STATEMENT, X, requiredProperty, Y),
+		unequal(<values>, Y).
+
+Note that if allowed values have been specified, the first set of rules is still required, since the preceding statements will in all likelihood not have the requiredProperty, thus not triggering the second set of rules.
+If this is computed a violations is found if the last statement of an item does not have the required property (with an allowed value).
+	violation(X, requiredProperty) :- require(STATEMENT, requiredProperty), last(STATEMENT, X)
+

@@ -1,0 +1,21 @@
+conflicts-with constraint (Q21502838) - items with a statement using the constrained property as predicate may not have certain statements or statements with certain properties
+
+Qualifiers:
+	conflicting property (P2306) - states the property the item may not have in a statement or in a statement with the conflicting values
+	conflicting values (P2305) - optional - contains the values the item may not have in statements with the conflicting property as predicate
+
+Violations:
+	1) statements on items with the constrained property with the conflicting property
+	2) statements on items with the constrained property with the conflicting property and one of the conflicting values
+
+Dependencies:
+	all statements on one item that has a statement with the constrained property as predicate
+
+The conflicts with constraint forbids either certain statements or statements with a specific property on items with a statement using the constrained property as predicate.
+The rules are:
+	violation_long(STATEMENT, X, constrainedPropertyConstant, Y) :- tripleEDB(STATEMENT, X, constrainedPropertyConstant, Y), tripleEDB(OTHER_STATEMENT, X, conflictingPropertyConstant, Z)
+and
+	violation_long(STATEMENT, X, constrainedPropertyConstant, Y) :-
+		tripleEDB(STATEMENT, X, constrainedPropertyConstant, Y),
+		tripleEDB(OTHER_STATEMENT, X, conflictingPropertyConstant, conflictingValueConstant)
+

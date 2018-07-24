@@ -1,0 +1,21 @@
+none of constraint (Q52558054) - constrained property may not have specific values
+Qualifiers:
+	item of property constraint (P2305) - values that may not be object of a triple having the constrained property as predicate
+
+Violations:
+	statements with the constrained property as predicate and a forbidden value as object
+
+Dependencies:
+	statements with the constrained property as predicate
+
+The none of constraints restricts the values that the property may refer to. Every property with the none of constraint needs one or more values listed as forbidden.
+There is no restriction placed on what these values are, this is specified via one of constraint (Q21510859) or type constraint (Q21503250).
+The violations for this constraint are single statements and depend only on themselves, meaning each statement can be checked individually, independant of all others.
+A triple subject predicate object constitutes a violation of this constraint if it has the constrained property as predicate and one of the forbidden values as object.
+The rule modeling is:
+	violation_long(STATEMENT, X, propertyConstant, Y) :- tripleEDB(STATEMENT, X, propertyConstant, confValueConstant)
+for each constrained property in combination with all its forbidden values. Alternatively one could model:
+	forbidden_value(propertyConstant, confValueConstant)
+for all forbidden property-value combinations and find violations via:
+	violation_long(STATEMENT, X, propertyConstant, Y) :- tripleEDB(STATEMENT, X, PROPERTY, Y), forbidden_value(PROPERTY, Y)
+but this would result in a larger sum of facts and rules.
