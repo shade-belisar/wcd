@@ -25,7 +25,8 @@ If separators were specified for the property, the rules are:
 		unequal (STATEMENT, OTHER_STATEMENT),
 		qualifierEDB(STATEMENT, <separatorConstant>, <separatorValue>),
 		qualifierEDB(OTHER_STATEMENT, <separatorConstant>, <separatorValue>)
-where <separator> denotes that these atoms are added for each qualifier. Since this rule would only find violations where the main statements both have all separating qualifiers, the following rule would have to be added:
+where <separator> denotes that these atoms are added for each qualifier.
+Since this rule would only find violations where the main statements both have all separating qualifiers, the following rule would have to be added:
 	violation_long(STATEMENT, X, propertyConstant, Y :-
 		tripleEDB(STATEMENT, X, propertyConstant, Y),
 		tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
