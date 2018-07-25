@@ -23,62 +23,160 @@ Bild"ubernahmen zitieren.}
 \acknowledgments{Die Danksagung...}
 \abstracten{abstract text english}
 \abstractde{ Zusammenfassung Text Deutsch}
+
 \usepackage{rotating}
+\usepackage{float}
+\restylefloat{table}
+\usepackage{makecell}
+\renewcommand{\cellalign}{tl}
+\usepackage{tabularx}
 
 \begin{document}
 \chapter{Introduction/Preliminaries}
 Motivation
 \cite{test}
 \section{Wikidata}
-Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). 
+Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). These store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. A value is one of several datatypes noted in table \ref{tab_datatypes}. \\
+
+\begin{table}
+\caption{wikidata datatypes}\label{tab_datatypes}
+\begin{tabularx}{\textwidth}{lllX}
+Datatype & Fields & Description \\
+\hline
+string & string (string) & simple string literal \\
+globecoordinate & \makecell{latitude (float) \\ longitude (float) \\ precision (float) \\ globe(URI)} & \makecell{coordinates on a given celestial body \\ or geographic standard} \\
+quantity & \makecell {amount (decimal) \\ upperBound (decimal) \\ lowerBound (decimal) \\ unit (URI or 1)} & quantity of a specified unit (or none) \\ with uncertainty \\
+time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} & \makecell {time as a string according to calendarmodel \\ (julian or gregorian),\\ with precision mapping to orders of magnitude \\ (eg. 10 years, months)} \\
+
+
+\end{tabularx}
+\end{table}
+
+While this is simliar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows, in essence, to store additional information about statements. This is done via a statement id, which is assigend to every triple storing information about an item. 
 \section{Datalog}
-Datalog is a logic programming language. It is fully delarative and uses simple rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a constant, which is a given [string]? expressing a fix point. In the context of Wikidata any entity or property, e.g. the universe (Q1) or head of government (P6), could be represented as a constant. Together with variables constants form terms. To form rules and define facts it is necessary to express their properties and relations. This is achieved using predicates
+Datalog is a logic programming language. It is fully delarative and uses simple rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a constant, which is a given [string]? expressing a fix point. In the context of Wikidata any item or property, e.g. the universe (Q1) or head of government (P6), could be represented as a constant. 
+\section{Terminology}
+\begin{table}[H]
+\caption{shorthands}
+\begin{tabular}{ll}
+Shorthand & Description \\
+\hline
+constrained statement & statement with the constrained property as predicate \\
+item statement & statement on the same item as the constrained statement \\
+constrained item & item with a constrained statement
+\end{tabular}
+\end{table}
 \chapter{Property Constraints}
+
+%\begin{table}[t]
+%\caption{property constraints and basic information}\label{tab_basestats}
+%\begin{tabular}{rcl}
+
+%\# of properties & constraint id & constraint name \\
+%\hline
+%4265 & Q21503247 & Item requires statement \\
+%3021 & Q21502404 & Format \\
+%2909 & Q19474404 & Single value \\
+%2843 & Q21502410 & Unique value \\
+%2613 & Q21503250 & Type \\
+%1410 & Q53869507 & Scope \\
+%781 & Q21502838 & Conflicts with \\
+%707 & Q21510865 & Value type \\
+%343 & Q21514353 & Allowed units \\
+%303 & Q21510851 & Allowed qualifiers \\
+%244 & Q21510864 & Value requires statement \\
+%203 & Q21510856 & Mandatory qualifier \\
+%188 & Q21510860 & Range \\
+%119 & Q21510855 & Inverse \\
+%116 & Q21510859 & One of \\
+%106 & Q52848401 & Integer \\
+%65 & Q51723761 & No bounds \\
+%53 & Q21510852 & Commons link \\
+%33 & Q21510862 & Symmetric \\
+%27 & Q52004125 & Allowed entity types \\
+%17 & Q52558054 & None of \\
+%13 & Q21510857 & Multi-value \\
+%10 & Q54554025 & Link \\
+%6 & Q21510854 & Difference within range \\
+%3 & Q52060874 & Single best value \\
+%1 & Q25796498 &  \\
+%1 & Q52712340 &  \\
+%
+%\end{tabular}
+%\end{table}
 To improve the data quality, help editors avoid common mistakes and clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are however not firm rules and execptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. only certain values are allowed or more complex requirements on connected parts of the data graph, e.g. the value of a statement with this property should have certain statements. On the following page you can find table \ref{tab_basestats} which list the existing property constraints and a short description as well as classifying information which will be explained shortly. Afterwards the constraints will be explained in detail and either a basic approach for their modeling or reasoning why it is not possible or sensible to model it given.\\
 
 To apply a constraint to a property a statement <property> <P2302> <constraint> is added to the properties item page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. Note that a constrained statement from hereon denotes a statement whose predicate is a property that has a specific constraint. A simple example for this would be distinct values (Q21502410) stating that values of the property must be unique across all constrained statements. For this case no additional information regarding the constraint is necessary and violation could be found by surveying all constrained statements and comparing their values.\\
 Constraints can be further specified by using qualifiers on the constraint statement. These qualifiers are either optional or mandatory and may be applied once or multiple times. For example, the none of constraint (Q52558054) states that values for a specific property may not be in a set of disallowed values. These are specified as qualifiers using item of property constraint (P2305) on the constraint statement and require at least one such statement.\\
 More comlex dependencies are also possible. A constraint can depend on all constrained statements of a specific item (single value constraint [Q19474404]), on all statements of the value of a constrained statement (value requires statement constraint [Q21510864]) or in the most complex case on all statements using the subclassOf-predicate (type constraint [Q21503250]).
-\newpage
-\begin{table}[t]
-\caption{property constraints and basic information}\label{tab_basestats}
-\begin{tabular}{rcl}
 
-\# of properties & constraint id & constraint name \\
+
+\section{Wikidata constraints explained}
+This section will explain all interesting, meaning translatable or partially translatable, currently used property constraints on Wikidata. They will be presented rougly in descending order of the number of properties with this constraint, although constraints with very similar function will be explained directly after one another. Also, all constraints that were considered untranslatable are listed at the and, each with a short explanation as to why they were placed in that group.\\
+
+Every constraint will start with a table showing basic properties of the constraint. This includes the requirement, relevant qualifiers, possible violations of the constraint and the data the constraint depends on. The requirement states which part of the data graph in relation to the constrained statement are restricted or need to exist. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The dependecies list their relation to the constrained statement. Table \ref{tab_example_constraint} shows the formatting as an example.
+
+\begin{table}[H]
+\caption{example constraint (Q31415926)}\label{tab_example_constraint}
+\begin{tabularx}{\textwidth}{ ll X}
 \hline
-4265 & Q21503247 & Item requires statement \\
-3021 & Q21502404 & Format \\
-2909 & Q19474404 & Single value \\
-2843 & Q21502410 & Unique value \\
-2613 & Q21503250 & Type \\
-1410 & Q53869507 & Scope \\
-781 & Q21502838 & Conflicts with \\
-707 & Q21510865 & Value type \\
-343 & Q21514353 & Allowed units \\
-303 & Q21510851 & Allowed qualifiers \\
-244 & Q21510864 & Value requires statement \\
-203 & Q21510856 & Mandatory qualifier \\
-188 & Q21510860 & Range \\
-119 & Q21510855 & Inverse \\
-116 & Q21510859 & One of \\
-106 & Q52848401 & Integer \\
-65 & Q51723761 & No bounds \\
-53 & Q21510852 & Commons link \\
-33 & Q21510862 & Symmetric \\
-27 & Q52004125 & Allowed entity types \\
-17 & Q52558054 & None of \\
-13 & Q21510857 & Multi-value \\
-10 & Q54554025 & Link \\
-6 & Q21510854 & Difference within range \\
-3 & Q52060874 & Single best value \\
-1 & Q25796498 &  \\
-1 & Q52712340 &  \\
-
-\end{tabular}
+Requirement & requirement \\
+\hline
+Qualifiers & \makecell{example qualifier (P1234) -- 1..* \\ description \\ another qualifier (P4321) -- 0..1 \\ different description} \\
+\hline
+Violation & \makecell{one way to violate the constraint \\ another violation possibility} \\
+\hline
+Dependency & statements, qualifiers or references in relation to the constrained statement\\
+\hline
+Rule features & features needed (missing if no features needed) \\
+\hline
+\end{tabularx}
 \end{table}
+
 \newpage
+\subsection{Item requires statement (Q21503247)}\label{subsec_item_requires_statement}
+The item requires statement constraint requires an additional statement on an item with a statement using the constrained property, possibly also using a specific value from the list of allowed values.
+\begin{table}[H]
+\caption{item requires statement constraint (Q21503247)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & item statement \\
+\hline
+Qualifiers & \makecell{required property (P2306) -- 1 \\ property the item statement must have \\ allowed value (P2305) -- 0..* \\ values the item statement may have} \\
+\hline
+Violation & \makecell{no item statement with required property \\ all item statements with required property have no allowed value} \\
+\hline
+Dependency &  all statements of a constrained item\\
+\hline
+Rule features & negation \\
+\hline
+\end{tabularx}
+\end{table}
 
+An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the required property as predicate, or (if allowed values are specified) b2) has only statement using required property as predicate that do not use one of the allowed values as value.\\
+While condition a) can easily be tested by a tripleEDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is adressed in section [?].
 
+\subsection{Value requires statement (Q21510864)}
+The value requires statement constraint requires an additional statement on the value of a statement using the constrained property, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
+
+\subsection{Single value (Q19474404)}
+The single value constraint constrains the values a property may take on a single item. A property marked with the single value constraint can have properties marked as separators, which define exceptions under specific circumstances.
+\begin{table}[H]
+\caption{single value constraint (Q19474404)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement value \\
+\hline
+Qualifiers & \makecell{required property (P2306) -- 1 \\ property the item statement must have \\ allowed value (P2305) -- 0..* \\ values the item statement may have} \\
+\hline
+Violation & \makecell{no item statement with required property \\ all item statements with required property have no allowed value} \\
+\hline
+Dependency &  all statements of a constrained item\\
+\hline
+Rule features & negation \\
+\hline
+\end{tabularx}
+\end{table}
 
 \chapter{Rules}
 \chapter{Evaluation/Comparison}
