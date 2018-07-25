@@ -38,7 +38,7 @@ Motivation
 \section{Wikidata}
 Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). These store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. A value is one of several datatypes noted in table \ref{tab_datatypes}. \\
 
-\begin{table}
+\begin{table}[H]
 \caption{wikidata datatypes}\label{tab_datatypes}
 \begin{tabularx}{\textwidth}{lllX}
 Datatype & Fields & Description \\
@@ -54,7 +54,13 @@ time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} &
 
 While this is simliar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows, in essence, to store additional information about statements. This is done via a statement id, which is assigend to every triple storing information about an item. 
 \section{Datalog}
-Datalog is a logic programming language. It is fully delarative and uses simple rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a constant, which is a given [string]? expressing a fix point. In the context of Wikidata any item or property, e.g. the universe (Q1) or head of government (P6), could be represented as a constant. 
+Datalog is a logic programming language. It is fully delarative and uses simple rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a constant, which is a given [string]? expressing a fix point. In the context of Wikidata any item or property, e.g. the universe (Q1) or head of government (P6), could be represented as a constant.
+\section{Representation}
+To model the basic represenation of triples, qualifiers and references three predicates are introduced.\\
+tripleEDB (STATEMENT, ITEM, PROPERTY, VALUE) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either and item ID or a string-representation of the data value.\\
+qualifierEDB (STATEMENT, PROPERTY, VALUE) and referenceEDB (STATEMENT, PROPERTY, VALUE) represent the qualifiers and references on a given statement ID with their respective property id and the value as usual.\\
+
+Additional predicates modelling different preprocessing steps are explained in chapter \ref{cha_rules}.
 \section{Terminology}
 \begin{table}[H]
 \caption{shorthands}
@@ -104,7 +110,7 @@ constrained item & item with a constrained statement
 %
 %\end{tabular}
 %\end{table}
-To improve the data quality, help editors avoid common mistakes and clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are however not firm rules and execptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. only certain values are allowed or more complex requirements on connected parts of the data graph, e.g. the value of a statement with this property should have certain statements. On the following page you can find table \ref{tab_basestats} which list the existing property constraints and a short description as well as classifying information which will be explained shortly. Afterwards the constraints will be explained in detail and either a basic approach for their modeling or reasoning why it is not possible or sensible to model it given.\\
+To improve the data quality, help editors avoid common mistakes and clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are however not firm rules and execptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. only certain values are allowed or more complex requirements on connected parts of the data graph, e.g. the value of a statement with this property should have certain statements. On the following page you can find table \ref{tab_basestats} which list the existing property constraints and a short description as well as classifying information which will be explained shortly. Afterwards the constraints will be explained in detail and either a basic approach for their modelling or reasoning why it is not possible or sensible to model it given.\\
 
 To apply a constraint to a property a statement <property> <P2302> <constraint> is added to the properties item page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. Note that a constrained statement from hereon denotes a statement whose predicate is a property that has a specific constraint. A simple example for this would be distinct values (Q21502410) stating that values of the property must be unique across all constrained statements. For this case no additional information regarding the constraint is necessary and violation could be found by surveying all constrained statements and comparing their values.\\
 Constraints can be further specified by using qualifiers on the constraint statement. These qualifiers are either optional or mandatory and may be applied once or multiple times. For example, the none of constraint (Q52558054) states that values for a specific property may not be in a set of disallowed values. These are specified as qualifiers using item of property constraint (P2305) on the constraint statement and require at least one such statement.\\
@@ -167,17 +173,39 @@ The single value constraint constrains the values a property may take on a singl
 \hline
 Requirement & constrained statement value \\
 \hline
-Qualifiers & \makecell{required property (P2306) -- 1 \\ property the item statement must have \\ allowed value (P2305) -- 0..* \\ values the item statement may have} \\
+Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
 \hline
-Violation & \makecell{no item statement with required property \\ all item statements with required property have no allowed value} \\
+Violation & \makecell{two constrained statements with same item and value \\ (exception: statements with separators as qualifiers with different values)} \\
 \hline
-Dependency &  all statements of a constrained item\\
+Dependency & \makecell{without separators: all constrained statements on one item \\ with separators: additionally all qualifiers with separators on those statements }\\
 \hline
-Rule features & negation \\
+Rule features & inequality, partially negation \\
 \hline
 \end{tabularx}
 \end{table}
 
-\chapter{Rules}
+If no separators are specified, two triple form a violation of this constraint if they a) belong to the same item, b) have the same constrained property, and c) have the same value.
+If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values.\\
+In the case without separators the modelling idea would be to find two triples tripleEDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers either equal or nonexistent.
+
+\subsection{Distinct values (Q21502410)}
+The distinct values constraint forbids the existence of two constrained statements with the same value.
+\begin{table}[H]
+\caption{distinct values constraint (Q21502410)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement value \\
+\hline
+Violation & two constrained statements with same value \\
+\hline
+Dependency & all constrained statements\\
+\hline
+Rule features & inequality \\
+\hline
+\end{tabularx}
+\end{table}
+To model the distinct values constraint it is necessary to find triples tripleEDB
+
+\chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
 \end{document}
