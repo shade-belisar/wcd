@@ -154,7 +154,7 @@ Qualifiers & \makecell{required property (P2306) -- 1 \\ property the item state
 \hline
 Violation & \makecell{no item statement with required property \\ all item statements with required property have no allowed value} \\
 \hline
-Dependency &  all statements of a constrained item\\
+Dependency &  all item statements\\
 \hline
 Rule features & negation \\
 \hline
@@ -259,6 +259,27 @@ Dependency & constrained statement, qualifier or reference \\
 \end{table}
 
 Since only three posibilities exist, this is equivalent to forbidding all other possibilities and the rules are simple mapping all of tripleEDB, qualifierEDB and referenceEDB with the constrained property that are not allowed.
+
+\subsection{Conflicts-with (Q21502838)}
+The conflicts with constraint forbids either certain statements or statements with a specific property on constrained items.
+\begin{table}[H]
+\caption{Conflicts-with constraint (Q21502838)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & item statement \\
+\hline
+Qualifiers & \makecell{conflicting property (P2306) -- 1 \\ property no item statement may have (with conflicting values if specified) \\
+conflicting values (P2305) -- 0..* \\ values that may not appear in item statements with the conflicting property} \\
+\hline
+Violation & \makecell{item statement with the conflicting property \\ item statement with the conflicting property and one of the conflicting values} \\
+\hline
+Dependency & all item statements \\
+\hline
+\end{tabularx}
+\end{table}
+The rule modelling can simply be done by choosing all tripleEDB with the constrained property and then all tripleEDB on the same item with the conflicting property, specifying the values as well if necessary.
+
+
 
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
