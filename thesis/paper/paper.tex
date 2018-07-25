@@ -68,8 +68,10 @@ Additional predicates modelling different preprocessing steps are explained in c
 Shorthand & Description \\
 \hline
 constrained statement & statement with the constrained property as predicate \\
+constrained qualifier & qualifier with the constrained property as predicate \\
+constrained reference & reference with the constrained property as predicate \\
+constrained item & item with a constrained statement \\
 item statement & statement on the same item as the constrained statement \\
-constrained item & item with a constrained statement
 \end{tabular}
 \end{table}
 \chapter{Property Constraints}
@@ -239,6 +241,24 @@ For the relations involving subclasses all transivite subclass relationships wou
 \subsection{Value type (Q21510865)}
 The value type constraint works like the type constraint (see \ref{subsec_type}) except the statement chains are required on the value of the constrained statement instead of the constrained item. It will thus not be expanded upon.
 
+\subsection{Property scope (Q53869507)}
+The property scope constraint specifies if a property may be used in a statement, qualifier or reference as predicate.
+\begin{table}[H]
+\caption{property scope constraint (Q53869507)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement \\
+\hline
+Qualifiers & \makecell{property scope (P5314) -- 1..3 \\ must be as main value (Q54828448), as qualifier (Q54828449) or as reference (Q54828450) \\ specifies allowed use in statements, qualifiers or references} \\
+\hline
+Violation & constrained statement in a position that is not allowed \\
+\hline
+Dependency & constrained statement, qualifier or reference \\
+\hline
+\end{tabularx}
+\end{table}
+
+Since only three posibilities exist, this is equivalent to forbidding all other possibilities and the rules are simple mapping all of tripleEDB, qualifierEDB and referenceEDB with the constrained property that are not allowed.
 
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
