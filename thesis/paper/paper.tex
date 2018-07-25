@@ -162,8 +162,14 @@ Rule features & negation \\
 An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the required property as predicate, or (if allowed values are specified) b2) has only statement using required property as predicate that do not use one of the allowed values as value.\\
 While condition a) can easily be tested by a tripleEDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is adressed in section [?].
 
-\subsection{Value requires statement (Q21510864)}
-The value requires statement constraint requires an additional statement on the value of a statement using the constrained property, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
+\subsection{Value requires statement (Q21510864)}\label{subsec_value_requires_statement}
+The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
+
+\subsection{Inverse (Q21510855)}\label{subsec_inverse}
+The inverse constraint requires an additional statement on the value of a constrained statement with a specific property and the constrained item as value. It is very similar to value requires statement (see \ref{subsec_value_requires_statement}), although it does not specify allowed values, since the required statement has one specific value: the constrained item. While this means it could not be modelled exactly as a value requires statement constraint, it would only require very small rule changes and will thus not be elaborated on.
+
+\subsection{Symmetric (Q21510862)}
+The symmetric constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an inverse constraint (see \ref{subsec_inverse}) with the same property as constrained property and required property and will not be elaborated on.
 
 \subsection{Single value (Q19474404)}
 The single value constraint constrains the values a property may take on a single item. A property marked with the single value constraint can have properties marked as separators, which define exceptions under specific circumstances.
@@ -204,7 +210,9 @@ Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
-To model the distinct values constraint it is necessary to find triples tripleEDB
+To model the distinct values constraint it is necessary to find triples tripleEDB with the constrained property and the same value whose statement id is unequal.
+
+
 
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
