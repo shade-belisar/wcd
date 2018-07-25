@@ -118,7 +118,7 @@ More comlex dependencies are also possible. A constraint can depend on all const
 
 
 \section{Wikidata constraints explained}
-This section will explain all interesting, meaning translatable or partially translatable, currently used property constraints on Wikidata. They will be presented rougly in descending order of the number of properties with this constraint, although constraints with very similar function will be explained directly after one another. Also, all constraints that were considered untranslatable are listed at the and, each with a short explanation as to why they were placed in that group.\\
+This section will explain all interesting, meaning translatable or partially translatable, currently used property constraints on Wikidata. They will be presented rougly in descending order of the number of properties with this constraint, although constraints with similar function will be explained directly after one another. Also, all constraints that were considered untranslatable are listed at the and, each with a short explanation as to why they were placed in that group.\\
 
 Every constraint will start with a table showing basic properties of the constraint. This includes the requirement, relevant qualifiers, possible violations of the constraint and the data the constraint depends on. The requirement states which part of the data graph in relation to the constrained statement are restricted or need to exist. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The dependecies list their relation to the constrained statement. Table \ref{tab_example_constraint} shows the formatting as an example.
 
@@ -212,9 +212,9 @@ Rule features & inequality \\
 \end{table}
 To model the distinct values constraint it is necessary to find triples tripleEDB with the constrained property and the same value whose statement id is unequal.
 
-\subsection{Type (Q21503250)}
+\subsection{Type (Q21503250)}\label{subsec_type}
 The type constraint requires the existence of either one of a specific statement (instanceOf <class>) or a chain of statements using subclassOf to connect directly (subclassOf* <class>)
-or via instanceOf (instanceOf/subclassOf* <class>) for all classes.
+or via instanceOf (instanceOf/subclassOf* <class>) for all classes on the constrained item.
 \begin{table}[H]
 \caption{type constraint (Q21503250)}
 \begin{tabularx}{\textwidth}{ ll X}
@@ -235,6 +235,10 @@ Rule features & inequality, negation \\
 
 If the relation is instanceOf, the constraint can be evaluated like multiple item requires statement constraints (see \ref{subsec_item_requires_statement}) by setting the required property to instanceOf (P31) and, for each created item requires statement constraint, the allowed value to one of the classes. \\
 For the relations involving subclasses all transivite subclass relationships would be concluded by setting a subclass relationship if a third item can be found that is subclass of one and subclassed by the other item. This would be extended with one step of instanceOf. A violation would then be any constrained item that is not subclass of any of the classes.
+
+\subsection{Value type (Q21510865)}
+The value type constraint works like the type constraint (see \ref{subsec_type}) except the statement chains are required on the value of the constrained statement instead of the constrained item. It will thus not be expanded upon.
+
 
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
