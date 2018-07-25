@@ -202,7 +202,7 @@ The distinct values constraint forbids the existence of two constrained statemen
 \hline
 Requirement & constrained statement value \\
 \hline
-Violation & two constrained statements with same value \\
+Violations & two constrained statements with same value \\
 \hline
 Dependency & all constrained statements\\
 \hline
@@ -212,7 +212,29 @@ Rule features & inequality \\
 \end{table}
 To model the distinct values constraint it is necessary to find triples tripleEDB with the constrained property and the same value whose statement id is unequal.
 
+\subsection{Type (Q21503250)}
+The type constraint requires the existence of either one of a specific statement (instanceOf <class>) or a chain of statements using subclassOf to connect directly (subclassOf* <class>)
+or via instanceOf (instanceOf/subclassOf* <class>) for all classes.
+\begin{table}[H]
+\caption{type constraint (Q21503250)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & chain of statements \\
+\hline
+Qualifiers & \makecell{relation (P2309) -- 1 \\ must be instance of (Q21503252), subclass of (Q21514624), \\ or instance or subclass of (Q30208840); \\ specifies the relation the constrained item must have to the classes\\
+class (P308) -- 1..* \\ entities that must be reached using the relation} \\
+\hline
+Violation & constrained item without relation to a class \\
+\hline
+Dependency & \makecell{statements of constrained items using instanceOf (P31) or subclassOf(P279) \\ all statements using subclassOf (P279) }\\
+\hline
+Rule features & inequality, negation \\
+\hline
+\end{tabularx}
+\end{table}
 
+If the relation is instanceOf, the constraint can be evaluated like multiple item requires statement constraints (see \ref{subsec_item_requires_statement}) by setting the required property to instanceOf (P31) and, for each created item requires statement constraint, the allowed value to one of the classes. \\
+For the relations involving subclasses all transivite subclass relationships would be concluded by setting a subclass relationship if a third item can be found that is subclass of one and subclassed by the other item. This would be extended with one step of instanceOf. A violation would then be any constrained item that is not subclass of any of the classes.
 
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
