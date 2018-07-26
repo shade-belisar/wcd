@@ -389,6 +389,26 @@ Dependency & constrained statement and entity type of the subject \\
 
 Since there are only three options (and only two in use), violations can be found without inequality by finding the tripleEDB with the constrained property whose subject is of the type that is not allowed, meaning either wikibase item or wikibase property.
 
+\subsection{None of (Q52558054)}
+The none of constraint restricts the values that the property may refer to by listing a set of values as forbidden.
+
+\begin{table}[H]
+\caption{None of constraint (Q52558054)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement \\
+\hline
+Qualifiers & \makecell{forbidden value (P2305) -- 1..* \\ values that may not appear in a constrained property} \\
+\hline
+Violation & \makecell{constrained statement with a forbidden value} \\
+\hline
+Dependency & constrained statement \\
+\hline
+\end{tabularx}
+\end{table}
+
+Modelling this constraint is very straightforward, since each forbidden value forms a property-value pair with the constrained statement that may not exists. Thus a violations is a tripleEDB with the constrained statement and a forbidden value.
+
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
 \end{document}
