@@ -285,7 +285,7 @@ The rule modelling can simply be done by choosing all tripleEDB with the constra
 The allowed units constraint specifies that a constrained statement may only have a unit that is in a set of specific units.
 
 \begin{table}[H]
-\caption{Conflicts-with constraint (Q21502838)}
+\caption{Allowed units constraint (Q21514353)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
 Requirement & constrained statement unit \\
@@ -302,6 +302,28 @@ Rule features & inequality \\
 \end{table}
 
 Modelling the constraint requires a predicate associating the value or the statement with its unit and inequality between every unit and all allowed units. Then a violation can be found by finding all tripleEDB with the constrained property and a unit unequal to all allowed units.
+
+\subsection{Allowed qualifiers (Q21510851)}
+The allowed qualifiers constraint specifies that only a limited set of properties may be used as qualifiers on a constrained statement.
+
+\begin{table}[H]
+\caption{Allowed qualifiers constraint (Q21510851)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & qualifier on constrained statement \\
+\hline
+Qualifiers & \makecell{	allowed qualifier (P2306) -- 1..* \\ qualifiers that the statement may have} \\
+\hline
+Violation & \makecell{constrained statement with a qualifier unequal to all allowed qualifiers} \\
+\hline
+Dependency & constrained statement and its qualifiers \\
+\hline
+Rule features & inequality \\
+\hline
+\end{tabularx}
+\end{table}
+
+To represent a violation of this constraint in datalog inequality between all specified allowed qualifiers and the properties of the qualifiers on constrained statements is required. A tripleEDB with the constrained property and a qualifierEDB on that statement with a property different from all allowed qualifiers would violate the constraint.
 
 
 \chapter{Rules}\label{cha_rules}
