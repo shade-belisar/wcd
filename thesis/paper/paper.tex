@@ -472,6 +472,20 @@ Rule features & inequality \\
 
 The constraint can be modelled if the inequality between a value of a qualifier property with all qualifier values is given. The violations could then be found by taking a tripleEDB with the constrained property and a qualifier with the qualifier property on the former statement whose value is unequal to all qualifier values.
 
+\section{Reasoning for unconsidered constraints}
+Multiple constraints have not been described above for different reasons. The most prominent of these is the format constraint (Q21502404) which specifies a regular expressions the values of the constrained property must adhere to. Evaluating these expressions would be theoretically possible but \\
+a) primarily results in a large amount of preprocessing and\\
+b) does not solve the question of negation, since violations would be values that do not conform to their required regular expression. \\
+
+The integer constraint (Q52848401), which requires values of a constrained property be integers (notably a quantity without decimal places), could easily be seen as a specific format constraint. While precomputing if a value is an integer or not could be done, it would mean that no actually relevant rules would be needed for the evaluation in datalog.
+
+Another problem that could not be sensibly solved is the comparison of values, needed for range (Q21510860), difference within range (Q21510854) and contemporary constraint (Q25796498). Range restricts the values of a constrained property within a certain range, difference within range specifies that two item statements should have values within a certain range and contemporary constraint specifies that subject and object of a constrained statement have to have coexisted at some point in time. While it would be possible to extract all values that might need to be compared and precompute the comparison, it would make most of the work precomputing and leave little to be done in datalog.\\
+
+Link constraint (Q54554025), requiring that constraint statements must have one or more references, requires a negation that cannot be concluded except by explicitly precomputing it, which makes the evaluation unnecessary. \\
+
+And finally commons link constraint (Q21510852) requires that values for a property should be valid links to to Wikimedia Commons. This validity cannot be testes from within datalog since there is no way to query the web for information.
+
+
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
 \end{document}
