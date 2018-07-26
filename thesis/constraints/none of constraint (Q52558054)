@@ -1,6 +1,6 @@
 none of constraint (Q52558054) - constrained property may not have specific values
 Qualifiers:
-	item of property constraint (P2305) - values that may not be object of a triple having the constrained property as predicate
+	forbidden value (P2305) - values that may not be object of a triple having the constrained property as predicate
 
 Violations:
 	statements with the constrained property as predicate and a forbidden value as object
