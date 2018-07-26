@@ -325,6 +325,27 @@ Rule features & inequality \\
 
 To represent a violation of this constraint in datalog inequality between all specified allowed qualifiers and the properties of the qualifiers on constrained statements is required. A tripleEDB with the constrained property and a qualifierEDB on that statement with a property different from all allowed qualifiers would violate the constraint.
 
+\subsection{Mandatory qualifier (Q21510856)}
+The mandatory qualifier constraint requires that a constrained statement has a qualifier with a specific property.
+
+\begin{table}[H]
+\caption{Mandatory qualifier constraint (Q21510856)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & qualifier on constrained statement \\
+\hline
+Qualifiers & \makecell{required property (P2306) -- 1 \\ qualifier that the statement must have} \\
+\hline
+Violation & \makecell{constrained statement without a qualifier with the required property} \\
+\hline
+Dependency & constrained statement and its qualifiers \\
+\hline
+Rule features & negation \\
+\hline
+\end{tabularx}
+\end{table}
+
+To find violations of this constraint one would find a tripleEDB with the constrained property, but where no qualifierEDB for the statement and with the required property exists.
 
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
