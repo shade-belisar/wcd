@@ -409,6 +409,26 @@ Dependency & constrained statement \\
 
 Modelling this constraint is very straightforward, since each forbidden value forms a property-value pair with the constrained statement that may not exists. Thus a violations is a tripleEDB with the constrained statement and a forbidden value.
 
+\subsection{Multi-value (Q21510857)}
+The multi-value constraint specifies that the constrained property should appear in multiple statements of an item or none.
+
+\begin{table}[H]
+\caption{Multi-value constraint (Q21510857)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & item statement \\
+\hline
+Violation & \makecell{constrained item with exactly one constrained statement} \\
+\hline
+Dependency & all item statements \\
+\hline
+Rule features & count \\
+\hline
+\end{tabularx}
+\end{table}
+
+To model this constraint a count of statements using the constrained property per item would be needed. Then a violation would be any constrained item with a count of one for the constrained property. Since there is no need for arbitrarily large counts, but only for the difference between one and two, this could be solved explicitly.
+
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
 \end{document}
