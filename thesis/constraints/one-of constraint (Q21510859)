@@ -9,7 +9,7 @@ Violations
 Dependencies
 	statements with the constrained property as predicate
 
-the one-of constraint limits the values a property may use. Any statement with the property and a value other than one of the allowed values is a violation.
+The one-of constraint limits the values a property may use. Any statement with the property and a value other than one of the allowed values is a violation.
 The rule is:
 	violation_long(STATEMENT, X, constrainedPropertyConstant, Y) :- tripleEDB(STATEMENT, X, constrainedPropertyConstant, Y), unequal(<allowedValues>, Y)
 with unequal(<allowedValues>, Y) for all allowed values.
