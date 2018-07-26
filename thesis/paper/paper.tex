@@ -449,6 +449,29 @@ Rule features & count \\
 
 Modelling the constraint means a count of all constrained statements with rank preferred is necessary, with a violation constituted if an item has a count of two or higher. Since it is only needed to differentiate between one and many, the rules could be written explicitly.
 
+\subsection{One-of qualifier value (Q52712340)}
+The one-of qualifier value constraint restricts which values may be used on a qualifier with a given property on a constrained statement.
+
+\begin{table}[H]
+\caption{One-of qualifier value constraint (Q52712340)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement qualifier value \\
+\hline
+Qualifiers: & \makecell{qualifier property (P2306) -- 1 \\ property of the restricted qualifier\\
+qualifier values (P2305) -- 1..* \\ values the qualifiers may take}\\
+\hline
+Violation & \makecell{constrained statement with a qualifier with the qualifier property and a value unequal to all qualifier values} \\
+\hline
+Dependency & constrained item and qualifiers with the qualifier property \\
+\hline
+Rule features & inequality \\
+\hline
+\end{tabularx}
+\end{table}
+
+The constraint can be modelled if the inequality between a value of a qualifier property with all qualifier values is given. The violations could then be found by taking a tripleEDB with the constrained property and a qualifier with the qualifier property on the former statement whose value is unequal to all qualifier values.
+
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
 \end{document}
