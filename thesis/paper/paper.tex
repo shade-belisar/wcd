@@ -34,9 +34,9 @@ Bild"ubernahmen zitieren.}
 \begin{document}
 \chapter{Introduction/Preliminaries}
 Motivation
-\cite{test}
+\newpage
 \section{Wikidata}
-Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). These store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. A value is one of several datatypes noted in table \ref{tab_datatypes}. \\
+Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). These store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P respectively. A value is one of several datatypes noted in table \ref{tab_datatypes}, although it is also possible to use none or some as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the datatype it accepts as an object. \\
 
 \begin{table}[H]
 \caption{wikidata datatypes}\label{tab_datatypes}
@@ -45,14 +45,16 @@ Datatype & Fields & Description \\
 \hline
 string & string (string) & simple string literal \\
 globecoordinate & \makecell{latitude (float) \\ longitude (float) \\ precision (float) \\ globe(URI)} & \makecell{coordinates on a given celestial body \\ or geographic standard} \\
-quantity & \makecell {amount (decimal) \\ upperBound (decimal) \\ lowerBound (decimal) \\ unit (URI or 1)} & quantity of a specified unit (or none) \\ with uncertainty \\
+quantity & \makecell {amount (decimal) \\ upperBound (decimal) \\ lowerBound (decimal) \\ unit (URI or 1)} & \makecell{quantity of a specified unit (or none) \\ with uncertainty} \\
 time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} & \makecell {time as a string according to calendarmodel \\ (julian or gregorian),\\ with precision mapping to orders of magnitude \\ (eg. 10 years, months)} \\
 
 
 \end{tabularx}
 \end{table}
 
-While this is simliar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows, in essence, to store additional information about statements. This is done via a statement id, which is assigend to every triple storing information about an item. 
+While this is simliar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows, to store additional information about statements. This is done via a statement ID, which is assigend to every triple storing information about an item. Every statement can be references by qualifiers and references which contain a predicate and an object, but have no item as subject but instead the statement ID. Qualifiers provide contextual information for statements. The most common context is the timeframe in which the statement was accurate, e.g. stating the start and end times of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. References are information that supports the claim by citing the source and possibly additional information like when it was retrieved or when the source was published.
+
+Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
 \section{Datalog}
 Datalog is a logic programming language. It is fully delarative and uses simple rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a constant, which is a given [string]? expressing a fix point. In the context of Wikidata any item or property, e.g. the universe (Q1) or head of government (P6), could be represented as a constant.
 \section{Representation}
@@ -278,7 +280,6 @@ Dependency & all item statements \\
 \end{tabularx}
 \end{table}
 The rule modelling can simply be done by choosing all tripleEDB with the constrained property and then all tripleEDB on the same item with the conflicting property, specifying the values as well if necessary.
-
 
 
 \chapter{Rules}\label{cha_rules}
