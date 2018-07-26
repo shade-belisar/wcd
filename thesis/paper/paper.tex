@@ -429,6 +429,26 @@ Rule features & count \\
 
 To model this constraint a count of statements using the constrained property per item would be needed. Then a violation would be any constrained item with a count of one for the constrained property. Since there is no need for arbitrarily large counts, but only for the difference between one and two, this could be solved explicitly.
 
+\subsection{Single best value (Q52060874)}
+The single best value constraint requires that only one constrained statement per item has the rank preferred.
+
+\begin{table}[H]
+\caption{Single best value constraint (Q52060874)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & item statement rank \\
+\hline
+Violation & \makecell{items with two constrained statements with rank preferred} \\
+\hline
+Dependency & all item statements and their rank \\
+\hline
+Rule features & count \\
+\hline
+\end{tabularx}
+\end{table}
+
+Modelling the constraint means a count of all constrained statements with rank preferred is necessary, with a violation constituted if an item has a count of two or higher. Since it is only needed to differentiate between one and many, the rules could be written explicitly.
+
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
 \end{document}
