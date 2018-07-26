@@ -281,6 +281,28 @@ Dependency & all item statements \\
 \end{table}
 The rule modelling can simply be done by choosing all tripleEDB with the constrained property and then all tripleEDB on the same item with the conflicting property, specifying the values as well if necessary.
 
+\subsection{Allowed units (Q21514353)}
+The allowed units constraint specifies that a constrained statement may only have a unit that is in a set of specific units.
+
+\begin{table}[H]
+\caption{Conflicts-with constraint (Q21502838)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement unit \\
+\hline
+Qualifiers & \makecell{allowed unit (P2305) -- 1..* \\ units that the statement may have (or none for dimensionless units)} \\
+\hline
+Violation & \makecell{constrained statement with a unit unequal to all allowed units} \\
+\hline
+Dependency & constrained statement and its unit \\
+\hline
+Rule features & inequality \\
+\hline
+\end{tabularx}
+\end{table}
+
+Modelling the constraint requires a predicate associating the value or the statement with its unit and inequality between every unit and all allowed units. Then a violation can be found by finding all tripleEDB with the constrained property and a unit unequal to all allowed units.
+
 
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
