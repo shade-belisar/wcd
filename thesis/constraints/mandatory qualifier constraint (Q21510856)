@@ -1,7 +1,7 @@
 mandatory qualifier constraint (Q21510856) - statements with the constrained property as predicate must have a qualifier with a specific property as predicate
 
 Qualifier:
-	required qualifier - the property which must be used in a qualifier on every statement with the constrained property
+	required qualifier (P2306) - the property which must be used in a qualifier on every statement with the constrained property
 
 Violation:
 	statements without a qualifier using the requires property
