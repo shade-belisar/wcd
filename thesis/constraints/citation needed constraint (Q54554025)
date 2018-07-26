@@ -1,0 +1,12 @@
+citation needed constraint (Q54554025) - statements with the constrained property as predicate should have one or more references
+
+Violations:
+	statements with the constrained property as predicate and no references
+
+Dependency:
+	statements with the constrained property and all their references
+
+The citation needed constraint states that a statement with the constrained property as predicate should have at least one reference.
+It is violated by a statement with the constrained property but no reference.
+
+Would not know how to implement this at the moment.

@@ -1,0 +1,11 @@
+single best value constraint (Q52060874) - items with a statement using the constrained property as predicate should only have one such statement with rank preferred
+
+Violations:
+	two distinct statements with the constrained property as predicate and preferred rank on the same item
+
+Dependencies:
+	all statements on an item with the constrained property and their rank
+
+The single best value constraint requires that only one statement with the constrained property per item has the rank preferred.
+It is violated if there are two or more statements on the same item with the constrained property and the rank preferred.
+To model this one would need to count all statements with a specific property and rank preferred and output all items with more then one.

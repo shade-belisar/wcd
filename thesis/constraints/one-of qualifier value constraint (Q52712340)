@@ -1,0 +1,14 @@
+one-of qualifier value constraint (Q52712340) - qualifiers on statements with the constrained property as predicate with specific properties may only use specific values
+
+Qualifiers:
+	qualifier property (P2306) - the qualifier whose values are restricted
+	qualifier values (P2305) - contains the values that are allowed for the qualifier
+
+Violations:
+	qualifiers on statements with the constrained property as predicate with the qualifier property and a value different from all qualifier values
+
+Dependencies:
+	statement with the constrained property and all qualifiers with the qualifier property
+
+The one-of qualifier value constraint restricts which values may be used on a qualifier with the qualifier property on a statement with the constrained property as predicate.
+A violation would thus be any statement with the constrained property and a qualifier with the qualifier property that has a value that is unequal to all qualifier values.

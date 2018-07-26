@@ -1,0 +1,13 @@
+allowed entity types constraint (Q52004125) - property may only be used on specific entity type
+
+Qualifiers:
+	allowed entity type (P2305) - Wikibase item (Q29934200), Wikibase property (Q29934218) or lexeme (Q51885771), specifies the type the property may be used on
+
+Violations:
+	statements using the constrained property as predicate on entities of a type that is not allowed
+
+Dependencies:
+	statement with the constrained property and its type
+
+The allowed entity type constraint limits if a property may be used on an item, a property or a lexeme (effectively item or property since lexemes are not yet deployed).
+A violations would thus occur if a statement using the constrained property as predicate had the forbidden (not-allowed) entity type.
