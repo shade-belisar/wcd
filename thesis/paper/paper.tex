@@ -347,6 +347,28 @@ Rule features & negation \\
 
 To find violations of this constraint one would find a tripleEDB with the constrained property, but where no qualifierEDB for the statement and with the required property exists.
 
+\subsection{One-of (Q21510859)}
+The one-of constraint limits the values a property may use to a set of given values.
+
+\begin{table}[H]
+\caption{One-of constraint (Q21510859)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement \\
+\hline
+Qualifiers & \makecell{allowed values (P2305) -- 1..* \\ values that may be used in the constrained statement} \\
+\hline
+Violation & \makecell{constrained statement with a value unequal to all allowed values} \\
+\hline
+Dependency & constrained statement \\
+\hline
+Rule features & inequality \\
+\hline
+\end{tabularx}
+\end{table}
+
+Modelling the one-of constraint requires a rule finding a tripleEDB with the constrained property whose value is unequal to all allowed values, meaning the inequality between each value of constrained statements and all allowed values must be given.
+
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
 \end{document}
