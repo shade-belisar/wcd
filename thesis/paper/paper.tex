@@ -369,6 +369,26 @@ Rule features & inequality \\
 
 Modelling the one-of constraint requires a rule finding a tripleEDB with the constrained property whose value is unequal to all allowed values, meaning the inequality between each value of constrained statements and all allowed values must be given.
 
+\subsection{Allowed entity types (Q52004125)}
+The allowed entity types constraint limits if a property may be used on an item, a property or a lexeme, although lexemes are not yet deployed.
+
+\begin{table}[H]
+\caption{Allowed entity types constraint (Q52004125)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement \\
+\hline
+Qualifiers & \makecell{allowed entity type (P2305) -- 1..3 \\ must be wikibase item (Q29934200), wikibase property (Q29934218) \\ or lexeme (Q51885771); \\ specifies the type the property may be used on} \\
+\hline
+Violation & \makecell{constrained statement on an entity of a type unequal to all allowed types} \\
+\hline
+Dependency & constrained statement and entity type of the subject \\
+\hline
+\end{tabularx}
+\end{table}
+
+Since there are only three options (and only two in use), violations can be found without inequality by finding the tripleEDB with the constrained property whose subject is of the type that is not allowed, meaning either wikibase item or wikibase property.
+
 \chapter{Rules}\label{cha_rules}
 \chapter{Evaluation/Comparison}
 \end{document}
