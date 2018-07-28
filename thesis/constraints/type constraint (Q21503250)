@@ -1,6 +1,6 @@
 type constraint (Q21503250) - item with a statement using the constrained property must be in a relation to an entity using instanceOf (P31), subclassOf (P279) or both as specified
 Qualifiers:
-	class (P308) - the entities the item with the constrained property has to be in relation with
+	class (P2308) - the entities the item with the constrained property has to be in relation with
 	relation (P2309) - specifies the relation the item should have with the class (either instanceOf (Q21503252)(P31), subclassOf (Q21514624)(P279) or instance- or subclassOf (Q30208840); note that subclassOf counts repeatedly)
 
 Violations:
