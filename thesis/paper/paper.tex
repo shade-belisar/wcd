@@ -158,106 +158,6 @@ Rule features & features needed (missing if no features needed) \\
 \end{tabularx}
 \end{table}
 
-\newpage
-\subsection{Item requires statement (Q21503247)}\label{subsec_item_requires_statement}
-The item requires statement constraint requires an additional statement on an item with a statement using the constrained property, possibly also using a specific value from the list of allowed values.
-\begin{table}[H]
-\caption{item requires statement constraint (Q21503247)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Requirement & item statement \\
-\hline
-Qualifiers & \makecell{required property (P2306) -- 1 \\ property the item statement must have \\ allowed value (P2305) -- 0..* \\ values the item statement may have} \\
-\hline
-Violation & \makecell{no item statement with required property \\ all item statements with required property have no allowed value} \\
-\hline
-Dependency &  all item statements\\
-\hline
-Rule features & negation \\
-\hline
-\end{tabularx}
-\end{table}
-
-An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the required property as predicate, or (if allowed values are specified) b2) has only statement using required property as predicate that do not use one of the allowed values as value.\\
-While condition a) can easily be tested by a tripleEDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is addressed in section [?].
-
-\subsection{Value requires statement (Q21510864)}\label{subsec_value_requires_statement}
-The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
-
-\subsection{Inverse (Q21510855)}\label{subsec_inverse}
-The inverse constraint requires an additional statement on the value of a constrained statement with a specific property and the constrained item as value. It is very similar to value requires statement (see \ref{subsec_value_requires_statement}), although it does not specify allowed values, since the required statement has one specific value: the constrained item. While this means it could not be modelled exactly as a value requires statement constraint, it would only require very small rule changes and will thus not be elaborated on.
-
-\subsection{Symmetric (Q21510862)}
-The symmetric constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an inverse constraint (see \ref{subsec_inverse}) with the same property as constrained property and required property and will not be elaborated on.
-
-\subsection{Single value (Q19474404)}
-The single value constraint constrains the values a property may take on a single item. A property marked with the single value constraint can have properties marked as separators, which define exceptions under specific circumstances.
-\begin{table}[H]
-\caption{single value constraint (Q19474404)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Requirement & constrained statement value \\
-\hline
-Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
-\hline
-Violation & \makecell{two constrained statements with same item and value \\ (exception: statements with separators as qualifiers with different values)} \\
-\hline
-Dependency & \makecell{without separators: all constrained statements on one item \\ with separators: additionally all qualifiers with separators on those statements }\\
-\hline
-Rule features & inequality, partially negation \\
-\hline
-\end{tabularx}
-\end{table}
-
-If no separators are specified, two triple form a violation of this constraint if they a) belong to the same item, b) have the same constrained property, and c) have the same value.
-If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values.\\
-In the case without separators the modelling idea would be to find two triples tripleEDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers either equal or non-existent.
-
-\subsection{Distinct values (Q21502410)}
-The distinct values constraint forbids the existence of two constrained statements with the same value.
-\begin{table}[H]
-\caption{distinct values constraint (Q21502410)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Requirement & constrained statement value \\
-\hline
-Violations & two constrained statements with same value \\
-\hline
-Dependency & all constrained statements\\
-\hline
-Rule features & inequality \\
-\hline
-\end{tabularx}
-\end{table}
-To model the distinct values constraint it is necessary to find triples tripleEDB with the constrained property and the same value whose statement id is unequal.
-
-\subsection{Type (Q21503250)}\label{subsec_type}
-The type constraint requires the existence of either one of a specific statement (instanceOf <class>) or a chain of statements using subclassOf to connect directly (subclassOf* <class>)
-or via instanceOf (instanceOf/subclassOf* <class>) for all classes on the constrained item.
-\begin{table}[H]
-\caption{type constraint (Q21503250)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Requirement & chain of statements \\
-\hline
-Qualifiers & \makecell{relation (P2309) -- 1 \\ must be instance of (Q21503252), subclass of (Q21514624), \\ or instance or subclass of (Q30208840); \\ specifies the relation the constrained item must have to the classes\\
-class (P2308) -- 1..* \\ entities that must be reached using the relation} \\
-\hline
-Violation & constrained item without relation to a class \\
-\hline
-Dependency & \makecell{statements of constrained items using instanceOf (P31) or subclassOf(P279) \\ all statements using subclassOf (P279) }\\
-\hline
-Rule features & inequality, negation \\
-\hline
-\end{tabularx}
-\end{table}
-
-If the relation is instanceOf, the constraint can be evaluated like multiple item requires statement constraints (see \ref{subsec_item_requires_statement}) by setting the required property to instanceOf (P31) and, for each created item requires statement constraint, the allowed value to one of the classes. \\
-For the relations involving subclasses all transitive subclass relationships would be concluded by setting a subclass relationship if a third item can be found that is subclass of one and subclassed by the other item. This would be extended with one step of instanceOf. A violation would then be any constrained item that is not subclass of any of the classes.
-
-\subsection{Value type (Q21510865)}
-The value type constraint works like the type constraint (see \ref{subsec_type}) except the statement chains are required on the value of the constrained statement instead of the constrained item. It will thus not be expanded upon.
-
 \subsection{Property scope (Q53869507)}
 The property scope constraint specifies if a property may be used in a statement, qualifier or reference as predicate.
 \begin{table}[H]
@@ -295,6 +195,64 @@ Dependency & all item statements \\
 \end{tabularx}
 \end{table}
 The rule modelling can simply be done by choosing all tripleEDB with the constrained property and then all tripleEDB on the same item with the conflicting property, specifying the values as well if necessary.
+
+\subsection{Allowed entity types (Q52004125)}
+The allowed entity types constraint limits if a property may be used on an item, a property or a lexeme, although lexemes are not yet deployed.
+
+\begin{table}[H]
+\caption{Allowed entity types constraint (Q52004125)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement \\
+\hline
+Qualifiers & \makecell{allowed entity type (P2305) -- 1..3 \\ must be wikibase item (Q29934200), wikibase property (Q29934218) \\ or lexeme (Q51885771); \\ specifies the type the property may be used on} \\
+\hline
+Violation & \makecell{constrained statement on an entity of a type unequal to all allowed types} \\
+\hline
+Dependency & constrained statement and entity type of the subject \\
+\hline
+\end{tabularx}
+\end{table}
+
+Since there are only three options (and only two in use), violations can be found without inequality by finding the tripleEDB with the constrained property whose subject is of the type that is not allowed, meaning either wikibase item or wikibase property.
+
+\subsection{None of (Q52558054)}
+The none of constraint restricts the values that the property may refer to by listing a set of values as forbidden.
+
+\begin{table}[H]
+\caption{None of constraint (Q52558054)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement \\
+\hline
+Qualifiers & \makecell{forbidden value (P2305) -- 1..* \\ values that may not appear in a constrained property} \\
+\hline
+Violation & \makecell{constrained statement with a forbidden value} \\
+\hline
+Dependency & constrained statement \\
+\hline
+\end{tabularx}
+\end{table}
+
+Modelling this constraint is very straightforward, since each forbidden value forms a property-value pair with the constrained statement that may not exists. Thus a violations is a tripleEDB with the constrained statement and a forbidden value.
+
+\subsection{Distinct values (Q21502410)}
+The distinct values constraint forbids the existence of two constrained statements with the same value.
+\begin{table}[H]
+\caption{distinct values constraint (Q21502410)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement value \\
+\hline
+Violations & two constrained statements with same value \\
+\hline
+Dependency & all constrained statements\\
+\hline
+Rule features & inequality \\
+\hline
+\end{tabularx}
+\end{table}
+To model the distinct values constraint it is necessary to find triples tripleEDB with the constrained property and the same value whose statement id is unequal.
 
 \subsection{Allowed units (Q21514353)}
 The allowed units constraint specifies that a constrained statement may only have a unit that is in a set of specific units.
@@ -340,28 +298,6 @@ Rule features & inequality \\
 
 To represent a violation of this constraint in datalog inequality between all specified allowed qualifiers and the properties of the qualifiers on constrained statements is required. A tripleEDB with the constrained property and a qualifierEDB on that statement with a property different from all allowed qualifiers would violate the constraint.
 
-\subsection{Mandatory qualifier (Q21510856)}
-The mandatory qualifier constraint requires that a constrained statement has a qualifier with a specific property.
-
-\begin{table}[H]
-\caption{Mandatory qualifier constraint (Q21510856)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Requirement & qualifier on constrained statement \\
-\hline
-Qualifiers & \makecell{required property (P2306) -- 1 \\ qualifier that the statement must have} \\
-\hline
-Violation & \makecell{constrained statement without a qualifier with the required property} \\
-\hline
-Dependency & constrained statement and its qualifiers \\
-\hline
-Rule features & negation \\
-\hline
-\end{tabularx}
-\end{table}
-
-To find violations of this constraint one would find a tripleEDB with the constrained property, but where no qualifierEDB for the statement and with the required property exists.
-
 \subsection{One-of (Q21510859)}
 The one-of constraint limits the values a property may use to a set of given values.
 
@@ -383,66 +319,6 @@ Rule features & inequality \\
 \end{table}
 
 Modelling the one-of constraint requires a rule finding a tripleEDB with the constrained property whose value is unequal to all allowed values, meaning the inequality between each value of constrained statements and all allowed values must be given.
-
-\subsection{Allowed entity types (Q52004125)}
-The allowed entity types constraint limits if a property may be used on an item, a property or a lexeme, although lexemes are not yet deployed.
-
-\begin{table}[H]
-\caption{Allowed entity types constraint (Q52004125)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Requirement & constrained statement \\
-\hline
-Qualifiers & \makecell{allowed entity type (P2305) -- 1..3 \\ must be wikibase item (Q29934200), wikibase property (Q29934218) \\ or lexeme (Q51885771); \\ specifies the type the property may be used on} \\
-\hline
-Violation & \makecell{constrained statement on an entity of a type unequal to all allowed types} \\
-\hline
-Dependency & constrained statement and entity type of the subject \\
-\hline
-\end{tabularx}
-\end{table}
-
-Since there are only three options (and only two in use), violations can be found without inequality by finding the tripleEDB with the constrained property whose subject is of the type that is not allowed, meaning either wikibase item or wikibase property.
-
-\subsection{None of (Q52558054)}
-The none of constraint restricts the values that the property may refer to by listing a set of values as forbidden.
-
-\begin{table}[H]
-\caption{None of constraint (Q52558054)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Requirement & constrained statement \\
-\hline
-Qualifiers & \makecell{forbidden value (P2305) -- 1..* \\ values that may not appear in a constrained property} \\
-\hline
-Violation & \makecell{constrained statement with a forbidden value} \\
-\hline
-Dependency & constrained statement \\
-\hline
-\end{tabularx}
-\end{table}
-
-Modelling this constraint is very straightforward, since each forbidden value forms a property-value pair with the constrained statement that may not exists. Thus a violations is a tripleEDB with the constrained statement and a forbidden value.
-
-\subsection{Multi-value (Q21510857)}
-The multi-value constraint specifies that the constrained property should appear in multiple statements of an item or none.
-
-\begin{table}[H]
-\caption{Multi-value constraint (Q21510857)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Requirement & item statement \\
-\hline
-Violation & \makecell{constrained item with exactly one constrained statement} \\
-\hline
-Dependency & all item statements \\
-\hline
-Rule features & count \\
-\hline
-\end{tabularx}
-\end{table}
-
-To model this constraint a count of statements using the constrained property per item would be needed. Then a violation would be any constrained item with a count of one for the constrained property. Since there is no need for arbitrarily large counts, but only for the difference between one and two, this could be solved explicitly.
 
 \subsection{Single best value (Q52060874)}
 The single best value constraint requires that only one constrained statement per item has the rank preferred.
@@ -487,6 +363,129 @@ Rule features & inequality \\
 
 The constraint can be modelled if the inequality between a value of a qualifier property with all qualifier values is given. The violations could then be found by taking a tripleEDB with the constrained property and a qualifier with the qualifier property on the former statement whose value is unequal to all qualifier values.
 
+\subsection{Item requires statement (Q21503247)}\label{subsec_item_requires_statement}
+The item requires statement constraint requires an additional statement on an item with a statement using the constrained property, possibly also using a specific value from the list of allowed values.
+\begin{table}[H]
+\caption{item requires statement constraint (Q21503247)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & item statement \\
+\hline
+Qualifiers & \makecell{required property (P2306) -- 1 \\ property the item statement must have \\ allowed value (P2305) -- 0..* \\ values the item statement may have} \\
+\hline
+Violation & \makecell{no item statement with required property \\ all item statements with required property have no allowed value} \\
+\hline
+Dependency &  all item statements\\
+\hline
+Rule features & negation \\
+\hline
+\end{tabularx}
+\end{table}
+
+An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the required property as predicate, or (if allowed values are specified) b2) has only statement using required property as predicate that do not use one of the allowed values as value.\\
+While condition a) can easily be tested by a tripleEDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is addressed in section [?].
+
+\subsection{Value requires statement (Q21510864)}\label{subsec_value_requires_statement}
+The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
+
+\subsection{Inverse (Q21510855)}\label{subsec_inverse}
+The inverse constraint requires an additional statement on the value of a constrained statement with a specific property and the constrained item as value. It is very similar to value requires statement (see \ref{subsec_value_requires_statement}), although it does not specify allowed values, since the required statement has one specific value: the constrained item. While this means it could not be modelled exactly as a value requires statement constraint, it would only require very small rule changes and will thus not be elaborated on.
+
+\subsection{Symmetric (Q21510862)}
+The symmetric constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an inverse constraint (see \ref{subsec_inverse}) with the same property as constrained property and required property and will not be elaborated on.
+
+\subsection{Multi-value (Q21510857)}
+The multi-value constraint specifies that the constrained property should appear in multiple statements of an item or none.
+
+\begin{table}[H]
+\caption{Multi-value constraint (Q21510857)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & item statement \\
+\hline
+Violation & \makecell{constrained item with exactly one constrained statement} \\
+\hline
+Dependency & all item statements \\
+\hline
+Rule features & count \\
+\hline
+\end{tabularx}
+\end{table}
+
+To model this constraint a count of statements using the constrained property per item would be needed. Then a violation would be any constrained item with a count of one for the constrained property. Since there is no need for arbitrarily large counts, but only for the difference between one and two, this could be solved explicitly.
+
+\subsection{Single value (Q19474404)}
+The single value constraint constrains the values a property may take on a single item. A property marked with the single value constraint can have properties marked as separators, which define exceptions under specific circumstances.
+\begin{table}[H]
+\caption{single value constraint (Q19474404)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & constrained statement value \\
+\hline
+Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
+\hline
+Violation & \makecell{two constrained statements with same item and value \\ (exception: statements with separators as qualifiers with different values)} \\
+\hline
+Dependency & \makecell{without separators: all constrained statements on one item \\ with separators: additionally all qualifiers with separators on those statements }\\
+\hline
+Rule features & inequality, partially negation \\
+\hline
+\end{tabularx}
+\end{table}
+
+If no separators are specified, two triple form a violation of this constraint if they a) belong to the same item, b) have the same constrained property, and c) have the same value.
+If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values.\\
+In the case without separators the modelling idea would be to find two triples tripleEDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers either equal or non-existent.
+
+\subsection{Mandatory qualifier (Q21510856)}
+The mandatory qualifier constraint requires that a constrained statement has a qualifier with a specific property.
+
+\begin{table}[H]
+\caption{Mandatory qualifier constraint (Q21510856)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & qualifier on constrained statement \\
+\hline
+Qualifiers & \makecell{required property (P2306) -- 1 \\ qualifier that the statement must have} \\
+\hline
+Violation & \makecell{constrained statement without a qualifier with the required property} \\
+\hline
+Dependency & constrained statement and its qualifiers \\
+\hline
+Rule features & negation \\
+\hline
+\end{tabularx}
+\end{table}
+
+To find violations of this constraint one would find a tripleEDB with the constrained property, but where no qualifierEDB for the statement and with the required property exists.
+
+\subsection{Type (Q21503250)}\label{subsec_type}
+The type constraint requires the existence of either one of a specific statement (instanceOf <class>) or a chain of statements using subclassOf to connect directly (subclassOf* <class>)
+or via instanceOf (instanceOf/subclassOf* <class>) for all classes on the constrained item.
+\begin{table}[H]
+\caption{type constraint (Q21503250)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Requirement & chain of statements \\
+\hline
+Qualifiers & \makecell{relation (P2309) -- 1 \\ must be instance of (Q21503252), subclass of (Q21514624), \\ or instance or subclass of (Q30208840); \\ specifies the relation the constrained item must have to the classes\\
+class (P2308) -- 1..* \\ entities that must be reached using the relation} \\
+\hline
+Violation & constrained item without relation to a class \\
+\hline
+Dependency & \makecell{statements of constrained items using instanceOf (P31) or subclassOf(P279) \\ all statements using subclassOf (P279) }\\
+\hline
+Rule features & inequality, negation \\
+\hline
+\end{tabularx}
+\end{table}
+
+If the relation is instanceOf, the constraint can be evaluated like multiple item requires statement constraints (see \ref{subsec_item_requires_statement}) by setting the required property to instanceOf (P31) and, for each created item requires statement constraint, the allowed value to one of the classes. \\
+For the relations involving subclasses all transitive subclass relationships would be concluded by setting a subclass relationship if a third item can be found that is subclass of one and subclassed by the other item. This would be extended with one step of instanceOf. A violation would then be any constrained item that is not subclass of any of the classes.
+
+\subsection{Value type (Q21510865)}
+The value type constraint works like the type constraint (see \ref{subsec_type}) except the statement chains are required on the value of the constrained statement instead of the constrained item. It will thus not be expanded upon.
+
 \section{Reasoning for unconsidered constraints}
 Multiple constraints have not been described above for different reasons. The most prominent of these is the format constraint (Q21502404) which specifies a regular expressions the values of the constrained property must adhere to. Evaluating these expressions would be theoretically possible but \\
 a) primarily results in a large amount of preprocessing and\\
@@ -526,7 +525,9 @@ this would increase the amount of facts loaded significantly while almost not re
 
 The task for each constraint is thus: Given the constraint and a constrained property, potentially with qualifiers, which rule finds all violations of the rule in a given set of triples, qualifiers and references if applicable? The necessary preprocessing and filtering will be listed and the amount of rules necessary to model the constrained depending on the number of qualifiers given.
 
-\section{No preprocessing}\label{sec_no_preprocessing}
+
+
+\section{No additional preprocessing}\label{sec_no_preprocessing}
 
 \section{Inequality}\label{sec_inequality}
 
