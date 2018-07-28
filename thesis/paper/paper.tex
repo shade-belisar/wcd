@@ -53,11 +53,23 @@ While this is similar to RDF and Wikidata has in fact been exported as RDF \cite
 
 Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
 \section{Datalog}
-Datalog is a logic programming language. It is fully declarative and uses simple rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a \emph{constant}, which will be denoted as \(someConstant\). In the context of Wikidata any item or property, e.g. Earth (Q2) or head of government (P6), could be represented as a constant. Relations in datalog are expressed as \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate statement\([3]\) as an example. This would be used to express the \emph{subject}-\emph{predicate}-\emph{object} relation with each position representing one part of the triple.\\
+Datalog is a logic programming language. It is fully declarative and uses simple rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a \emph{constant}, which will be denoted as someConstant. In the context of Wikidata any item or property, e.g. Earth (Q2) or head of government (P6), could be represented as a constant. Relations in datalog are expressed as \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate statement\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
 Additionally, datalog also knows \emph{variables}, which will be capitalized like \(X\). Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form predicate\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
 Atoms are the building blocks of \emph{rules}, which are used to derive information in datalog. Given atoms \(C\) and \(B_n\), a rule takes the form \(C \leftarrow P_1 \wedge \ldots \wedge P_m\), with \(C\) being the conclusion and \(B_1 \wedge \ldots \wedge B_m\) the premise. If the premise does not contain any atoms such a rule is called a \emph{fact}, or a \emph{ground rule} if it additionally only uses constants. A finite set of rules forms a \emph{program}.\\
 
 Within the rule predicates we can differentiate between two different schemas: the \emph{extensional schema} and the \emph{intensional schema}, called EDB and IDB \todo{Shouldn't this be called \\EDP/IDP?} (extensional/intensional database predicate). An EDB may only occur in the premise of a rule, meaning it can never be derived. All others (predicates that appear in the conclusion at least once) are IDB.
+
+\todo[inline]{Explain the relation to FO-logic?}
+
+For the following example taken from Wikidata descriptive names will be used instead of the IDs to increase readability. The individual entities and properties are introduced with their ID beforehand so the example can be retraced. The blue whales (Q42196) parent taxon (P171) is balaenoptera (Q133320), which in turn has the parent taxon rorqual (Q232829). The predicates used are tripleEDB\([3]\) as the input and isInTaxonIDB\([2]\), which will be derived. The basic facts are:\\
+\[\text{tripleEDB}(\text{blue whale}, \text{parent taxon}, \text{balaenoptera})\]
+\[\text{tripleEDB}(\text{balaenoptera}, \text{parent taxon}, \text{rorqual})\]
+From this we can draw conclusions. The first step is to represent the already existing facts as IDB:
+\[\text{isInTaxonIDB}(X, Y) \leftarrow \text{tripleEDB}(X, \text{parent taxon}, Y)\]
+Finally the transitive closure of this relation can be derived with
+\[\text{isInTaxonIDB}(X, Y) \leftarrow \text{isInTaxonIDB}(X, Z) \wedge \text{isInTaxonIDB}(Z, Y)\]
+
+\todo[inline]{Probably a good place to explain existential and universal quantifiers.}
 \section{Representation}
 To model the basic representation of triples, qualifiers and references three predicates are introduced.\\
 tripleEDB\([4]\) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either and item ID or a string-representation of the data value.\\
