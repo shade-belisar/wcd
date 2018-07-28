@@ -1,4 +1,4 @@
-\documentclass[hyperref,bachelorofscience]{cgvpub}
+\documentclass[hyperref,bachelorofscience,fleqn]{cgvpub}
 %weitere Optionen zum Ergänzen (in eckigen Klammern):
 % 
 % bibnum	numerische Literaturschlüssel
@@ -507,20 +507,23 @@ The previous chapter has show that most constraints cannot be modelled without a
 A problem that occurs multiple times is the need to determine inequality between constants. Distinct value, Allowed units, Allowed qualifiers, One of, Single best value and One-of qualifier value each require a rule to determine if a value, unit or property is not equal to another. To this end a certain amount of preprocessing is necessary, most notably the extraction of all constant pairs whose inequality has to be determined for finding the violations. To avoid putting and undue amount of processing outside of datalog this extraction will not check more than that the constant is in the right position relative to the constrained statement, e.g. all values on statements constrained by Distinct value or all qualifiers on statements constrained by Allowed qualifiers. From this set inequality will be generated, different versions of which will be introduced in section \ref{sec_inequality} and evaluated with regards to their performance in section \ref{sec_inequality_evaluation}.\\
 
 Negation as a general problem cannot be solved in datalog. One could pre-process every necessary fact to be negated and add this to the ground facts, but this is not the purpose of this work. However, not all constraints require a general negation. Item requires statement, Value requires statement, Inverse and Symmetric are all violated if a statement does not exist on a specific item. This problem can be solved with limited amounts of preprocessing by leveraging a preprocessed statement order per item and 'iterating' through the statements until the required conditions are met.\\
-A similar approach can be taken to find items with exactly one statement matching certain criteria , required for 	Multi-value. The idea is to ask the question if a second statement exists, then evaluating it as above. Both methods will be explained in section \ref{sec_statement_nonexistence}.
+A similar approach can be taken to find items with exactly one statement matching certain criteria, required for 	Multi-value. The idea is to ask the question if a second statement exists, then evaluating it as above. Both methods will be explained in section \ref{sec_statement_nonexistence}.
 
 \section{Task}
 Each property constraint will be modelled and evaluated as one set of rules per property per constraint, meaning each violating statement will be of a form similar to
-\begin{verbatim}
-violation(ID, ITEM, propertyConstant, VALUE) :-
-    <rules determining the violation>
-\end{verbatim}
-where \texttt{propertyConstant} denotes the constrained property. While it would be possible to load all data at once and restrict the property constant with a separate predicate akin to
-\begin{verbatim}
-violation(ID, ITEM, PROPERTY, VALUE) :-
-    constrained(PROPERTY, constraintConstant),
-    <rules determining the violation>
-\end{verbatim}
+\begin{equation}
+\begin{split}
+\text{violation}(X, Y, \text{propertyConstant}, Z) \leftarrow \text{atoms determining the violation}
+\end{split}
+\end{equation}
+where propertyConstant denotes the constrained property. While it would be possible to load all data at once and restrict the property constant with a separate predicate akin to
+\begin{equation}
+\begin{split}
+\text{violation}&(X, Y, \text{PROPERTY}, Z) \leftarrow \\
+&\text{constrained}(\text{PROPERTY}, \text{constrainedConstant}) \wedge\\
+&\text{rules determining the violation}
+\end{split}
+\end{equation}
 this would increase the amount of facts loaded significantly while almost not reducing preprocessing.\\
 
 The task for each constraint is thus: Given the constraint and a constrained property, potentially with qualifiers, which rule finds all violations of the rule in a given set of triples, qualifiers and references if applicable? The necessary preprocessing and filtering will be listed and the amount of rules necessary to model the constrained depending on the number of qualifiers given.
