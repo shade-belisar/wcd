@@ -8,21 +8,17 @@
 % noproblem	keine Aufgabenstellung
 % notoc			kein Inhaltsverzeichnis
 % twoside		zweiseitig
-\author{Roland Raytracer}
-\title{Titeltext}
-\birthday{1. Januar 1234}
+\author{Adrian Bielefeldt}
+\title{Tit}le
+\birthday{15. October 1994}
 \placeofbirth{Dresden}
-\matno{123456}
-\betreuer{Dr. B. Spline}
+\matno{3694323}
+\betreuer{Prof. Dr. Markus Krötzsch}
 \bibfiles{literatur}
-\problem{Text der Aufgabenstellung...}
-\copyrighterklaerung{Hier soll jeder Autor die von ihm eingeholten
-Zustimmungen der Copyright-Besitzer angeben bzw. die in Web Press
-Rooms angegebenen generellen Konditionen seiner Text- und
-Bild"ubernahmen zitieren.}
-\acknowledgments{Die Danksagung...}
-\abstracten{abstract text english}
-\abstractde{ Zusammenfassung Text Deutsch}
+\problem{problem}
+\copyrighterklaerung{copyright stuff}
+\acknowledgments{Acknowledgements}
+\abstracten{abstract text English}
 
 \usepackage{rotating}
 \usepackage{float}
@@ -30,42 +26,47 @@ Bild"ubernahmen zitieren.}
 \usepackage{makecell}
 \renewcommand{\cellalign}{tl}
 \usepackage{tabularx}
+\usepackage{todonotes}
 
 \begin{document}
 \chapter{Introduction/Preliminaries}
 Motivation
 \newpage
 \section{Wikidata}
-Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). These store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P respectively. A value is one of several datatypes noted in table \ref{tab_datatypes}, although it is also possible to use none or some as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the datatype it accepts as an object. \\
+Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). These store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P respectively. A value is one of several data types noted in table \ref{tab_datatypes}, although it is also possible to use none or some as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
 
 \begin{table}[H]
-\caption{wikidata datatypes}\label{tab_datatypes}
+\caption{wikidata data types}\label{tab_datatypes}
 \begin{tabularx}{\textwidth}{lllX}
-Datatype & Fields & Description \\
+Data type & Fields & Description \\
 \hline
 string & string (string) & simple string literal \\
 globecoordinate & \makecell{latitude (float) \\ longitude (float) \\ precision (float) \\ globe(URI)} & \makecell{coordinates on a given celestial body \\ or geographic standard} \\
 quantity & \makecell {amount (decimal) \\ upperBound (decimal) \\ lowerBound (decimal) \\ unit (URI or 1)} & \makecell{quantity of a specified unit (or none) \\ with uncertainty} \\
-time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} & \makecell {time as a string according to calendarmodel \\ (julian or gregorian),\\ with precision mapping to orders of magnitude \\ (eg. 10 years, months)} \\
+time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} & \makecell {time as a string according to calendarmodel \\ (julian or gregorian),\\ with precision mapping to orders of magnitude \\ (e.g.. 10 years, months)} \\
 
 
 \end{tabularx}
 \end{table}
 
-While this is simliar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows, to store additional information about statements. This is done via a statement ID, which is assigend to every triple storing information about an item. Every statement can be references by qualifiers and references which contain a predicate and an object, but have no item as subject but instead the statement ID. Qualifiers provide contextual information for statements. The most common context is the timeframe in which the statement was accurate, e.g. stating the start and end times of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. References are information that supports the claim by citing the source and possibly additional information like when it was retrieved or when the source was published.
+While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows, to store additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Every statement can be references by qualifiers and references which contain a predicate and an object, but have no item as subject but instead the statement ID. Qualifiers provide contextual information for statements. The most common context is the time frame in which the statement was accurate, e.g. stating the start and end times of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. References are information that supports the claim by citing the source and possibly additional information like when it was retrieved or when the source was published.
 
 Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
 \section{Datalog}
-Datalog is a logic programming language. It is fully delarative and uses simple rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a constant, which is a given [string]? expressing a fix point. In the context of Wikidata any item or property, e.g. the universe (Q1) or head of government (P6), could be represented as a constant.
-\section{Representation}
-To model the basic represenation of triples, qualifiers and references three predicates are introduced.\\
-tripleEDB (STATEMENT, ITEM, PROPERTY, VALUE) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either and item ID or a string-representation of the data value.\\
-qualifierEDB (STATEMENT, PROPERTY, VALUE) and referenceEDB (STATEMENT, PROPERTY, VALUE) represent the qualifiers and references on a given statement ID with their respective property id and the value as usual.\\
+Datalog is a logic programming language. It is fully declarative and uses simple rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a \emph{constant}, which will be denoted as \(someConstant\). In the context of Wikidata any item or property, e.g. Earth (Q2) or head of government (P6), could be represented as a constant. Relations in datalog are expressed as \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate statement\([3]\) as an example. This would be used to express the \emph{subject}-\emph{predicate}-\emph{object} relation with each position representing one part of the triple.\\
+Additionally, datalog also knows \emph{variables}, which will be capitalized like \(X\). Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form predicate\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
+Atoms are the building blocks of \emph{rules}, which are used to derive information in datalog. Given atoms \(C\) and \(B_n\), a rule takes the form \(C \leftarrow P_1 \wedge \ldots \wedge P_m\), with \(C\) being the conclusion and \(B_1 \wedge \ldots \wedge B_m\) the premise. If the premise does not contain any atoms such a rule is called a \emph{fact}, or a \emph{ground rule} if it additionally only uses constants. A finite set of rules forms a \emph{program}.\\
 
-Additional predicates modelling different preprocessing steps are explained in chapter \ref{cha_rules}.
+Within the rule predicates we can differentiate between two different schemas: the \emph{extensional schema} and the \emph{intensional schema}, called EDB and IDB \todo{Shouldn't this be called \\EDP/IDP?} (extensional/intensional database predicate). An EDB may only occur in the premise of a rule, meaning it can never be derived. All others (predicates that appear in the conclusion at least once) are IDB.
+\section{Representation}
+To model the basic representation of triples, qualifiers and references three predicates are introduced.\\
+tripleEDB\([4]\) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either and item ID or a string-representation of the data value.\\
+qualifierEDB\([3]\) and referenceEDB\([3]\) represent the qualifiers and references on a given statement ID with their respective property id and the value as usual.\\
+
+Additional predicates modelling different pre-processing steps are explained in chapter \ref{cha_rules}.
 \section{Terminology}
 \begin{table}[H]
-\caption{shorthands}
+\caption{abbreviations}
 \begin{tabular}{ll}
 Shorthand & Description \\
 \hline
@@ -114,17 +115,17 @@ item statement & statement on the same item as the constrained statement \\
 %
 %\end{tabular}
 %\end{table}
-To improve the data quality, help editors avoid common mistakes and clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are however not firm rules and execptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. only certain values are allowed or more complex requirements on connected parts of the data graph, e.g. the value of a statement with this property should have certain statements. On the following page you can find table \ref{tab_basestats} which list the existing property constraints and a short description as well as classifying information which will be explained shortly. Afterwards the constraints will be explained in detail and either a basic approach for their modelling or reasoning why it is not possible or sensible to model it given.\\
+To improve the data quality, help editors avoid common mistakes and clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are however not firm rules and exceptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. only certain values are allowed or more complex requirements on connected parts of the data graph, e.g. the value of a statement with this property should have certain statements. On the following page you can find table \ref{tab_basestats} which list the existing property constraints and a short description as well as classifying information which will be explained shortly. Afterwards the constraints will be explained in detail and either a basic approach for their modelling or reasoning why it is not possible or sensible to model it given.\\
 
-To apply a constraint to a property a statement <property> <P2302> <constraint> is added to the properties item page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. Note that a constrained statement from hereon denotes a statement whose predicate is a property that has a specific constraint. A simple example for this would be distinct values (Q21502410) stating that values of the property must be unique across all constrained statements. For this case no additional information regarding the constraint is necessary and violation could be found by surveying all constrained statements and comparing their values.\\
+To apply a constraint to a property a statement <property> <P2302> <constraint> is added to the properties item page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. Note that a constrained statement means a statement whose predicate is a property that has a specific constraint. A simple example for this would be distinct values (Q21502410) stating that values of the property must be unique across all constrained statements. For this case no additional information regarding the constraint is necessary and violation could be found by surveying all constrained statements and comparing their values.\\
 Constraints can be further specified by using qualifiers on the constraint statement. These qualifiers are either optional or mandatory and may be applied once or multiple times. For example, the none of constraint (Q52558054) states that values for a specific property may not be in a set of disallowed values. These are specified as qualifiers using item of property constraint (P2305) on the constraint statement and require at least one such statement.\\
-More comlex dependencies are also possible. A constraint can depend on all constrained statements of a specific item (single value constraint [Q19474404]), on all statements of the value of a constrained statement (value requires statement constraint [Q21510864]) or in the most complex case on all statements using the subclassOf-predicate (type constraint [Q21503250]).
+More complex dependencies are also possible. A constraint can depend on all constrained statements of a specific item (single value constraint [Q19474404]), on all statements of the value of a constrained statement (value requires statement constraint [Q21510864]) or in the most complex case on all statements using the subclassOf-predicate (type constraint [Q21503250]).
 
 
 \section{Wikidata constraints explained}
-This section will explain all interesting, meaning translatable or partially translatable, currently used property constraints on Wikidata. They will be presented rougly in descending order of the number of properties with this constraint, although constraints with similar function will be explained directly after one another. Also, all constraints that were considered untranslatable are listed at the and, each with a short explanation as to why they were placed in that group.\\
+This section will explain all interesting, meaning translatable or partially translatable, currently used property constraints on Wikidata. They will be presented roughly in descending order of the number of properties with this constraint, although constraints with similar function will be explained directly after one another. Also, all constraints that were considered untranslatable are listed at the and, each with a short explanation as to why they were placed in that group.\\
 
-Every constraint will start with a table showing basic properties of the constraint. This includes the requirement, relevant qualifiers, possible violations of the constraint and the data the constraint depends on. The requirement states which part of the data graph in relation to the constrained statement are restricted or need to exist. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The dependecies list their relation to the constrained statement. Table \ref{tab_example_constraint} shows the formatting as an example.
+Every constraint will start with a table showing basic properties of the constraint. This includes the requirement, relevant qualifiers, possible violations of the constraint and the data the constraint depends on. The requirement states which part of the data graph in relation to the constrained statement are restricted or need to exist. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The dependencies list their relation to the constrained statement. Table \ref{tab_example_constraint} shows the formatting as an example.
 
 \begin{table}[H]
 \caption{example constraint (Q31415926)}\label{tab_example_constraint}
@@ -164,7 +165,7 @@ Rule features & negation \\
 \end{table}
 
 An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the required property as predicate, or (if allowed values are specified) b2) has only statement using required property as predicate that do not use one of the allowed values as value.\\
-While condition a) can easily be tested by a tripleEDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is adressed in section [?].
+While condition a) can easily be tested by a tripleEDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is addressed in section [?].
 
 \subsection{Value requires statement (Q21510864)}\label{subsec_value_requires_statement}
 The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
@@ -196,7 +197,7 @@ Rule features & inequality, partially negation \\
 
 If no separators are specified, two triple form a violation of this constraint if they a) belong to the same item, b) have the same constrained property, and c) have the same value.
 If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values.\\
-In the case without separators the modelling idea would be to find two triples tripleEDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers either equal or nonexistent.
+In the case without separators the modelling idea would be to find two triples tripleEDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers either equal or non-existent.
 
 \subsection{Distinct values (Q21502410)}
 The distinct values constraint forbids the existence of two constrained statements with the same value.
@@ -226,7 +227,7 @@ or via instanceOf (instanceOf/subclassOf* <class>) for all classes on the constr
 Requirement & chain of statements \\
 \hline
 Qualifiers & \makecell{relation (P2309) -- 1 \\ must be instance of (Q21503252), subclass of (Q21514624), \\ or instance or subclass of (Q30208840); \\ specifies the relation the constrained item must have to the classes\\
-class (P308) -- 1..* \\ entities that must be reached using the relation} \\
+class (P2308) -- 1..* \\ entities that must be reached using the relation} \\
 \hline
 Violation & constrained item without relation to a class \\
 \hline
@@ -238,7 +239,7 @@ Rule features & inequality, negation \\
 \end{table}
 
 If the relation is instanceOf, the constraint can be evaluated like multiple item requires statement constraints (see \ref{subsec_item_requires_statement}) by setting the required property to instanceOf (P31) and, for each created item requires statement constraint, the allowed value to one of the classes. \\
-For the relations involving subclasses all transivite subclass relationships would be concluded by setting a subclass relationship if a third item can be found that is subclass of one and subclassed by the other item. This would be extended with one step of instanceOf. A violation would then be any constrained item that is not subclass of any of the classes.
+For the relations involving subclasses all transitive subclass relationships would be concluded by setting a subclass relationship if a third item can be found that is subclass of one and subclassed by the other item. This would be extended with one step of instanceOf. A violation would then be any constrained item that is not subclass of any of the classes.
 
 \subsection{Value type (Q21510865)}
 The value type constraint works like the type constraint (see \ref{subsec_type}) except the statement chains are required on the value of the constrained statement instead of the constrained item. It will thus not be expanded upon.
@@ -260,7 +261,7 @@ Dependency & constrained statement, qualifier or reference \\
 \end{tabularx}
 \end{table}
 
-Since only three posibilities exist, this is equivalent to forbidding all other possibilities and the rules are simple mapping all of tripleEDB, qualifierEDB and referenceEDB with the constrained property that are not allowed.
+Since only three possibilities exist, this is equivalent to forbidding all other possibilities and the rules are simple mapping all of tripleEDB, qualifierEDB and referenceEDB with the constrained property that are not allowed.
 
 \subsection{Conflicts-with (Q21502838)}
 The conflicts with constraint forbids either certain statements or statements with a specific property on constrained items.
@@ -442,7 +443,7 @@ Violation & \makecell{items with two constrained statements with rank preferred}
 \hline
 Dependency & all item statements and their rank \\
 \hline
-Rule features & count \\
+Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
@@ -477,15 +478,47 @@ Multiple constraints have not been described above for different reasons. The mo
 a) primarily results in a large amount of preprocessing and\\
 b) does not solve the question of negation, since violations would be values that do not conform to their required regular expression. \\
 
-The integer constraint (Q52848401), which requires values of a constrained property be integers (notably a quantity without decimal places), could easily be seen as a specific format constraint. While precomputing if a value is an integer or not could be done, it would mean that no actually relevant rules would be needed for the evaluation in datalog.
+The integer constraint (Q52848401), which requires values of a constrained property be integers (notably a quantity without decimal places), could easily be seen as a specific format constraint. While precomputing if a value is an integer or not could be done, it would mean that no actually relevant rules would be needed for the evaluation in datalog. \\
 
 Another problem that could not be sensibly solved is the comparison of values, needed for range (Q21510860), difference within range (Q21510854) and contemporary constraint (Q25796498). Range restricts the values of a constrained property within a certain range, difference within range specifies that two item statements should have values within a certain range and contemporary constraint specifies that subject and object of a constrained statement have to have coexisted at some point in time. While it would be possible to extract all values that might need to be compared and precompute the comparison, it would make most of the work precomputing and leave little to be done in datalog.\\
 
 Link constraint (Q54554025), requiring that constraint statements must have one or more references, requires a negation that cannot be concluded except by explicitly precomputing it, which makes the evaluation unnecessary. \\
+A similar situation is the no bounds constraint (Q51723761), which requires that quantity values have neither upper nor lower bound. While it would be possible to precompute if a statement has no upper or lower bound, this would shift basically all evaluation logic into precomputing.
 
 And finally commons link constraint (Q21510852) requires that values for a property should be valid links to to Wikimedia Commons. This validity cannot be testes from within datalog since there is no way to query the web for information.
 
 
 \chapter{Rules}\label{cha_rules}
+The previous chapter has show that most constraints cannot be modelled without at least some amount of preprocessing. Only Scope, Conflicts with, Allowed entity types and None of can be modelled directly. This is due to the fact that Conflicts with and None of exclude a limited and specified set of statements from validity and these cases can thus be directly takes as violations. Scope and Allowed entity types work very similar, since there are only three respectively two possible values and violations are simply the options that have not been allowed.  The rules for these constraints are described in section \ref{sec_no_preprocessing}.\\
+
+A problem that occurs multiple times is the need to determine inequality between constants. Distinct value, Allowed units, Allowed qualifiers, One of, Single best value and One-of qualifier value each require a rule to determine if a value, unit or property is not equal to another. To this end a certain amount of preprocessing is necessary, most notably the extraction of all constant pairs whose inequality has to be determined for finding the violations. To avoid putting and undue amount of processing outside of datalog this extraction will not check more than that the constant is in the right position relative to the constrained statement, e.g. all values on statements constrained by Distinct value or all qualifiers on statements constrained by Allowed qualifiers. From this set inequality will be generated, different versions of which will be introduced in section \ref{sec_inequality} and evaluated with regards to their performance in section \ref{sec_inequality_evaluation}.\\
+
+Negation as a general problem cannot be solved in datalog. One could pre-process every necessary fact to be negated and add this to the ground facts, but this is not the purpose of this work. However, not all constraints require a general negation. Item requires statement, Value requires statement, Inverse and Symmetric are all violated if a statement does not exist on a specific item. This problem can be solved with limited amounts of preprocessing by leveraging a preprocessed statement order per item and 'iterating' through the statements until the required conditions are met.\\
+A similar approach can be taken to find items with exactly one statement matching certain criteria , required for 	Multi-value. The idea is to ask the question if a second statement exists, then evaluating it as above. Both methods will be explained in section \ref{sec_statement_nonexistence}.
+
+\section{Task}
+Each property constraint will be modelled and evaluated as one set of rules per property per constraint, meaning each violating statement will be of a form similar to
+\begin{verbatim}
+violation(ID, ITEM, propertyConstant, VALUE) :-
+    <rules determining the violation>
+\end{verbatim}
+where \texttt{propertyConstant} denotes the constrained property. While it would be possible to load all data at once and restrict the property constant with a separate predicate akin to
+\begin{verbatim}
+violation(ID, ITEM, PROPERTY, VALUE) :-
+    constrained(PROPERTY, constraintConstant),
+    <rules determining the violation>
+\end{verbatim}
+this would increase the amount of facts loaded significantly while almost not reducing preprocessing.\\
+
+The task for each constraint is thus: Given the constraint and a constrained property, potentially with qualifiers, which rule finds all violations of the rule in a given set of triples, qualifiers and references if applicable? The necessary preprocessing and filtering will be listed and the amount of rules necessary to model the constrained depending on the number of qualifiers given.
+
+\section{No preprocessing}\label{sec_no_preprocessing}
+
+\section{Inequality}\label{sec_inequality}
+
+\section{Statement nonexistence}\label{sec_statement_nonexistence}
+
 \chapter{Evaluation/Comparison}
+
+\section{Inequality evaluation}\label{sec_inequality_evaluation}
 \end{document}
