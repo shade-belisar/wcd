@@ -45,8 +45,6 @@ string & string (string) & simple string literal \\
 globecoordinate & \makecell{latitude (float) \\ longitude (float) \\ precision (float) \\ globe(URI)} & \makecell{coordinates on a given celestial body \\ or geographic standard} \\
 quantity & \makecell {amount (decimal) \\ upperBound (decimal) \\ lowerBound (decimal) \\ unit (URI or 1)} & \makecell{quantity of a specified unit (or none) \\ with uncertainty} \\
 time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} & \makecell {time as a string according to calendarmodel \\ (julian or gregorian),\\ with precision mapping to orders of magnitude \\ (e.g.. 10 years, months)} \\
-
-
 \end{tabularx}
 \end{table}
 
@@ -528,11 +526,72 @@ this would increase the amount of facts loaded significantly while almost not re
 
 The task for each constraint is thus: Given the constraint and a constrained property, potentially with qualifiers, which rule finds all violations of the rule in a given set of triples, qualifiers and references if applicable? The necessary preprocessing and filtering will be listed and the amount of rules necessary to model the constrained depending on the number of qualifiers given.
 
+\subsection{General approach}
+The goal outlined above is to identify violations of constrained properties, meaning a triple, qualifier, or reference with the constrained property will always be part of the rule body. With the exception of Property scope all constraints work on triples. The atom that will thus always be included is \(\text{tripleEDB}(X, Y, \text{propertyConstant}, Z)\).\\
+
+Every constraint violation depends on some constant in relation to the constrained statement. These requirements have been roughly identified in the previous chapter and will now be specified as rules. This step can include expanding the pre-processing to load more data such as units for quantities.\\
+
+The second step is the most complex: Depending on the constrained statement and the requirements, has a violation occurred? For the easiest category of constraints this step does not entail any additional work since the existence of the dependent structure is itself a violation. However, most constraints require at least evaluation of inequality between allowed values and existing values (\ref{sec_inequality}) or the non-existence of certain facts (\ref{sec_statement_nonexistence}). Both processes will be explained in their respective sections.
+
+The final step of translation is not necessary to identify violations per se, but provides additional information as to where exactly a violation has occurred. \todo[inline]{lets see how much we can actually do here}
+
+\section{No additional pre-processing}\label{sec_no_preprocessing}
+Four constraints do not require any additional features and can be easily translated, since they are violated if specific statements exists. A violation of these statements is thus always a triple, qualifier, or reference and violations will be expressed as the result of a query atom
+\[\text{violation\_triple}(S, I, P, V)\]
+\[\text{violation\_qualifier}(S, P, V)\]
+\[\text{violation\_reference}(S, P, V)\]
+where \(S\) specifies the statement ID, \(I\) the item, \(P\) the property, and \(V\) the value. The term propertyConstant will be used for the constant of the constrained property.
+
+\subsection{Property scope (Q53869507)}
+The property scope constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough. The dependent atoms are thus:
+\[\text{tripleEDB}(S, I, \text{propertyConstant}, V)\]
+\[\text{qualifierEDB}(S, \text{propertyConstant}, V)\]
+\[\text{referenceEDB}(S, \text{propertyConstant}, V)\]
+depending on if the property scope qualifier is not set to as main value, as qualifier, or as reference respectively.\\
+
+A violation for a property scope constraint is
+\[\text{violation\_triple}(S, I, \text{propertyConstant}, V) \leftarrow \text{tripleEDB}(S, I, \text{propertyConstant}, V)\]
+\[\text{violation\_qualifier}(S, \text{propertyConstant}, V) \leftarrow \text{qualifierEDB}(S, \text{propertyConstant}, V)\]
+\[\text{violation\_reference}(S, \text{propertyConstant}, V) \leftarrow \text{referenceEDB}(S, \text{propertyConstant}, V)\]
+depending on if as main value, as qualifier, or as reference was not set in the qualifiers.\\
+
+There is no further information that can be materialized regarding this violations.
+
+\subsection{Conflicts-with (Q21502838)}
+The conflicts-with constraint is violated if another statement on the same item either has a conflicting property or a conflicting property and a conflicting value depending on specified qualifiers. It depends on a conjunction (\(O\) denoting another statement ID, \(C\) another value)
+\begin{equation*}
+\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{tripleEDB}(O, I, \text{conflictingPropertyConstant}, C)
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{tripleEDB}&(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{tripleEDB}(O, I, \text{conflictingPropertyConstant}, \text{conflictingValueConstant})
+\end{split}
+\end{equation*}
+
+A violation for a conflicts-with constraint is thus either
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge\\
+&\text{tripleEDB}(O, I, \text{conflictingPropertyConstant}, C)
+\end{split}
+\end{equation*}
+for constraints with no conflicting values specified and one
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge\\
+&\text{tripleEDB}(O, I, \text{conflictingPropertyConstant}, \text{conflictingValueConstant})
+\end{split}
+\end{equation*}
+for each conflicting value if specified.\\
 
 
-\section{No additional preprocessing}\label{sec_no_preprocessing}
+
 
 \section{Inequality}\label{sec_inequality}
+All rules except the four covered in the previous section require inequality in some way or another. 
 
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
 
