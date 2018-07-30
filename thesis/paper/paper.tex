@@ -616,10 +616,12 @@ In every approach it will be necessary to load some basic inequalities into the 
 \text{unequal}(X, Y) \leftarrow \text{unequalEDB}(X, Y)
 \end{equation*}
 
-Given a set of entities \(E\), the task is to generate rules so that \(\forall x, y \in E, x \ne y: \text{unequal}(x, y)\). In doing so, dependant on the number of entities \(n = |E|\), the sum of the number of introduced EDB facts \(f(n)\), the number of introduced rules \(r(n)\), and the number of materialised facts \(m(n)\) should be kept as small as possible. Note that \(n > 1\) is presumed. The effects will be evaluated in section \ref{sec_inequality_evaluation}.
+Given a set of entities \(E\), the task is to generate rules so that \(\forall x, y \in E, x \ne y: \text{unequal}(x, y)\). In doing so, dependent on the number of entities \(n = |E|\), the sum of the number of introduced EDB facts \(f(n)\) and the number of introduced rules \(r(n)\) should be kept as small as possible. Note that \(n > 1\) is presumed. The effects will be evaluated in section \ref{sec_inequality_evaluation}.
 
 \todo[inline]{How are the three numbers weighted? Or do I determine that in evaluation?}
-\subsubsection{Naive}
+\todo[inline]{Is the number of materialised facts even relevant? Maybe look at rule applications.}
+%, and the number of materialised facts \(m(n)\)
+\subsubsection{Naive}\label{subsubsec_naive}
 The naive approach would be to to simply add all possible combinations:
 \begin{equation*}
 \forall x, y \in E, x \ne y \text{ add } \text{unequalEDB}(x, y)
@@ -633,11 +635,29 @@ The it is sufficient to add each combinations once if disregarding their order:
 \forall x, y \in E, x < y \text{ add } \text{unequalEDB}(x, y)
 \end{equation*}.
 
-The naive approach with inverse would result in \(f(n) = \binom{n}{2}\) EDB facts, \(r(n) = 1\) additional rule and \(m(n) = \binom{n}{2}\) materialized facts since equation \ref{equ_inverse} would be applied exactly once to every EDB fact.
+The naive approach with inverse would result in \(f(n) = \binom{n}{2}\) EDB facts and \(r(n) = 1\) additional rule.
+%and \(m(n) = \binom{n}{2}\) materialized facts since equation \ref{equ_inverse} would be applied exactly once to every EDB fact.
 
 \subsubsection{Encoding}
+One option to determine inequality would be to utilise that all entities are strings of single characters. The idea is to determine the set of characters used in all entities \(C\), set them as unequal as outlined above in section \ref{subsubsec_naive} and associate each entity with their characters.\\
 
-\subsubsection{Tree-limited materialization}
+An entity \(e \in E\) is always a string and can be written as \(c_0 \ldots c_{l - 1}\) with \(l = len(e)\) being the length of the string. Denote the set \(C = \{c | \exists e \in E: c \in e\}\)\todo{\(c \in e\) does not seem correct} as the set of characters occurring in entities. Then \(l_{\max} = \max\limits_{\forall e \in E}(len(e))\) is the length of the longest entity string. Based on this a group of predicates letter\_iEDB[2] is introduced where \(i \in \{0 \ldots l_{\max}-1\}\) and letter\_iEBD denotes the ith letter of the entity string.\\
+
+For each entity string \(e = c_0 \ldots c_{l - 1}\) each predicate letter\_iEDB is created as \(\text{letter\_iEDB}(e, f(e, i))\), where
+\begin{equation*}
+f(e, i) = 
+\begin{cases}
+      c_i & i < len(e) \\
+      \text{NONE} & i \geq len(e)
+\end{cases}
+\end{equation*}
+
+Now that inequality between all constitution characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates letter\_i:
+\begin{equation*}
+\text{unequal}(X, Y) \leftarrow \text{letter\_i}(X, A) \wedge \text{letter\_i}(Y, B) \wedge \text{unequal}(A, B)
+\end{equation*}
+
+With this approach the statistics depend on the number of distinct characters \(n_c = |C|\). The number of introduced EDB facts is \(f(n, n_c) = \binom{n_c}{2} + n*l_{\max}\) and the number of introduced rules \(r(n, n_c) = 1 + l_{\max}\). The effectiveness of this approach thus depends on the ratio between \(n\) and \(n_c\).
 
 \subsubsection{Demand-driven materialization}
 
