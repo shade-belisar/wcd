@@ -616,7 +616,7 @@ In every approach it will be necessary to load some basic inequalities into the 
 \text{unequal}(X, Y) \leftarrow \text{unequalEDB}(X, Y)
 \end{equation*}
 
-Given a set of entities \(E\), the task is to generate rules so that \(\forall x, y \in E, x \ne y: \text{unequal}(x, y)\). In doing so, dependant on the number of entities \(n = |E|\), the sum of the number of introduced EDB facts \(f(n)\), the number of introduced rules \(r(n)\), and the number of materialised facts \(m(n)\) should be kept as small as possible. The effects will be evaluated in section \ref{sec_inequality_evaluation}.
+Given a set of entities \(E\), the task is to generate rules so that \(\forall x, y \in E, x \ne y: \text{unequal}(x, y)\). In doing so, dependant on the number of entities \(n = |E|\), the sum of the number of introduced EDB facts \(f(n)\), the number of introduced rules \(r(n)\), and the number of materialised facts \(m(n)\) should be kept as small as possible. Note that \(n > 1\) is presumed. The effects will be evaluated in section \ref{sec_inequality_evaluation}.
 
 \todo[inline]{How are the three numbers weighted? Or do I determine that in evaluation?}
 \subsubsection{Naive}
