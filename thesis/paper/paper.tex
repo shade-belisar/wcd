@@ -607,6 +607,19 @@ The none of constraint simply forbids certain values for properties, thus effect
 \end{split}
 \end{equation*}
 
+\section{Inequality}\label{sec_inequality}
+All rules except the four covered in the previous section require inequality in some way or another. This means it is necessary to extract additional information during pre-processing, namely the constants for whom inequality needs to be stated. Each constraint will list the possible unequal entities in relation to the constrained statement. Multiple ways of implementing inequality while keeping the number of rules small will be discussed. Afterwards all constraints that can be translated using inequality will be explained.
+
+\subsection{Approaches}
+In every approach it will be necessary to load some basic inequalities into the database. To this end the predicate unequalEDB\([2]\) is introduced. Since the goal is to keep the number of applications of this predicate small, an IDB predicate unequal\([2]\) has to be introduced. This leads to the linear rule
+\begin{equation*}
+\text{unequal}(X, Y) \leftarrow \text{unequalEDB}(X, Y)
+\end{equation*}
+
+Given a set of entities \(E\), the task is to generate rules so that \(\forall x, y \in E, x \ne y: \text{unequal}(x, y)\). In doing so, dependant on the number of entities \(n = |E|\), the sum of the number of introduced EDB facts \(f(n)\), the number of introduced rules \(r(n)\), and the number of materialised facts \(m(n)\) should be kept as small as possible. The effects will be evaluated in section \ref{sec_inequality_evaluation}.
+
+\todo[inline]{How are the three numbers weighted? Or do I determine that in evaluation?}
+
 
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
 
