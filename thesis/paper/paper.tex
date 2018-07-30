@@ -586,6 +586,26 @@ The allowed entity types constraint is violated by a statement with the wrong en
 \end{split}
 \end{equation*}
 
+\subsection{None of (Q52558054)}
+The none of constraint simply forbids certain values for properties, thus effectively prohibiting certain triples, qualifiers and references. The violations, depending on nothing but specific database entries, are
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, \text{forbiddenValueConstant})
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_qualifier}&(S, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
+&\text{qualifierEDB}(S, \text{propertyConstant}, \text{forbiddenValueConstant})
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_reference}&(S, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
+&\text{referenceEDB}(S, \text{propertyConstant}, \text{forbiddenValueConstant})
+\end{split}
+\end{equation*}
 
 
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
