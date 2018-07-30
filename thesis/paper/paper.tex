@@ -678,6 +678,35 @@ This premise in addition with inequality between the statement IDs can then be u
 \end{equation*}
 While it is possible to set this constraint on qualifiers or references, this is currently not done and is thus not evaluated here.
 
+\subsection{Allowed units (Q21514353)}
+The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the unit of a triple, qualifier or reference needs to be extracted during pre-processing. Three predicates unitTriple\([2]\), unitQualifier\([4]\) and unitReference\([4]\) are introduced. While each triple has a unique identifier and only need to associate this with the unit, qualifiers and references need to be identified completely to assign the correct unit.\\
+
+Inequality between units needs to be determined if a constrained triple, qualifier or reference exists. For every allowed unit of the constraint the following rules are introduced
+\begin{equation*}
+\begin{split}
+\text{req\_inequality}&(X, \text{allowedUnitConstant}) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{unitTriple}(S, X)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{req\_inequality}&(X, \text{allowedUnitConstant}) \leftarrow \\
+&\text{qualifierEDB}(S, \text{propertyConstant}, V) \wedge \\
+&\text{unitQualifier}(S, \text{propertyConstant}, V, X)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{req\_inequality}&(X, \text{allowedUnitConstant}) \leftarrow \\
+&\text{referenceEDB}(S, \text{propertyConstant}, V) \wedge \\
+&\text{unitReference}(S, \text{propertyConstant}, V, X)
+\end{split}
+\end{equation*}
+
+The violations can then be found using the same premises with inequality added.
+\todo[inline]{Kind of ridiculous to write basically the same premise repeatedly. Should probably write the general approach in demand-driven and just write the normal inequality here}
+
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
 
 
