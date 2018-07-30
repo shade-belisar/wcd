@@ -577,7 +577,7 @@ A violation for a conflicts-with constraint is thus either
 &\text{tripleEDB}(O, I, \text{conflictingPropertyConstant}, C)
 \end{split}
 \end{equation*}
-for constraints with no conflicting values specified and one
+for constraints with no conflicting values specified or one
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
@@ -586,9 +586,6 @@ for constraints with no conflicting values specified and one
 \end{split}
 \end{equation*}
 for each conflicting value if specified.\\
-
-
-
 
 \section{Inequality}\label{sec_inequality}
 All rules except the four covered in the previous section require inequality in some way or another. 
