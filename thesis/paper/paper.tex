@@ -659,9 +659,27 @@ Now that inequality between all constitution characters and the link between ent
 
 With this approach the statistics depend on the number of distinct characters \(n_c = |C|\). The number of introduced EDB facts is \(f(n, n_c) = \binom{n_c}{2} + n*l_{\max}\) and the number of introduced rules \(r(n, n_c) = 1 + l_{\max}\). The effectiveness of this approach thus depends on the ratio between \(n\) and \(n_c\).
 
-\subsubsection{Demand-driven materialization}
+\subsubsection{Demand-driven materialisation}
+The approaches outlined above will always result in all inequalities between the members of \(E\) being materialised. However, the purpose of determining inequality is to assist in finding violations of specific constraints. This means that only some inequalities -- the ones that actually appear in the dataset -- have to be evaluated. The rules can then be limited by introducing a new predicate req\_inequality\([2]\) which will only be derived if a condition occurs in which the inequality must be evaluated.\\
+
+\subsection{Distinct values (Q21502410)}
+The distinct values constraints requires two distinct constrained statements with the same value. Inequality needs to be evaluated if two statements with the same value have been found.
+\begin{equation*}
+\text{req\_inequality}(S, O) \leftarrow \text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{tripleEDB}(O, X, \text{propertyConstant}, V)
+\end{equation*}
+This premise in addition with inequality between the statement IDs can then be used to identify all violations.
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{tripleEDB}(O, X, \text{propertyConstant}, V) \wedge \\
+&\text{unequal}(S, O)
+\end{split}
+\end{equation*}
+While it is possible to set this constraint on qualifiers or references, this is currently not done and is thus not evaluated here.
 
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
+
 
 \chapter{Evaluation/Comparison}
 
