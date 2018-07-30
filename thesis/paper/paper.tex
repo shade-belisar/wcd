@@ -619,6 +619,22 @@ In every approach it will be necessary to load some basic inequalities into the 
 Given a set of entities \(E\), the task is to generate rules so that \(\forall x, y \in E, x \ne y: \text{unequal}(x, y)\). In doing so, dependant on the number of entities \(n = |E|\), the sum of the number of introduced EDB facts \(f(n)\), the number of introduced rules \(r(n)\), and the number of materialised facts \(m(n)\) should be kept as small as possible. The effects will be evaluated in section \ref{sec_inequality_evaluation}.
 
 \todo[inline]{How are the three numbers weighted? Or do I determine that in evaluation?}
+\subsubsection{Naive}
+The naive approach would be to to simply add all possible combinations:
+\begin{equation*}
+\forall x, y \in E, x \ne y \text{ add } \text{unequalEDB}(x, y)
+\end{equation*}.
+This can be easily improved using the inverse and adding the following rule:
+\begin{equation}\label{equ_inverse}
+\text{unequal}(X, Y) \leftarrow \text{unequal}(Y, X)
+\end{equation}
+The it is sufficient to add each combinations once if disregarding their order:
+\begin{equation*}
+\forall x, y \in E, x < y \text{ add } \text{unequalEDB}(x, y)
+\end{equation*}.
+
+The naive approach with inverse would result in \(f(n) = \binom{n}{2}\) EDB facts, \(r(n) = 1\) additional rule and \(m(n) = \binom{n}{2}\) materialized facts since equation \ref{equ_inverse} would be applied exactly once to every EDB fact.
+
 
 
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
