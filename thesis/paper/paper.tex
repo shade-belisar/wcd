@@ -543,12 +543,7 @@ Four constraints do not require any additional features and can be easily transl
 where \(S\) specifies the statement ID, \(I\) the item, \(P\) the property, and \(V\) the value. The term propertyConstant will be used for the constant of the constrained property.
 
 \subsection{Property scope (Q53869507)}
-The property scope constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough. The dependent atoms are thus:
-\[\text{tripleEDB}(S, I, \text{propertyConstant}, V)\]
-\[\text{qualifierEDB}(S, \text{propertyConstant}, V)\]
-\[\text{referenceEDB}(S, \text{propertyConstant}, V)\]
-depending on if the property scope qualifier is not set to as main value, as qualifier, or as reference respectively.\\
-
+The property scope constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough.
 A violation for a property scope constraint is
 \[\text{violation\_triple}(S, I, \text{propertyConstant}, V) \leftarrow \text{tripleEDB}(S, I, \text{propertyConstant}, V)\]
 \[\text{violation\_qualifier}(S, \text{propertyConstant}, V) \leftarrow \text{qualifierEDB}(S, \text{propertyConstant}, V)\]
@@ -558,18 +553,7 @@ depending on if as main value, as qualifier, or as reference was not set in the 
 There is no further information that can be materialized regarding this violations.
 
 \subsection{Conflicts-with (Q21502838)}
-The conflicts-with constraint is violated if another statement on the same item either has a conflicting property or a conflicting property and a conflicting value depending on specified qualifiers. It depends on a conjunction (\(O\) denoting another statement ID, \(C\) another value)
-\begin{equation*}
-\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{tripleEDB}(O, I, \text{conflictingPropertyConstant}, C)
-\end{equation*}
-\begin{equation*}
-\begin{split}
-\text{tripleEDB}&(S, I, \text{propertyConstant}, V) \wedge \\
-&\text{tripleEDB}(O, I, \text{conflictingPropertyConstant}, \text{conflictingValueConstant})
-\end{split}
-\end{equation*}
-
-A violation for a conflicts-with constraint is thus either
+The conflicts-with constraint is violated if another statement on the same item either has a conflicting property or a conflicting property and a conflicting value depending on specified qualifiers. It depends on a conjunction (\(O\) denoting another statement ID, \(C\) another value) and a violation for a conflicts-with constraint is thus either
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
@@ -587,8 +571,22 @@ for constraints with no conflicting values specified or one
 \end{equation*}
 for each conflicting value if specified.\\
 
-\section{Inequality}\label{sec_inequality}
-All rules except the four covered in the previous section require inequality in some way or another. 
+\subsection{Allowed entity types (Q52004125)}
+The allowed entity types constraint is violated by a statement with the wrong entity type. This means that during extraction additional data has to be readied. To encode this two new predicates are introduced, item\([1]\) and property\([1]\). All items and properties with a constrained statement will then be sorted into one of these two categories. Constraints regarding the lexeme entity type can be ignored since they are currently not deployed. The violations the depend on a simple conjunction and follow directly as
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{item}(I)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{property}(I)
+\end{split}
+\end{equation*}
+
+
 
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
 
