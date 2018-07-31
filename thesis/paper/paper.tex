@@ -508,7 +508,7 @@ The previous chapter has show that most constraints cannot be modelled without a
 A problem that occurs multiple times is the need to determine inequality between constants. Distinct value, Allowed units, Allowed qualifiers, One of, Single best value and One-of qualifier value each require a rule to determine if a value, unit or property is not equal to another. To this end a certain amount of preprocessing is necessary, most notably the extraction of all constant pairs whose inequality has to be determined for finding the violations. To avoid putting and undue amount of processing outside of datalog this extraction will not check more than that the constant is in the right position relative to the constrained statement, e.g. all values on statements constrained by Distinct value or all qualifiers on statements constrained by Allowed qualifiers. From this set inequality will be generated, different versions of which will be introduced in section \ref{sec_inequality} and evaluated with regards to their performance in section \ref{sec_inequality_evaluation}.\\
 
 Negation as a general problem cannot be solved in datalog. One could pre-process every necessary fact to be negated and add this to the ground facts, but this is not the purpose of this work. However, not all constraints require a general negation. Item requires statement, Value requires statement, Inverse and Symmetric are all violated if a statement does not exist on a specific item. This problem can be solved with limited amounts of preprocessing by leveraging a preprocessed statement order per item and 'iterating' through the statements until the required conditions are met.\\
-A similar approach can be taken to find items with exactly one statement matching certain criteria, required for 	Multi-value. The idea is to ask the question if a second statement exists, then evaluating it as above. Both methods will be explained in section \ref{sec_statement_nonexistence}.
+A similar approach can be taken to find items with exactly one statement matching certain criteria, required for 	Multi-value. The idea is to ask the question if a second statement exists, then evaluating it as above. Both methods will be explained in section \ref{sec_statement_non-existence}.
 
 \section{Task}
 Each property constraint will be modelled and evaluated as one set of rules per property per constraint, meaning each violating statement will be of a form similar to
@@ -534,7 +534,7 @@ The goal outlined above is to identify violations of constrained properties, mea
 
 Every constraint violation depends on some constant in relation to the constrained statement. These requirements have been roughly identified in the previous chapter and will now be specified as rules. This step can include expanding the pre-processing to load more data such as units for quantities.\\
 
-The second step is the most complex: Depending on the constrained statement and the requirements, has a violation occurred? For the easiest category of constraints this step does not entail any additional work since the existence of the dependent structure is itself a violation. However, most constraints require at least evaluation of inequality between allowed values and existing values (\ref{sec_inequality}) or the non-existence of certain facts (\ref{sec_statement_nonexistence}). Both processes will be explained in their respective sections.
+The second step is the most complex: Depending on the constrained statement and the requirements, has a violation occurred? For the easiest category of constraints this step does not entail any additional work since the existence of the dependent structure is itself a violation. However, most constraints require at least evaluation of inequality between allowed values and existing values (\ref{sec_inequality}) or the non-existence of certain facts (\ref{sec_statement_non-existence}). Both processes will be explained in their respective sections.
 
 The final step of translation is not necessary to identify violations per se, but provides additional information as to where exactly a violation has occurred. \todo[inline]{lets see how much we can actually do here}
 
@@ -766,7 +766,24 @@ The one-of qualifier value constraint is violated if a constrained statement has
 \end{split}
 \end{equation*}
 
-\section{Statement nonexistence}\label{sec_statement_nonexistence}
+\section{Statement non-existence}\label{sec_statement_non-existence}
+Multiple statements are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: first\([2]\), last\([2]\), and next\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
+
+If qualifier non-existence should be tested the predicates have to be adapted, since they do not have a unique identifier. Their order has to be established using the entire set of statement ID, property and value. For this the predicates first\_qualifier\([3]\) and last\_qualifier\([3]\) taking the statement ID, the property and the value and next\_qualifier\([6]\) with ID, property and value for the current and next qualifier are introduced.\\
+
+Using this pre-processed data the approach is to apply a require-predicate to each statement or qualifier. They will be introduced in the respective constraint sections since they may need to carry different information. For the introduction the predicate require\([1]\) simply denotes that the statement requires something. The qualifier variant works analogous.\\
+
+The pattern consists of two rules, both utilising the same conjunction \(t = \text{tripleEDB}(S, I, P, V) \wedge C_1 .. C_m\) with arbitrary atoms \(C_n\) which is used to test if the triple does not fulfil the requirement. Then rule one
+\begin{equation*}
+\text{require}(S) \leftarrow \text{first}(S) \wedge t
+\end{equation*}
+states that the statement requires the condition and
+\begin{equation*}
+\text{require}(O) \leftarrow \text{next}(S, O) \wedge \text{require}(S) \wedge t
+\end{equation*}
+propagates this down the statement chain. If the last statement of an item or the last qualifier of a statement has require the violation occurred.\\
+
+In the following constraints only the conjunction \(t\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
 
 \subsection{Single best value (Q52060874)}
 The single best value constraint limits the number of constrained statements with rank preferred on the same item to one. This means during pre-processing the rank information per triple must be extracted and attached to the statement with the new predicate rank\([2]\) which links the statement ID and the rank. Qualifiers and references are not affected since they do not have ranks. Inequality is established between all constrained statement IDs. For the simple case without separators the rule is:
