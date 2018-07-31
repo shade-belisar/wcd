@@ -735,6 +735,28 @@ The allowed qualifiers constraint is violated if a qualifier on a constrained st
 \end{split}
 \end{equation*}
 
+\subsection{One-of (Q21510859)}
+The one-of constraint fits in the pattern established by the previous two constraints and disallows certain property-value combinations. With \(A\) the set of allowed values the rules for triple, qualifier and reference are respectively:
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_qualifier}&(S, \text{propertyConstant}, V) \leftarrow \\
+&\text{qualifierEDB}(S, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_reference}&(S, \text{propertyConstant}, V) \leftarrow \\
+&\text{referenceEDB}(S, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+\end{split}
+\end{equation*}
+
+
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
 
 
