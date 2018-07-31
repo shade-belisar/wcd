@@ -787,9 +787,9 @@ propagates this down the statement chain. If the last statement of an item or th
 In the following constraints only the conjunction \(t\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
 
 \subsection{Item requires statement (Q21503247)}
-The item requires statement constraint requires the pre-processing of all item statements. Additionally, inequality between all properties of item statements and the required property as well as between all values and the allowed values has to be established. It occurs in two varieties, depending on if allowed values have been specified or not. The predicate is defined as require\([2]\) denoting the statement and the required property. Without separators the conjunction is \(t = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)\).\\
+The item requires statement constraint requires the pre-processing of all item statements. Additionally, inequality between all properties of item statements and the required property as well as between all values and the allowed values has to be established. It occurs in two varieties, depending on if allowed values have been specified or not. The predicate is defined as require\([2]\) denoting the statement and the required property. Without separators the conjunction is \(t_1 = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)\).\\
 
-If a set of allowed values \(A\) has been specified, a second set of require-rules have to be introduced with \(t = \text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)\). Note that the first set of rules is still required, since the preceding statements do not need to have the required property.\\
+If a set of allowed values \(A\) has been specified, a second set of require-rules have to be introduced with \(t_2 = \text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)\). Note that the first set of rules is still required, since the preceding statements do not need to have the required property.\\
 
 In both cases violations can be found with
 \begin{equation*}
@@ -811,6 +811,22 @@ The value requires statement constraint is syntactically very similar to the pre
 &\text{require}(O, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
+
+\subsection{Inverse (Q21510855)}
+The inverse constraint is similar to the value requires statement constraint in requiring a statement on a constrained value with a specific property. However, instead of putting no constraint or a list of fixed values on the required statements value it set a relative requirement: the constrained item. The pre-processing and inequalities thus remain the same, but the conjunctions change to 
+\begin{equation*}
+t_1 = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{inversePropertyConstant}, P)
+\end{equation*}
+\begin{equation*}
+\begin{split}
+t_2 = &\text{tripleEDB}(O, R, \text{propertyConstant}, X) \wedge \\
+&\text{tripleEDB}(S, I, \text{inversePropertyConstant}, V) \wedge \\
+&\text{unequal}(R, V)
+\end{split}
+\end{equation*}
+
+
+
 
 \subsection{Single best value (Q52060874)}
 The single best value constraint limits the number of constrained statements with rank preferred on the same item to one. This means during pre-processing the rank information per triple must be extracted and attached to the statement with the new predicate rank\([2]\) which links the statement ID and the rank. Qualifiers and references are not affected since they do not have ranks. Inequality is established between all constrained statement IDs. For the simple case without separators the rule is:
