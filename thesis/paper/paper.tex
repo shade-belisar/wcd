@@ -250,7 +250,7 @@ Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
-To model the distinct values constraint it is necessary to find triples tripleEDB with the constrained property and the same value whose statement id is unequal.
+To model the distinct values constraint it is necessary to find triples tripleEDB with the constrained property and the same value whose statement id is unequal. In theory the constraint can also be applied to qualifiers and references by setting the respective value on a constraint scope (P4680) qualifier. However, there is currently no such case and will therefore not be regarded.
 
 \subsection{Allowed units (Q21514353)}
 The allowed units constraint specifies that a constrained statement may only have a unit that is in a set of specific units.
@@ -272,7 +272,7 @@ Rule features & inequality \\
 \end{tabularx}
 \end{table}
 
-Modelling the constraint requires a predicate associating the value or the statement with its unit and inequality between every unit and all allowed units. Then a violation can be found by finding all tripleEDB with the constrained property and a unit unequal to all allowed units. In theory the constraint can also be applied to qualifiers and references by setting the respective value on a constraint scope (P4680) qualifier. However, there is currently no such case and will therefore not be regarded.
+Modelling the constraint requires a predicate associating the value or the statement with its unit and inequality between every unit and all allowed units. Then a violation can be found by finding all tripleEDB, qualifierEDB and referenceEDB with the constrained property and a unit unequal to all allowed units. Theoretically some of these can be excluded by using the constraint scope (P4680) qualifier on the constraint but there is no current case where this is done.
 
 \subsection{Allowed qualifiers (Q21510851)}
 The allowed qualifiers constraint specifies that only a limited set of properties may be used as qualifiers on a constrained statement.
@@ -715,7 +715,6 @@ Inequality between units needs to be determined if a constrained triple, qualifi
 \end{equation*}
 
 The violations can then be found using the same premises with inequality added.
-\todo[inline]{Kind of ridiculous to write basically the same premise repeatedly. Should probably write the general approach in demand-driven and just write the normal inequality here}
 
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
 
