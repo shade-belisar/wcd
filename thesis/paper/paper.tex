@@ -689,32 +689,38 @@ While finding constrained statements with the same value is straightforward, vio
 While it is possible to set this constraint on qualifiers or references, this is currently not done and is thus not evaluated here.
 
 \subsection{Allowed units (Q21514353)}
-The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the unit of a triple, qualifier or reference needs to be extracted during pre-processing. Three predicates unitTriple\([2]\), unitQualifier\([4]\) and unitReference\([4]\) are introduced. While each triple has a unique identifier and only need to associate this with the unit, qualifiers and references need to be identified completely to assign the correct unit.\\
+The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the unit of a triple, qualifier or reference needs to be extracted during pre-processing. Quantities are rendered as string during pre-processing, specifying their value, bounds and unit. The new predicate unit\([2]\) will associate a value with its unit.\\
 
-Inequality between units needs to be determined if a constrained triple, qualifier or reference exists. For every allowed unit of the constraint the following rules are introduced
+To determine if a violation occurred the unit to the constrained statement needs to be found. This is done via the unit-predicate as below
+\begin{equation*}
+\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{unit}(V, U)
+\end{equation*}
+with qualifiers and references working on the same lines.
+
+The full rules require multiple unequal-atoms for all allowed units. Given a set \(A\) of constants, in this case allowed units, \(\text{unequal}(\{A\}, t)\) is short for the conjunction of the set \(\{\text{unequal}(a, t) | \forall a \in A\}\), with \(t\) being an arbitrary term.
+
+Violation are thus
 \begin{equation*}
 \begin{split}
-\text{req\_inequality}&(X, \text{allowedUnitConstant}) \leftarrow \\
+\text{violation\_triple}&(S, I \text{propertyConstant}, V) \leftarrow \\
 &\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
-&\text{unitTriple}(S, X)
+&\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
 \end{split}
 \end{equation*}
 \begin{equation*}
 \begin{split}
-\text{req\_inequality}&(X, \text{allowedUnitConstant}) \leftarrow \\
+\text{violation\_qualifier}&(S, I \text{propertyConstant}, V) \leftarrow \\
 &\text{qualifierEDB}(S, \text{propertyConstant}, V) \wedge \\
-&\text{unitQualifier}(S, \text{propertyConstant}, V, X)
+&\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
 \end{split}
 \end{equation*}
 \begin{equation*}
 \begin{split}
-\text{req\_inequality}&(X, \text{allowedUnitConstant}) \leftarrow \\
+\text{violation\_reference}&(S, I \text{propertyConstant}, V) \leftarrow \\
 &\text{referenceEDB}(S, \text{propertyConstant}, V) \wedge \\
-&\text{unitReference}(S, \text{propertyConstant}, V, X)
+&\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
 \end{split}
 \end{equation*}
-
-The violations can then be found using the same premises with inequality added.
 
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
 
