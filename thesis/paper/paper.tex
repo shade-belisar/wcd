@@ -691,8 +691,8 @@ While finding constrained statements with the same value is straightforward, vio
 \end{equation*}
 While it is possible to set this constraint on qualifiers or references, this is currently not done and is thus not evaluated here.
 
-\subsection{Allowed units (Q21514353)}
-The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the unit of a triple, qualifier or reference needs to be extracted during pre-processing. Quantities are rendered as string during pre-processing, specifying their value, bounds and unit. The new predicate unit\([2]\) will associate a value with its unit.\\
+\subsection{Allowed units (Q21514353)}\label{subsec_allowed_units}
+The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the units of a triple, qualifier or reference needs to be extracted during pre-processing and their inequality established. Quantities are rendered as string during pre-processing, specifying their value, bounds and unit. The new predicate unit\([2]\) will associate a value with its unit.\\
 
 To determine if a violation occurred the unit to the constrained statement needs to be found. This is done via the unit-predicate as below
 \begin{equation*}
@@ -725,7 +725,15 @@ Violation are thus
 \end{split}
 \end{equation*}
 
-
+\subsection{Allowed qualifiers (Q21510851)}
+The allowed qualifiers constraint is violated if a qualifier on a constrained statement exists that is different from all allowed qualifiers. During pre-processing all qualifiers on constrained statements will be extracted and the inequality of their properties and the allowed qualifiers established. We will use the notation for set inequality as introduced in section \ref{subsec_allowed_units}. With \(A\) the set of allowed qualifiers the rule is:
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{qualifierEDB}(S, Q, O) \wedge \text{unequal}(\{A\}, Q)
+\end{split}
+\end{equation*}
 
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
 
