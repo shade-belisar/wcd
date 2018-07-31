@@ -272,7 +272,7 @@ Rule features & inequality \\
 \end{tabularx}
 \end{table}
 
-Modelling the constraint requires a predicate associating the value or the statement with its unit and inequality between every unit and all allowed units. Then a violation can be found by finding all tripleEDB with the constrained property and a unit unequal to all allowed units.
+Modelling the constraint requires a predicate associating the value or the statement with its unit and inequality between every unit and all allowed units. Then a violation can be found by finding all tripleEDB with the constrained property and a unit unequal to all allowed units. In theory the constraint can also be applied to qualifiers and references by setting the respective value on a constraint scope (P4680) qualifier. However, there is currently no such case and will therefore not be regarded.
 
 \subsection{Allowed qualifiers (Q21510851)}
 The allowed qualifiers constraint specifies that only a limited set of properties may be used as qualifiers on a constrained statement.
@@ -676,11 +676,8 @@ The rules outlined in section \ref{subsubsec_encoding} are changed to utilise th
 \todo{could use this to restrict the character inequality too but do we gain much?}
 
 \subsection{Distinct values (Q21502410)}
-The distinct values constraints requires two distinct constrained statements with the same value. Inequality needs to be evaluated if two statements with the same value have been found.
-\begin{equation*}
-\text{req\_inequality}(S, O) \leftarrow \text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{tripleEDB}(O, X, \text{propertyConstant}, V)
-\end{equation*}
-This premise in addition with inequality between the statement IDs can then be used to identify all violations.
+The distinct values constraints requires two distinct constrained statements with the same value. 
+While finding constrained statements with the same value is straightforward, violations only occur if the statements are actually different, i.e. have an unequal statement id.
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
