@@ -756,6 +756,16 @@ The one-of constraint fits in the pattern established by the previous two constr
 \end{split}
 \end{equation*}
 
+\subsection{One-of qualifier value (Q52712340)}
+The one-of qualifier value constraint is violated if a constrained statement has a qualifier with a value unequal to all allowed values. Inequality needs to be pre-processed between all values of qualifiers on constrained statements. With the set of allowed Values \(A\) the rules are
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{qualifierEDB}(S, \text{qualifierProperty}, O) \wedge \text{unequal}(\{A\}, O)
+\end{split}
+\end{equation*}
+
 \section{Statement nonexistence}\label{sec_statement_nonexistence}
 
 \subsection{Single best value (Q52060874)}
