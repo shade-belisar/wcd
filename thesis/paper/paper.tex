@@ -88,7 +88,8 @@ constrained statement & statement with the constrained property as predicate \\
 constrained qualifier & qualifier with the constrained property as predicate \\
 constrained reference & reference with the constrained property as predicate \\
 constrained item & item with a constrained statement \\
-item statement & statement on the same item as the constrained statement \\
+item statement & statement on the same item of a constrained statement \\
+value statement & statement on the value of a constrained statement
 \end{tabular}
 \end{table}
 \chapter{Property Constraints}
@@ -796,6 +797,17 @@ In both cases violations can be found with
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{tripleEDB}(O, I, P, X) \wedge \text{last}(O, I) \wedge \\
+&\text{require}(O, \text{requiredPropertyConstant})
+\end{split}
+\end{equation*}
+
+\subsection{Value requires statement (Q21510864)}
+The value requires statement constraint is syntactically very similar to the previous item requires statement constraint. Instead of requiring a statement on the item of a constrained statement it requires it on the value. The pre-processing changes to extracting all value statements along the constrained statements and ordering them. Inequality need to be computed between all properties and all values on value statements. The conjunctions remain the same and the final violation rule is
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{tripleEDB}(O, V, P, X) \wedge \text{last}(O, V) \wedge \\
 &\text{require}(O, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
