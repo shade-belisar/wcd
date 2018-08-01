@@ -29,6 +29,8 @@
 \usepackage{todonotes}
 \usepackage{adjustbox}
 
+\setcounter{tocdepth}{1}
+
 \begin{document}
 \chapter{Introduction/Preliminaries}
 Motivation
@@ -418,6 +420,7 @@ Rule features & inequality, partially negation \\
 If no separators are specified, two triple form a violation of this constraint if they a) belong to the same item, b) have the same constrained property, and c) have the same value.
 If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values or an unequal number of separator qualifiers.\\
 In the case without separators the modelling idea would be to find two triples tripleEDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers equal or non-existent.
+\todo{Since I found the details via looking at the source code, should/can I cite that?}
 
 \subsection{Mandatory qualifier (Q21510856)}
 The mandatory qualifier constraint requires that a constrained statement has a qualifier with a specific property.
@@ -929,6 +932,12 @@ As in the case above, the qualifier non-existence and violation rules are very s
 \end{split}
 \end{equation*}
 
+\subsection{Type (Q21503250)}
+\todo[inline]{Well. I wouldn't know. I'd have to expand the require pattern to search up the subclass tree and if require arrives at the root the class is not there. But a) its not a tree, so that does not work and b) there is no single root.\\
+Alternatively I could compute each items class via transitivity aaaand.... well. Violation if items classes unequal required class, but how to write that? Well, maybe I'll get a brilliant idea. Or I'll stop being stupid in case this does not require a brilliant idea.}
+
+\subsection{Value type (Q21510865)}
+\todo[]{as above, so below. no wait...}
 
 \chapter{Evaluation/Comparison}
 
