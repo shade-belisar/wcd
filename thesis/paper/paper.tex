@@ -345,7 +345,7 @@ Rule features & inequality \\
 
 The constraint can be modelled if the inequality between a value of a qualifier property with all qualifier values is given. The violations could then be found by taking a tripleEDB with the constrained property and a qualifier with the qualifier property on the former statement whose value is unequal to all qualifier values.
 
-\subsection{Item requires statement (Q21503247)}\label{subsec_item_requires_statement}
+\subsection{Item requires statement (Q21503247)}\label{subsec_2_item_requires_statement}
 The item requires statement constraint requires an additional statement on an item with a statement using the constrained property, possibly also using a specific value from the list of allowed values.
 \begin{table}[H]
 \caption{item requires statement constraint (Q21503247)}
@@ -367,14 +367,14 @@ Rule features & negation \\
 An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the required property as predicate, or (if allowed values are specified) b2) has only statement using required property as predicate that do not use one of the allowed values as value.\\
 While condition a) can easily be tested by a tripleEDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is addressed in section [?].
 
-\subsection{Value requires statement (Q21510864)}\label{subsec_value_requires_statement}
-The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
+\subsection{Value requires statement (Q21510864)}\label{subsec_2_value_requires_statement}
+The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_2_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
 
-\subsection{Inverse (Q21510855)}\label{subsec_inverse}
-The inverse constraint requires an additional statement on the value of a constrained statement with a specific property and the constrained item as value. It is very similar to value requires statement (see \ref{subsec_value_requires_statement}), although it does not specify allowed values, since the required statement has one specific value: the constrained item. While this means it could not be modelled exactly as a value requires statement constraint, it would only require very small rule changes and will thus not be elaborated on.
+\subsection{Inverse (Q21510855)}\label{subsec_2_inverse}
+The inverse constraint requires an additional statement on the value of a constrained statement with a specific property and the constrained item as value. It is very similar to value requires statement (see \ref{subsec_2_value_requires_statement}), although it does not specify allowed values, since the required statement has one specific value: the constrained item. While this means it could not be modelled exactly as a value requires statement constraint, it would only require very small rule changes and will thus not be elaborated on.
 
 \subsection{Symmetric (Q21510862)}
-The symmetric constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an inverse constraint (see \ref{subsec_inverse}) with the same property as constrained property and required property and will not be elaborated on.
+The symmetric constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an inverse constraint (see \ref{subsec_2_inverse}) with the same property as constrained property and required property and will not be elaborated on.
 
 \subsection{Multi-value (Q21510857)}
 The multi-value constraint specifies that the constrained property should appear in multiple statements of an item or none.
@@ -461,7 +461,7 @@ Rule features & inequality \\
 
 Modelling the constraint means a count of all constrained statements with rank preferred is necessary, with a violation constituted if an item has a count of two or higher. Since it is only needed to differentiate between one and many, the rules could be written explicitly.
 
-\subsection{Type (Q21503250)}\label{subsec_type}
+\subsection{Type (Q21503250)}\label{subsec_2_type}
 The type constraint requires the existence of either one of a specific statement (instanceOf <class>) or a chain of statements using subclassOf to connect directly (subclassOf* <class>)
 or via instanceOf (instanceOf/subclassOf* <class>) for all classes on the constrained item.
 \begin{table}[H]
@@ -482,11 +482,11 @@ Rule features & inequality, negation \\
 \end{tabularx}
 \end{table}
 
-If the relation is instanceOf, the constraint can be evaluated like multiple item requires statement constraints (see \ref{subsec_item_requires_statement}) by setting the required property to instanceOf (P31) and, for each created item requires statement constraint, the allowed value to one of the classes. \\
+If the relation is instanceOf, the constraint can be evaluated like multiple item requires statement constraints (see \ref{subsec_2_item_requires_statement}) by setting the required property to instanceOf (P31) and, for each created item requires statement constraint, the allowed value to one of the classes. \\
 For the relations involving subclasses all transitive subclass relationships would be concluded by setting a subclass relationship if a third item can be found that is subclass of one and subclassed by the other item. This would be extended with one step of instanceOf. A violation would then be any constrained item that is not subclass of any of the classes.
 
 \subsection{Value type (Q21510865)}
-The value type constraint works like the type constraint (see \ref{subsec_type}) except the statement chains are required on the value of the constrained statement instead of the constrained item. It will thus not be expanded upon.
+The value type constraint works like the type constraint (see \ref{subsec_2_type}) except the statement chains are required on the value of the constrained statement instead of the constrained item. It will thus not be expanded upon.
 
 \section{Reasoning for unconsidered constraints}
 Multiple constraints have not been described above for different reasons. The most prominent of these is the format constraint (Q21502404) which specifies a regular expressions the values of the constrained property must adhere to. Evaluating these expressions would be theoretically possible but \\
@@ -692,7 +692,7 @@ While finding constrained statements with the same value is straightforward, vio
 \end{equation*}
 While it is possible to set this constraint on qualifiers or references, this is currently not done and is thus not evaluated here.
 
-\subsection{Allowed units (Q21514353)}\label{subsec_allowed_units}
+\subsection{Allowed units (Q21514353)}\label{subsec_3_allowed_units}
 The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the units of a triple, qualifier or reference needs to be extracted during pre-processing and their inequality established. Quantities are rendered as string during pre-processing, specifying their value, bounds and unit. The new predicate unit\([2]\) will associate a value with its unit.\\
 
 To determine if a violation occurred the unit to the constrained statement needs to be found. This is done via the unit-predicate as below
@@ -727,7 +727,7 @@ Violation are thus
 \end{equation*}
 
 \subsection{Allowed qualifiers (Q21510851)}
-The allowed qualifiers constraint is violated if a qualifier on a constrained statement exists that is different from all allowed qualifiers. During pre-processing all qualifiers on constrained statements will be extracted and the inequality of their properties and the allowed qualifiers established. We will use the notation for set inequality as introduced in section \ref{subsec_allowed_units}. With \(A\) the set of allowed qualifiers the rule is:
+The allowed qualifiers constraint is violated if a qualifier on a constrained statement exists that is different from all allowed qualifiers. During pre-processing all qualifiers on constrained statements will be extracted and the inequality of their properties and the allowed qualifiers established. We will use the notation for set inequality as introduced in section \ref{subsec_3_allowed_units}. With \(A\) the set of allowed qualifiers the rule is:
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
@@ -873,7 +873,7 @@ For qualifiers and reference there is no ID whose inequality could be checked. H
 \subsubsection{With separators}
 To find all violations under separators a number of things have to be considered. Only triples are eligible, since qualifiers cannot have further qualifier, and the order of qualifiers on constrained statements needs to be pre-processed as well since qualifier non-existence is relevant. The predicate require\([4]\) is introduced which notes the statement ID, property, and value of a qualifier as well as the separator. The pattern needs to be applied for every separator, meaning the conjunction is: \(t = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})\) for each separator in \(S\).\\
 
-With qualifier non-existence established the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all qualifiers are either equal or non-existent. \(\forall X \subset S, Y = S \setminus X\) the following rule has to be added. Note that \(qualifierEDB(S, {X}, [X])\) denotes one atom for each element \(x \in X\) as introduced in section \ref{subsec_allowed_units} with \([X]\) representing a variable which is distinct for each atom unless they have the same \(x\). With the predicate does\_not\_have\([2]\) linking a statement ID to the separator it does not have via \(\text{does\_not\_have}(S, R) \leftarrow \text{last\_qualifier}(S, P, V) \wedge \text{require}(S, P, V, R)\) for brevity the rules are
+With qualifier non-existence established the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all qualifiers are either equal or non-existent. \(\forall X \subset S, Y = S \setminus X\) the following rule has to be added. Note that \(qualifierEDB(S, {X}, [X])\) denotes one atom for each element \(x \in X\) as introduced in section \ref{subsec_3_allowed_units} with \([X]\) representing a variable which is distinct for each atom unless they have the same \(x\). With the predicate does\_not\_have\([2]\) linking a statement ID to the separator it does not have via \(\text{does\_not\_have}(S, R) \leftarrow \text{last\_qualifier}(S, P, V) \wedge \text{require}(S, P, V, R)\) for brevity the rules are
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
@@ -886,6 +886,8 @@ With qualifier non-existence established the violation can be found. Two stateme
 &\text{does\_not\_have}(O, \{Y\})
 \end{split}
 \end{equation*}
+
+
 
 \subsection{Single best value (Q52060874)}
 The single best value constraint limits the number of constrained statements with rank preferred on the same item to one. This means during pre-processing the rank information per triple must be extracted and attached to the statement with the new predicate rank\([2]\) which links the statement ID and the rank. Qualifiers and references are not affected since they do not have ranks. Inequality is established between all constrained statement IDs. For the simple case without separators the rule is:
