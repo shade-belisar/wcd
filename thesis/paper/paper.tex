@@ -828,6 +828,15 @@ t_2 = &\text{tripleEDB}(O, R, \text{propertyConstant}, X) \wedge \\
 \subsection{Symmetric (Q21510862)}
 The symmetric constraint can be translated exactly as the inverse constraint if the inverse property where set to the same as the constrained property.
 
+\subsection{Multi-value (Q21510857)}
+The multi-value constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Pre-processing extracts all items statements and inequality between all item statement properties as usual and the conjunction is \(t = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{propertyConstant}, P)\). The predicate require\_second\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found:
+\begin{equation*}
+\text{require\_second}(S, \text{propertyConstant}) \leftarrow \text{next}(Q, R) \wedge \text{next}(R, S) \wedge \text{require}(Q) \wedge t
+\end{equation*}
+\begin{equation*}
+\text{require\_second}(S, \text{propertyConstant}) \leftarrow \text{next}(R, S) \wedge \text{require\_second}(R) \wedge t
+\end{equation*}
+A violations would be any last statement requiring a second constrained statement.
 
 \subsection{Single best value (Q52060874)}
 The single best value constraint limits the number of constrained statements with rank preferred on the same item to one. This means during pre-processing the rank information per triple must be extracted and attached to the statement with the new predicate rank\([2]\) which links the statement ID and the rank. Qualifiers and references are not affected since they do not have ranks. Inequality is established between all constrained statement IDs. For the simple case without separators the rule is:
