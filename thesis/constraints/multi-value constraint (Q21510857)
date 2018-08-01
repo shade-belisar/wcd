@@ -11,13 +11,14 @@ The rules can be construced similar to the require pattern:
 	require(STATEMENT, constrainedProperty)
 for first and next as ususal, then:
 	require_second(STATEMENT, constrainedProperty) :-
-		next(PREVIOUS_STATEMENT, STATEMENT,
-		require(PREVIOUS_STATEMENT, constrainedProperty),
+		next(PREVIOUS_STATEMENT, STATEMENT),
+		next(PREVIOUSER_STATEMENT, PREVIOUS_STATEMENT)
+		require(PREVIOUSER_STATEMENT, constrainedProperty),
 		tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y),
 		unequal(constrainedProperty, OTHER_PROPERTY)
 and
 	require_second(STATEMENT, constrainedProperty) :-
-		next(PREVIOUS_STATEMENT, STATEMENT,
+		next(PREVIOUS_STATEMENT, STATEMENT),
 		require_second(PREVIOUS_STATEMENT, constrainedProperty),
 		tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y),
 		unequal(constrainedProperty, OTHER_PROPERTY)
