@@ -838,7 +838,7 @@ The multi-value constraint requires a limited count of constrained statements. A
 \end{equation*}
 A violations would be any last statement requiring a second constrained statement.
 
-\subsection{Single value (Q19474404)}
+\subsection{Single value (Q19474404)}\label{subsec_3_single_value}
 The single value constraint can be divided into two different cases, depending on if the set of separators \(S\) is empty or not. Pre-processing needs to extract all item statements and their qualifiers and establish inequality between all statement IDs and all qualifier values.
 
 \subsubsection{No separators}
@@ -897,8 +897,38 @@ The mandatory qualifier constraint needs to determine qualifier non-existence on
 \end{equation*}
 
 \subsection{Single best value (Q52060874)}
-The single best value constraint limits the number of constrained statements with rank preferred on the same item to one. This means during pre-processing the rank information per triple must be extracted and attached to the statement with the new predicate rank\([2]\) which links the statement ID and the rank. Qualifiers and references are not affected since they do not have ranks. Inequality is established between all constrained statement IDs. For the simple case without separators the rule is:
-\todo[inline]{Well, this isn't done.}
+The single best value constraint, like the single value constraint (section \ref{subsec_3_single_value}), differentiates between the set of separators \(S\) being empty or not. Since the constraint depends on the rank of statements this needs to be extracted during pre-processing and attached to the statement ID with the new predicate rank\([2]\). Qualifiers and references are not affected since they do not have ranks. For this constraint all item statements, their rank and their qualifiers need to be extracted and inequality established between the statement IDs and the qualifier values.\\
+
+\subsubsection{No separators}
+If the separator set is empty, the violation simply occurs if there are two constrained statements on the same item with the preferred rank. Thus the equation \ref{eq_no_separators_triple} is expanded to
+\begin{equation}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{rank}(S, \text{preferredRankConstant}) \wedge \\
+&\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+&\text{rank}(O, \text{preferredRankConstant}) \wedge \\
+&\text{unequal}(S, O)
+\end{split}
+\end{equation}
+
+\subsubsection{With separators}
+As in the case above, the qualifier non-existence and violation rules are very similar to single value. The only change is the addition of the rank requirements as shown below.
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{rank}(S, \text{preferredRankConstant}) \wedge \\
+&\text{tripleEDB}(O, I, \text{propertyConstant}, W) \wedge \\
+&\text{rank}(O, \text{preferredRankConstant}) \wedge \\
+&\text{unequal}(S, O) \wedge \\
+&\text{qualifierEDB}(S, \{X\}, [X]) \wedge \\
+&\text{qualifierEDB}(O, \{X\}, [X]) \wedge \\
+&\text{does\_not\_have}(S, \{Y\}) \wedge \\
+&\text{does\_not\_have}(O, \{Y\})
+\end{split}
+\end{equation*}
+
 
 \chapter{Evaluation/Comparison}
 
