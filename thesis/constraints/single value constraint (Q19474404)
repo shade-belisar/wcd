@@ -18,6 +18,10 @@ The rule modeling for the case without separators is:
 		tripleEDB(STATEMENT, X, propertyConstant, Y),
 		tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
 		unequal (STATEMENT, OTHER_STATEMENT)
+	violation_short(STATEMENT, propertyConstant, Y) :-
+		qualifierEDB(STATEMENT, propertyConstant, Y),
+		qualifierEDB(STATEMENT, propertyConstant, Z),
+		unequal (Y, Z)
 If separators were specified for the property, the rules are:
 	violation_long(STATEMENT, X, propertyConstant, Y) :-
 		tripleEDB(STATEMENT, X, propertyConstant, Y),
