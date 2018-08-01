@@ -838,6 +838,54 @@ The multi-value constraint requires a limited count of constrained statements. A
 \end{equation*}
 A violations would be any last statement requiring a second constrained statement.
 
+\subsection{Single value (Q19474404)}
+The single value constraint can be divided into two different cases, depending on if the set of separators \(S\) is empty or not. Pre-processing needs to extract all item statements and their qualifiers and establish inequality between all statement IDs and all qualifier values.
+
+\subsubsection{No separators}
+If the separator set is empty, the violation simply occurs if there are two constrained statements on the same item. 
+\begin{equation}\label{eq_no_separators_triple}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+&\text{unequal}(S, O)
+\end{split}
+\end{equation}
+For qualifiers and reference there is no ID whose inequality could be checked. However, since the statement ID and the property of a possible conflict are always the same, inequality can be tested on the values.
+\begin{equation*}
+\begin{split}
+\text{violation\_qualifier}&(S, \text{propertyConstant}, V) \leftarrow \\
+&\text{qualifierEDB}(S, \text{propertyConstant}, V) \wedge \\
+&\text{qualifierEDB}(S, \text{propertyConstant}, X) \wedge \\
+&\text{unequal}(V, X)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_reference}&(S, \text{propertyConstant}, V) \leftarrow \\
+&\text{referenceEDB}(S, \text{propertyConstant}, V) \wedge \\
+&\text{referenceEDB}(S, \text{propertyConstant}, X) \wedge \\
+&\text{unequal}(V, X)
+\end{split}
+\end{equation*}
+\todo{Check if all reference-rules look exactly like the qualifier rules and cut them out if it is so.}
+
+\subsubsection{With separators}
+To find all violations under separators a number of things have to be considered. Only triples are eligible, since qualifiers cannot have further qualifier, and the order of qualifiers on constrained statements needs to be pre-processed as well since qualifier non-existence is relevant. The predicate require\([4]\) is introduced which notes the statement ID, property, and value of a qualifier as well as the separator. The pattern needs to be applied for every separator, meaning the conjunction is: \(t = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})\) for each separator in \(S\).\\
+
+With qualifier non-existence established the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all qualifiers are either equal or non-existent. \(\forall X \subset S, Y = S \setminus X\) the following rule has to be added. Note that \(qualifierEDB(S, {X}, [X])\) denotes one atom for each element \(x \in X\) as introduced in section \ref{subsec_allowed_units} with \([X]\) representing a variable which is distinct for each atom unless they have the same \(x\). With the predicate does\_not\_have\([2]\) linking a statement ID to the separator it does not have via \(\text{does\_not\_have}(S, R) \leftarrow \text{last\_qualifier}(S, P, V) \wedge \text{require}(S, P, V, R)\) for brevity the rules are
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{tripleEDB}(O, I, \text{propertyConstant}, W) \wedge \\
+&\text{unequal}(S, O) \wedge \\
+&\text{qualifierEDB}(S, \{X\}, [X]) \wedge \\
+&\text{qualifierEDB}(O, \{X\}, [X]) \wedge \\
+&\text{does\_not\_have}(S, \{Y\}) \wedge \\
+&\text{does\_not\_have}(O, \{Y\})
+\end{split}
+\end{equation*}
 
 \subsection{Single best value (Q52060874)}
 The single best value constraint limits the number of constrained statements with rank preferred on the same item to one. This means during pre-processing the rank information per triple must be extracted and attached to the statement with the new predicate rank\([2]\) which links the statement ID and the rank. Qualifiers and references are not affected since they do not have ranks. Inequality is established between all constrained statement IDs. For the simple case without separators the rule is:
