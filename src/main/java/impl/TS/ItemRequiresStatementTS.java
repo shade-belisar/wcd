@@ -9,7 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ItemRequiresStatementTS extends ConflictsWithTS {
+import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
+import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+
+import utility.OutputValueVisitor;
+
+public class ItemRequiresStatementTS extends TripleSet {
 	
 	TripleSetFile first;
 	
@@ -105,6 +111,32 @@ public class ItemRequiresStatementTS extends ConflictsWithTS {
 		lastSubject = subject;
 	}
 	
+	@Override
+	public void processItemDocument(ItemDocument itemDocument) {
+		boolean foundProperty = false;
+		
+		String subject = itemDocument.getEntityId().getIri();
+		for (StatementGroup sg : itemDocument.getStatementGroups()) {
+			if (foundProperty)
+				break;
+			String predicate = sg.getProperty().getIri();
+			if (predicate.endsWith(property)) {
+				foundProperty = true;
+				break;
+			}
+		}
+		if (!foundProperty)
+			return;
+		for (StatementGroup	sg : itemDocument.getStatementGroups()) {
+			String predicate = sg.getProperty().getIri();
+			for (Statement statement : sg) {
+				String id = statement.getStatementId();
+				String object = statement.getValue().accept(new OutputValueVisitor());
+				triple(id, subject, predicate, object);
+			}
+		}
+	}
+	
 	protected void first(String statement, String item) {
 		writeFirst(statement, item);
 	}
@@ -139,5 +171,10 @@ public class ItemRequiresStatementTS extends ConflictsWithTS {
 			last.close();
 		}
 			
+	}
+
+	@Override
+	protected String getTripleSetType() {
+		return "ItemRequiresStatement";
 	}
 }
