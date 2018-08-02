@@ -775,24 +775,32 @@ Multiple statements are violated if specific statements do not exist in relation
 
 If qualifier non-existence should be tested the predicates have to be adapted, since they do not have a unique identifier. Their order has to be established using the entire set of statement ID, property and value. For this the predicates first\_qualifier\([3]\) and last\_qualifier\([3]\) taking the statement ID, the property and the value and next\_qualifier\([6]\) with ID, property and value for the current and next qualifier are introduced.\\
 
-Using this pre-processed data the approach is to apply a require-predicate to each statement or qualifier. They will be introduced in the respective constraint sections since they may need to carry different information. For the introduction the predicate require\([1]\) simply denotes that the statement requires something. The qualifier variant works analogous.\\
+Using this pre-processed data the approach is to apply a require-predicate to each statement or qualifier. This is require\([2]\) for statements, connecting the statement ID with a required term \(t\) and require\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the term \(t\).\\
 
-The pattern consists of two rules, both utilising the same conjunction \(t = \text{tripleEDB}(S, I, P, V) \wedge C_1 .. C_m\) with arbitrary atoms \(C_n\) which is used to test if the triple does not fulfil the requirement. Then rule one
+For statements the pattern consists of two rules, both utilising the same conjunction \(c = \text{tripleEDB}(S, I, P, V) \wedge C_1 \wedge .. \wedge C_m\) with arbitrary atoms \(C_n\) which is used to test if the triple does not fulfil the requirement. Then rule one
 \begin{equation*}
-\text{require}(S) \leftarrow \text{first}(S) \wedge t
+\text{require}(S, t) \leftarrow \text{first}(S) \wedge c
 \end{equation*}
 states that the statement requires the condition and
 \begin{equation*}
-\text{require}(O) \leftarrow \text{next}(S, O) \wedge \text{require}(S) \wedge t
+\text{require}(O, t) \leftarrow \text{next}(S, O) \wedge \text{require}(S, t) \wedge c
 \end{equation*}
-propagates this down the statement chain. If the last statement of an item or the last qualifier of a statement has require the violation occurred.\\
+propagates this down the statement chain.
 
-In the following constraints only the conjunction \(t\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
+For qualifiers the conjunction has to be adapted to \(c_q = \text{qualifierEDB}(S, P, V) \wedge C_1 \wedge .. \wedge C_m \) and the rules are
+\begin{equation*}
+\text{require}(S, P, V, t) \leftarrow \text{first}(S, P, V) \wedge c
+\end{equation*}
+\begin{equation*}
+\text{require}(O, X, C, t) \leftarrow \text{next}(S, P, V, O, X, C) \wedge \text{require}(S, P, V, t) \wedge c
+\end{equation*}
+
+If the last statement of an item or the last qualifier of a statement has require the violation occurred. In the following constraints only the conjunction \(c\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
 
 \subsection{Item requires statement (Q21503247)}
-The item requires statement constraint requires the pre-processing of all item statements. Additionally, inequality between all properties of item statements and the required property as well as between all values and the allowed values has to be established. It occurs in two varieties, depending on if allowed values have been specified or not. The predicate is defined as require\([2]\) denoting the statement and the required property. Without separators the conjunction is \(t_1 = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)\).\\
+The item requires statement constraint requires the pre-processing of all item statements. Additionally, inequality between all properties of item statements and the required property as well as between all values and the allowed values has to be established. It occurs in two varieties, depending on if allowed values have been specified or not. The required term \(t\) is the  required property. Without separators the conjunction is \(c_1 = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)\).\\
 
-If a set of allowed values \(A\) has been specified, a second set of require-rules have to be introduced with \(t_2 = \text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)\). Note that the first set of rules is still required, since the preceding statements do not need to have the required property.\\
+If a set of allowed values \(A\) has been specified, a second set of require-rules have to be introduced with \(c_2 = \text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)\). Note that the first set of rules is still required, since the preceding statements do not need to have the required property.\\
 
 In both cases violations can be found with
 \begin{equation*}
@@ -818,11 +826,11 @@ The value requires statement constraint is syntactically very similar to the pre
 \subsection{Inverse (Q21510855)}
 The inverse constraint is similar to the value requires statement constraint in requiring a statement on a constrained value with a specific property. However, instead of putting no constraint or a list of fixed values on the required statements value it set a relative requirement: the constrained item. The pre-processing and inequalities thus remain the same, but the conjunctions change to 
 \begin{equation*}
-t_1 = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{inversePropertyConstant}, P)
+c_1 = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{inversePropertyConstant}, P)
 \end{equation*}
 \begin{equation*}
 \begin{split}
-t_2 = &\text{tripleEDB}(O, R, \text{propertyConstant}, X) \wedge \\
+c_2 = &\text{tripleEDB}(O, R, \text{propertyConstant}, X) \wedge \\
 &\text{tripleEDB}(S, I, \text{inversePropertyConstant}, V) \wedge \\
 &\text{unequal}(R, V)
 \end{split}
@@ -832,7 +840,7 @@ t_2 = &\text{tripleEDB}(O, R, \text{propertyConstant}, X) \wedge \\
 The symmetric constraint can be translated exactly as the inverse constraint if the inverse property where set to the same as the constrained property.
 
 \subsection{Multi-value (Q21510857)}
-The multi-value constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Pre-processing extracts all items statements and inequality between all item statement properties as usual and the conjunction is \(t = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{propertyConstant}, P)\). The predicate require\_second\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found:
+The multi-value constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Pre-processing extracts all items statements and inequality between all item statement properties as usual and the conjunction is \(c = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{propertyConstant}, P)\). The predicate require\_second\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found:
 \begin{equation*}
 \text{require\_second}(S, \text{propertyConstant}) \leftarrow \text{next}(Q, R) \wedge \text{next}(R, S) \wedge \text{require}(Q) \wedge t
 \end{equation*}
@@ -874,7 +882,7 @@ For qualifiers and reference there is no ID whose inequality could be checked. H
 \todo{Check if all reference-rules look exactly like the qualifier rules and cut them out if it is so.}
 
 \subsubsection{With separators}\label{subsubsec_with_separators}
-To find all violations under separators a number of things have to be considered. Only triples are eligible, since qualifiers cannot have further qualifier, and the order of qualifiers on constrained statements needs to be pre-processed as well since qualifier non-existence is relevant. The predicate require\([4]\) is introduced which notes the statement ID, property, and value of a qualifier as well as the separator. The pattern needs to be applied for every separator, meaning the conjunction is: \(t = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})\) for each separator in \(S\).\\
+To find all violations under separators a number of things have to be considered. Only triples are eligible, since qualifiers cannot have further qualifier, and the order of qualifiers on constrained statements needs to be pre-processed as well since qualifier non-existence is relevant. The pattern needs to be applied for every separator, meaning the conjunction is: \(c_q = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{separatorConstant})\) for each separator in \(S\).\\
 
 With qualifier non-existence established the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all qualifiers are either equal or non-existent. \(\forall X \subset S, Y = S \setminus X\) the following rule has to be added. Note that \(qualifierEDB(S, {X}, [X])\) denotes one atom for each element \(x \in X\) as introduced in section \ref{subsec_3_allowed_units} with \([X]\) representing a variable which is distinct for each atom unless they have the same \(x\). With the predicate does\_not\_have\([2]\) linking a statement ID to the separator it does not have via \(\text{does\_not\_have}(S, R) \leftarrow \text{last\_qualifier}(S, P, V) \wedge \text{require}(S, P, V, R)\) for brevity the rules are
 \begin{equation*}
@@ -891,7 +899,7 @@ With qualifier non-existence established the violation can be found. Two stateme
 \end{equation*}
 
 \subsection{Mandatory qualifier (Q21510856)}
-The mandatory qualifier constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. All constrained statements and their qualifiers have to be extracted and the order of the qualifiers pre-processed. Inequality must be established between all qualifier properties and the conjunction is \(t = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})\). With the usual require-pattern for qualifiers and the does\_not\_have rule added for brevity the violations would be
+The mandatory qualifier constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. All constrained statements and their qualifiers have to be extracted and the order of the qualifiers pre-processed. Inequality must be established between all qualifier properties and the conjunction is \(c_q = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})\). With the usual require-pattern for qualifiers and the does\_not\_have rule added for brevity the violations would be
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
