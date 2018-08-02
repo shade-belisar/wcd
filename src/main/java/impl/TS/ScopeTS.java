@@ -19,7 +19,7 @@ public class ScopeTS extends TripleSet {
 	
 	@Override
 	protected String getTripleSetType() {
-		return "PropertyAsPredicate";
+		return "Scope";
 	}
 	
 	@Override

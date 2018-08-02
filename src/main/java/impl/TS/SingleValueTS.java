@@ -55,7 +55,7 @@ public class SingleValueTS extends TripleSet {
 
 	@Override
 	protected String getTripleSetType() {
-		return "PropertyAsPredicateWithQualifiers";
+		return "SingleValue";
 	}
 
 }

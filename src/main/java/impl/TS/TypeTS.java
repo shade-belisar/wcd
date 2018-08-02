@@ -44,7 +44,7 @@ public class TypeTS extends TripleSet {
 
 	@Override
 	protected String getTripleSetType() {
-		return "";
+		return "Type";
 	}
 
 }
