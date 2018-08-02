@@ -56,7 +56,7 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 		
 		for (Map.Entry<String, HashSet<String>> entry : conflicts.entrySet()) {
 			String confProperty = entry.getKey();
-			Constant confPropertyConstant = Utility.makeConstant(confProperty);
+			Constant confPropertyConstant = Expressions.makeConstant(confProperty);
 			HashSet<String> confValues = entry.getValue();
 			
 			if (confValues.size() == 0) {

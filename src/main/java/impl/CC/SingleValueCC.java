@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import impl.PCC.PropertyConstraintChecker;
 import impl.PCC.SingleValuePCC;
+import utility.Utility;
 
 public class SingleValueCC extends ConstraintChecker {
 	
@@ -53,7 +54,7 @@ public class SingleValueCC extends ConstraintChecker {
 			if (content.equals(""))
 				return;
 			for (String value : literal.getString().split(",")) {
-				propertiesAndSeparators.get(property).add(value);				
+				propertiesAndSeparators.get(property).add(Utility.removeBaseURI(value));				
 			}
 		} else {
 			logger.error("Node " + node + " is no a literal.");

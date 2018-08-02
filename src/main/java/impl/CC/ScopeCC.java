@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import impl.PCC.PropertyConstraintChecker;
 import impl.PCC.ScopePCC;
+import utility.Utility;
 
 public class ScopeCC extends ConstraintChecker {
 	
@@ -49,7 +50,7 @@ public class ScopeCC extends ConstraintChecker {
 		if (node.isLiteral()) {
 			Literal literal = node.asLiteral();
 			for (String qualifier : literal.getString().split(",")) {
-				qualifiers.add(qualifier);
+				qualifiers.add(Utility.removeBaseURI(qualifier));
 			}
 			result.put(property, qualifiers);
 		} else {

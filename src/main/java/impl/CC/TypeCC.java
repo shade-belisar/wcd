@@ -23,6 +23,7 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
 import impl.PCC.PropertyConstraintChecker;
+import utility.Utility;
 
 public class TypeCC extends ConstraintChecker {
 	
@@ -62,7 +63,7 @@ public class TypeCC extends ConstraintChecker {
 			if (content.equals(""))
 				return;
 			for (String value : literal.getString().split(",")) {
-				relationAndClasses.get(property).add(value);				
+				relationAndClasses.get(property).add(Utility.removeBaseURI(value));				
 			}
 		} else {
 			logger.error("Node " + node + " is no a literal.");

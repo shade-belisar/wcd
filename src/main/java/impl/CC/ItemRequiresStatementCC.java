@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import impl.PCC.ItemRequiresStatementPCC;
 import impl.PCC.PropertyConstraintChecker;
+import utility.Utility;
 
 public class ItemRequiresStatementCC extends ConstraintChecker {
 	
@@ -57,7 +58,7 @@ final static Logger logger = Logger.getLogger(ItemRequiresStatementCC.class);
 			if (content.equals(""))
 				return;
 			for (String value : literal.getString().split(",")) {
-				configuration.get(property).get(propQualifier).add(value);				
+				configuration.get(property).get(propQualifier).add(Utility.removeBaseURI(value));				
 			}
 		} else {
 			logger.error("Node " + node + " is no a literal.");

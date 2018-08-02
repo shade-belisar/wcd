@@ -97,7 +97,7 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 		
 		for (Set<String> propertiesForOneItem : tripleSet.getProperties()) {
 			for(String requiredProperty : requirements.keySet()) {
-				propertiesForOneItem.add(Utility.BASE_URI + requiredProperty);
+				propertiesForOneItem.add(requiredProperty);
 			}
 			try {
 				InequalityHelper.addUnequalConstantsToReasoner(propertiesForOneItem);
@@ -113,7 +113,7 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 			
 			Set<String> allowedValues = entry.getValue();
 			
-			Constant requiredPropertyConstant = Utility.makeConstant(requiredProperty);
+			Constant requiredPropertyConstant = Expressions.makeConstant(requiredProperty);
 			
 			// require(STATEMENT, requiredProperty)
 			Atom require_Sr = Expressions.makeAtom(require, statement, requiredPropertyConstant);
@@ -154,7 +154,7 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 				Atom tripleEDB_SXrY = Expressions.makeAtom(tripleEDB, statement, x, requiredPropertyConstant, y);
 				
 				// setup values inequality
-				Set<String> valuesForRequiredProperty = tripleSet.getValues().get(Utility.BASE_URI + requiredProperty);
+				Set<String> valuesForRequiredProperty = tripleSet.getValues().get(requiredProperty);
 				if (valuesForRequiredProperty != null) {
 					valuesForRequiredProperty.addAll(allowedValues);
 					try {
@@ -210,11 +210,11 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 		
 		Constant lastStatement = Expressions.makeConstant("Q129$1101349A-38FB-45F0-B365-60DF8EEE0ACA");
 		
-		Constant conflictingValue = Utility.makeConstant("Q13");
+		Constant conflictingValue = Expressions.makeConstant("Q13");
 		
-		Constant nonconflictingValue = Utility.makeConstant("Q13789518");
+		Constant nonconflictingValue = Expressions.makeConstant("Q13789518");
 		
-		Atom query = Expressions.makeAtom(InequalityHelper.unequal, Utility.makeConstant("P131"), x);
+		Atom query = Expressions.makeAtom(InequalityHelper.unequal, Expressions.makeConstant("P131"), x);
 		
 		try {
 			return prepareAndExecuteQueries(rules, Arrays.asList(violation_query));

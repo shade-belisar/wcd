@@ -96,7 +96,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 	protected boolean allowedAs(String qualifier) {
 		boolean result = false;
 		for (String allowed : qualifiers) {
-			if (allowed.equals(Utility.BASE_URI + qualifier))
+			if (allowed.equals(qualifier))
 				result = true;
 		}
 		return result;

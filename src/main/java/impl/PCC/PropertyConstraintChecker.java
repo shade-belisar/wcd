@@ -83,7 +83,7 @@ public abstract class PropertyConstraintChecker {
 	public PropertyConstraintChecker(String property_) throws IOException {
 		property = property_;
 		internalError = "INTERNAL_ERROR for property " + property + ".";
-		propertyConstant = Utility.makeConstant(property);
+		propertyConstant = Expressions.makeConstant(property);
 		
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
 	}
