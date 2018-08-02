@@ -25,6 +25,23 @@
 				<target>1.8</target>
 			</configuration>
 		</plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <id>Main</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>main.Main</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 	</plugins>
   </build>
 
