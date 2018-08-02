@@ -9,13 +9,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
+import org.wikidata.wdtk.dumpfiles.DumpContentType;
 import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
+import org.wikidata.wdtk.dumpfiles.EntityTimerProcessor;
+import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
 import impl.CC.ConflictsWithCC;
@@ -37,14 +46,45 @@ public class Main {
 	final static String DUMP_FILE = "./resources/sample-dump-20150815.json.gz";
 	
 	static DumpProcessingController dumpProcessingController;
+	
+	static boolean onlyCurrentRevisions = true;
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		Options options = new Options();
+		options.addOption("d", "download", false, "Download the current JSON dump.");
+		options.addOption("l", "local", false, "Process local example dump.");
+		options.addOption("h", "help", false, "Displays this help.");
+		
+		CommandLineParser parser = new DefaultParser();
+	    CommandLine cmd;
+	    
+	    try {
+			cmd = parser.parse(options, args);
+		} catch (ParseException e) {
+			System.out.println("There was an error while parsing the command line input.");
+		    HelpFormatter formatter = new HelpFormatter();
+		    formatter.printHelp("help", options);
+		    return;
+		}
+	    
+	    if (cmd.hasOption("help")) {
+	    	HelpFormatter formatter = new HelpFormatter();
+	        formatter.printHelp("help", options);
+	        return;
+	    }
+		
 		configureLogging();
 		
 		dumpProcessingController = new DumpProcessingController("wikidatawiki");
+		if (cmd.hasOption("download")) {
+			dumpProcessingController.setOfflineMode(false);
+		} else {
+			dumpProcessingController.setOfflineMode(true);
+		}
+		
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
 		checkers.add(new DistinctValuesCC());
@@ -57,7 +97,16 @@ public class Main {
 			return;
 		}
 		
-		MwLocalDumpFile mwDumpFile = new MwLocalDumpFile(DUMP_FILE);
+		// Add timer for progress
+		EntityTimerProcessor time = new EntityTimerProcessor(0);
+		dumpProcessingController.registerEntityDocumentProcessor(time, null, onlyCurrentRevisions);
+		
+		MwDumpFile mwDumpFile;
+		if (cmd.hasOption("local")){
+			mwDumpFile = new MwLocalDumpFile(DUMP_FILE);
+		} else {
+			mwDumpFile = dumpProcessingController.getMostRecentDump(DumpContentType.JSON);
+		}
 
 		dumpProcessingController.processDump(mwDumpFile);
 		
@@ -87,7 +136,7 @@ public class Main {
 	}
 	
 	public static void registerProcessor(EntityDocumentProcessor processor) {
-		dumpProcessingController.registerEntityDocumentProcessor(processor, null, false);
+		dumpProcessingController.registerEntityDocumentProcessor(processor, null, onlyCurrentRevisions);
 	}
 	
 	public static void configureLogging() {
