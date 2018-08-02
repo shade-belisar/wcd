@@ -16,7 +16,7 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
-import impl.TS.PropertyPredicateTS;
+import impl.TS.ScopeTS;
 import impl.TS.TripleSet;
 import utility.PrepareQueriesException;
 
@@ -31,7 +31,7 @@ public class NoneOfPCC extends PropertyConstraintChecker {
 	public NoneOfPCC(String property_, Set<String> qualifiers_) throws IOException {
 		super(property_);
 		qualifiers = qualifiers_;
-		tripleSet = new PropertyPredicateTS(property);
+		tripleSet = new ScopeTS(property);
 	}
 
 	@Override

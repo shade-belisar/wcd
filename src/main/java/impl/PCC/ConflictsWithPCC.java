@@ -15,7 +15,7 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
-import impl.TS.StatementsItemTS;
+import impl.TS.ConflictsWithTS;
 import impl.TS.TripleSet;
 import utility.PrepareQueriesException;
 import utility.Utility;
@@ -31,7 +31,7 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 	public ConflictsWithPCC(String property_, Map<String, HashSet<String>> qualifiers_) throws IOException {
 		super(property_);
 		conflicts = qualifiers_;
-		tripleSet = new StatementsItemTS(property);
+		tripleSet = new ConflictsWithTS(property);
 	}
 
 	@Override

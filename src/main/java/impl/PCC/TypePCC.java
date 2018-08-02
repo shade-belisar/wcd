@@ -9,7 +9,7 @@ import java.util.Set;
 import org.apache.jena.atlas.lib.tuple.Tuple2;
 import org.apache.log4j.Logger;
 
-import impl.TS.ItemInstanceTS;
+import impl.TS.TypeTS;
 import impl.TS.TripleSet;
 
 public class TypePCC extends PropertyConstraintChecker {
@@ -29,7 +29,7 @@ public class TypePCC extends PropertyConstraintChecker {
 		relation = relation_;
 		classes = classes_;
 		subclassRelations = subclassRelations_;
-		tripleSet = new ItemInstanceTS(property);
+		tripleSet = new TypeTS(property);
 		
 	}
 

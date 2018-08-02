@@ -12,13 +12,13 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 import utility.OutputValueVisitor;
 
-public class PropertyPredicateQualifiersTS extends TripleSet {
+public class SingleValueTS extends TripleSet {
 	
 	Set<String> qualifiers = new HashSet<String>();
 	
 	Set<String> statementIDs = new HashSet<String>();
 
-	public PropertyPredicateQualifiersTS(String property_, Set<String> qualifiers_) throws IOException {
+	public SingleValueTS(String property_, Set<String> qualifiers_) throws IOException {
 		super(property_);
 		qualifiers = qualifiers_;
 	}

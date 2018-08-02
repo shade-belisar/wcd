@@ -1,6 +1,7 @@
 package impl.TS;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -8,9 +9,14 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 
 import utility.OutputValueVisitor;
 
-public class ItemInstanceTS extends TripleSet {
+/**
+ * A triple set limited to all direct statements of items with a statement containing the property as predicate.
+ * @author adrian
+ *
+ */
+public class ConflictsWithTS extends TripleSet {
 
-	public ItemInstanceTS(String property_) throws IOException {
+	public ConflictsWithTS(String property_) throws IOException {
 		super(property_);
 	}
 	
@@ -32,8 +38,6 @@ public class ItemInstanceTS extends TripleSet {
 			return;
 		for (StatementGroup	sg : itemDocument.getStatementGroups()) {
 			String predicate = sg.getProperty().getIri();
-			if (!predicate.endsWith("P31"))
-				return;
 			for (Statement statement : sg) {
 				String id = statement.getStatementId();
 				String object = statement.getValue().accept(new OutputValueVisitor());
@@ -44,7 +48,7 @@ public class ItemInstanceTS extends TripleSet {
 
 	@Override
 	protected String getTripleSetType() {
-		return "";
+		return "DirectStatementsOnItem";
 	}
 
 }

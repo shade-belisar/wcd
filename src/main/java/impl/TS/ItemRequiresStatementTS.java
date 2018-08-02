@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class StatementItemOrderTS extends StatementsItemTS {
+public class ItemRequiresStatementTS extends ConflictsWithTS {
 	
 	TripleSetFile first;
 	
@@ -25,7 +25,7 @@ public class StatementItemOrderTS extends StatementsItemTS {
 	
 	Map<String, HashSet<String>> valuesPerProperty;
 
-	public StatementItemOrderTS(String property_) throws IOException {
+	public ItemRequiresStatementTS(String property_) throws IOException {
 		super(property_);
 		
 		first = new TripleSetFile(getTripleSetType(), property + "first");

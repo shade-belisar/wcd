@@ -11,9 +11,9 @@ import main.Main;
  * @author adrian
  *
  */
-public class PropertyPredicateTS extends TripleSet {
+public class ScopeTS extends TripleSet {
 
-	public PropertyPredicateTS(String property_) throws IOException {
+	public ScopeTS(String property_) throws IOException {
 		super(property_);
 	}
 	

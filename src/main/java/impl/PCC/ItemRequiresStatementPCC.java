@@ -19,7 +19,7 @@ import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
-import impl.TS.StatementItemOrderTS;
+import impl.TS.ItemRequiresStatementTS;
 import impl.TS.TripleSet;
 import utility.InequalityHelper;
 import utility.PrepareQueriesException;
@@ -27,7 +27,7 @@ import utility.Utility;
 
 public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 	
-	final StatementItemOrderTS tripleSet;
+	final ItemRequiresStatementTS tripleSet;
 	
 	final Map<String, HashSet<String>> requirements;
 	
@@ -55,7 +55,7 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 
 	public ItemRequiresStatementPCC(String property_, Map<String, HashSet<String>> qualifiers) throws IOException {
 		super(property_);
-		tripleSet = new StatementItemOrderTS(property);
+		tripleSet = new ItemRequiresStatementTS(property);
 		requirements = qualifiers;
 	}
 

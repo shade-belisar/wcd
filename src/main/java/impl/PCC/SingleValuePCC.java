@@ -16,7 +16,7 @@ import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
-import impl.TS.PropertyPredicateQualifiersTS;
+import impl.TS.SingleValueTS;
 import impl.TS.TripleSet;
 import utility.InequalityHelper;
 import utility.PrepareQueriesException;
@@ -25,14 +25,14 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(SingleValuePCC.class);
 	
-	final PropertyPredicateQualifiersTS tripleSet;
+	final SingleValueTS tripleSet;
 	
 	final Set<String> separators;
 
 	public SingleValuePCC(String property_, Set<String> separators_) throws IOException {
 		super(property_);
 		separators = separators_;
-		tripleSet = new PropertyPredicateQualifiersTS(property, separators);
+		tripleSet = new SingleValueTS(property, separators);
 	}
 
 	@Override
