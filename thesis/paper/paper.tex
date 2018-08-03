@@ -777,9 +777,9 @@ If qualifier non-existence should be tested the predicates have to be adapted, s
 
 Using this pre-processed data the approach is to apply a require-predicate to each statement or qualifier. This is require\([2]\) for statements, connecting the statement ID with a required term \(t\) and require\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the term \(t\).\\
 
-For statements the pattern consists of two rules, both utilising the same conjunction \(c = \text{tripleEDB}(S, I, P, V) \wedge C_1 \wedge .. \wedge C_m\) with arbitrary atoms \(C_n\) which is used to test if the triple does not fulfil the requirement. Then rule one
+For statements the pattern consists of two rules, both utilising the same conjunction \(c = C_1 \wedge .. \wedge C_m\) with arbitrary atoms \(C_n\) which is used to test if the statement does not fulfil the requirement. Then rule one
 \begin{equation*}
-\text{require}(S, t) \leftarrow \text{first}(S) \wedge c
+\text{require}(S, t) \leftarrow \text{first}(S, I) \wedge c
 \end{equation*}
 states that the statement requires the condition and
 \begin{equation*}
@@ -787,7 +787,7 @@ states that the statement requires the condition and
 \end{equation*}
 propagates this down the statement chain.
 
-For qualifiers the conjunction has to be adapted to \(c_q = \text{qualifierEDB}(S, P, V) \wedge C_1 \wedge .. \wedge C_m \) and the rules are
+For qualifiers the rules are
 \begin{equation*}
 \text{require}(S, P, V, t) \leftarrow \text{first}(S, P, V) \wedge c
 \end{equation*}
@@ -882,7 +882,7 @@ For qualifiers and reference there is no ID whose inequality could be checked. H
 \todo{Check if all reference-rules look exactly like the qualifier rules and cut them out if it is so.}
 
 \subsubsection{With separators}\label{subsubsec_with_separators}
-To find all violations under separators a number of things have to be considered. Only triples are eligible, since qualifiers cannot have further qualifier, and the order of qualifiers on constrained statements needs to be pre-processed as well since qualifier non-existence is relevant. The pattern needs to be applied for every separator, meaning the conjunction is: \(c_q = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{separatorConstant})\) for each separator in \(S\).\\
+To find all violations under separators a number of things have to be considered. Only triples are eligible, since qualifiers cannot have further qualifier, and the order of qualifiers on constrained statements needs to be pre-processed as well since qualifier non-existence is relevant. The pattern needs to be applied for every separator, meaning the conjunction is: \(c = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{separatorConstant})\) for each separator in \(S\).\\
 
 With qualifier non-existence established the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all qualifiers are either equal or non-existent. \(\forall X \subset S, Y = S \setminus X\) the following rule has to be added. Note that \(qualifierEDB(S, {X}, [X])\) denotes one atom for each element \(x \in X\) as introduced in section \ref{subsec_3_allowed_units} with \([X]\) representing a variable which is distinct for each atom unless they have the same \(x\). With the predicate does\_not\_have\([2]\) linking a statement ID to the separator it does not have via \(\text{does\_not\_have}(S, R) \leftarrow \text{last\_qualifier}(S, P, V) \wedge \text{require}(S, P, V, R)\) for brevity the rules are
 \begin{equation*}
@@ -899,7 +899,7 @@ With qualifier non-existence established the violation can be found. Two stateme
 \end{equation*}
 
 \subsection{Mandatory qualifier (Q21510856)}
-The mandatory qualifier constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. All constrained statements and their qualifiers have to be extracted and the order of the qualifiers pre-processed. Inequality must be established between all qualifier properties and the conjunction is \(c_q = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})\). With the usual require-pattern for qualifiers and the does\_not\_have rule added for brevity the violations would be
+The mandatory qualifier constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. All constrained statements and their qualifiers have to be extracted and the order of the qualifiers pre-processed. Inequality must be established between all qualifier properties and the conjunction is \(c = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})\). With the usual require-pattern for qualifiers and the does\_not\_have rule added for brevity the violations would be
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
