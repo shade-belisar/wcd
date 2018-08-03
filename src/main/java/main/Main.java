@@ -25,9 +25,15 @@ import org.wikidata.wdtk.dumpfiles.EntityTimerProcessor;
 import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
+import impl.CC.AllowedEntityTypesCC;
+import impl.CC.ConflictsWithCC;
 import impl.CC.ConstraintChecker;
 import impl.CC.DistinctValuesCC;
 import impl.CC.ItemRequiresStatementCC;
+import impl.CC.NoneOfCC;
+import impl.CC.ScopeCC;
+import impl.CC.SingleValueCC;
+import impl.CC.TypeCC;
 
 /**
  * @author adrian
@@ -81,7 +87,13 @@ public class Main {
 		
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
-		checkers.add(new ItemRequiresStatementCC());
+		//checkers.add(new ItemRequiresStatementCC());
+		//checkers.add(new AllowedEntityTypesCC());
+		checkers.add(new ConflictsWithCC());
+		checkers.add(new DistinctValuesCC());
+		checkers.add(new NoneOfCC());
+		checkers.add(new ScopeCC());
+		checkers.add(new SingleValueCC());
 		try {
 			for (ConstraintChecker constraintChecker : checkers) {
 				constraintChecker.init();
