@@ -37,7 +37,19 @@ public class OutputValueVisitor implements ValueVisitor<String> {
 
 	@Override
 	public String visit(QuantityValue value) {
-		String result = value.getNumericValue().toString() + " Lower: " + value.getLowerBound().toString() + " Upper: " + value.getUpperBound().toString() + value.getUnit();
+		String numericValue = "NaN";
+		if (value.getNumericValue() != null)
+			numericValue = value.getNumericValue().toString();
+		String lowerBound = "NaN";
+		if (value.getLowerBound() != null)
+			lowerBound = value.getLowerBound().toString();
+		String upperBound = "NaN";
+		if (value.getUpperBound() != null)
+			upperBound = value.getUpperBound().toString();
+		String unit = "None";
+		if (value.getUnit() != null)
+			unit = value.getUnit().toString();
+		String result = numericValue + " Lower: " + lowerBound + " Upper: " + upperBound + " Unit: " + unit;
 		return result;
 	}
 
