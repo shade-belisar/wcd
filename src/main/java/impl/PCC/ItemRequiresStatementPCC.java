@@ -9,11 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.model.api.Conjunction;
 import org.semanticweb.vlog4j.core.model.api.Constant;
-import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Rule;
-import org.semanticweb.vlog4j.core.model.api.Variable;
+import org.semanticweb.vlog4j.core.model.api.Term;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
@@ -23,40 +21,19 @@ import impl.TS.ItemRequiresStatementTS;
 import impl.TS.TripleSet;
 import utility.InequalityHelper;
 import utility.PrepareQueriesException;
+import utility.StatementNonExistenceHelper;
 import utility.Utility;
 
 public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 	
+	final Map<String, HashSet<String>> configuration;
+	
 	final ItemRequiresStatementTS tripleSet;
-	
-	final Map<String, HashSet<String>> requirements;
-	
-	final String OTHER_PROPERTY = "otherProperty";
-	final String PREVIOUS_STATEMENT = "previousStatement";
-	
-	final String REQUIRE = "require";
-	
-	final String FIRST = "first";
-	final String NEXT = "next";
-	final String LAST = "last";
-	
-	final String VIOLATION_ITEM_PROPERTY = "violation_item_property";
-	
-	final Variable otherProperty = Expressions.makeVariable(OTHER_PROPERTY);
-	final Variable previousStatement = Expressions.makeVariable(PREVIOUS_STATEMENT);
-	
-	final Predicate require = Expressions.makePredicate(REQUIRE, 2);
-	
-	final Predicate first = Expressions.makePredicate(FIRST, 2);
-	final Predicate next = Expressions.makePredicate(NEXT, 2);
-	final Predicate last = Expressions.makePredicate(LAST, 2);
-	
-	final Predicate violation_item_property = Expressions.makePredicate(VIOLATION_ITEM_PROPERTY, 2);
 
-	public ItemRequiresStatementPCC(String property_, Map<String, HashSet<String>> qualifiers) throws IOException {
+	public ItemRequiresStatementPCC(String property_, Map<String, HashSet<String>> configuration_) throws IOException {
 		super(property_);
+		configuration = configuration_;
 		tripleSet = new ItemRequiresStatementTS(property);
-		requirements = qualifiers;
 	}
 
 	@Override
@@ -64,160 +41,106 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 		if (!tripleSet.notEmpty())
 			return "";
 		
+		// Loading EDB-facts
 		try {
 			loadTripleSets(tripleSet);
+			if (tripleSet.firstNotEmpty()) {
+				final DataSource firstEDBPath = new CsvFileDataSource(tripleSet.getFirstFile());
+				reasoner.addFactsFromDataSource(StatementNonExistenceHelper.first, firstEDBPath);
+			}
+			if (tripleSet.nextNotEmpty()) {
+				final DataSource nextEDBPath = new CsvFileDataSource(tripleSet.getNextFile());
+				reasoner.addFactsFromDataSource(StatementNonExistenceHelper.next, nextEDBPath);
+			}
+			if (tripleSet.lastNotEmpty()) {
+				final DataSource lastEDBPath = new CsvFileDataSource(tripleSet.getLastFile());
+				reasoner.addFactsFromDataSource(StatementNonExistenceHelper.last, lastEDBPath);
+			}
+				
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
 			return internalError;
 		}
 		
-		List<Rule> rules = new ArrayList<Rule>();
-		
-		// PREPARATION
-		try {
-			if (tripleSet.firstNotEmpty()) {
-				final DataSource firstEDBPath = new CsvFileDataSource(tripleSet.getFirstFile());
-				reasoner.addFactsFromDataSource(first, firstEDBPath);
-			}
-			if (tripleSet.nextNotEmpty()) {
-				final DataSource nextEDBPath = new CsvFileDataSource(tripleSet.getNextFile());
-				reasoner.addFactsFromDataSource(next, nextEDBPath);
-			}
-			if (tripleSet.lastNotEmpty()) {
-				final DataSource lastEDBPath = new CsvFileDataSource(tripleSet.getLastFile());
-				reasoner.addFactsFromDataSource(last, lastEDBPath);
-			}
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
-		}
-		
-		String inequalityError = "Trying to add unequal constants to reasoner in the wrong state for property " + property + ".";
-		
+		// Establishing inequality
 		InequalityHelper.setOrReset(reasoner);
 		
-		for (Set<String> propertiesForOneItem : tripleSet.getProperties()) {
-			for(String requiredProperty : requirements.keySet()) {
-				propertiesForOneItem.add(requiredProperty);
-			}
-			try {
-				InequalityHelper.addUnequalConstantsToReasoner(propertiesForOneItem);
-			} catch (ReasonerStateException e) {
-				logger.error(inequalityError, e);
-				return internalError;
-			}
+		try {
+			InequalityHelper.addUnequalConstantsToReasoner(tripleSet.allProperties());
+			InequalityHelper.addUnequalConstantsToReasoner(tripleSet.allValues());
+		} catch (ReasonerStateException e) {
+			logger.error("Trying to add unequal constants to reasoner in the wrong state for property " + property + ".", e);
+			return internalError;
 		}
 		
-		for (Map.Entry<String, HashSet<String>> entry : requirements.entrySet()) {
+		// Establishing require
+		StatementNonExistenceHelper.setOrReset(reasoner);
+		
+		try {
+			for (Map.Entry<String, HashSet<String>> entry : configuration.entrySet()) {
+				Term requiredPropertyConstant = Utility.makeConstant(entry.getKey());
 			
-			String requiredProperty = entry.getKey();
+				// tripleEDB(S, I, P, V)
+				Atom tripleEDB_SIPV = Expressions.makeAtom(tripleEDB, s, i, p, v);
 			
-			Set<String> allowedValues = entry.getValue();
+				// unequal(requiredPropertyConstant, P)
+				Atom unequal_rP = Expressions.makeAtom(InequalityHelper.unequal, requiredPropertyConstant, p);
 			
-			Constant requiredPropertyConstant = Expressions.makeConstant(requiredProperty);
-			
-			// require(STATEMENT, requiredProperty)
-			Atom require_Sr = Expressions.makeAtom(require, statement, requiredPropertyConstant);
-			
-			// first(STATEMENT, X)
-			Atom first_Sx = Expressions.makeAtom(first, statement, x);
-			
-			// tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y)
-			Atom tripleEDB_SXOY = Expressions.makeAtom(tripleEDB, statement, x, otherProperty, y);
-			
-			// unequal(requiredProperty, OTHER_PROPERTY)
-			Atom unequal_rO = Expressions.makeAtom(InequalityHelper.unequal, requiredPropertyConstant, otherProperty);
-			
-			// require(STATEMENT, requiredProperty) :- first(STATEMENT, X), tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y), unequal(requiredProperty, OTHER_PROPERTY)
-			Rule require_first = Expressions.makeRule(require_Sr, first_Sx, tripleEDB_SXOY, unequal_rO);
-			
-			rules.add(require_first);
-			
-			// next(PREVIOUS_STATEMENT, STATEMENT)
-			Atom next_PS = Expressions.makeAtom(next, previousStatement, statement);
-			
-			// require(PREVIOUS_STATEMENT, requiredProperty)
-			Atom require_Pr = Expressions.makeAtom(require, previousStatement, requiredPropertyConstant);
-			
-			// require(STATEMENT, requiredProperty) :-
-			//	next(PREVIOUS_STATEMENT, STATEMENT,
-			//	require(PREVIOUS_STATEMENT, requiredProperty),
-			//	tripleEDB(STATEMENT, X, OTHER_PROPERTY, Y),
-			//	unequal(requiredProperty, OTHER_PROPERTY)
-			Rule require_next = Expressions.makeRule(require_Sr, next_PS, require_Pr, tripleEDB_SXOY, unequal_rO);
-			
-			rules.add(require_next);
-			
-			if (allowedValues.size() > 0) {
-				Conjunction require_Sr_conjunction = Expressions.makeConjunction(require_Sr);
-
-				// tripleEDB(STATEMENT, X, requiredProperty, Y)
-				Atom tripleEDB_SXrY = Expressions.makeAtom(tripleEDB, statement, x, requiredPropertyConstant, y);
+				StatementNonExistenceHelper.initRequireTriple(requiredPropertyConstant, tripleEDB_SIPV, unequal_rP);
 				
-				// setup values inequality
-				Set<String> valuesForRequiredProperty = tripleSet.getValues().get(requiredProperty);
-				if (valuesForRequiredProperty != null) {
-					valuesForRequiredProperty.addAll(allowedValues);
-					try {
-						InequalityHelper.addUnequalConstantsToReasoner(valuesForRequiredProperty);
-					} catch (ReasonerStateException e) {
-						logger.error(inequalityError, e);
-						return internalError;
+				Set<String> allowedValues = entry.getValue();				
+				if (allowedValues.size() != 0) {
+					// tripleEDB(S, I, requiredPropertyConstant, V)
+					Atom tripleEDB_SIrV = Expressions.makeAtom(tripleEDB, s, i, requiredPropertyConstant, v);
+					
+					List<Atom> conjunction = new ArrayList<Atom>();
+					conjunction.add(tripleEDB_SIrV);
+					
+					for (String allowedValue : allowedValues) {
+						Constant allowedValueConstant = Utility.makeConstant(allowedValue);
+						conjunction.add(Expressions.makeAtom(InequalityHelper.unequal, allowedValueConstant, v));
 					}
+					
+					StatementNonExistenceHelper.initRequireTriple(requiredPropertyConstant, conjunction);
 				}
+			
 				
-				List<Atom> unequal_vY = new ArrayList<Atom>();
-				// unequal(<values>, Y)
-				
-				for (String value : allowedValues) {
-					Constant valueConstant = Expressions.makeConstant(value);
-					unequal_vY.add(Expressions.makeAtom(InequalityHelper.unequal, valueConstant, y));
-				}
-				
-				// require(STATEMENT, requiredProperty) :- first(STATEMENT, X), tripleEDB(STATEMENT, X, requiredProperty, Y), unequal(<values>, Y)
-				List<Atom> bodyFirst = new ArrayList<Atom>(Arrays.asList(first_Sx, tripleEDB_SXrY));
-				bodyFirst.addAll(unequal_vY);
-				Rule require_first_values = Expressions.makeRule(require_Sr_conjunction, Expressions.makeConjunction(bodyFirst));
-				
-				rules.add(require_first_values);
-				
-				// require(STATEMENT, requiredProperty) :-
-				//	next(PREVIOUS_STATEMENT, STATEMENT),
-				//	require(PREVIOUS_STATEMENT, requiredProperty),
-				//	tripleEDB(STATEMENT, X, requiredProperty, Y),
-				//	unequal(<values>, Y)
-				List<Atom> bodyNext = new ArrayList<Atom>(Arrays.asList(next_PS, require_Pr, tripleEDB_SXrY));
-				bodyNext.addAll(unequal_vY);
-				Rule require_next_values = Expressions.makeRule(require_Sr_conjunction, Expressions.makeConjunction(bodyNext));
-				
-				rules.add(require_next_values);
 			}
+		} catch (ReasonerStateException e) {
+			logger.error("Trying to add require-pattern rules to reasoner in the wrong state for property " + property + ".", e);
+			return internalError;
+		}
+		
+		List<Rule> rules = new ArrayList<Rule>();
+		
+		for (String requiredProperty : configuration.keySet()) {
+			Term requiredPropertyConstant = Utility.makeConstant(requiredProperty);
 			
-			// violation_item_property(X, requiredProperty)
-			Atom violation_Xr = Expressions.makeAtom(violation_item_property, x, requiredPropertyConstant);
+			// violation_triple(S, I, propertyConstant, V)
+			Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
 			
-			// last(STATEMENT, X)
-			Atom last_SX = Expressions.makeAtom(last, statement, x);
+			// tripleEDB(S, I, propertyConstant, V)
+			Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
 			
-			// violation(X, requiredProperty) :- require(STATEMENT, requiredProperty), last(STATEMENT, X)
-			Rule violation = Expressions.makeRule(violation_Xr, require_Sr, last_SX);
+			// tripleEDB(O, I, P, X)
+			Atom tripleEDB_OIPX = Expressions.makeAtom(tripleEDB, o, i, p, x);
 			
+			// last(O, I)
+			Atom last_OI = Expressions.makeAtom(StatementNonExistenceHelper.last, o, i);
+			
+			// require(O, requiredPropertyConstant)
+			Atom require_Or = Expressions.makeAtom(StatementNonExistenceHelper.require, o, requiredPropertyConstant);
+			
+			// violation_triple(S, I, propertyConstant, V) :-
+			//	tripleEDB(S, I, propertyConstant, V),
+			//	tripleEDB(O, I, P, X), last(O, I),
+			//	require(O, requiredPropertyConstant)
+			Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OIPX, last_OI, require_Or);
 			rules.add(violation);
 		}
 		
-		Atom violation_query = Expressions.makeAtom(violation_item_property, x, y);
-		
-		Constant secondToLastStatement = Expressions.makeConstant("Q129$1101349A-38FB-45F0-B365-60DD8EEE0ACA");
-		
-		Constant lastStatement = Expressions.makeConstant("Q129$1101349A-38FB-45F0-B365-60DF8EEE0ACA");
-		
-		Constant conflictingValue = Expressions.makeConstant("Q13");
-		
-		Constant nonconflictingValue = Expressions.makeConstant("Q13789518");
-		
-		Atom query = Expressions.makeAtom(InequalityHelper.unequal, Expressions.makeConstant("P131"), x);
-		
 		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_query));
+			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query));
 		} catch (PrepareQueriesException e1) {
 			return e1.getMessage();
 		}
@@ -227,5 +150,4 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
 		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
 	}
-
 }

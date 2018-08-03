@@ -53,41 +53,59 @@ public class ScopePCC extends PropertyConstraintChecker {
 			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
 			return internalError;
 		}
-
-		// violation_short(STATEMENT, propertyConstant, X)
-		Atom violation_short_SpX = Expressions.makeAtom(violation_short, statement, propertyConstant, x);
-		// violation_long(STATEMENT, X, propertyConstant, Y)
-		Atom violation_long_SXpY = Expressions.makeAtom(violation_long, statement, x, propertyConstant, y);
-		// tripleEDB(STATEMENT, X, propertyConstant, Y)
-		Atom tripleEDB_SXpY = Expressions.makeAtom(tripleEDB, statement, x, propertyConstant, y);
-		// qualifierEDB(STATEMENT, propertyConstant, X)
-		Atom qualifierEDB_SpX = Expressions.makeAtom(qualifierEDB, statement, propertyConstant, x);
-		// referenceEDB(STATEMENT, propertyConstant, X)
-		Atom referenceEDB_SpX = Expressions.makeAtom(referenceEDB, statement, propertyConstant, x);
 		
-		// violation_long(STATEMENT, X, propertyConstant, Y) :- tripleEDB(STATEMENT, X, propertyConstant, Y)
-		Rule notTriple = Expressions.makeRule(violation_long_SXpY, tripleEDB_SXpY);
-		// violation(STATEMENT, propertyConstant, X) :- qualifierEDB(STATEMENT, propertyConstant, X)
-		Rule notQualifier = Expressions.makeRule(violation_short_SpX, qualifierEDB_SpX);
-		// violation(STATEMENT, propertyConstant, X) :- referenceEDB(STATEMENT, propertyConstant, X)
-		Rule notReference = Expressions.makeRule(violation_short_SpX, referenceEDB_SpX);
+		// violation_triple(S, I, propertyConstant, V)
+		Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
+
+		// tripleEDB(S, I, propertyConstant, V)
+		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
+		
+		// violation_qualfier(S, propertyConstant, V)
+		Atom violation_qualifier_SpV = Expressions.makeAtom(qualifierEDB, s, propertyConstant, v);
+
+		// qualifierEDB(S, propertyConstant, V)
+		Atom qualifierEDB_SpV = Expressions.makeAtom(qualifierEDB, s, propertyConstant, v);
+		
+		// violation_reference(S, propertyConstant, V)
+		Atom violation_reference_SpV = Expressions.makeAtom(referenceEDB, s, propertyConstant, v);
+
+		// referenceEDB(S, propertyConstant, V)
+		Atom referenceEDB_SpV = Expressions.makeAtom(referenceEDB, s, propertyConstant, v);
+
+		// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V)
+		Rule notTriple = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV);
+		// violation_qualfier(S, propertyConstant, V) :- qualifierEDB(S, propertyConstant, V)
+		Rule notQualifier = Expressions.makeRule(violation_qualifier_SpV, qualifierEDB_SpV);
+		// violation_reference(S, propertyConstant, V) :- referenceEDB(S, propertyConstant, V)
+		Rule notReference = Expressions.makeRule(violation_reference_SpV, referenceEDB_SpV); 
 		
 		List<Rule> rules = new ArrayList<Rule>();
 		rules.add(notTriple);
 		rules.add(notQualifier);
 		rules.add(notReference);
 		
-		if (allowedAs(ScopeCC.AS_MAIN_VALUE))
+		List<Atom> queries = new ArrayList<Atom>();
+		queries.add(violation_triple_query);
+		queries.add(violation_qualifier_query);
+		queries.add(violation_reference_query);
+		
+		if (allowedAs(ScopeCC.AS_MAIN_VALUE)) {
 			rules.remove(notTriple);
+			queries.remove(violation_triple_query);
+		}
 		
-		if (allowedAs(ScopeCC.AS_QUALIFIER))
+		if (allowedAs(ScopeCC.AS_QUALIFIER)) {
 			rules.remove(notQualifier);
+			queries.remove(violation_qualifier_query);
+		}
 		
-		if (allowedAs(ScopeCC.AS_REFERENCE))
+		if (allowedAs(ScopeCC.AS_REFERENCE)) {
 			rules.remove(notReference);
+			queries.remove(violation_reference_query);
+		}
 		
 		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_long_query, violation_short_query));
+			return prepareAndExecuteQueries(rules, queries);
 		} catch (PrepareQueriesException e1) {
 			return e1.getMessage();
 		}

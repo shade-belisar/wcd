@@ -2,11 +2,7 @@ package impl.TS;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
@@ -17,41 +13,18 @@ import utility.OutputValueVisitor;
 
 public class ItemRequiresStatementTS extends TripleSet {
 	
-	TripleSetFile first;
+	Set<String> allProperties = new HashSet<String>();
+	Set<String> allValues = new HashSet<String>();
+
+	TripleSetFile first = new TripleSetFile(getTripleSetType(), property + "first");
+	TripleSetFile next = new TripleSetFile(getTripleSetType(), property + "next");
+	TripleSetFile last = new TripleSetFile(getTripleSetType(), property + "last");
 	
-	TripleSetFile next;
-	
-	TripleSetFile last;
-	
-	String lastId;
-	
+	String lastID;
 	String lastSubject;
-	
-	Map<String, HashSet<String>> propertiesPerItem;
-	
-	Map<String, HashSet<String>> valuesPerProperty;
 
 	public ItemRequiresStatementTS(String property_) throws IOException {
 		super(property_);
-		
-		first = new TripleSetFile(getTripleSetType(), property + "first");
-		next = new TripleSetFile(getTripleSetType(), property + "next");
-		last = new TripleSetFile(getTripleSetType(), property + "last");
-		
-		propertiesPerItem = new HashMap<String, HashSet<String>>();
-		valuesPerProperty = new HashMap<String, HashSet<String>>();
-	}
-	
-	protected final void writeFirst(String statement, String item) {
-		first.write(statement, item);
-	}
-	
-	protected final void writeNext(String statement, String otherStatement) {
-		next.write(statement, otherStatement);
-	}
-	
-	protected final void writeLast(String statement, String item) {
-		last.write(statement, item);
 	}
 	
 	@Override
@@ -79,36 +52,18 @@ public class ItemRequiresStatementTS extends TripleSet {
 		return next.getFile();
 	}
 	
-	public File getLastFile() throws IOException {
-		if (!last.isClosed())
-			writeLast(lastId, lastSubject);
-		return last.getFile();
+	public Set<String> allProperties() {
+		return allProperties;
 	}
 	
-	@Override
-	protected void triple(String id, String subject, String predicate, String object) {
-		super.triple(id, subject, predicate, object);
-		
-		if (!propertiesPerItem.containsKey(subject))
-			propertiesPerItem.put(subject, new HashSet<String>());
-		
-		propertiesPerItem.get(subject).add(predicate);
-		
-		if (!valuesPerProperty.containsKey(predicate))
-			valuesPerProperty.put(predicate, new HashSet<String>());
-		
-		valuesPerProperty.get(predicate).add(object);
-		
-		if (lastSubject == null) {
-			first(id, subject);
-		} else if (!lastSubject.equals(subject)) {
-			last(lastId, lastSubject);
-			first(id, subject);
-		} else {
-			next(lastId, id);
-		}
-		lastId = id;
-		lastSubject = subject;
+	public Set<String> allValues() {
+		return allValues;
+	}
+	
+	public File getLastFile() throws IOException {
+		if (!last.isClosed())
+			last.write(lastID, lastSubject);
+		return last.getFile();
 	}
 	
 	@Override
@@ -137,28 +92,24 @@ public class ItemRequiresStatementTS extends TripleSet {
 		}
 	}
 	
-	protected void first(String statement, String item) {
-		writeFirst(statement, item);
-	}
-	
-	protected void next(String previousStatement, String nextStatement) {
-		writeNext(previousStatement, nextStatement);
-	}
-	
-	protected void last(String statement, String item) {
-		writeLast(statement, item);
-	}
-	
-	public List<Set<String>> getProperties() {
-		List<Set<String>> result = new ArrayList<Set<String>>();
-		for (Set<String> set : propertiesPerItem.values()) {
-			result.add(set);
+	@Override
+	protected void triple(String id, String subject, String predicate, String object) {
+		super.triple(id, subject, predicate, object);
+		
+		allProperties.add(predicate);
+		allValues.add(object);
+		
+		if (lastID == null)
+			first.write(id, subject);
+		else if (!lastSubject.equals(subject)) {
+			last.write(lastID, lastSubject);
+			first.write(id, subject);
+		} else {
+			next.write(lastID, id);
 		}
-		return result;
-	}
-	
-	public Map<String, HashSet<String>> getValues() {
-		return valuesPerProperty;
+			
+		lastID = id;
+		lastSubject = subject;
 	}
 	
 	@Override
@@ -167,7 +118,7 @@ public class ItemRequiresStatementTS extends TripleSet {
 		first.close();
 		next.close();
 		if (!last.isClosed()) {
-			writeLast(lastId, lastSubject);
+			last.write(lastID, lastSubject);
 			last.close();
 		}
 			
@@ -177,4 +128,5 @@ public class ItemRequiresStatementTS extends TripleSet {
 	protected String getTripleSetType() {
 		return "ItemRequiresStatement";
 	}
+
 }

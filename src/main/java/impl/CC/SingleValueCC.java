@@ -54,7 +54,7 @@ public class SingleValueCC extends ConstraintChecker {
 			if (content.equals(""))
 				return;
 			for (String value : literal.getString().split(",")) {
-				propertiesAndSeparators.get(property).add(Utility.removeBaseURI(value));				
+				propertiesAndSeparators.get(property).add(value);				
 			}
 		} else {
 			logger.error("Node " + node + " is no a literal.");

@@ -58,31 +58,29 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 		    	
 		List<Rule> rules = new ArrayList<Rule>();
 		
-		// violation_long(STATEMENT, X, propertyConstant, Y)
-		Atom violation_long_SXpY = Expressions.makeAtom(violation_long, statement, x, propertyConstant, y);
+		// violation_triple(S, I, propertyConstant, V)
+		Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
 		
-		// tripleEDB(STATEMENT, X, propertyConstant, Y)
-		Atom tripleEDB_SXpY = Expressions.makeAtom(tripleEDB, statement, x, propertyConstant, y);
+		// tripleEDB(S, I, propertyConstant, V)
+		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
 		
-		// tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z)
-		Atom tripleEDB_PXpZ = Expressions.makeAtom(tripleEDB, otherStatement, x, propertyConstant, z);
+		// tripleEDB(O, I, propertyConstant, C)
+		Atom tripleEDB_OIpC = Expressions.makeAtom(tripleEDB, o, i, propertyConstant, c);
 		
-		// unequal (STATEMENT, OTHER_STATEMENT)
-		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal, statement, otherStatement);
+		// unequal (S, O)
+		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal, s, o);
 		
 		if (separators.size() == 0) {
-			/*
-			 * violation_long(STATEMENT, X, propertyConstant, Y) :-
-			 * 	tripleEDB(STATEMENT, X, propertyConstant, Y),
-			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
-			 * 	unequal (STATEMENT, OTHER_STATEMENT)
-			 */
-			Rule conflict = Expressions.makeRule(violation_long_SXpY, tripleEDB_SXpY, tripleEDB_PXpZ, unequal_SO);
+			// violation_triple(S, I, propertyConstant, V) :-
+			//	tripleEDB(S, I, propertyConstant, V),
+			//	tripleEDB(O, I, propertyConstant, C),
+			//	unequal (S, O)
+			Rule conflict = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OIpC, unequal_SO);
 			
 			rules.add(conflict);
 			
 		}
-		else {
+/*		else {
 			int i = 0;
 			
 			// violation_long(STATEMENT, X, propertyConstant, Y)
@@ -118,23 +116,23 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			
 			Conjunction body = Expressions.makeConjunction(forBody);
 
-			/*
+			
 			 * violation_long(STATEMENT, X, propertyConstant, Y) :-
 			 * 	tripleEDB(STATEMENT, X, propertyConstant, Y),
 			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
 			 * 	unequal (STATEMENT, OTHER_STATEMENT),
 			 * 	qualifierEDB(STATEMENT, <separator>, <separatorValue>),
 			 * 	qualifierEDB(OTHER_STATEMENT, <separator>, <separatorValue>)
-			 */
+			 
 			Rule conflict = Expressions.makeRule(head, body);
 			
 			System.out.println(conflict);
 			
 			rules.add(conflict);
-		}
+		}*/
 		
 		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_long_query));
+			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query));
 		} catch (PrepareQueriesException e) {
 			return e.getMessage();
 		}

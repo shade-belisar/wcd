@@ -19,6 +19,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import impl.TS.ScopeTS;
 import impl.TS.TripleSet;
 import utility.PrepareQueriesException;
+import utility.Utility;
 
 public class NoneOfPCC extends PropertyConstraintChecker {
 	
@@ -51,22 +52,44 @@ public class NoneOfPCC extends PropertyConstraintChecker {
 		
 		for (String notAllowedValue : qualifiers) {
 			
-			Constant confValueConstant =  Expressions.makeConstant(notAllowedValue);
+			Constant confValueConstant =  Utility.makeConstant(notAllowedValue);
 			
-			// violation_long(STATEMENT, X, propertyConstant, Y)
-			Atom violation_long_SXpc = Expressions.makeAtom(violation_long, statement, x, propertyConstant, confValueConstant);
+			// violation_triple(S, I, propertyConstant, confValueConstant)
+			Atom violation_triple_SIpc = Expressions.makeAtom(violation_triple, s, i, propertyConstant, confValueConstant);
 			
-			// tripleEDB(STATEMENT, X, propertyConstant, confValueConstant)
-			Atom tripleEDB_SXpc = Expressions.makeAtom(tripleEDB, statement, x, propertyConstant, confValueConstant);
+			// tripleEDB(S, I, propertyConstant, confValueConstant)
+			Atom tripleEDB_SIpc = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, confValueConstant);
 			
-			// violation_long(STATEMENT, X, propertyConstant, Y) :- tripleEDB(STATEMENT, X, propertyConstant, confValueConstant)
-			Rule conflict = Expressions.makeRule(violation_long_SXpc, tripleEDB_SXpc);
+			// violation_triple(S, I, propertyConstant, confValueConstant) :- tripleEDB(S, I, propertyConstant, confValueConstant)
+			Rule conflict_triple = Expressions.makeRule(violation_triple_SIpc, tripleEDB_SIpc);
 			
-			rules.add(conflict);
+			rules.add(conflict_triple);
+			
+			// violation_qualifier(S, propertyConstant, confValueConstant)
+			Atom violation_qualifier_Spc = Expressions.makeAtom(violation_qualifier, s, propertyConstant, confValueConstant);
+			
+			// qualifierEDB(S, propertyConstant, confValueConstant)
+			Atom qualifierEDB_Spc = Expressions.makeAtom(qualifierEDB, s, propertyConstant, confValueConstant);
+			
+			// violation_qualifier(S, propertyConstant, confValueConstant) :- qualifierEDB(S, propertyConstant, confValueConstant)
+			Rule conflict_qualifier = Expressions.makeRule(violation_qualifier_Spc, qualifierEDB_Spc);
+			
+			rules.add(conflict_qualifier);
+			
+			// violation_reference(S, propertyConstant, confValueConstant)
+			Atom violation_reference_Spc = Expressions.makeAtom(violation_reference, s, propertyConstant, confValueConstant);
+			
+			// referenceEDB(S, propertyConstant, confValueConstant)
+			Atom referenceEDB_Spc = Expressions.makeAtom(referenceEDB, s, propertyConstant, confValueConstant);
+			
+			// violation_reference(S, propertyConstant, confValueConstant) :- referenceEDB(S, propertyConstant, confValueConstant)
+			Rule conflict_reference = Expressions.makeRule(violation_reference_Spc, referenceEDB_Spc);
+			
+			rules.add(conflict_reference);
 		}
 		
 		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_long_query));
+			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query, violation_qualifier_query, violation_reference_query));
 		} catch (PrepareQueriesException e) {
 			return e.getMessage();
 		}

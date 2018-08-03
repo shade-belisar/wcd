@@ -54,7 +54,7 @@ public class NoneOfCC extends ConstraintChecker {
 			if (content.equals(""))
 				return;
 			for (String value : literal.getString().split(",")) {
-				notAllowedValues.get(property).add(Utility.removeBaseURI(value));				
+				notAllowedValues.get(property).add(value);				
 			}
 		} else {
 			logger.error("Node " + node + " is no a literal.");

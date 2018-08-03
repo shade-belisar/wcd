@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
+import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
@@ -48,35 +49,35 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 		
 		List<Rule> rules = new ArrayList<Rule>();
 		
-		// violation_long(STATEMENT, X, propertyConstant, Y)
-		Atom violation_long_SXpY = Expressions.makeAtom(violation_long, statement, x, propertyConstant, y);
+		// violation_triple(S, I, propertyConstant, V)
+		Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
 		
-		// tripleEDB(STATEMENT, X, propertyConstant, Y)
-		Atom tripleEDB_SXpY = Expressions.makeAtom(tripleEDB, statement, x, propertyConstant, y);
+		// tripleEDB(S, I, propertyConstant, V)
+		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
 		
 		for (Map.Entry<String, HashSet<String>> entry : conflicts.entrySet()) {
 			String confProperty = entry.getKey();
-			Constant confPropertyConstant = Expressions.makeConstant(confProperty);
+			Constant confPropertyConstant = Utility.makeConstant(confProperty);
 			HashSet<String> confValues = entry.getValue();
 			
 			if (confValues.size() == 0) {
-				// tripleEDB(OTHER_STATEMENT, X, confPropertyConstant, Z)
-				Atom tripleEDB_OXcZ = Expressions.makeAtom(tripleEDB, otherStatement, x, confPropertyConstant, z);
+				// tripleEDB(O, I, confPropertyConstant, C)
+				Atom tripleEDB_OIcC = Expressions.makeAtom(tripleEDB, o, i, confPropertyConstant, c);
 				
-				// violation_long(STATEMENT, X, propertyConstant, Y) :- tripleEDB(STATEMENT, X, propertyConstant, Y), tripleEDB(OTHER_STATEMENT, X, confPropertyConstant, Z)
-				Rule conflicting = Expressions.makeRule(violation_long_SXpY, tripleEDB_SXpY, tripleEDB_OXcZ);
+				// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V), tripleEDB(O, I, confPropertyConstant, C)
+				Rule conflicting = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OIcC);
 				
 				rules.add(conflicting);
 			} else {
 				for (String value : confValues) {
-					Constant confValueConstant =  Expressions.makeConstant(value);
-					// tripleEDB(OTHER_STATEMENT, X, confPropertyConstant, confValueConstant)
-					Atom tripleEDB_OXcc = Expressions.makeAtom(tripleEDB, otherStatement, x, confPropertyConstant, confValueConstant);
+					Constant confValueConstant =  Utility.makeConstant(value);
+					// tripleEDB(O, I, confPropertyConstant, confValueConstant)
+					Atom tripleEDB_OIcc = Expressions.makeAtom(tripleEDB, o, i, confPropertyConstant, confValueConstant);
 					
-					// violation_long(STATEMENT, X, propertyConstant, Y) :-
-					//	tripleEDB(STATEMENT, X, propertyConstant, Y),
-					//	tripleEDB(OTHER_STATEMENT, X, confPropertyConstant, confValueConstant)
-					Rule conflicting = Expressions.makeRule(violation_long_SXpY, tripleEDB_SXpY, tripleEDB_OXcc);
+					// violation_triple(S, I, propertyConstant, V) :-
+					//	tripleEDB(S, I, propertyConstant, V),
+					//	tripleEDB(O, I, confPropertyConstant, confValueConstant)
+					Rule conflicting = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OIcc);
 					
 					rules.add(conflicting);
 				}
@@ -84,7 +85,7 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 		}
 		
 		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_long_query));
+			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query));
 		} catch (PrepareQueriesException e) {
 			return e.getMessage();
 		}

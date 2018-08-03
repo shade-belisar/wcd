@@ -4,6 +4,8 @@
 package impl.CC;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -92,7 +94,7 @@ public abstract class ConstraintChecker {
 		while (results.hasNext()) {
 			QuerySolution solution = results.next();
 			String property = solution.get("item").asResource().getLocalName();
-			if (!(property.equals("P1115") ||property.equals("P633"))) 
+			if (!(property.equals("P1341"))) 
 				continue;
 
 			process(solution);
@@ -136,5 +138,9 @@ public abstract class ConstraintChecker {
 	protected abstract void process(QuerySolution solution);
 	
 	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
+	
+	protected Set<String> asSet(String...strings) {
+		return new HashSet<String>(Arrays.asList(strings));
+	}
 	
 }

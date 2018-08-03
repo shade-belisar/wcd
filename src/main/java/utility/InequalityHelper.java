@@ -101,7 +101,7 @@ public class InequalityHelper {
 		Set<String> characters = new HashSet<String>();
 		
 		for (String string : unequalConstants) {
-			Constant constant = Expressions.makeConstant(string);
+			Constant constant = Utility.makeConstant(string);
 			for (int i = 0; i < maxLength; i++) {
 				String character;
 				if (i < string.length()) {

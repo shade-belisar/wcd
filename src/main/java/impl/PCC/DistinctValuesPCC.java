@@ -24,18 +24,6 @@ public class DistinctValuesPCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(DistinctValuesPCC.class);
 	
-	protected final static String EQUAL_VALUES = "equalValues";
-	
-	protected final static String A = "a";
-	protected final static String B = "b";
-	protected final static String C = "c";
-	
-	protected final static Predicate equalValues = Expressions.makePredicate(EQUAL_VALUES, 8);
-	
-	protected final static Variable a = Expressions.makeVariable(A);
-	protected final static Variable b = Expressions.makeVariable(B);
-	protected final static Variable c = Expressions.makeVariable(C);
-	
 	final DistinctValuesTS tripleSet;
 
 	public DistinctValuesPCC(String property_) throws IOException {
@@ -66,30 +54,28 @@ public class DistinctValuesPCC extends PropertyConstraintChecker {
 			return internalError;
 		}
 		
-		// equalValues(STATEMENT, X, propertyConstant, Z, OTHER_STATEMENT, A, propertyConstant, Z)
-		Atom equalValues_SXpZOApZ = Expressions.makeAtom(equalValues, statement, x, propertyConstant, z, otherStatement, a, propertyConstant, z);
+		// violation_triple(S, I, propertyConstant, V)
+		Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
 		
-		// tripleEDB(STATEMENT, X, propertyConstant, Z)
-		Atom tripleEDB_SXpZ = Expressions.makeAtom(tripleEDB, statement, x, propertyConstant, z);
+		// tripleEDB(S, I, propertyConstant, V)
+		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
 		
-		// tripleEDB(OTHER_STATEMENT, A, propertyConstant, Z)
-		Atom tripleEDB_OApZ = Expressions.makeAtom(tripleEDB, otherStatement, a, propertyConstant, z);
+		// tripleEDB(O, X, propertyConstant, V)
+		Atom tripleEDB_OXpV = Expressions.makeAtom(tripleEDB, o, x, propertyConstant, v);
 		
-		// unequal(STATEMENT, OTHER_STATEMENT)
-		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal, statement, otherStatement);
+		// unequal(S, O)
+		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal, s, o);
 		
-		// equalValues(STATEMENT, X, propertyConstant, Z, OTHER_STATEMENT, A, propertyConstant, Z) :-
-		//	tripleEDB(STATEMENT, X, propertyConstant, Z),
-		//	tripleEDB(OTHER_STATEMENT, A, propertyConstant, Z),
-		//	unequal(STATEMENT, OTHER_STATEMENT)
-		Rule violation = Expressions.makeRule(equalValues_SXpZOApZ, tripleEDB_SXpZ, tripleEDB_OApZ, unequal_SO);
+		//violation_triple(S, I, propertyConstant, V) :-
+		//	tripleEDB(S, I, propertyConstant, V),
+		//	tripleEDB(O, X, propertyConstant, V),
+		//	unequal(S, O)
+		Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OXpV, unequal_SO);
 		
 		rules.add(violation);
 		
-		Atom query = Expressions.makeAtom(equalValues, statement, x, y, z, otherStatement, a, b, c);
-		
 		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(query));
+			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query));
 		} catch (PrepareQueriesException e) {
 			return e.getMessage();
 		}

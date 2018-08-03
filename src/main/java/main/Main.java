@@ -27,6 +27,7 @@ import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
 import impl.CC.ConstraintChecker;
 import impl.CC.DistinctValuesCC;
+import impl.CC.ItemRequiresStatementCC;
 
 /**
  * @author adrian
@@ -80,7 +81,7 @@ public class Main {
 		
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
-		checkers.add(new DistinctValuesCC());
+		checkers.add(new ItemRequiresStatementCC());
 		try {
 			for (ConstraintChecker constraintChecker : checkers) {
 				constraintChecker.init();

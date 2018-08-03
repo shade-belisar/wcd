@@ -58,7 +58,7 @@ public class ConflictsWithCC extends ConstraintChecker {
 			if (content.equals(""))
 				return;
 			for (String value : literal.getString().split(",")) {
-				configuration.get(property).get(propQualifier).add(Utility.removeBaseURI(value));				
+				configuration.get(property).get(propQualifier).add(value);				
 			}
 		} else {
 			logger.error("Node " + node + " is no a literal.");

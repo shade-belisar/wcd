@@ -63,7 +63,7 @@ public class TypeCC extends ConstraintChecker {
 			if (content.equals(""))
 				return;
 			for (String value : literal.getString().split(",")) {
-				relationAndClasses.get(property).add(Utility.removeBaseURI(value));				
+				relationAndClasses.get(property).add(value);				
 			}
 		} else {
 			logger.error("Node " + node + " is no a literal.");

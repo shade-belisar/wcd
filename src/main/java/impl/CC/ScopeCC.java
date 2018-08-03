@@ -50,7 +50,7 @@ public class ScopeCC extends ConstraintChecker {
 		if (node.isLiteral()) {
 			Literal literal = node.asLiteral();
 			for (String qualifier : literal.getString().split(",")) {
-				qualifiers.add(Utility.removeBaseURI(qualifier));
+				qualifiers.add(qualifier);
 			}
 			result.put(property, qualifiers);
 		} else {

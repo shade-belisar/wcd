@@ -2,7 +2,6 @@ package impl.CC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,10 +19,10 @@ import utility.Utility;
 
 public class ItemRequiresStatementCC extends ConstraintChecker {
 	
-final static Logger logger = Logger.getLogger(ItemRequiresStatementCC.class);
+	final static Logger logger = Logger.getLogger(ItemRequiresStatementCC.class);
 	
-	public static final String PROPERTY = "P2306";
-	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "P2305";
+	public static final String REQUIRED_PROPERTY = "P2306";
+	public static final String ALLOWED_VALUE = "P2305";
 	
 	Map<String, HashMap<String, HashSet<String>>> configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
 
@@ -33,12 +32,12 @@ final static Logger logger = Logger.getLogger(ItemRequiresStatementCC.class);
 
 	@Override
 	protected Set<String> qualifiers() {
-		return new HashSet<String>(Arrays.asList("P2306"));
+		return asSet(REQUIRED_PROPERTY);
 	}
 
 	@Override
 	protected Set<String> concatQualifiers() {
-		return new HashSet<String>(Arrays.asList("P2305"));
+		return asSet(ALLOWED_VALUE);
 	}
 
 	@Override
@@ -47,18 +46,19 @@ final static Logger logger = Logger.getLogger(ItemRequiresStatementCC.class);
 		
 		if (!configuration.containsKey(property))
 			configuration.put(property, new HashMap<String, HashSet<String>>());
-
-		String propQualifier = solution.get(PROPERTY).asResource().getLocalName();
+		
+		String propQualifier = solution.get(REQUIRED_PROPERTY).asResource().getLocalName();
 		if (!configuration.get(property).containsKey(propQualifier))
 			configuration.get(property).put(propQualifier, new HashSet<String>());
-		RDFNode node = solution.get(ITEM_OF_PROPERTY_CONSTRAINT);
+		
+		RDFNode node = solution.get(ALLOWED_VALUE);
 		if (node.isLiteral()) {
 			Literal literal = node.asLiteral();
 			String content = literal.getString();
 			if (content.equals(""))
 				return;
 			for (String value : literal.getString().split(",")) {
-				configuration.get(property).get(propQualifier).add(Utility.removeBaseURI(value));				
+				configuration.get(property).get(propQualifier).add(value);				
 			}
 		} else {
 			logger.error("Node " + node + " is no a literal.");
@@ -68,7 +68,7 @@ final static Logger logger = Logger.getLogger(ItemRequiresStatementCC.class);
 	@Override
 	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
 		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
-		for (Map.Entry<String, HashMap<String, HashSet<String>>> entry : configuration.entrySet()) {
+		for(Map.Entry<String, HashMap<String, HashSet<String>>> entry : configuration.entrySet()) {
 			result.add(new ItemRequiresStatementPCC(entry.getKey(), entry.getValue()));
 		}
 		return result;
