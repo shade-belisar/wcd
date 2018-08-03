@@ -61,13 +61,13 @@ public class ScopePCC extends PropertyConstraintChecker {
 		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
 		
 		// violation_qualfier(S, propertyConstant, V)
-		Atom violation_qualifier_SpV = Expressions.makeAtom(qualifierEDB, s, propertyConstant, v);
+		Atom violation_qualifier_SpV = Expressions.makeAtom(violation_qualifier, s, propertyConstant, v);
 
 		// qualifierEDB(S, propertyConstant, V)
 		Atom qualifierEDB_SpV = Expressions.makeAtom(qualifierEDB, s, propertyConstant, v);
 		
 		// violation_reference(S, propertyConstant, V)
-		Atom violation_reference_SpV = Expressions.makeAtom(referenceEDB, s, propertyConstant, v);
+		Atom violation_reference_SpV = Expressions.makeAtom(violation_reference, s, propertyConstant, v);
 
 		// referenceEDB(S, propertyConstant, V)
 		Atom referenceEDB_SpV = Expressions.makeAtom(referenceEDB, s, propertyConstant, v);
