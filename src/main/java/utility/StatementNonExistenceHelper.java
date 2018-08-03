@@ -61,16 +61,15 @@ public class StatementNonExistenceHelper {
 	}
 	
 	public static void initRequireTriple(Term requiredTerm, List<Atom> conjunctionAtoms) throws ReasonerStateException {
-		
 		// require(S, requiredTerm)
 		Atom require_Sr = Expressions.makeAtom(require, s, requiredTerm);
 		
 		// first(S, I)
-		Atom first_S = Expressions.makeAtom(first, s, i);
+		Atom first_SI = Expressions.makeAtom(first, s, i);
 		
 		List<Atom> firstConjunctionAtoms = new ArrayList<Atom>();
 		
-		firstConjunctionAtoms.add(first_S);
+		firstConjunctionAtoms.add(first_SI);
 		firstConjunctionAtoms.addAll(conjunctionAtoms);
 		
 		// require(S, requiredTerm) :- first(S, I), conjunctionAtoms
