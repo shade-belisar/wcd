@@ -9,6 +9,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import utility.OutputValueVisitor;
 
@@ -33,7 +34,11 @@ public class SingleValueTS extends TripleSet {
 			for (Statement statement : sg) {
 				String id = statement.getStatementId();
 				statementIDs.add(id);
-				String object = statement.getValue().accept(new OutputValueVisitor());
+				Value value = statement.getValue();
+				String object = "";
+				if (value != null) {
+					object = value.accept(new OutputValueVisitor());
+				}
 				triple(id, subject, predicate, object);
 				
 				for (SnakGroup qualifier : statement.getClaim().getQualifiers()) {

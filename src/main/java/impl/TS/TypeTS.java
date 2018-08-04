@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import utility.OutputValueVisitor;
 
@@ -36,7 +37,11 @@ public class TypeTS extends TripleSet {
 				return;
 			for (Statement statement : sg) {
 				String id = statement.getStatementId();
-				String object = statement.getValue().accept(new OutputValueVisitor());
+				Value value = statement.getValue();
+				String object = "";
+				if (value != null) {
+					object = value.accept(new OutputValueVisitor());
+				}
 				triple(id, subject, predicate, object);
 			}
 		}
