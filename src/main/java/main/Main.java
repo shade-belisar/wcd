@@ -89,11 +89,11 @@ public class Main {
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
 		//checkers.add(new ItemRequiresStatementCC());
 		//checkers.add(new AllowedEntityTypesCC());
-		checkers.add(new ConflictsWithCC());
-		checkers.add(new DistinctValuesCC());
-		checkers.add(new NoneOfCC());
+		//checkers.add(new ConflictsWithCC());
+		//checkers.add(new DistinctValuesCC());
+		//checkers.add(new NoneOfCC());
 		checkers.add(new ScopeCC());
-		checkers.add(new SingleValueCC());
+		//checkers.add(new SingleValueCC());
 		try {
 			for (ConstraintChecker constraintChecker : checkers) {
 				constraintChecker.init();

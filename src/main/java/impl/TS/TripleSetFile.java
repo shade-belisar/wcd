@@ -2,10 +2,13 @@ package impl.TS;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -22,6 +25,10 @@ public class TripleSetFile {
 	
 	String name;
 	
+	final String fileName;
+	
+	File tripleSetFileGz;
+	
 	File tripleSetFile;
 	
 	CSVPrinter writer;
@@ -33,14 +40,23 @@ public class TripleSetFile {
 	public TripleSetFile(String folder_, String name_) throws IOException {
 		folder = folder_;
 		name = name_;
+		fileName = BASE_LOCATION + folder + "/" + name + ".csv";
 		
-		tripleSetFile = new File(BASE_LOCATION + folder + "/" + name + ".csv");
-		tripleSetFile.getParentFile().mkdirs();
-		tripleSetFile.createNewFile();
+		tripleSetFileGz = new File(fileName + ".gz");
+		tripleSetFileGz.getParentFile().mkdirs();
+		tripleSetFileGz.createNewFile();
 		
 		closed = false;
 		
-		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tripleSetFile, false))), CSVFormat.DEFAULT);
+		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tripleSetFileGz, false)))), CSVFormat.DEFAULT);
+	}
+	
+	String getFileName() {
+		return fileName;
+	}
+	
+	String getFileNameGz() {
+		return fileName + ".gz";
 	}
 	
 	public void write(String...strings) {
@@ -49,7 +65,7 @@ public class TripleSetFile {
 			writer.flush();
 			tripleNotEmpty = true;
 		} catch (IOException e) {
-			logger.error("Could not write line to file " + tripleSetFile.getAbsolutePath(), e);
+			logger.error("Could not write line to file " + tripleSetFileGz.getAbsolutePath(), e);
 		}
 	}
 	
@@ -59,11 +75,32 @@ public class TripleSetFile {
 	
 	public File getFile() throws IOException {
 		close();
+		
+		tripleSetFile = new File(fileName); 
+		
+		GZIPInputStream gzippedInput = new GZIPInputStream(new FileInputStream(tripleSetFileGz));
+		FileOutputStream unzippedOutput = new FileOutputStream(tripleSetFile);
+		byte[] buffer = new byte[1024];
+		int len;
+		while ((len = gzippedInput.read(buffer)) != -1) {
+			unzippedOutput.write(buffer, 0, len);
+		}
+		gzippedInput.close();
+		new File(getFileNameGz()).delete();
+		
+		unzippedOutput.close();
+		
 		return tripleSetFile;
+	}
+	
+	public void delete() {
+		new File(getFileName()).delete();
 	}
 	
 	public void close() throws IOException {
 		writer.close();
+		if (!tripleNotEmpty)
+			new File(getFileNameGz()).delete();
 		closed = true;
 	}
 	

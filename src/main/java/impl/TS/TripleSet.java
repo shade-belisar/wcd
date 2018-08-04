@@ -142,6 +142,12 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 		
 	}
 	
+	public void delete() throws IOException {
+		triple.delete();
+		qualifier.delete();
+		reference.delete();
+	}
+	
 	public void close() throws IOException {
 		triple.close();
 		qualifier.close();

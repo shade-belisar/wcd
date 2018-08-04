@@ -103,7 +103,7 @@ public abstract class PropertyConstraintChecker {
 				final DataSource referenceEDBPath = new CsvFileDataSource(tripleSet.getReferenceFile());
 				reasoner.addFactsFromDataSource(referenceEDB, referenceEDBPath);				
 			}
-		}
+		}	
 	}
 	
 	protected String prepareAndExecuteQueries(List<Rule> rules, List<Atom> queries) throws IOException, PrepareQueriesException {
@@ -122,6 +122,10 @@ public abstract class PropertyConstraintChecker {
 		} catch (IncompatiblePredicateArityException e) {
 			logger.error("Predicate does not match the datasource for property " + property + ".", e);
 			throw new PrepareQueriesException(internalError);
+		}
+		
+		for (TripleSet tripleSet : getRequiredTripleSets()) {
+			tripleSet.delete();
 		}
 		
 		try {
