@@ -13,6 +13,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Reference;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
@@ -95,10 +96,9 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 		writeReference(id, predicate, object);
 	}
 	
-	@Override
-	public void processItemDocument(ItemDocument itemDocument) {
-		String subject = itemDocument.getEntityId().getIri();
-		for (StatementGroup	sg : itemDocument.getStatementGroups()) {
+	public void processStatementDocument(StatementDocument statementDocument) {
+		String subject = statementDocument.getEntityId().getIri();
+		for (StatementGroup	sg : statementDocument.getStatementGroups()) {
 			String predicate = sg.getProperty().getIri();
 			for (Statement statement : sg) {
 				String id = statement.getStatementId();
@@ -134,12 +134,17 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 					}
 				}
 			}
-		}		
+		}
+	}
+	
+	@Override
+	public void processItemDocument(ItemDocument itemDocument) {
+		processStatementDocument(itemDocument);		
 	}
 	
 	@Override
 	public void processPropertyDocument(PropertyDocument propertyDocument) {
-		
+		processStatementDocument(propertyDocument);
 	}
 	
 	public void delete() throws IOException {

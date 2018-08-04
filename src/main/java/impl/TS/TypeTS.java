@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
@@ -16,11 +17,11 @@ public class TypeTS extends TripleSet {
 	}
 	
 	@Override
-	public void processItemDocument(ItemDocument itemDocument) {
+	public void processStatementDocument(StatementDocument statementDocument) {
 		boolean foundProperty = false;
 		
-		String subject = itemDocument.getEntityId().getIri();
-		for (StatementGroup sg : itemDocument.getStatementGroups()) {
+		String subject = statementDocument.getEntityId().getIri();
+		for (StatementGroup sg : statementDocument.getStatementGroups()) {
 			if (foundProperty)
 				break;
 			String predicate = sg.getProperty().getIri();
@@ -31,7 +32,7 @@ public class TypeTS extends TripleSet {
 		}
 		if (!foundProperty)
 			return;
-		for (StatementGroup	sg : itemDocument.getStatementGroups()) {
+		for (StatementGroup	sg : statementDocument.getStatementGroups()) {
 			String predicate = sg.getProperty().getIri();
 			if (!predicate.endsWith("P31"))
 				return;
@@ -46,7 +47,7 @@ public class TypeTS extends TripleSet {
 			}
 		}
 	}
-
+	
 	@Override
 	protected String getTripleSetType() {
 		return "Type";

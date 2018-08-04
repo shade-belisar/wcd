@@ -8,6 +8,7 @@ import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
+import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
@@ -25,9 +26,9 @@ public class SingleValueTS extends TripleSet {
 	}
 	
 	@Override
-	public void processItemDocument(ItemDocument itemDocument) {
-		String subject = itemDocument.getEntityId().getIri();
-		for (StatementGroup	sg : itemDocument.getStatementGroups()) {
+	public void processStatementDocument(StatementDocument statementDocument) {
+		String subject = statementDocument.getEntityId().getIri();
+		for (StatementGroup	sg : statementDocument.getStatementGroups()) {
 			String predicate = sg.getProperty().getIri();
 			if (!predicate.endsWith(property))
 				continue;
