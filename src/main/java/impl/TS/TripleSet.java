@@ -124,7 +124,11 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 					for (SnakGroup rGroup : reference.getSnakGroups()) {
 						String reference_predicate = rGroup.getProperty().getIri();
 						for (Snak snak : rGroup) {
-							String reference_object = snak.getValue().accept(new OutputValueVisitor());
+							Value reference_value = snak.getValue();
+							String reference_object = "";
+							if (reference_value != null) {
+								reference_object = reference_value.accept(new OutputValueVisitor());
+							}
 							reference(id, reference_predicate, reference_object);
 						}
 					}
