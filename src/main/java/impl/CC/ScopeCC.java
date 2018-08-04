@@ -24,9 +24,9 @@ public class ScopeCC extends ConstraintChecker {
 	
 	public static final String SCOPE = "P5314";
 	
-	public static final String AS_MAIN_VALUE = "Q54828448";
-	public static final String AS_QUALIFIER = "Q54828449";
-	public static final String AS_REFERENCE = "Q54828450";
+	public static final String AS_MAIN_VALUE = Utility.BASE_URI + "Q54828448";
+	public static final String AS_QUALIFIER = Utility.BASE_URI + "Q54828449";
+	public static final String AS_REFERENCE = Utility.BASE_URI + "Q54828450";
 	
 	Map<String, HashSet<String>> result = new HashMap<String, HashSet<String>>();
 
