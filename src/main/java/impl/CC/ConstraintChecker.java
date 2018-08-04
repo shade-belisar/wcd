@@ -105,7 +105,7 @@ public abstract class ConstraintChecker {
 	}
 	
 	public String violations() throws ReasonerStateException, IOException {
-		String result = "";
+		String result = "Constraint: " + constraint + "\n";
 		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
 			String violations = propertyConstraintChecker.violations();
 			if (!violations.equals(""))
