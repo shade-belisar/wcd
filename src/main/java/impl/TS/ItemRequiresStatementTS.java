@@ -54,18 +54,18 @@ public class ItemRequiresStatementTS extends TripleSet {
 		return next.getFile();
 	}
 	
+	public File getLastFile() throws IOException {
+		if (!last.isClosed())
+			last.write(lastID, lastSubject);
+		return last.getFile();
+	}
+	
 	public Set<String> allProperties() {
 		return allProperties;
 	}
 	
 	public Set<String> allValues() {
 		return allValues;
-	}
-	
-	public File getLastFile() throws IOException {
-		if (!last.isClosed())
-			last.write(lastID, lastSubject);
-		return last.getFile();
 	}
 	
 	@Override
