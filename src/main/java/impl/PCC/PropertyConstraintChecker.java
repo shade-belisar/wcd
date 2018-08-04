@@ -4,6 +4,7 @@
 package impl.PCC;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -104,6 +105,10 @@ public abstract class PropertyConstraintChecker {
 				reasoner.addFactsFromDataSource(referenceEDB, referenceEDBPath);				
 			}
 		}	
+	}
+	
+	protected String prepareAndExecuteQueries(List<Rule> rules, Atom...queries) throws IOException, PrepareQueriesException {
+		return prepareAndExecuteQueries(rules, Arrays.asList(queries));
 	}
 	
 	protected String prepareAndExecuteQueries(List<Rule> rules, List<Atom> queries) throws IOException, PrepareQueriesException {
