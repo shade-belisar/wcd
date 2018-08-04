@@ -42,10 +42,10 @@ public class ConflictsWithTS extends TripleSet {
 			for (Statement statement : sg) {
 				String id = statement.getStatementId();
 				Value value = statement.getValue();
-				if (value == null) {
-					System.out.println(statement);
+				String object = "";
+				if (value != null) {
+					object = value.accept(new OutputValueVisitor());
 				}
-				String object = value.accept(new OutputValueVisitor());
 				triple(id, subject, predicate, object);
 			}
 		}
