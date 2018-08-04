@@ -112,7 +112,11 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 				for (SnakGroup qualifier : statement.getClaim().getQualifiers()) {
 					String qualifier_predicate = qualifier.getProperty().getIri();
 					for (Snak snak : qualifier) {
-						String qualifier_object = snak.getValue().accept(new OutputValueVisitor());
+						Value qualifier_value = snak.getValue();
+						String qualifier_object = "";
+						if (qualifier_value != null) {
+							qualifier_object = qualifier_value.accept(new OutputValueVisitor());
+						}
 						qualifier(id, qualifier_predicate, qualifier_object);
 					}
 				}
