@@ -54,6 +54,8 @@ public class ScopePCC extends PropertyConstraintChecker {
 			return internalError;
 		}
 		
+		List<Rule> rules = new ArrayList<Rule>();
+		
 		// violation_triple(S, I, propertyConstant, V)
 		Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
 
@@ -79,7 +81,6 @@ public class ScopePCC extends PropertyConstraintChecker {
 		// violation_reference(S, propertyConstant, V) :- referenceEDB(S, propertyConstant, V)
 		Rule notReference = Expressions.makeRule(violation_reference_SpV, referenceEDB_SpV); 
 		
-		List<Rule> rules = new ArrayList<Rule>();
 		rules.add(notTriple);
 		rules.add(notQualifier);
 		rules.add(notReference);
