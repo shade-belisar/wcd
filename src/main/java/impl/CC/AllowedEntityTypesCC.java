@@ -21,6 +21,9 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 	
 	public static final String ALLOWED_ENTITY_TYPE =  "P2305";
 	
+	public static final String AS_ITEM = Utility.BASE_URI + "Q29934200";
+	public static final String AS_PROPERTY = Utility.BASE_URI + " Q29934218";
+	
 	Map<String, HashSet<String>> allowedEntityTypes = new HashMap<String, HashSet<String>>();
 
 	public AllowedEntityTypesCC() {
