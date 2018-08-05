@@ -2,7 +2,6 @@ package impl.CC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +15,6 @@ import org.apache.log4j.Logger;
 
 import impl.PCC.PropertyConstraintChecker;
 import impl.PCC.SingleValuePCC;
-import utility.Utility;
 
 public class SingleValueCC extends ConstraintChecker {
 	
@@ -32,12 +30,12 @@ public class SingleValueCC extends ConstraintChecker {
 
 	@Override
 	protected Set<String> qualifiers() {
-		return new HashSet<String>();
+		return asSet();
 	}
 
 	@Override
 	protected Set<String> concatQualifiers() {
-		return new HashSet<String>(Arrays.asList(SEPARATOR));
+		return asSet(SEPARATOR);
 	}
 
 	@Override
