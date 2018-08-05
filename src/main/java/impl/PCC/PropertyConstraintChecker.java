@@ -157,6 +157,10 @@ public abstract class PropertyConstraintChecker {
     	return result;
 	}
 	
+	protected static Atom[] toArray(List<Atom> list) {
+		return list.toArray(new Atom[list.size()]);
+	}
+	
 	public abstract String violations() throws IOException;
 	
 	protected abstract Set<TripleSet> getRequiredTripleSets() throws IOException;
