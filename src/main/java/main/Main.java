@@ -26,6 +26,7 @@ import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
 import impl.CC.AllowedEntityTypesCC;
+import impl.CC.AllowedUnitsCC;
 import impl.CC.ConflictsWithCC;
 import impl.CC.ConstraintChecker;
 import impl.CC.DistinctValuesCC;
@@ -91,7 +92,8 @@ public class Main {
 		//checkers.add(new ConflictsWithCC());
 		//checkers.add(new AllowedEntityTypesCC());
 		//checkers.add(new NoneOfCC());
-		checkers.add(new DistinctValuesCC());
+		//checkers.add(new DistinctValuesCC());
+		checkers.add(new AllowedUnitsCC());
 		//checkers.add(new ItemRequiresStatementCC());
 		//checkers.add(new SingleValueCC());
 		try {
