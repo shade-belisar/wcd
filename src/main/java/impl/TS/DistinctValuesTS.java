@@ -24,6 +24,14 @@ public class DistinctValuesTS extends TripleSet {
 		}
 			
 	}
+	
+	@Override
+	protected void qualifier(String id, String predicate, String object) {
+	}
+	
+	@Override
+	protected void reference(String id, String predicate, String object) {
+	}
 
 	@Override
 	protected String getTripleSetType() {
