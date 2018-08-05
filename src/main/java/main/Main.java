@@ -33,6 +33,7 @@ import impl.CC.ConstraintChecker;
 import impl.CC.DistinctValuesCC;
 import impl.CC.ItemRequiresStatementCC;
 import impl.CC.NoneOfCC;
+import impl.CC.OneOfCC;
 import impl.CC.ScopeCC;
 import impl.CC.SingleValueCC;
 import impl.CC.TypeCC;
@@ -95,7 +96,8 @@ public class Main {
 		//checkers.add(new NoneOfCC());
 		//checkers.add(new DistinctValuesCC());
 		//checkers.add(new AllowedUnitsCC());
-		checkers.add(new AllowedQualifiersCC());
+		//checkers.add(new AllowedQualifiersCC());
+		checkers.add(new OneOfCC());
 		//checkers.add(new ItemRequiresStatementCC());
 		//checkers.add(new SingleValueCC());
 		try {
