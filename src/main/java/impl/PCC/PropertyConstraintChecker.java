@@ -76,6 +76,20 @@ public abstract class PropertyConstraintChecker {
 	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);
 	public final static Atom violation_reference_query = Expressions.makeAtom(violation_reference, s, p, v);
 	
+	// violation_triple(S, I, propertyConstant, V)
+	protected final Atom violation_triple_SIpV;
+	// violation_qualifier(S, propertyConstant, V)
+	protected final Atom violation_qualifier_SpV;
+	// violation_reference(S, propertyConstant, V)
+	protected final Atom violation_reference_SpV;
+	
+	// tripleEDB(S, I, propertyConstant, V)
+	protected final Atom tripleEDB_SIpV;
+	// qualifierEDB(S, propertyConstant, V)
+	protected final Atom qualifierEDB_SpV;
+	// referenceEDB(S, propertyConstant, V)
+	protected final Atom referenceEDB_SpV;
+	
 	protected final Constant propertyConstant;
 	
 	protected final String property;
@@ -88,6 +102,14 @@ public abstract class PropertyConstraintChecker {
 		propertyConstant = Utility.makeConstant(property);
 		
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
+		
+		violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
+		violation_qualifier_SpV = Expressions.makeAtom(violation_qualifier, s, propertyConstant, v);
+		violation_reference_SpV = Expressions.makeAtom(violation_reference, s, propertyConstant, v);
+		
+		tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
+		qualifierEDB_SpV = Expressions.makeAtom(qualifierEDB, s, propertyConstant, v);
+		referenceEDB_SpV = Expressions.makeAtom(referenceEDB, s, propertyConstant, v);
 	}
 	
 	protected void loadTripleSets(TripleSet... sets) throws ReasonerStateException, IOException {

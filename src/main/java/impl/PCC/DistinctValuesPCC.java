@@ -54,12 +54,6 @@ public class DistinctValuesPCC extends PropertyConstraintChecker {
 			return internalError;
 		}
 		
-		// violation_triple(S, I, propertyConstant, V)
-		Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
-		
-		// tripleEDB(S, I, propertyConstant, V)
-		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
-		
 		// tripleEDB(O, X, propertyConstant, V)
 		Atom tripleEDB_OXpV = Expressions.makeAtom(tripleEDB, o, x, propertyConstant, v);
 		

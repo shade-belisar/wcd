@@ -84,13 +84,6 @@ public class AllowedUnitsPCC extends PropertyConstraintChecker {
 			unequal_conjunction.add(unequal_AU);
 		}
 		
-		// violation_triple(S, I, propertyConstant, V)
-		Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
-		
-		// tripleEDB(S, I, propertyConstant, V)
-		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
-
-		
 		List<Atom> violation_triple_conjunction = new ArrayList<Atom>();
 		violation_triple_conjunction.add(tripleEDB_SIpV);
 		violation_triple_conjunction.addAll(unequal_conjunction);
@@ -98,32 +91,22 @@ public class AllowedUnitsPCC extends PropertyConstraintChecker {
 		// violation_triple(S, I, propertyConstant, V) :-  tripleEDB(S, I, propertyConstant, V), unit(V, U), unequal({A}, U)
 		Rule tripleViolation = Expressions.makeRule(violation_triple_SIpV, toArray(violation_triple_conjunction));
 		rules.add(tripleViolation);
-		
-		// violation_qualifier(S, propertyConstant, V)
-		Atom violation_qualifier_SIpV = Expressions.makeAtom(violation_qualifier, s, propertyConstant, v);
-		
-		// qualifierEDB(S, propertyConstant, V)
-		Atom qualifierEDB_SIpV = Expressions.makeAtom(qualifierEDB, s, propertyConstant, v);
 	
 		List<Atom> violation_qualifier_conjunction = new ArrayList<Atom>();
-		violation_qualifier_conjunction.add(qualifierEDB_SIpV);
+		violation_qualifier_conjunction.add(qualifierEDB_SpV);
 		violation_qualifier_conjunction.addAll(unequal_conjunction);
 		
 		// violation_qualifier(S, propertyConstant, V) :- qualifierEDB(S, propertyConstant, V), unit(V, U), unequal({A}, U)
-		Rule qualifierViolation = Expressions.makeRule(violation_qualifier_SIpV, toArray(violation_qualifier_conjunction));
-		
-		// violation_reference(S, propertyConstant, V)
-		Atom violation_reference_SIpV = Expressions.makeAtom(violation_reference, s, propertyConstant, v);
-		
-		// referenceEDB(S, propertyConstant, V)
-		Atom referenceEDB_SpV = Expressions.makeAtom(referenceEDB, s, propertyConstant, v);
+		Rule qualifierViolation = Expressions.makeRule(violation_qualifier_SpV, toArray(violation_qualifier_conjunction));
+		rules.add(qualifierViolation);
 		
 		List<Atom> violation_reference_conjunction = new ArrayList<Atom>();
-		violation_reference_conjunction.add(qualifierEDB_SIpV);
+		violation_reference_conjunction.add(qualifierEDB_SpV);
 		violation_reference_conjunction.addAll(unequal_conjunction);
 		
 		// violation_reference(S, propertyConstant, V) :- referenceEDB(S, propertyConstant, V), unit(V, U), unequal({A}, U)
-		Rule referenceViolation = Expressions.makeRule(violation_reference_SIpV, toArray(violation_reference_conjunction));
+		Rule referenceViolation = Expressions.makeRule(violation_reference_SpV, toArray(violation_reference_conjunction));
+		rules.add(referenceViolation);
 		
 		try {
 			return prepareAndExecuteQueries(rules, violation_triple_query, violation_qualifier_query, violation_reference_query);

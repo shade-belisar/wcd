@@ -116,12 +116,6 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 		for (String requiredProperty : configuration.keySet()) {
 			Term requiredPropertyConstant = Utility.makeConstant(requiredProperty);
 			
-			// violation_triple(S, I, propertyConstant, V)
-			Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
-			
-			// tripleEDB(S, I, propertyConstant, V)
-			Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
-			
 			// tripleEDB(O, I, P, X)
 			Atom tripleEDB_OIPX = Expressions.makeAtom(tripleEDB, o, i, p, x);
 			

@@ -66,12 +66,6 @@ public class AllowedQualifiersPCC extends PropertyConstraintChecker {
 		    	
 		List<Rule> rules = new ArrayList<Rule>();
 		
-		// violation_triple(S, I, propertyConstant, V)
-		Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
-		
-		// tripleEDB(S, I, propertyConstant, V)
-		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
-		
 		// qualifierEDB(S, Q, O)
 		Atom qualfierEDB_SQO = Expressions.makeAtom(qualifierEDB, s, q, o);
 		

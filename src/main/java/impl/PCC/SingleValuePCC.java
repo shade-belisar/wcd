@@ -58,12 +58,6 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 		    	
 		List<Rule> rules = new ArrayList<Rule>();
 		
-		// violation_triple(S, I, propertyConstant, V)
-		Atom violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
-		
-		// tripleEDB(S, I, propertyConstant, V)
-		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
-		
 		// tripleEDB(O, I, propertyConstant, C)
 		Atom tripleEDB_OIpC = Expressions.makeAtom(tripleEDB, o, i, propertyConstant, c);
 		
@@ -80,56 +74,6 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			rules.add(conflict);
 			
 		}
-/*		else {
-			int i = 0;
-			
-			// violation_long(STATEMENT, X, propertyConstant, Y)
-			Conjunction head = Expressions.makeConjunction(violation_long_SXpY);
-			
-			List<Atom> forBody = new ArrayList<Atom>();
-			
-			// tripleEDB(STATEMENT, X, propertyConstant, Y)
-			forBody.add(tripleEDB_SXpY);
-			
-			// tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z)
-			forBody.add(tripleEDB_PXpZ);
-			
-			// unequal (STATEMENT, OTHER_STATEMENT)
-			forBody.add(unequal_SO);
-			
-			for (String separator : separators) {
-				Constant separatorConstant = Expressions.makeConstant(separator);
-				Variable separatorValueVariable = Expressions.makeVariable("separatorValue" + i);
-				
-				// qualifierEDB(STATEMENT, <separatorConstant>, <separatorValueVariable>)
-				Atom qualifierEDB_Ssv = Expressions.makeAtom(qualifierEDB, statement, separatorConstant, separatorValueVariable);
-				
-				forBody.add(qualifierEDB_Ssv);
-				
-				// qualifierEDB(OTHER_STATEMENT, <separator>, <separatorValue>)
-				Atom qualifierEDB_Osv = Expressions.makeAtom(qualifierEDB, otherStatement, separatorConstant, separatorValueVariable);
-				
-				forBody.add(qualifierEDB_Osv);
-				
-				i++;
-			}
-			
-			Conjunction body = Expressions.makeConjunction(forBody);
-
-			
-			 * violation_long(STATEMENT, X, propertyConstant, Y) :-
-			 * 	tripleEDB(STATEMENT, X, propertyConstant, Y),
-			 * 	tripleEDB(OTHER_STATEMENT, X, propertyConstant, Z),
-			 * 	unequal (STATEMENT, OTHER_STATEMENT),
-			 * 	qualifierEDB(STATEMENT, <separator>, <separatorValue>),
-			 * 	qualifierEDB(OTHER_STATEMENT, <separator>, <separatorValue>)
-			 
-			Rule conflict = Expressions.makeRule(head, body);
-			
-			System.out.println(conflict);
-			
-			rules.add(conflict);
-		}*/
 		
 		try {
 			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query));
