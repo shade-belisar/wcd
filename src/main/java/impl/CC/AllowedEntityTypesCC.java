@@ -32,12 +32,12 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 
 	@Override
 	protected Set<String> qualifiers() {
-		return new HashSet<String>();
+		return asSet();
 	}
 
 	@Override
 	protected Set<String> concatQualifiers() {
-		return new HashSet<String>(Arrays.asList(ALLOWED_ENTITY_TYPE));
+		return asSet(ALLOWED_ENTITY_TYPE);
 	}
 
 	@Override
