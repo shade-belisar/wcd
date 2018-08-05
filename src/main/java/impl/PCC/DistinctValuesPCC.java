@@ -75,7 +75,7 @@ public class DistinctValuesPCC extends PropertyConstraintChecker {
 		rules.add(violation);
 		
 		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query));
+			return prepareAndExecuteQueries(rules, violation_triple_query);
 		} catch (PrepareQueriesException e) {
 			return e.getMessage();
 		}
