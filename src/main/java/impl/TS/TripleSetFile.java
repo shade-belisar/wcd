@@ -86,7 +86,6 @@ public class TripleSetFile {
 			unzippedOutput.write(buffer, 0, len);
 		}
 		gzippedInput.close();
-		new File(getFileNameGz()).delete();
 		
 		unzippedOutput.close();
 		
