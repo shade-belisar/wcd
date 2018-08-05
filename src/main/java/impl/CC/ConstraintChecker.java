@@ -15,6 +15,7 @@ import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.riot.web.HttpOp;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
@@ -57,6 +58,7 @@ public abstract class ConstraintChecker {
 		Set<String> concatQualifiers = concatQualifiers();
 		
 		String propertiesQuery =
+		"#Tool: Wikidata Constraints Datalog https://github.com/Adrian-Bielefeldt/wcd\n"+
 		"PREFIX wd: <http://www.wikidata.org/entity/>\n"+
 		"PREFIX p: <http://www.wikidata.org/prop/>\n"+
 		"PREFIX ps: <http://www.wikidata.org/prop/statement/>\n"+
@@ -85,6 +87,8 @@ public abstract class ConstraintChecker {
 		for (String key : qualifiers) {
 			propertiesQuery += " ?" + key;
 		}
+		
+		HttpOp.setUserAgent("Wikidata Constraints Datalog https://github.com/Adrian-Bielefeldt/wcd");
 
 		Query query = QueryFactory.create(propertiesQuery);
 		QueryExecution qexec = QueryExecutionFactory.sparqlService("https://query.wikidata.org/sparql", query);
