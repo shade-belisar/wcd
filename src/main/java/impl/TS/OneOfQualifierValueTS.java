@@ -2,6 +2,7 @@ package impl.TS;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -17,10 +18,9 @@ public class OneOfQualifierValueTS extends TripleSet {
 	
 	Set<String> values = new HashSet<String>();
 	
-	Set<String> qualifierProperties;
+	Map<String, Set<String>> qualifierProperties;
 
-	public OneOfQualifierValueTS(String property_, Set<String> qualifierProperties_) throws IOException {
-		super(property_);
+	public OneOfQualifierValueTS(Map<String, Set<String>> qualifierProperties_) throws IOException {
 		qualifierProperties = qualifierProperties_;
 	}
 	
@@ -33,7 +33,7 @@ public class OneOfQualifierValueTS extends TripleSet {
 		String subject = statementDocument.getEntityId().getIri();
 		for (StatementGroup	sg : statementDocument.getStatementGroups()) {
 			String predicate = sg.getProperty().getIri();
-			if (!predicate.endsWith(property))
+			if (!qualifierProperties.containsKey(predicate))
 				continue;
 			for (Statement statement : sg) {
 				String id = statement.getStatementId();
@@ -46,7 +46,7 @@ public class OneOfQualifierValueTS extends TripleSet {
 				
 				for (SnakGroup qualifier : statement.getClaim().getQualifiers()) {
 					String qualifier_predicate = qualifier.getProperty().getIri();
-					if (!qualifierProperties.contains(qualifier_predicate))
+					if (!qualifierProperties.get(predicate).contains(qualifier_predicate))
 						continue;
 					for (Snak snak : qualifier) {
 						String qualifier_object = snak.getValue().accept(new OutputValueVisitor());

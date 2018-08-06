@@ -12,10 +12,16 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
+import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.OneOfQualifierValuePCC;
 import impl.PCC.PropertyConstraintChecker;
+import impl.TS.OneOfQualifierValueTS;
+import utility.InequalityHelper;
 import utility.Utility;
+
+import static utility.SC.violation_triple_query;
 
 public class OneOfQualifierValueCC extends ConstraintChecker {
 	
@@ -24,10 +30,17 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 	public static final String QUALIFIER_PROPERTY = "P2306";
 	public static final String QUALIFIER_VALUE = "P2305";
 	
-	Map<String, HashMap<String, HashSet<String>>> qualifiersAndValues = new HashMap<String, HashMap<String, HashSet<String>>>();
+	Map<String, Map<String, Set<String>>> qualifiersAndValues;
+	
+	final OneOfQualifierValueTS tripleSet;
 
-	public OneOfQualifierValueCC() {
+	public OneOfQualifierValueCC() throws IOException {
 		super("Q52712340");
+		Map<String, Set<String>> temp = new HashMap<String, Set<String>>();
+		for (Map.Entry<String, Map<String, Set<String>>> entry : qualifiersAndValues.entrySet()) {
+			temp.put(entry.getKey(), entry.getValue().keySet());
+		}
+		tripleSet = new OneOfQualifierValueTS(temp);
 	}
 
 	@Override
@@ -42,12 +55,13 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		String property = solution.get("item").asResource().getLocalName();
+		qualifiersAndValues = new HashMap<String, Map<String, Set<String>>>();
+		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!qualifiersAndValues.containsKey(property))
-			qualifiersAndValues.put(property, new HashMap<String, HashSet<String>>());
+			qualifiersAndValues.put(property, new HashMap<String, Set<String>>());
 
-		String propQualifier = Utility.BASE_URI + solution.get(QUALIFIER_PROPERTY).asResource().getLocalName();
+		String propQualifier = Utility.addBaseURI(solution.get(QUALIFIER_PROPERTY).asResource().getLocalName());
 		if (!qualifiersAndValues.get(property).containsKey(propQualifier))
 			qualifiersAndValues.get(property).put(propQualifier, new HashSet<String>());
 		RDFNode node = solution.get(QUALIFIER_VALUE);
@@ -63,10 +77,39 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 			logger.error("Node " + node + " is no a literal.");
 		}
 	}
+	
+	@Override
+	protected Set<Atom> queries() {
+		return asSet(violation_triple_query);
+	}
+
+	@Override
+	void prepareFacts() throws ReasonerStateException, IOException {
+		loadTripleSets(tripleSet);
+		InequalityHelper.setOrReset(reasoner);
+		Set<String> values = tripleSet.getValues();
+		for (Map.Entry<String, Map<String, Set<String>>> entry1 : qualifiersAndValues.entrySet()) {
+			for (Map.Entry<String, Set<String>> entry2 : entry1.getValue().entrySet()) {
+				values.addAll(entry2.getValue());
+			}
+		}
+		InequalityHelper.addUnequalConstantsToReasoner(values);
+	}
+
+	@Override
+	void delete() throws IOException {
+		tripleSet.delete();
+	}
+
+	@Override
+	void close() throws IOException {
+		tripleSet.close();
+	}
+
 	@Override
 	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
 		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
-		for (Map.Entry<String, HashMap<String, HashSet<String>>> entry : qualifiersAndValues.entrySet()) {
+		for (Map.Entry<String, Map<String, Set<String>>> entry : qualifiersAndValues.entrySet()) {
 			result.add(new OneOfQualifierValuePCC(entry.getKey(), entry.getValue()));
 		}
 		return result;

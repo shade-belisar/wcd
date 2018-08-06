@@ -102,13 +102,10 @@ public class Main {
 			//checkers.add(new DistinctValuesCC());
 			//checkers.add(new AllowedUnitsCC());
 			//checkers.add(new AllowedQualifiersCC());
-			checkers.add(new OneOfCC());
-			//checkers.add(new OneOfQualifierValueCC());
+			//checkers.add(new OneOfCC());
+			checkers.add(new OneOfQualifierValueCC());
 			//checkers.add(new ItemRequiresStatementCC());
 			//checkers.add(new SingleValueCC());
-			for (ConstraintChecker constraintChecker : checkers) {
-				constraintChecker.init();
-			}
 		} catch (IOException e) {
 			logger.error("Could not open a file, see the error message for details.", e);
 			return;
