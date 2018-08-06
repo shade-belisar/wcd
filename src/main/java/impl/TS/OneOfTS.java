@@ -7,9 +7,11 @@ import java.util.Set;
 public class OneOfTS extends TripleSet {
 	
 	Set<String> values = new HashSet<String>();
+	
+	Set<String> properties;
 
-	public OneOfTS(String property_) throws IOException {
-		super(property_);
+	public OneOfTS(Set<String> properties_) throws IOException {
+		properties = properties_;
 	}
 	
 	public Set<String> getValues() {
@@ -18,7 +20,7 @@ public class OneOfTS extends TripleSet {
 	
 	@Override
 	protected void triple(String id, String subject, String predicate, String object) {
-		if (predicate.endsWith(property)) {
+		if (properties.contains(predicate)) {
 			super.triple(id, subject, predicate, object);
 			values.add(object);
 		}
@@ -27,7 +29,7 @@ public class OneOfTS extends TripleSet {
 	
 	@Override
 	protected void qualifier(String id, String predicate, String object) {
-		if (predicate.endsWith(property)) {
+		if (properties.contains(predicate)) {
 			super.qualifier(id, predicate, object);
 			values.add(object);
 		}
@@ -36,7 +38,7 @@ public class OneOfTS extends TripleSet {
 	
 	@Override
 	protected void reference(String id, String predicate, String object) {
-		if (predicate.endsWith(property)) {
+		if (properties.contains(predicate)) {
 			super.reference(id, predicate, object);
 			values.add(object);
 		}
@@ -44,7 +46,7 @@ public class OneOfTS extends TripleSet {
 
 	@Override
 	protected String getTripleSetType() {
-		return "One-of";
+		return "OneOf";
 	}
 
 }

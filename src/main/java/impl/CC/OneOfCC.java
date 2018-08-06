@@ -12,9 +12,18 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
+import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.OneOfPCC;
 import impl.PCC.PropertyConstraintChecker;
+import impl.TS.OneOfTS;
+import utility.InequalityHelper;
+import utility.Utility;
+
+import static utility.SC.violation_triple_query;
+import static utility.SC.violation_qualifier_query;
+import static utility.SC.violation_reference_query;
 
 public class OneOfCC extends ConstraintChecker {
 	
@@ -23,9 +32,12 @@ public class OneOfCC extends ConstraintChecker {
 	public static final String ALLOWED_VALUES = "P2305";
 	
 	Map<String, HashSet<String>> allowedValues = new HashMap<String, HashSet<String>>();
+	
+	final OneOfTS tripleSet;
 
-	public OneOfCC() {
+	public OneOfCC() throws IOException {
 		super("Q21510859");
+		tripleSet = new OneOfTS(allowedValues.keySet());
 	}
 
 	@Override
@@ -40,7 +52,7 @@ public class OneOfCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		String property = solution.get("item").asResource().getLocalName();
+		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!allowedValues.containsKey(property))
 			allowedValues.put(property, new HashSet<String>());
@@ -58,6 +70,32 @@ public class OneOfCC extends ConstraintChecker {
 			logger.error("Node " + node + " is no a literal.");
 		}
 	}
+	
+	@Override
+	protected Set<Atom> queries() {
+		return asSet(violation_triple_query, violation_qualifier_query, violation_reference_query);
+	}
+
+	@Override
+	void prepareFacts() throws ReasonerStateException, IOException {
+		loadTripleSets(tripleSet);
+		InequalityHelper.setOrReset(reasoner);
+		Set<String> values = tripleSet.getValues();
+		for (Set<String> valuesSet : allowedValues.values()) {
+			values.addAll(valuesSet);
+		}
+		InequalityHelper.addUnequalConstantsToReasoner(values);
+	}
+
+	@Override
+	void delete() throws IOException {
+		tripleSet.delete();
+	}
+
+	@Override
+	void close() throws IOException {
+		tripleSet.close();
+	}
 
 	@Override
 	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
@@ -67,5 +105,4 @@ public class OneOfCC extends ConstraintChecker {
 		}
 		return result;
 	}
-
 }

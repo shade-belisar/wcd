@@ -2,8 +2,6 @@ package impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,50 +10,22 @@ import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-
-import impl.TS.OneOfTS;
-import impl.TS.TripleSet;
 import utility.InequalityHelper;
-import utility.PrepareQueriesException;
+import static utility.SC.v;
 
 public class OneOfPCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(OneOfPCC.class);
 	
-	final OneOfTS tripleSet;
-	
 	final Set<String> allowedValues;
 
 	public OneOfPCC(String property_, Set<String> allowedValues_) throws IOException {
 		super(property_);
-		tripleSet = new OneOfTS(property);
 		allowedValues = allowedValues_;
 	}
 
 	@Override
-	public String violations() throws IOException {
-		if (!tripleSet.notEmpty())
-			return "";
-		
-		try {
-			loadTripleSets(tripleSet);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-		
-		InequalityHelper.setOrReset(reasoner);
-		
-		try {
-			Set<String> values = tripleSet.getValues();
-			values.addAll(allowedValues);
-			InequalityHelper.addUnequalConstantsToReasoner(values);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to add unequal constants to reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-		    	
+	public List<Rule> rules() {	    	
 		List<Rule> rules = new ArrayList<Rule>();
 		
 		List<Atom> unequal_conjunction = new ArrayList<Atom>();
@@ -92,16 +62,6 @@ public class OneOfPCC extends PropertyConstraintChecker {
 		rules.add(violationQualifier);
 		rules.add(violationReference);
 		
-		try {
-			return prepareAndExecuteQueries(rules, violation_triple_query, violation_qualifier_query, violation_reference_query);
-		} catch (PrepareQueriesException e) {
-			return e.getMessage();
-		}
+		return rules;
 	}
-
-	@Override
-	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
-		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
-	}
-
 }
