@@ -18,39 +18,24 @@ import impl.TS.TripleSet;
 import utility.InequalityHelper;
 import utility.PrepareQueriesException;
 
+import static utility.SC.tripleEDB;
+
+import static utility.SC.s;
+import static utility.SC.o;
+import static utility.SC.x;
+import static utility.SC.v;
+
 public class DistinctValuesPCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(DistinctValuesPCC.class);
-	
-	final DistinctValuesTS tripleSet;
 
 	public DistinctValuesPCC(String property_) throws IOException {
 		super(property_);
-		tripleSet = new DistinctValuesTS(property);
 	}
 
 	@Override
-	public String violations() throws IOException {
-		if (!tripleSet.notEmpty())
-			return "";
-		
-		try {
-			loadTripleSets(tripleSet);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-		
+	public List<Rule> rules() {
 		List<Rule> rules = new ArrayList<Rule>();
-		
-		InequalityHelper.setOrReset(reasoner);
-		
-		try {
-			InequalityHelper.addUnequalConstantsToReasoner(tripleSet.getStatements());
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to add unequal constants to reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
 		
 		// tripleEDB(O, X, propertyConstant, V)
 		Atom tripleEDB_OXpV = Expressions.makeAtom(tripleEDB, o, x, propertyConstant, v);
@@ -66,16 +51,6 @@ public class DistinctValuesPCC extends PropertyConstraintChecker {
 		
 		rules.add(violation);
 		
-		try {
-			return prepareAndExecuteQueries(rules, violation_triple_query);
-		} catch (PrepareQueriesException e) {
-			return e.getMessage();
-		}
+		return rules;
 	}
-
-	@Override
-	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
-		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
-	}
-
 }
