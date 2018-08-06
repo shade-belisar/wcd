@@ -2,73 +2,32 @@ package impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
-import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Rule;
-import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import org.semanticweb.vlog4j.core.reasoner.DataSource;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
-
-import impl.TS.AllowedUnitsTS;
-import impl.TS.TripleSet;
 import utility.InequalityHelper;
-import utility.PrepareQueriesException;
+import static utility.SC.unit;
+
+import static utility.SC.v;
+import static utility.SC.u;
 
 public class AllowedUnitsPCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(AllowedUnitsPCC.class);
 	
-	final AllowedUnitsTS tripleSet;
-	
 	final HashSet<String> allowedUnits;
-	
-	final static String U = "u";
-	final static String UNIT = "unit";
-	
-	final static Variable u = Expressions.makeVariable(U);
-	final static Predicate unit = Expressions.makePredicate(UNIT, 2);
 
 	public AllowedUnitsPCC(String property_, HashSet<String> allowedUnits_) throws IOException {
 		super(property_);
-		tripleSet = new AllowedUnitsTS(property);
 		allowedUnits = allowedUnits_;
 	}
 
 	@Override
-	public String violations() throws IOException {
-		if (!tripleSet.notEmpty())
-			return "";
-		
-		try {
-			loadTripleSets(tripleSet);
-			if (tripleSet.unitsNotEmpty()) {
-				final DataSource unitsEDBPath = new CsvFileDataSource(tripleSet.getUnitsFile());
-				reasoner.addFactsFromDataSource(unit, unitsEDBPath);
-			}
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-		
-		InequalityHelper.setOrReset(reasoner);
-		try {
-			Set<String> units = tripleSet.getUnits();
-			units.addAll(allowedUnits);
-			InequalityHelper.addUnequalConstantsToReasoner(units);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to add unequal constants to reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-
+	public List<Rule> rules() {
 		List<Rule> rules = new ArrayList<Rule>();
 
 		List<Atom> unequal_conjunction = new ArrayList<Atom>();
@@ -108,16 +67,6 @@ public class AllowedUnitsPCC extends PropertyConstraintChecker {
 		Rule referenceViolation = Expressions.makeRule(violation_reference_SpV, toArray(violation_reference_conjunction));
 		rules.add(referenceViolation);
 		
-		try {
-			return prepareAndExecuteQueries(rules, violation_triple_query, violation_qualifier_query, violation_reference_query);
-		} catch (PrepareQueriesException e1) {
-			return e1.getMessage();
-		}
+		return rules;
 	}
-
-	@Override
-	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
-		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
-	}
-
 }

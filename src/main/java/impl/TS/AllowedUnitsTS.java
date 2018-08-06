@@ -20,11 +20,13 @@ public class AllowedUnitsTS extends TripleSet {
 	
 	final TripleSetFile unitsFile;
 	
-	final Set<String> units = new HashSet<String>();
+	Set<String> units = new HashSet<String>();
+	
+	Set<String> properties;
 
-	public AllowedUnitsTS(String property_) throws IOException {
-		super(property_);
-		unitsFile = new TripleSetFile(getTripleSetType(), property + "units");
+	public AllowedUnitsTS(Set<String> properties_) throws IOException {
+		unitsFile = new TripleSetFile(getTripleSetType(), "units");
+		properties = properties_;		
 	}
 	
 	public Set<String> getUnits() {
@@ -44,7 +46,7 @@ public class AllowedUnitsTS extends TripleSet {
 				if (value != null) {
 					object = value.accept(new OutputValueVisitor());
 				}
-				if (predicate.endsWith(property)) {
+				if (properties.contains(predicate)) {
 					triple(id, subject, predicate, object);
 					String unit = value.accept(new OutputUnitVisitor());
 					if (unit != null) {
@@ -52,8 +54,6 @@ public class AllowedUnitsTS extends TripleSet {
 						units.add(unit);
 					}
 				}
-					
-				
 				for (SnakGroup qualifier : statement.getClaim().getQualifiers()) {
 					String qualifier_predicate = qualifier.getProperty().getIri();
 					for (Snak snak : qualifier) {
@@ -62,7 +62,7 @@ public class AllowedUnitsTS extends TripleSet {
 						if (qualifier_value != null) {
 							qualifier_object = qualifier_value.accept(new OutputValueVisitor());
 						}
-						if (qualifier_predicate.endsWith(property)) {
+						if (properties.contains(qualifier_predicate)) {
 							qualifier(id, qualifier_predicate, qualifier_object);
 							String qualifier_unit = qualifier_value.accept(new OutputUnitVisitor());
 							if (qualifier_unit  != null) {
@@ -70,7 +70,6 @@ public class AllowedUnitsTS extends TripleSet {
 								units.add(qualifier_unit);
 							}
 						}
-						
 					}
 				}
 				for (Reference reference : statement.getReferences()) {
@@ -82,7 +81,7 @@ public class AllowedUnitsTS extends TripleSet {
 							if (reference_value != null) {
 								reference_object = reference_value.accept(new OutputValueVisitor());
 							}
-							if (reference_predicate.endsWith(property)) {
+							if (properties.contains(reference_predicate)) {
 								reference(id, reference_predicate, reference_object);
 								String reference_unit = reference_value.accept(new OutputUnitVisitor());
 								if (reference_unit != null) {
@@ -90,13 +89,10 @@ public class AllowedUnitsTS extends TripleSet {
 									units.add(reference_unit);
 								}
 							}
-							
 						}
 					}
 				}
 			}
-			
-			
 		}
 	}
 	
@@ -116,7 +112,7 @@ public class AllowedUnitsTS extends TripleSet {
 	@Override
 	public void delete() throws IOException {
 		super.delete();
-		unitsFile.delete();
+		unitsFile.deleteRawFile();
 	}
 	
 	@Override
@@ -127,7 +123,7 @@ public class AllowedUnitsTS extends TripleSet {
 
 	@Override
 	protected String getTripleSetType() {
-		return "AllowedUnitsTs";
+		return "AllowedUnits";
 	}
 
 }
