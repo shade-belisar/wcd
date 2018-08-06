@@ -5,52 +5,31 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Term;
-import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
-import impl.PCC.PropertyConstraintChecker;
+import static utility.SC.require;
+import static utility.SC.require_qualifier;
+import static utility.SC.first;
+import static utility.SC.first_qualifier;
+import static utility.SC.next;
+import static utility.SC.next_qualifier;
+
+import static utility.SC.s;
+import static utility.SC.o;
+import static utility.SC.i;
+import static utility.SC.x;
+import static utility.SC.p;
+import static utility.SC.v;
+import static utility.SC.c;
+
 
 public class StatementNonExistenceHelper {
 	
-	static Reasoner reasoner;
-	
-	public static final String REQUIRE = "require";
-	
-	public static final String FIRST = "first";
-	public static final String NEXT = "next";
-	public static final String LAST = "last";
-	
-	public static final String REQUIRE_QUALIFIER = "require_qualifier";
-	
-	public static final String FIRST_QUALIFIER = "first_qualifier";
-	public static final String NEXT_QUALIFIER = "next_qualifier";
-	public static final String LAST_QUALIFIER = "last_qualifier";
-	
-	public static final Predicate require = Expressions.makePredicate(REQUIRE, 2);
-	
-	public static final Predicate first = Expressions.makePredicate(FIRST, 2);
-	public static final Predicate next = Expressions.makePredicate(NEXT, 2);
-	public static final Predicate last = Expressions.makePredicate(LAST, 2);
-	
-	public static final Predicate require_qualifier = Expressions.makePredicate(REQUIRE_QUALIFIER, 4);
-	
-	public static final Predicate first_qualifier = Expressions.makePredicate(FIRST_QUALIFIER, 3);
-	public static final Predicate next_qualifier = Expressions.makePredicate(NEXT_QUALIFIER, 6);
-	public static final Predicate last_qualifier = Expressions.makePredicate(LAST_QUALIFIER, 3);	
-	
-	static final Predicate tripleEDB = PropertyConstraintChecker.tripleEDB;	
-	static final Variable s = PropertyConstraintChecker.s;
-	static final Variable o = PropertyConstraintChecker.o;
-	static final Variable i = PropertyConstraintChecker.i;
-	static final Variable x = PropertyConstraintChecker.x;
-	static final Variable p = PropertyConstraintChecker.p;
-	static final Variable v = PropertyConstraintChecker.v;
-	static final Variable c = PropertyConstraintChecker.c;
+	static Reasoner reasoner;	
 	
 	public static void setOrReset(Reasoner reasoner_) {
 		reasoner = reasoner_;

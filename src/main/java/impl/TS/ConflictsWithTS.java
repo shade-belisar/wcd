@@ -1,6 +1,7 @@
 package impl.TS;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
@@ -15,9 +16,11 @@ import utility.OutputValueVisitor;
  *
  */
 public class ConflictsWithTS extends TripleSet {
+	
+	Set<String> properties;
 
-	public ConflictsWithTS(String property_) throws IOException {
-		super(property_);
+	public ConflictsWithTS(Set<String> properties_) throws IOException {
+		properties = properties_;
 	}
 	
 	@Override
@@ -29,7 +32,7 @@ public class ConflictsWithTS extends TripleSet {
 			if (foundProperty)
 				break;
 			String predicate = sg.getProperty().getIri();
-			if (predicate.endsWith(property)) {
+			if (properties.contains(predicate)) {
 				foundProperty = true;
 				break;
 			}
@@ -52,7 +55,7 @@ public class ConflictsWithTS extends TripleSet {
 
 	@Override
 	protected String getTripleSetType() {
-		return "DirectStatementsOnItem";
+		return "ConflictsWith";
 	}
 
 }

@@ -12,9 +12,15 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
+import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.ConflictsWithPCC;
 import impl.PCC.PropertyConstraintChecker;
+import impl.TS.ConflictsWithTS;
+import utility.Utility;
+
+import static utility.SC.violation_triple_query;
 
 public class ConflictsWithCC extends ConstraintChecker {
 	
@@ -24,9 +30,12 @@ public class ConflictsWithCC extends ConstraintChecker {
 	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "P2305";
 	
 	Map<String, HashMap<String, HashSet<String>>> configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
+	
+	final ConflictsWithTS tripleSet;
 
-	public ConflictsWithCC() {
+	public ConflictsWithCC() throws IOException {
 		super("Q21502838");
+		tripleSet = new ConflictsWithTS(configuration.keySet());
 	}
 
 	@Override
@@ -41,12 +50,12 @@ public class ConflictsWithCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		String property = solution.get("item").asResource().getLocalName();
+		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!configuration.containsKey(property))
 			configuration.put(property, new HashMap<String, HashSet<String>>());
 
-		String propQualifier = solution.get(PROPERTY).asResource().getLocalName();
+		String propQualifier = Utility.addBaseURI(solution.get(PROPERTY).asResource().getLocalName());
 		if (!configuration.get(property).containsKey(propQualifier))
 			configuration.get(property).put(propQualifier, new HashSet<String>());
 		RDFNode node = solution.get(ITEM_OF_PROPERTY_CONSTRAINT);
@@ -61,6 +70,26 @@ public class ConflictsWithCC extends ConstraintChecker {
 		} else {
 			logger.error("Node " + node + " is no a literal.");
 		}
+	}
+	
+	@Override
+	protected Set<Atom> queries() {
+		return asSet(violation_triple_query);
+	}
+
+	@Override
+	void prepareFacts() throws ReasonerStateException, IOException {
+		loadTripleSets(tripleSet);
+	}
+
+	@Override
+	void delete() throws IOException {
+		tripleSet.delete();
+	}
+
+	@Override
+	void close() throws IOException {
+		tripleSet.close();
 	}
 
 	@Override

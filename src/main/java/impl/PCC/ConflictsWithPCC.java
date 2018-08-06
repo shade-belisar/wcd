@@ -2,23 +2,24 @@ package impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.TS.ConflictsWithTS;
 import impl.TS.TripleSet;
-import utility.PrepareQueriesException;
 import utility.Utility;
+
+import static utility.SC.tripleEDB;
+import static utility.SC.o;
+import static utility.SC.i;
+import static utility.SC.c;
 
 public class ConflictsWithPCC extends PropertyConstraintChecker {
 	
@@ -31,21 +32,11 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 	public ConflictsWithPCC(String property_, Map<String, HashSet<String>> qualifiers_) throws IOException {
 		super(property_);
 		conflicts = qualifiers_;
-		tripleSet = new ConflictsWithTS(property);
+		tripleSet = new ConflictsWithTS(conflicts.keySet());
 	}
 
 	@Override
-	public String violations() throws IOException {	
-		if (!tripleSet.notEmpty())
-			return "";
-		
-		try {
-			loadTripleSets(tripleSet);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-		
+	public List<Rule> rules() {	
 		List<Rule> rules = new ArrayList<Rule>();
 		
 		for (Map.Entry<String, HashSet<String>> entry : conflicts.entrySet()) {
@@ -77,16 +68,6 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 			}
 		}
 		
-		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query));
-		} catch (PrepareQueriesException e) {
-			return e.getMessage();
-		}
+		return rules;
 	}
-
-	@Override
-	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
-		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
-	}
-
 }

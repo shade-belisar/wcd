@@ -83,9 +83,9 @@ public class TripleSetFile {
 	
 	public File getFile() throws IOException {
 		close();
-		
+
 		tripleSetFile = new File(fileName); 
-		
+
 		GZIPInputStream gzippedInput = new GZIPInputStream(new FileInputStream(tripleSetFileGz));
 		FileOutputStream unzippedOutput = new FileOutputStream(tripleSetFile);
 		byte[] buffer = new byte[1024];
@@ -94,16 +94,16 @@ public class TripleSetFile {
 			unzippedOutput.write(buffer, 0, len);
 		}
 		gzippedInput.close();
-		
+
 		unzippedOutput.close();
-		
+
 		return tripleSetFile;
 	}
-	
+
 	public void deleteRawFile() {
 		new File(getFileName()).delete();
 	}
-	
+
 	public void close() throws IOException {
 		if (writer != null) {
 			writer.close();
