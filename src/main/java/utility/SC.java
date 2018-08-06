@@ -20,6 +20,7 @@ public class SC {
 	public final static String I = "i";
 	public final static String X = "x";
 	public final static String P = "p";
+	public final static String Q = "q";
 	public final static String V = "v";
 	public final static String C = "c";
 	public final static String U = "u";
@@ -50,6 +51,7 @@ public class SC {
 	public final static Variable i = Expressions.makeVariable(I);
 	public final static Variable x = Expressions.makeVariable(X);
 	public final static Variable p = Expressions.makeVariable(P);
+	public final static Variable q = Expressions.makeVariable(Q);
 	public final static Variable v = Expressions.makeVariable(V);
 	public final static Variable c = Expressions.makeVariable(C);
 	public final static Variable u = Expressions.makeVariable(U);

@@ -12,9 +12,16 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
+import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.AllowedQualifiersPCC;
 import impl.PCC.PropertyConstraintChecker;
+import impl.TS.AllowedQualifiersTS;
+import utility.InequalityHelper;
+import utility.Utility;
+
+import static utility.SC.violation_triple_query;
 
 public class AllowedQualifiersCC extends ConstraintChecker {
 	
@@ -24,8 +31,11 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 	
 	Map<String, HashSet<String>> allowedQualifiers = new HashMap<String, HashSet<String>>();
 	
-	public AllowedQualifiersCC() {
+	final AllowedQualifiersTS tripleSet;
+	
+	public AllowedQualifiersCC() throws IOException {
 		super("Q21510851");
+		tripleSet = new AllowedQualifiersTS(allowedQualifiers.keySet());
 	}
 
 	@Override
@@ -40,7 +50,7 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		String property = solution.get("item").asResource().getLocalName();
+		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!allowedQualifiers.containsKey(property))
 			allowedQualifiers.put(property, new HashSet<String>());
@@ -61,6 +71,32 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 	}
 
 	@Override
+	protected Set<Atom> queries() {
+		return asSet(violation_triple_query);
+	}
+
+	@Override
+	void prepareFacts() throws ReasonerStateException, IOException {
+		loadTripleSets(tripleSet);
+		InequalityHelper.setOrReset(reasoner);
+		Set<String> qualifiers = tripleSet.getQualifierProperties();
+		for (Set<String> qualifierSet : allowedQualifiers.values()) {
+			qualifiers.addAll(qualifierSet);
+		}
+		InequalityHelper.addUnequalConstantsToReasoner(qualifiers);
+	}
+
+	@Override
+	void delete() throws IOException {
+		tripleSet.delete();
+	}
+
+	@Override
+	void close() throws IOException {
+		tripleSet.close();
+	}
+
+	@Override
 	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
 		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
 		for (Map.Entry<String, HashSet<String>> entry : allowedQualifiers.entrySet()) {
@@ -68,5 +104,4 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 		}
 		return result;
 	}
-
 }

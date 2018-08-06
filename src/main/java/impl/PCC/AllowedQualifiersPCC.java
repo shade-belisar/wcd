@@ -2,8 +2,6 @@ package impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -11,58 +9,27 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
-import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-
-import impl.TS.AllowedQualifiersTS;
-import impl.TS.TripleSet;
 import utility.InequalityHelper;
-import utility.PrepareQueriesException;
+import static utility.SC.qualifierEDB;
+
+import static utility.SC.s;
+import static utility.SC.q;
+import static utility.SC.o;
 
 public class AllowedQualifiersPCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(AllowedQualifiersPCC.class);
 	
-	final AllowedQualifiersTS tripleSet;
-	
 	final Set<String> allowedQualifiers;
-	
-	final static String O = "o";
-	final static String Q = "q";
-	
-	final static Variable o = Expressions.makeVariable(O);
-	final static Variable q = Expressions.makeVariable(Q);
 
 	public AllowedQualifiersPCC(String property_, Set<String> allowedQualifiers_) throws IOException {
 		super(property_);
-		tripleSet = new AllowedQualifiersTS(property);
 		allowedQualifiers = allowedQualifiers_;
 	}
 
 	@Override
-	public String violations() throws IOException {
-		if (!tripleSet.notEmpty())
-			return "";
-		
-		try {
-			loadTripleSets(tripleSet);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-		
-		InequalityHelper.setOrReset(reasoner);
-		
-		try {
-			Set<String> qualifiers = tripleSet.getQualifierProperties();
-			qualifiers.addAll(allowedQualifiers);
-			InequalityHelper.addUnequalConstantsToReasoner(qualifiers);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to add unequal constants to reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-		    	
+	public List<Rule> rules() { 	
 		List<Rule> rules = new ArrayList<Rule>();
 		
 		// qualifierEDB(S, Q, O)
@@ -83,16 +50,6 @@ public class AllowedQualifiersPCC extends PropertyConstraintChecker {
 		Rule violation = Expressions.makeRule(violation_triple_SIpV, toArray(violation_conjunction));
 		rules.add(violation);
 
-		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query));
-		} catch (PrepareQueriesException e) {
-			return e.getMessage();
-		}
+		return rules;
 	}
-
-	@Override
-	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
-		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
-	}
-
 }
