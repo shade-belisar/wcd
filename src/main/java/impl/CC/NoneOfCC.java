@@ -2,7 +2,6 @@ package impl.CC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,9 +12,17 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
+import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.NoneOfPCC;
 import impl.PCC.PropertyConstraintChecker;
+import impl.TS.NoneOfTS;
+import utility.Utility;
+
+import static utility.SC.violation_triple_query;
+import static utility.SC.violation_qualifier_query;
+import static utility.SC.violation_reference_query;
 
 public class NoneOfCC extends ConstraintChecker {
 	
@@ -24,24 +31,27 @@ public class NoneOfCC extends ConstraintChecker {
 	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "P2305";
 	
 	Map<String, HashSet<String>> notAllowedValues = new HashMap<String, HashSet<String>>();
+	
+	final NoneOfTS tripleSet;
 
-	public NoneOfCC() {
+	public NoneOfCC() throws IOException {
 		super("Q52558054");
+		tripleSet = new NoneOfTS(notAllowedValues.keySet());
 	}
 
 	@Override
 	protected Set<String> qualifiers() {
-		return new HashSet<String>();
+		return asSet();
 	}
 
 	@Override
 	protected Set<String> concatQualifiers() {
-		return new HashSet<String>(Arrays.asList(ITEM_OF_PROPERTY_CONSTRAINT));
+		return asSet(ITEM_OF_PROPERTY_CONSTRAINT);
 	}
 
 	@Override
 	protected void process(QuerySolution solution) {
-		String property = solution.get("item").asResource().getLocalName();
+		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!notAllowedValues.containsKey(property))
 			notAllowedValues.put(property, new HashSet<String>());
@@ -58,6 +68,26 @@ public class NoneOfCC extends ConstraintChecker {
 		} else {
 			logger.error("Node " + node + " is no a literal.");
 		}
+	}
+	
+	@Override
+	protected Set<Atom> queries() {
+		return asSet(violation_triple_query, violation_qualifier_query, violation_reference_query);
+	}
+
+	@Override
+	void prepareFacts() throws ReasonerStateException, IOException {
+		loadTripleSets(tripleSet);
+	}
+
+	@Override
+	void delete() throws IOException {
+		tripleSet.delete();
+	}
+
+	@Override
+	void close() throws IOException {
+		tripleSet.close();
 	}
 
 	@Override

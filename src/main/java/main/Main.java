@@ -29,6 +29,7 @@ import impl.CC.AllowedEntityTypesCC;
 import impl.CC.ConflictsWithCC;
 import impl.CC.ConstraintChecker;
 import impl.CC.ItemRequiresStatementCC;
+import impl.CC.NoneOfCC;
 import impl.CC.OneOfQualifierValueCC;
 import impl.CC.ScopeCC;
 
@@ -92,8 +93,8 @@ public class Main {
 		try {
 			//checkers.add(new ScopeCC());
 			//checkers.add(new ConflictsWithCC());
-			checkers.add(new AllowedEntityTypesCC());
-			//checkers.add(new NoneOfCC());
+			//checkers.add(new AllowedEntityTypesCC());
+			checkers.add(new NoneOfCC());
 			//checkers.add(new DistinctValuesCC());
 			//checkers.add(new AllowedUnitsCC());
 			//checkers.add(new AllowedQualifiersCC());

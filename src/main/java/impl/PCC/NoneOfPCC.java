@@ -2,8 +2,6 @@ package impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,43 +10,36 @@ import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-
-import impl.TS.ScopeTS;
-import impl.TS.TripleSet;
-import utility.PrepareQueriesException;
 import utility.Utility;
+
+import static utility.SC.violation_triple;
+import static utility.SC.violation_qualifier;
+import static utility.SC.violation_reference;
+
+import static utility.SC.tripleEDB;
+import static utility.SC.qualifierEDB;
+import static utility.SC.referenceEDB;
+
+import static utility.SC.s;
+import static utility.SC.i;
 
 public class NoneOfPCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(NoneOfPCC.class);
 	
-	final TripleSet tripleSet;
-	
-	final Set<String> qualifiers;
+	final Set<String> forbiddenValues;
 
 	public NoneOfPCC(String property_, Set<String> qualifiers_) throws IOException {
 		super(property_);
-		qualifiers = qualifiers_;
-		tripleSet = new ScopeTS(property);
+		forbiddenValues = qualifiers_;
 	}
 
 	@Override
-	public String violations() throws IOException {
-		if (!tripleSet.notEmpty())
-			return "";
-		
-		try {
-			loadTripleSets(tripleSet);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-
+	public List<Rule> rules() {
 		List<Rule> rules = new ArrayList<Rule>();
 		
 		
-		for (String notAllowedValue : qualifiers) {
+		for (String notAllowedValue : forbiddenValues) {
 			
 			Constant confValueConstant =  Utility.makeConstant(notAllowedValue);
 			
@@ -86,16 +77,6 @@ public class NoneOfPCC extends PropertyConstraintChecker {
 			rules.add(conflict_reference);
 		}
 		
-		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query, violation_qualifier_query, violation_reference_query));
-		} catch (PrepareQueriesException e) {
-			return e.getMessage();
-		}
+		return rules;
 	}
-
-	@Override
-	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
-		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
-	}
-
 }
