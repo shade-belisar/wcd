@@ -2,7 +2,6 @@ package impl.TS;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,36 +23,19 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	
 	static final Logger logger = LoggerFactory.getLogger(TripleSet.class);
 	
-	protected String property;
-	
 	TripleSetFile triple;
 	
 	TripleSetFile qualifier;
 	
 	TripleSetFile reference;
 	
-	public TripleSet(String property_) throws IOException {
-		property = property_;
+	public TripleSet() throws IOException {
 		
-		triple = new TripleSetFile(getTripleSetType(), property);
-		qualifier = new TripleSetFile(getTripleSetType(), property + "qualifier");
-		reference = new TripleSetFile(getTripleSetType(), property + "reference");
+		triple = new TripleSetFile(getTripleSetType(), "triple");
+		qualifier = new TripleSetFile(getTripleSetType(), "qualifier");
+		reference = new TripleSetFile(getTripleSetType(), "reference");
 		
 		Main.registerProcessor(this);
-	}
-	
-	protected final void write(String id, String subject, String predicate, String object) {
-		triple.write(id, subject, predicate, object);
-		
-	}	
-	
-	protected final void writeQualifier(String id, String predicate, String object) {
-		qualifier.write(id, predicate, object);
-		
-	}
-	
-	protected final void writeReference(String id, String predicate, String object) {
-		reference.write(id, predicate, object);		
 	}
 	
 	public boolean notEmpty() {
@@ -85,15 +67,15 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	}
 	
 	protected void triple(String id, String subject, String predicate, String object) {
-		write(id, subject, predicate, object);
+		triple.write(id, subject, predicate, object);
 	}
 	
 	protected void qualifier(String id, String predicate, String object) {
-		writeQualifier(id, predicate, object);
+		qualifier.write(id, predicate, object);
 	}
 	
 	protected void reference(String id, String predicate, String object) {
-		writeReference(id, predicate, object);
+		reference.write(id, predicate, object);
 	}
 	
 	public void processStatementDocument(StatementDocument statementDocument) {
@@ -148,9 +130,9 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	}
 	
 	public void delete() throws IOException {
-		triple.delete();
-		qualifier.delete();
-		reference.delete();
+		triple.deleteRawFile();
+		qualifier.deleteRawFile();
+		reference.deleteRawFile();
 	}
 	
 	public void close() throws IOException {
@@ -160,14 +142,4 @@ public abstract class TripleSet implements EntityDocumentProcessor {
 	}
 	
 	protected abstract String getTripleSetType();
-	
-	protected static String listToCSV(List<String> strings) {
-		String result = "";
-		for (String string : strings) {
-			result += string + ",";
-		}
-		result = result.substring(0, result.length() - 1);
-		return result;
-	}
-
 }

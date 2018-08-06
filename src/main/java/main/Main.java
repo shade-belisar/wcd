@@ -26,7 +26,9 @@ import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
 import impl.CC.ConstraintChecker;
+import impl.CC.ItemRequiresStatementCC;
 import impl.CC.OneOfQualifierValueCC;
+import impl.CC.ScopeCC;
 
 /**
  * @author adrian
@@ -41,6 +43,8 @@ public class Main {
 	static DumpProcessingController dumpProcessingController;
 	
 	static boolean onlyCurrentRevisions = true;
+	
+	static boolean extract = false;
 
 	/**
 	 * @param args
@@ -50,6 +54,7 @@ public class Main {
 		options.addOption("d", "download", false, "Download the current JSON dump.");
 		options.addOption("l", "local", false, "Process local example dump.");
 		options.addOption("h", "help", false, "Displays this help.");
+		options.addOption("e", "extract", false, "Extract the necessary data from the dump.");
 		
 		CommandLineParser parser = new DefaultParser();
 	    CommandLine cmd;
@@ -68,6 +73,9 @@ public class Main {
 	        formatter.printHelp("help", options);
 	        return;
 	    }
+	    
+	    if (cmd.hasOption("extract"))
+	    	extract = true; 
 		
 		configureLogging();
 		
@@ -76,22 +84,21 @@ public class Main {
 			dumpProcessingController.setOfflineMode(false);
 		} else {
 			dumpProcessingController.setOfflineMode(true);
-		}
-		
+		}		
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
-		//checkers.add(new ScopeCC());
-		//checkers.add(new ConflictsWithCC());
-		//checkers.add(new AllowedEntityTypesCC());
-		//checkers.add(new NoneOfCC());
-		//checkers.add(new DistinctValuesCC());
-		//checkers.add(new AllowedUnitsCC());
-		//checkers.add(new AllowedQualifiersCC());
-		//checkers.add(new OneOfCC());
-		checkers.add(new OneOfQualifierValueCC());
-		//checkers.add(new ItemRequiresStatementCC());
-		//checkers.add(new SingleValueCC());
 		try {
+			checkers.add(new ScopeCC());
+			//checkers.add(new ConflictsWithCC());
+			//checkers.add(new AllowedEntityTypesCC());
+			//checkers.add(new NoneOfCC());
+			//checkers.add(new DistinctValuesCC());
+			//checkers.add(new AllowedUnitsCC());
+			//checkers.add(new AllowedQualifiersCC());
+			//checkers.add(new OneOfCC());
+			//checkers.add(new OneOfQualifierValueCC());
+			//checkers.add(new ItemRequiresStatementCC());
+			//checkers.add(new SingleValueCC());
 			for (ConstraintChecker constraintChecker : checkers) {
 				constraintChecker.init();
 			}
@@ -100,25 +107,20 @@ public class Main {
 			return;
 		}
 		
-		// Add timer for progress
-		EntityTimerProcessor time = new EntityTimerProcessor(0);
-		dumpProcessingController.registerEntityDocumentProcessor(time, null, onlyCurrentRevisions);
-		
-		MwDumpFile mwDumpFile;
-		if (cmd.hasOption("local")){
-			mwDumpFile = new MwLocalDumpFile(DUMP_FILE);
-		} else {
-			mwDumpFile = dumpProcessingController.getMostRecentDump(DumpContentType.JSON);
-		}
+		if (extract) {
+			// Add timer for progress
+			EntityTimerProcessor time = new EntityTimerProcessor(0);
+			dumpProcessingController.registerEntityDocumentProcessor(time, null, onlyCurrentRevisions);
+			
+			MwDumpFile mwDumpFile;
+			if (cmd.hasOption("local")){
+				mwDumpFile = new MwLocalDumpFile(DUMP_FILE);
+			} else {
+				mwDumpFile = dumpProcessingController.getMostRecentDump(DumpContentType.JSON);
+			}
 
-		dumpProcessingController.processDump(mwDumpFile);
-		
-		try {
-			for(ConstraintChecker checker : checkers)
-				checker.close();
-		} catch (IOException e) {
-			logger.error("Could not close a file, see the error message for details.", e);
-			return;
+			dumpProcessingController.processDump(mwDumpFile);
+
 		}
 		
 		try {
@@ -135,7 +137,6 @@ public class Main {
 			logger.error("Could not open a file", e);
 			return;
 		}
-
 	}
 	
 	public static void registerProcessor(EntityDocumentProcessor processor) {
@@ -154,6 +155,10 @@ public class Main {
 
 		consoleAppender.activateOptions();
 		Logger.getRootLogger().addAppender(consoleAppender);
+	}
+	
+	public static boolean extract() {
+		return extract;
 	}
 
 }

@@ -4,6 +4,7 @@
 package impl.CC;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -17,9 +18,26 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.riot.web.HttpOp;
 import org.apache.log4j.Logger;
+import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.model.api.Predicate;
+import org.semanticweb.vlog4j.core.model.api.QueryResult;
+import org.semanticweb.vlog4j.core.model.api.Rule;
+import org.semanticweb.vlog4j.core.model.api.Term;
+import org.semanticweb.vlog4j.core.model.implementation.Expressions;
+import org.semanticweb.vlog4j.core.reasoner.Algorithm;
+import org.semanticweb.vlog4j.core.reasoner.DataSource;
+import org.semanticweb.vlog4j.core.reasoner.Reasoner;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
+import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
+import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 import impl.PCC.PropertyConstraintChecker;
+import impl.TS.TripleSet;
+import impl.TS.TripleSet;
+import utility.PrepareQueriesException;
+import utility.SC;
 
 /**
  * @author adrian
@@ -31,29 +49,19 @@ public abstract class ConstraintChecker {
 	
 	String constraint;
 	
+	protected final Reasoner reasoner = Reasoner.getInstance();
+	
+	protected final String internalError;
+	
 	protected List<PropertyConstraintChecker> propertyCheckers;
 	
 	public ConstraintChecker(String constraint_) {
 		constraint = constraint_;
+		internalError = "INTERNAL_ERROR for constraint " + constraint + ".";
+		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
 	}
 
 	public void init() throws IOException {
-		// Fetching the properties with this constraint
-		/*
-		 * 	PREFIX wd: <http://www.wikidata.org/entity/>
-			PREFIX p: <http://www.wikidata.org/prop/>
-			PREFIX ps: <http://www.wikidata.org/prop/statement/>
-			PREFIX pq: <http://www.wikidata.org/prop/qualifier/>
-			SELECT ?item (GROUP_CONCAT(DISTINCT (?scope); separator=",") as ?scope)
-			WHERE
-			{
-			  ?item p:P2302 ?s .
-			  ?s ps:P2302 wd:Q53869507.
-			  ?s pq:P5314 ?scope.
-			}
-			GROUP BY ?item
-		 */
-		
 		Set<String> qualifiers = qualifiers();
 		Set<String> concatQualifiers = concatQualifiers();
 		
@@ -98,7 +106,7 @@ public abstract class ConstraintChecker {
 		while (results.hasNext()) {
 			QuerySolution solution = results.next();
 			//String property = solution.get("item").asResource().getLocalName();
-			//if (!(property.equals("P1341"))) 
+			//if (!(property.equals("P6"))) 
 			//	continue;
 
 			process(solution);
@@ -109,31 +117,92 @@ public abstract class ConstraintChecker {
 	}
 	
 	public String violations() throws ReasonerStateException, IOException {
+		close();
+		prepareFacts();
 		String result = "Constraint: " + constraint + "\n";
+		List<Rule> rulesToAdd = new ArrayList<Rule>();
 		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
-			String violations = propertyConstraintChecker.violations();
-			if (!violations.equals(""))
-				result += violations + "\n";
+			rulesToAdd.addAll(propertyConstraintChecker.rules());
+
 		}
+		try {
+			result += prepareAndExecuteQueries(rulesToAdd, queries());
+		} catch (PrepareQueriesException e) {
+			return e.getMessage();
+		}
+		delete();
 		return result;
 	}
 	
-	public void close() throws IOException {
-		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
-			propertyConstraintChecker.close();
-		}
+	protected void loadTripleSets(TripleSet... sets) throws ReasonerStateException, IOException {
+		for (TripleSet tripleSet : sets) {
+			if (tripleSet.tripleNotEmpty()) {
+				final DataSource tripleEDBPath = new CsvFileDataSource(tripleSet.getTripleFile());
+				reasoner.addFactsFromDataSource(SC.tripleEDB, tripleEDBPath);
+			}
+			if (tripleSet.qualifierNotEmpty()) {
+				final DataSource qualifierEDBPath = new CsvFileDataSource(tripleSet.getQualifierFile());
+				reasoner.addFactsFromDataSource(SC.qualifierEDB, qualifierEDBPath);
+			}
+			if (tripleSet.referenceNotEmpty()) {
+				final DataSource referenceEDBPath = new CsvFileDataSource(tripleSet.getReferenceFile());
+				reasoner.addFactsFromDataSource(SC.referenceEDB, referenceEDBPath);				
+			}
+		}	
 	}
 	
-	@Override
-	public String toString() {
-		String result = "Constraint id: " + constraint + "\n";
-		for (PropertyConstraintChecker property : propertyCheckers) {
-			if (!property.equals(""))
-				result += "  " + property + "\n";
+	protected String prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
+		try {
+			reasoner.addRules(rules);
+		} catch (ReasonerStateException e) {
+			logger.error("Trying to add rules in the wrong state for constraint " + constraint + ".", e);
+			throw new PrepareQueriesException(internalError);
 		}
+		
+		try {
+			reasoner.load();
+		} catch (EdbIdbSeparationException e) {
+			logger.error("EDB rule occured in IDB for constraint " + constraint + ".", e);
+			throw new PrepareQueriesException(internalError);
+		} catch (IncompatiblePredicateArityException e) {
+			logger.error("Predicate does not match the datasource for constraint " + constraint + ".", e);
+			throw new PrepareQueriesException(internalError);
+		}
+		
+		try {
+			reasoner.reason();
+		} catch (ReasonerStateException e) {
+			logger.error("Trying to reason in the wrong state for constraint " + constraint + ".", e);
+			throw new PrepareQueriesException(internalError);
+		}
+		String result = "";
+		for (Atom query : queries) {
+	    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
+	    		result += result(iterator);
+	    	} catch (ReasonerStateException e) {
+				logger.error("Trying to answer query in the wrong state for constraint " + constraint + ".", e);
+				throw new PrepareQueriesException(internalError);
+			}
+		}
+
+    	return result;
+	}
+	
+	protected String result(QueryResultIterator queryResultIterator) {
+		String result = ""; 
+		while (queryResultIterator.hasNext()) {
+			QueryResult queryResult = queryResultIterator.next();
+			String triple = "";
+			for (Term term : queryResult.getTerms()) {
+				triple += term.getName() + "\t";
+			}
 			
+			result += triple.substring(0, triple.length() - 1) + "\n";
+		}
 		return result;
 	}
+	
+	protected abstract Set<Atom> queries();
 	
 	protected abstract Set<String> qualifiers();
 	
@@ -143,8 +212,14 @@ public abstract class ConstraintChecker {
 	
 	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
 	
-	protected Set<String> asSet(String...strings) {
-		return new HashSet<String>(Arrays.asList(strings));
+	abstract void prepareFacts() throws ReasonerStateException, IOException;
+	
+	abstract void delete() throws IOException;
+	
+	abstract void close() throws IOException;
+	
+	protected <T> Set<T> asSet(T...type) {
+		return new HashSet<T>(Arrays.asList(type));
 	}
 	
 }

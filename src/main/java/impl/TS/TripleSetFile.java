@@ -15,6 +15,8 @@ import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import main.Main;
+
 public class TripleSetFile {
 	
 	static final Logger logger = LoggerFactory.getLogger(TripleSetFile.class);
@@ -44,11 +46,12 @@ public class TripleSetFile {
 		
 		tripleSetFileGz = new File(fileName + ".gz");
 		tripleSetFileGz.getParentFile().mkdirs();
-		tripleSetFileGz.createNewFile();
+		tripleNotEmpty = !tripleSetFileGz.createNewFile();
 		
 		closed = false;
 		
-		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tripleSetFileGz, false)))), CSVFormat.DEFAULT);
+		if (Main.extract())
+			writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tripleSetFileGz, false)))), CSVFormat.DEFAULT);
 	}
 	
 	String getFileName() {
@@ -60,6 +63,11 @@ public class TripleSetFile {
 	}
 	
 	public void write(String...strings) {
+		if (writer == null) {
+			logger.warn("Trying to write to file " + getFileNameGz() + " but extraction has not been activated.");
+			return;
+		}
+			
 		try {
 			writer.printRecord(Arrays.asList(strings));
 			writer.flush();
@@ -92,15 +100,18 @@ public class TripleSetFile {
 		return tripleSetFile;
 	}
 	
-	public void delete() {
+	public void deleteRawFile() {
 		new File(getFileName()).delete();
 	}
 	
 	public void close() throws IOException {
-		writer.close();
-		if (!tripleNotEmpty)
-			new File(getFileNameGz()).delete();
-		closed = true;
+		if (writer != null) {
+			writer.close();
+			closed = true;
+			if (!notEmpty()) {
+				new File(getFileNameGz()).delete();
+			}
+		}
 	}
 	
 	public boolean isClosed() {

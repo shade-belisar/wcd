@@ -5,8 +5,6 @@ package impl.PCC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -14,12 +12,11 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.CC.ScopeCC;
-import impl.TS.ScopeTS;
-import impl.TS.TripleSet;
-import utility.PrepareQueriesException;
+import static utility.SC.violation_triple_query;
+import static utility.SC.violation_qualifier_query;
+import static utility.SC.violation_reference_query;
 
 /**
  * @author adrian
@@ -29,27 +26,14 @@ public class ScopePCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(ScopePCC.class);
 	
-	final TripleSet tripleSet;
-	
 	final Set<String> qualifiers;
 	
 	public ScopePCC(String property_, Set<String> qualifiers_) throws IOException {
 		super(property_);
 		qualifiers = qualifiers_;
-		tripleSet = new ScopeTS(property);
 	}
 	
-	public String violations() throws IOException {
-		if (!tripleSet.notEmpty())
-			return "";
-		
-		try {
-			loadTripleSets(tripleSet);
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to load facts to the reasoner in the wrong state for property " + property + ".", e);
-			return internalError;
-		}
-		
+	public List<Rule> rules() {		
 		List<Rule> rules = new ArrayList<Rule>();
 
 		// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V)
@@ -83,11 +67,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 			queries.remove(violation_reference_query);
 		}
 		
-		try {
-			return prepareAndExecuteQueries(rules, queries);
-		} catch (PrepareQueriesException e1) {
-			return e1.getMessage();
-		}
+		return rules;
 	}
 	
 	protected boolean allowedAs(String qualifier) {
@@ -98,10 +78,4 @@ public class ScopePCC extends PropertyConstraintChecker {
 		}
 		return result;
 	}
-
-	@Override
-	protected Set<TripleSet> getRequiredTripleSets() throws IOException {
-		return new HashSet<TripleSet>(Arrays.asList(tripleSet));
-	}
-
 }
