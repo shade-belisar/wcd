@@ -7,9 +7,11 @@ import java.util.Set;
 public class DistinctValuesTS extends TripleSet {
 
 	Set<String> statements = new HashSet<String>();
+	
+	Set<String> properties;
 
-	public DistinctValuesTS(String property_) throws IOException {
-		super(property_);
+	public DistinctValuesTS(Set<String> properties_) throws IOException {
+		properties = properties_;
 	}
 	
 	public Set<String> getStatements() {
@@ -18,7 +20,7 @@ public class DistinctValuesTS extends TripleSet {
 	
 	@Override
 	protected void triple(String id, String subject, String predicate, String object) {
-		if (predicate.endsWith(property)) {
+		if (properties.contains(predicate)) {
 			super.triple(id, subject, predicate, object);
 			statements.add(id);
 		}
