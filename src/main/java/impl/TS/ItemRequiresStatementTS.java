@@ -120,9 +120,9 @@ public class ItemRequiresStatementTS extends TripleSet {
 	@Override
 	public void delete() throws IOException {
 		super.delete();
-		first.delete();
-		next.delete();
-		last.delete();
+		first.deleteRawFile();
+		next.deleteRawFile();
+		last.deleteRawFile();
 	}
 	
 	@Override
