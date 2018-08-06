@@ -26,11 +26,11 @@ public class ScopePCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(ScopePCC.class);
 	
-	final Set<String> qualifiers;
+	final Set<String> allowedScopes;
 	
 	public ScopePCC(String property_, Set<String> qualifiers_) throws IOException {
 		super(property_);
-		qualifiers = qualifiers_;
+		allowedScopes = qualifiers_;
 	}
 	
 	public List<Rule> rules() {		
@@ -72,7 +72,7 @@ public class ScopePCC extends PropertyConstraintChecker {
 	
 	protected boolean allowedAs(String qualifier) {
 		boolean result = false;
-		for (String allowed : qualifiers) {
+		for (String allowed : allowedScopes) {
 			if (allowed.equals(qualifier))
 				result = true;
 		}
