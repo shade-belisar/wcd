@@ -25,18 +25,8 @@ import org.wikidata.wdtk.dumpfiles.EntityTimerProcessor;
 import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
-import impl.CC.AllowedEntityTypesCC;
-import impl.CC.AllowedQualifiersCC;
-import impl.CC.AllowedUnitsCC;
-import impl.CC.ConflictsWithCC;
 import impl.CC.ConstraintChecker;
-import impl.CC.DistinctValuesCC;
-import impl.CC.ItemRequiresStatementCC;
-import impl.CC.NoneOfCC;
-import impl.CC.OneOfCC;
-import impl.CC.ScopeCC;
-import impl.CC.SingleValueCC;
-import impl.CC.TypeCC;
+import impl.CC.OneOfQualifierValueCC;
 
 /**
  * @author adrian
@@ -97,7 +87,8 @@ public class Main {
 		//checkers.add(new DistinctValuesCC());
 		//checkers.add(new AllowedUnitsCC());
 		//checkers.add(new AllowedQualifiersCC());
-		checkers.add(new OneOfCC());
+		//checkers.add(new OneOfCC());
+		checkers.add(new OneOfQualifierValueCC());
 		//checkers.add(new ItemRequiresStatementCC());
 		//checkers.add(new SingleValueCC());
 		try {

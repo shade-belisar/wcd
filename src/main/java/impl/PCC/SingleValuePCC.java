@@ -9,10 +9,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.model.api.Conjunction;
-import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
-import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
@@ -76,7 +73,7 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 		}
 		
 		try {
-			return prepareAndExecuteQueries(rules, Arrays.asList(violation_triple_query));
+			return prepareAndExecuteQueries(rules, violation_triple_query);
 		} catch (PrepareQueriesException e) {
 			return e.getMessage();
 		}

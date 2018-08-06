@@ -6,10 +6,8 @@ package impl.PCC;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -21,9 +19,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import impl.CC.ScopeCC;
 import impl.TS.ScopeTS;
 import impl.TS.TripleSet;
-import main.Main;
 import utility.PrepareQueriesException;
-import utility.Utility;
 
 /**
  * @author adrian

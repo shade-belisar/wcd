@@ -2,7 +2,6 @@ package impl.CC;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -35,11 +34,11 @@ public class ScopeCC extends ConstraintChecker {
 	}
 
 	protected Set<String> qualifiers() {
-		return new HashSet<String>();
+		return asSet();
 	}
 
 	protected Set<String> concatQualifiers() {
-		return new HashSet<String>(Arrays.asList(SCOPE));
+		return asSet(SCOPE);
 	}
 	
 	protected void process(QuerySolution solution) {

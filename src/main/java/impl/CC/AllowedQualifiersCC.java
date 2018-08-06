@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 
 import impl.PCC.AllowedQualifiersPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.PCC.SingleValuePCC;
 
 public class AllowedQualifiersCC extends ConstraintChecker {
 	

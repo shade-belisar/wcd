@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 
 import impl.PCC.NoneOfPCC;
 import impl.PCC.PropertyConstraintChecker;
-import utility.Utility;
 
 public class NoneOfCC extends ConstraintChecker {
 	

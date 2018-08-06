@@ -12,7 +12,6 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 
-import impl.PCC.AllowedEntityTypesPCC;
 import impl.PCC.AllowedUnitsPCC;
 import impl.PCC.PropertyConstraintChecker;
 

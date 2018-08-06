@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.jena.atlas.lib.tuple.Tuple2;
-import org.apache.jena.atlas.lib.tuple.Tuple3;
 import org.apache.jena.atlas.lib.tuple.TupleFactory;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
@@ -23,7 +22,6 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 
 import impl.PCC.PropertyConstraintChecker;
-import utility.Utility;
 
 public class TypeCC extends ConstraintChecker {
 	

@@ -16,7 +16,6 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.TS.AllowedQualifiersTS;
-import impl.TS.SingleValueTS;
 import impl.TS.TripleSet;
 import utility.InequalityHelper;
 import utility.PrepareQueriesException;

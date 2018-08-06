@@ -9,8 +9,8 @@ import java.util.Set;
 import org.apache.jena.atlas.lib.tuple.Tuple2;
 import org.apache.log4j.Logger;
 
-import impl.TS.TypeTS;
 import impl.TS.TripleSet;
+import impl.TS.TypeTS;
 
 public class TypePCC extends PropertyConstraintChecker {
 	

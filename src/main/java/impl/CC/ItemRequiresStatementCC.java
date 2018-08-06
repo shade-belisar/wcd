@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 
 import impl.PCC.ItemRequiresStatementPCC;
 import impl.PCC.PropertyConstraintChecker;
-import utility.Utility;
 
 public class ItemRequiresStatementCC extends ConstraintChecker {
 	

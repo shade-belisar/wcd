@@ -1,10 +1,6 @@
 package impl.TS;
 
 import java.io.IOException;
-import java.util.Map;
-
-import impl.CC.ScopeCC;
-import main.Main;
 
 /**
  * A triple set limited to all triples containing the property as predicate.

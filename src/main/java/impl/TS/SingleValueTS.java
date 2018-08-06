@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
 import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
@@ -16,7 +15,7 @@ import utility.OutputValueVisitor;
 
 public class SingleValueTS extends TripleSet {
 	
-	Set<String> qualifiers = new HashSet<String>();
+	Set<String> qualifiers;
 	
 	Set<String> statementIDs = new HashSet<String>();
 
