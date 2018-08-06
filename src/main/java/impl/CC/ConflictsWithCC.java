@@ -29,7 +29,7 @@ public class ConflictsWithCC extends ConstraintChecker {
 	public static final String PROPERTY = "P2306";
 	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "P2305";
 	
-	Map<String, HashMap<String, HashSet<String>>> configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
+	Map<String, HashMap<String, HashSet<String>>> configuration;
 	
 	final ConflictsWithTS tripleSet;
 
@@ -50,6 +50,7 @@ public class ConflictsWithCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
+		configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!configuration.containsKey(property))

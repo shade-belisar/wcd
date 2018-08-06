@@ -31,7 +31,7 @@ public class OneOfCC extends ConstraintChecker {
 	
 	public static final String ALLOWED_VALUES = "P2305";
 	
-	Map<String, HashSet<String>> allowedValues = new HashMap<String, HashSet<String>>();
+	Map<String, HashSet<String>> allowedValues;
 	
 	final OneOfTS tripleSet;
 
@@ -52,6 +52,7 @@ public class OneOfCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
+		allowedValues = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!allowedValues.containsKey(property))

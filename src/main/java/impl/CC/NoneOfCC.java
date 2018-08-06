@@ -30,7 +30,7 @@ public class NoneOfCC extends ConstraintChecker {
 	
 	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "P2305";
 	
-	Map<String, HashSet<String>> notAllowedValues = new HashMap<String, HashSet<String>>();
+	Map<String, HashSet<String>> notAllowedValues;
 	
 	final NoneOfTS tripleSet;
 
@@ -51,6 +51,7 @@ public class NoneOfCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
+		notAllowedValues = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!notAllowedValues.containsKey(property))

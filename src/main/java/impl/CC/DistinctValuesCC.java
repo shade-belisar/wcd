@@ -23,7 +23,7 @@ public class DistinctValuesCC extends ConstraintChecker {
 
 	final static Logger logger = Logger.getLogger(DistinctValuesCC.class);
 	
-	final static Set<String> properties = new HashSet<String>();
+	Set<String> properties;
 	
 	final DistinctValuesTS tripleSet;
 
@@ -44,6 +44,7 @@ public class DistinctValuesCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
+		properties = new HashSet<String>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		properties.add(property);
 	}

@@ -34,7 +34,7 @@ public class ScopeCC extends ConstraintChecker {
 	public static final String AS_QUALIFIER = Utility.BASE_URI + "Q54828449";
 	public static final String AS_REFERENCE = Utility.BASE_URI + "Q54828450";
 	
-	Map<String, HashSet<String>> propertiesAndScopes = new HashMap<String, HashSet<String>>();
+	Map<String, HashSet<String>> propertiesAndScopes;
 	
 	final ScopeTS tripleSet;
 
@@ -52,6 +52,7 @@ public class ScopeCC extends ConstraintChecker {
 	}
 	
 	protected void process(QuerySolution solution) {
+		propertiesAndScopes = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		HashSet<String> qualifiers = new HashSet<String>();
 		

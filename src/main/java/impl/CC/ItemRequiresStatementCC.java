@@ -23,7 +23,7 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 	public static final String REQUIRED_PROPERTY = "P2306";
 	public static final String ALLOWED_VALUE = "P2305";
 	
-	Map<String, HashMap<String, HashSet<String>>> configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
+	Map<String, HashMap<String, HashSet<String>>> configuration;
 
 	public ItemRequiresStatementCC() {
 		super("Q21503247");
@@ -41,6 +41,7 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
+		configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
 		String property = solution.get("item").asResource().getLocalName();
 		
 		if (!configuration.containsKey(property))

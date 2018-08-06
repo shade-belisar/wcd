@@ -22,9 +22,9 @@ public class SingleValueCC extends ConstraintChecker {
 	
 	public static final String SEPARATOR = "P4155";
 	
-	Map<String, HashSet<String>> propertiesAndSeparators = new HashMap<String, HashSet<String>>();
+	Map<String, HashSet<String>> propertiesAndSeparators;
 
-	public SingleValueCC() {
+	public SingleValueCC() throws IOException {
 		super("Q19474404");
 	}
 
@@ -40,6 +40,7 @@ public class SingleValueCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
+		propertiesAndSeparators = new HashMap<String, HashSet<String>>();
 		String property = solution.get("item").asResource().getLocalName();
 		
 		if (!propertiesAndSeparators.containsKey(property))

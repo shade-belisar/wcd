@@ -29,7 +29,7 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 	
 	public static final String ALLOWED_QUALIFIER = "P2306";
 	
-	Map<String, HashSet<String>> allowedQualifiers = new HashMap<String, HashSet<String>>();
+	Map<String, HashSet<String>> allowedQualifiers;
 	
 	final AllowedQualifiersTS tripleSet;
 	
@@ -50,6 +50,7 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
+		allowedQualifiers = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!allowedQualifiers.containsKey(property))

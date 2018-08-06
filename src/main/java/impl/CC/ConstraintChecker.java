@@ -55,10 +55,11 @@ public abstract class ConstraintChecker {
 	
 	protected List<PropertyConstraintChecker> propertyCheckers;
 	
-	public ConstraintChecker(String constraint_) {
+	public ConstraintChecker(String constraint_) throws IOException {
 		constraint = constraint_;
 		internalError = "INTERNAL_ERROR for constraint " + constraint + ".";
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
+		init();
 	}
 
 	public void init() throws IOException {

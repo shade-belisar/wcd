@@ -32,7 +32,7 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 	public static final String AS_ITEM = Utility.BASE_URI + "Q29934200";
 	public static final String AS_PROPERTY = Utility.BASE_URI + " Q29934218";
 	
-	Map<String, HashSet<String>> allowedEntityTypes = new HashMap<String, HashSet<String>>();
+	Map<String, HashSet<String>> allowedEntityTypes;
 	
 	final AllowedEntityTypesTS tripleSet;
 
@@ -53,6 +53,7 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
+		allowedEntityTypes = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!allowedEntityTypes.containsKey(property))

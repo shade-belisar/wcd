@@ -32,7 +32,7 @@ public class AllowedUnitsCC extends ConstraintChecker {
 	
 	public static final String ALLOWED_UNIT =  "P2305";
 	
-	Map<String, HashSet<String>> allowedUnits = new HashMap<String, HashSet<String>>();
+	Map<String, HashSet<String>> allowedUnits;
 	
 	final AllowedUnitsTS tripleSet;
 
@@ -53,6 +53,7 @@ public class AllowedUnitsCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
+		allowedUnits = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!allowedUnits.containsKey(property))
