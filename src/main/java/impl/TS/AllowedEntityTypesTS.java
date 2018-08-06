@@ -2,26 +2,29 @@ package impl.TS;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 import org.wikidata.wdtk.datamodel.interfaces.ItemDocument;
 import org.wikidata.wdtk.datamodel.interfaces.PropertyDocument;
 
 public class AllowedEntityTypesTS extends TripleSet {
 	
-	final TripleSetFile items;
-	final TripleSetFile properties;
+	Set<String> properties;
+	
+	final TripleSetFile itemsFile;
+	final TripleSetFile propertiesFile;
 
-	public AllowedEntityTypesTS(String property_) throws IOException {
-		super(property_);
-		items = new TripleSetFile(getTripleSetType(), property + "items");
-		properties = new TripleSetFile(getTripleSetType(), property + "properties");
+	public AllowedEntityTypesTS(Set<String> properties_) throws IOException {
+		itemsFile = new TripleSetFile(getTripleSetType(), "items");
+		propertiesFile = new TripleSetFile(getTripleSetType(), "properties");
+		properties = properties_;
 	}
 	
 	@Override
 	public void processItemDocument(ItemDocument itemDocument) {
 		String subject = itemDocument.getEntityId().getIri();
 		
-		items.write(subject);
+		itemsFile.write(subject);
 		
 		super.processItemDocument(itemDocument);
 	}
@@ -30,15 +33,15 @@ public class AllowedEntityTypesTS extends TripleSet {
 	public void processPropertyDocument(PropertyDocument propertyDocument) {
 		String subject = propertyDocument.getEntityId().getIri();
 		
-		properties.write(subject);
+		propertiesFile.write(subject);
 		
 		super.processPropertyDocument(propertyDocument);
 	}
 	
 	@Override
 	protected void triple(String id, String subject, String predicate, String object) {
-		if (predicate.endsWith(property))
-			write(id, subject, predicate, object);
+		if (properties.contains(predicate))
+			super.triple(id, subject, predicate, object);
 	}
 	
 	@Override
@@ -47,33 +50,33 @@ public class AllowedEntityTypesTS extends TripleSet {
 	}
 	
 	public boolean itemsNotEmpty() {
-		return items.notEmpty();
+		return itemsFile.notEmpty();
 	}
 	
 	public boolean propertiesNotEmpty() {
-		return properties.notEmpty();
+		return propertiesFile.notEmpty();
 	}
 	
 	public File getItemsFile() throws IOException {
-		return items.getFile();
+		return itemsFile.getFile();
 	}
 	
 	public File getPropertiesFile() throws IOException {
-		return properties.getFile();
+		return propertiesFile.getFile();
 	}
 	
 	@Override
 	public void delete() throws IOException {
 		super.delete();
-		items.delete();
-		properties.delete();
+		itemsFile.deleteRawFile();
+		propertiesFile.deleteRawFile();
 	}
 	
 	@Override
 	public void close() throws IOException {
 		super.close();
-		items.close();
-		properties.close();			
+		itemsFile.close();
+		propertiesFile.close();			
 	}
 
 	@Override

@@ -35,6 +35,9 @@ public class SC {
 	public static final String NEXT_QUALIFIER = "next_qualifier";
 	public static final String LAST_QUALIFIER = "last_qualifier";
 	
+	public final static String ITEM = "item";
+	public final static String PROPERTY = "property";
+	
 	public final static Predicate violation_triple = Expressions.makePredicate(VIOLATION_TRIPLE, 4);
 	public final static Predicate violation_qualifier = Expressions.makePredicate(VIOLATION_QUALIFIER, 3);
 	public final static Predicate violation_reference = Expressions.makePredicate(VIOLATION_REFERENCE, 3);
@@ -66,4 +69,7 @@ public class SC {
 	public static final Predicate first_qualifier = Expressions.makePredicate(FIRST_QUALIFIER, 3);
 	public static final Predicate next_qualifier = Expressions.makePredicate(NEXT_QUALIFIER, 6);
 	public static final Predicate last_qualifier = Expressions.makePredicate(LAST_QUALIFIER, 3);
+	
+	public final static Predicate item = Expressions.makePredicate(ITEM, 1);
+	public final static Predicate property = Expressions.makePredicate(PROPERTY, 1);
 }
