@@ -17,15 +17,17 @@ public class ItemRequiresStatementTS extends TripleSet {
 	Set<String> allProperties = new HashSet<String>();
 	Set<String> allValues = new HashSet<String>();
 
-	TripleSetFile first = new TripleSetFile(getTripleSetType(), property + "first");
-	TripleSetFile next = new TripleSetFile(getTripleSetType(), property + "next");
-	TripleSetFile last = new TripleSetFile(getTripleSetType(), property + "last");
+	TripleSetFile first = new TripleSetFile(getTripleSetType(), "first");
+	TripleSetFile next = new TripleSetFile(getTripleSetType(), "next");
+	TripleSetFile last = new TripleSetFile(getTripleSetType(), "last");
 	
 	String lastID;
 	String lastSubject;
+	
+	Set<String> properties;
 
-	public ItemRequiresStatementTS(String property_) throws IOException {
-		super(property_);
+	public ItemRequiresStatementTS(Set<String> properties_) throws IOException {
+		properties = properties_;
 	}
 	
 	@Override
@@ -76,7 +78,7 @@ public class ItemRequiresStatementTS extends TripleSet {
 			if (foundProperty)
 				break;
 			String predicate = sg.getProperty().getIri();
-			if (predicate.endsWith(property)) {
+			if (properties.contains(predicate)) {
 				foundProperty = true;
 				break;
 			}
@@ -130,11 +132,10 @@ public class ItemRequiresStatementTS extends TripleSet {
 		super.close();
 		first.close();
 		next.close();
-		if (!last.isClosed()) {
+		if (!last.isClosed() && lastID != null) {
 			last.write(lastID, lastSubject);
-			last.close();
 		}
-			
+		last.close();
 	}
 
 	@Override

@@ -27,19 +27,13 @@ import static utility.SC.v;
 import static utility.SC.c;
 
 
-public class StatementNonExistenceHelper {
+public class StatementNonExistenceHelper {	
 	
-	static Reasoner reasoner;	
-	
-	public static void setOrReset(Reasoner reasoner_) {
-		reasoner = reasoner_;
+	public static List<Rule> initRequireTriple(Term requiredTerm, Atom...conjunctionAtoms) {
+		return initRequireTriple(requiredTerm, Arrays.asList(conjunctionAtoms));
 	}
 	
-	public static void initRequireTriple(Term requiredTerm, Atom...conjunctionAtoms) throws ReasonerStateException {
-		initRequireTriple(requiredTerm, Arrays.asList(conjunctionAtoms));
-	}
-	
-	public static void initRequireTriple(Term requiredTerm, List<Atom> conjunctionAtoms) throws ReasonerStateException {
+	public static List<Rule> initRequireTriple(Term requiredTerm, List<Atom> conjunctionAtoms) {
 		// require(S, requiredTerm)
 		Atom require_Sr = Expressions.makeAtom(require, s, requiredTerm);
 		
@@ -54,28 +48,28 @@ public class StatementNonExistenceHelper {
 		// require(S, requiredTerm) :- first(S, I), conjunctionAtoms
 		Rule firstRequire = Expressions.makeRule(require_Sr, toArray(firstConjunctionAtoms));
 		
+		// next(O, S)
+		Atom next_OS = Expressions.makeAtom(next, o, s);
+		
 		// require(O, requiredTerm)
 		Atom require_Or = Expressions.makeAtom(require, o, requiredTerm);
 		
-		// next(S, O)
-		Atom next_SO = Expressions.makeAtom(next, s, o);
-		
 		List<Atom> nextConjunctionAtoms = new ArrayList<Atom>();
-		nextConjunctionAtoms.add(next_SO);
-		nextConjunctionAtoms.add(require_Sr);
+		nextConjunctionAtoms.add(next_OS);
+		nextConjunctionAtoms.add(require_Or);
 		nextConjunctionAtoms.addAll(conjunctionAtoms);
 		
-		// require(O, requiredTerm) :- next(S, O), require(S, requiredTerm), conjunctionAtoms
-		Rule nextRequire = Expressions.makeRule(require_Or, toArray(nextConjunctionAtoms));
+		// require(S, requiredTerm) :- next(O, S), require(O, requiredTerm), conjunctionAtoms
+		Rule nextRequire = Expressions.makeRule(require_Sr, toArray(nextConjunctionAtoms));
 		
-		reasoner.addRules(firstRequire, nextRequire);
+		return Arrays.asList(firstRequire, nextRequire);
 	}
 	
-	public static void initRequireQualifier(Term requiredTerm, Atom...conjunctionAtoms) throws ReasonerStateException {
-		initRequireQualifier(requiredTerm, Arrays.asList(conjunctionAtoms));
+	public static List<Rule> initRequireQualifier(Term requiredTerm, Atom...conjunctionAtoms) {
+		return initRequireQualifier(requiredTerm, Arrays.asList(conjunctionAtoms));
 	}
 	
-	public static void initRequireQualifier(Term requiredTerm, List<Atom> conjunctionAtoms) throws ReasonerStateException {
+	public static List<Rule> initRequireQualifier(Term requiredTerm, List<Atom> conjunctionAtoms) {
 		
 		// require_qualifier(S, P, V, requiredTerm)
 		Atom require_qualifier_SPVr = Expressions.makeAtom(require_qualifier, s, p, v, requiredTerm);
@@ -90,21 +84,21 @@ public class StatementNonExistenceHelper {
 		// require_qualifier(S, P, V, requiredTerm) :- first_qualifier(S, P, V), conjunctionAtoms
 		Rule firstRequire = Expressions.makeRule(require_qualifier_SPVr, toArray(firstConjunctionAtoms));
 		
+		// next_qualifier(O, X, C, S, P, V)
+		Atom next_qualifier_OXCSPV = Expressions.makeAtom(next_qualifier, o, x, c, s, p, v);
+		
 		// require_qualifier(O, X, C, requiredTerm)
 		Atom require_qualifier_OXCr = Expressions.makeAtom(require_qualifier, o, x, c, requiredTerm);
 		
-		// next_qualifier(S, P, V, O, X, C)
-		Atom next_qualifier_SPVOXC = Expressions.makeAtom(next_qualifier, s, p, v, o, x, c);
-		
 		List<Atom> nextConjunctionAtoms = new ArrayList<Atom>();
-		nextConjunctionAtoms.add(next_qualifier_SPVOXC);
-		nextConjunctionAtoms.add(require_qualifier_SPVr);
+		nextConjunctionAtoms.add(next_qualifier_OXCSPV);
+		nextConjunctionAtoms.add(require_qualifier_OXCr);
 		nextConjunctionAtoms.addAll(conjunctionAtoms);
 		
-		// require_qualifier(O, X, C, requiredTerm) :- next_qualifier(S, P, V, O, X, C), require_qualifier(S, P, V, requiredTerm), conjunctionAtoms
-		Rule nextRequire = Expressions.makeRule(require_qualifier_OXCr, toArray(nextConjunctionAtoms));
+		// require_qualifier(S, P, V, requiredTerm) :- next_qualifier(O, X, C, S, P, V), require_qualifier(O, X, C, requiredTerm), conjunctionAtoms
+		Rule nextRequire = Expressions.makeRule(require_qualifier_SPVr, toArray(nextConjunctionAtoms));
 		
-		reasoner.addRules(firstRequire, nextRequire);
+		return Arrays.asList(firstRequire, nextRequire);
 	}
 	
 	static Atom[] toArray(List<Atom> list) {
