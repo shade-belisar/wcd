@@ -783,7 +783,7 @@ For statements the pattern consists of two rules, both utilising the same conjun
 \end{equation*}
 states that the statement requires the condition and
 \begin{equation*}
-\text{require}(O, t) \leftarrow \text{next}(S, O) \wedge \text{require}(S, t) \wedge c
+\text{require}(S, t) \leftarrow \text{next}(O, S) \wedge \text{require}(O, t) \wedge c
 \end{equation*}
 propagates this down the statement chain.
 
@@ -792,7 +792,7 @@ For qualifiers the rules are
 \text{require}(S, P, V, t) \leftarrow \text{first}(S, P, V) \wedge c
 \end{equation*}
 \begin{equation*}
-\text{require}(O, X, C, t) \leftarrow \text{next}(S, P, V, O, X, C) \wedge \text{require}(S, P, V, t) \wedge c
+\text{require}(S, P, V, t) \leftarrow \text{next}(O, X, C, S, P, V) \wedge \text{require}(O, X, C, t) \wedge c
 \end{equation*}
 
 If the last statement of an item or the last qualifier of a statement has require the violation occurred. In the following constraints only the conjunction \(c\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
