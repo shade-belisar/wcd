@@ -2,6 +2,7 @@ package impl.CC;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,13 +39,17 @@ public class DistinctValuesCC extends ConstraintChecker {
 	}
 
 	@Override
+	void initDataField() {
+		properties = new HashSet<String>();
+	}
+	
+	@Override
 	protected Set<String> concatQualifiers() {
 		return asSet();
 	}
 
 	@Override
 	protected void process(QuerySolution solution) {
-		properties = new HashSet<String>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		properties.add(property);
 	}

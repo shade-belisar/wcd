@@ -40,6 +40,11 @@ public class NoneOfCC extends ConstraintChecker {
 	}
 
 	@Override
+	void initDataField() {
+		notAllowedValues = new HashMap<String, HashSet<String>>();
+	}
+	
+	@Override
 	protected Set<String> qualifiers() {
 		return asSet();
 	}
@@ -51,7 +56,6 @@ public class NoneOfCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		notAllowedValues = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!notAllowedValues.containsKey(property))

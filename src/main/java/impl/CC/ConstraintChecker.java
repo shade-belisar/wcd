@@ -59,8 +59,11 @@ public abstract class ConstraintChecker {
 		constraint = constraint_;
 		internalError = "INTERNAL_ERROR for constraint " + constraint + ".";
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
+		initDataField();
 		init();
 	}
+	
+	abstract void initDataField();
 
 	public void init() throws IOException {
 		Set<String> qualifiers = qualifiers();
@@ -107,7 +110,7 @@ public abstract class ConstraintChecker {
 		while (results.hasNext()) {
 			QuerySolution solution = results.next();
 			//String property = solution.get("item").asResource().getLocalName();
-			//if (!(property.equals("P6"))) 
+			//if (!(property.equals("P103"))) 
 			//	continue;
 
 			process(solution);

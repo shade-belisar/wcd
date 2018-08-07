@@ -29,6 +29,11 @@ public class SingleValueCC extends ConstraintChecker {
 	}
 
 	@Override
+	void initDataField() {
+		propertiesAndSeparators = new HashMap<String, HashSet<String>>();
+	}
+	
+	@Override
 	protected Set<String> qualifiers() {
 		return asSet();
 	}
@@ -40,7 +45,6 @@ public class SingleValueCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		propertiesAndSeparators = new HashMap<String, HashSet<String>>();
 		String property = solution.get("item").asResource().getLocalName();
 		
 		if (!propertiesAndSeparators.containsKey(property))

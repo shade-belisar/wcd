@@ -40,6 +40,11 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 		super("Q52004125");
 		tripleSet = new AllowedEntityTypesTS(allowedEntityTypes.keySet());
 	}
+	
+	@Override
+	void initDataField() {
+		allowedEntityTypes = new HashMap<String, HashSet<String>>();
+	}
 
 	@Override
 	protected Set<String> qualifiers() {
@@ -53,7 +58,6 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		allowedEntityTypes = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!allowedEntityTypes.containsKey(property))

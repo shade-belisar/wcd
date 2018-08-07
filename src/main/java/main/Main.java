@@ -103,8 +103,8 @@ public class Main {
 			//checkers.add(new AllowedUnitsCC());
 			//checkers.add(new AllowedQualifiersCC());
 			//checkers.add(new OneOfCC());
-			checkers.add(new OneOfQualifierValueCC());
-			//checkers.add(new ItemRequiresStatementCC());
+			//checkers.add(new OneOfQualifierValueCC());
+			checkers.add(new ItemRequiresStatementCC());
 			//checkers.add(new SingleValueCC());
 		} catch (IOException e) {
 			logger.error("Could not open a file, see the error message for details.", e);

@@ -44,6 +44,11 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 	}
 
 	@Override
+	void initDataField() {
+		qualifiersAndValues = new HashMap<String, Map<String, Set<String>>>();
+	}
+	
+	@Override
 	protected Set<String> qualifiers() {
 		return asSet(QUALIFIER_PROPERTY);
 	}
@@ -55,7 +60,6 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		qualifiersAndValues = new HashMap<String, Map<String, Set<String>>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!qualifiersAndValues.containsKey(property))

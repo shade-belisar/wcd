@@ -37,6 +37,11 @@ public class ConflictsWithCC extends ConstraintChecker {
 		super("Q21502838");
 		tripleSet = new ConflictsWithTS(configuration.keySet());
 	}
+	
+	@Override
+	void initDataField() {
+		configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
+	}
 
 	@Override
 	protected Set<String> qualifiers() {
@@ -50,7 +55,6 @@ public class ConflictsWithCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		configuration = new HashMap<String, HashMap<String, HashSet<String>>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!configuration.containsKey(property))

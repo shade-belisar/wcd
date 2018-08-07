@@ -43,6 +43,11 @@ public class ScopeCC extends ConstraintChecker {
 		tripleSet = new ScopeTS(propertiesAndScopes.keySet());
 	}
 
+	@Override
+	void initDataField() {
+		propertiesAndScopes = new HashMap<String, HashSet<String>>();
+	}
+	
 	protected Set<String> qualifiers() {
 		return asSet();
 	}
@@ -52,7 +57,6 @@ public class ScopeCC extends ConstraintChecker {
 	}
 	
 	protected void process(QuerySolution solution) {
-		propertiesAndScopes = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		HashSet<String> qualifiers = new HashSet<String>();
 		

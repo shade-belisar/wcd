@@ -42,6 +42,11 @@ public class AllowedUnitsCC extends ConstraintChecker {
 	}
 
 	@Override
+	void initDataField() {
+		allowedUnits = new HashMap<String, HashSet<String>>();
+	}
+	
+	@Override
 	protected Set<String> qualifiers() {
 		return asSet();
 	}
@@ -53,7 +58,6 @@ public class AllowedUnitsCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		allowedUnits = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!allowedUnits.containsKey(property))

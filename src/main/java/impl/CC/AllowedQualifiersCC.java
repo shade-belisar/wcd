@@ -37,6 +37,11 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 		super("Q21510851");
 		tripleSet = new AllowedQualifiersTS(allowedQualifiers.keySet());
 	}
+	
+	@Override
+	void initDataField() {
+		allowedQualifiers = new HashMap<String, HashSet<String>>();
+	}
 
 	@Override
 	protected Set<String> qualifiers() {
@@ -50,7 +55,6 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 
 	@Override
 	protected void process(QuerySolution solution) {
-		allowedQualifiers = new HashMap<String, HashSet<String>>();
 		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
 		
 		if (!allowedQualifiers.containsKey(property))
