@@ -43,12 +43,13 @@ public class AllowedUnitsTS extends TripleSet {
 				String id = statement.getStatementId();
 				Value value = statement.getValue();
 				String object = "";
+				String unit = "";
 				if (value != null) {
 					object = value.accept(new OutputValueVisitor());
+					unit = value.accept(new OutputUnitVisitor());
 				}
 				if (properties.contains(predicate)) {
 					triple(id, subject, predicate, object);
-					String unit = value.accept(new OutputUnitVisitor());
 					if (unit != null) {
 						unitsFile.write(object, unit);
 						units.add(unit);
