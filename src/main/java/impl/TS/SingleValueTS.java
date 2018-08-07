@@ -2,6 +2,7 @@ package impl.TS;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.wikidata.wdtk.datamodel.interfaces.Snak;
@@ -15,12 +16,11 @@ import utility.OutputValueVisitor;
 
 public class SingleValueTS extends TripleSet {
 	
-	Set<String> qualifiers;
+	Map<String, Set<String>> qualifiers;
 	
 	Set<String> statementIDs = new HashSet<String>();
 
-	public SingleValueTS(String property_, Set<String> qualifiers_) throws IOException {
-		super(property_);
+	public SingleValueTS(Map<String, Set<String>> qualifiers_) throws IOException {
 		qualifiers = qualifiers_;
 	}
 	
@@ -29,7 +29,7 @@ public class SingleValueTS extends TripleSet {
 		String subject = statementDocument.getEntityId().getIri();
 		for (StatementGroup	sg : statementDocument.getStatementGroups()) {
 			String predicate = sg.getProperty().getIri();
-			if (!predicate.endsWith(property))
+			if (!qualifiers.containsKey(predicate))
 				continue;
 			for (Statement statement : sg) {
 				String id = statement.getStatementId();
@@ -43,7 +43,7 @@ public class SingleValueTS extends TripleSet {
 				
 				for (SnakGroup qualifier : statement.getClaim().getQualifiers()) {
 					String qualifier_predicate = qualifier.getProperty().getIri();
-					if (!qualifiers.contains(qualifier_predicate))
+					if (!qualifiers.get(predicate).contains(qualifier_predicate))
 						continue;
 					for (Snak snak : qualifier) {
 						String qualifier_object = snak.getValue().accept(new OutputValueVisitor());

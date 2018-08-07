@@ -36,6 +36,7 @@ import impl.CC.NoneOfCC;
 import impl.CC.OneOfCC;
 import impl.CC.OneOfQualifierValueCC;
 import impl.CC.ScopeCC;
+import impl.CC.SingleValueCC;
 
 /**
  * @author adrian
@@ -104,8 +105,8 @@ public class Main {
 			//checkers.add(new AllowedQualifiersCC());
 			//checkers.add(new OneOfCC());
 			//checkers.add(new OneOfQualifierValueCC());
-			checkers.add(new ItemRequiresStatementCC());
-			//checkers.add(new SingleValueCC());
+			//checkers.add(new ItemRequiresStatementCC());
+			checkers.add(new SingleValueCC());
 		} catch (IOException e) {
 			logger.error("Could not open a file, see the error message for details.", e);
 			return;
