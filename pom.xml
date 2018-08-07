@@ -26,22 +26,22 @@
 			</configuration>
 		</plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <id>Main</id>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>main.Main</mainClass>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.2.1</version>
+            <executions>
+                <execution>
+                    <id>Main</id>
+                    <goals>
+                        <goal>java</goal>
+                    </goals>
+                    <configuration>
+                        <mainClass>main.Main</mainClass>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
 	</plugins>
   </build>
 
@@ -80,16 +80,6 @@
 	<dependency>
 		<groupId>org.semanticweb.vlog4j</groupId>
 		<artifactId>vlog4j-core</artifactId>
-		<version>0.1.0</version>
-	</dependency>
-	<dependency>
-		<groupId>org.semanticweb.vlog4j</groupId>
-		<artifactId>vlog4j-rdf</artifactId>
-		<version>0.1.0</version>
-	</dependency>
-	<dependency>
-		<groupId>org.semanticweb.vlog4j</groupId>
-		<artifactId>vlog4j-owlapi</artifactId>
 		<version>0.1.0</version>
 	</dependency>
   </dependencies>
