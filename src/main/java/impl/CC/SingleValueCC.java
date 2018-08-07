@@ -63,6 +63,7 @@ public class SingleValueCC extends ConstraintChecker {
 		loadTripleSets(tripleSet);
 		InequalityHelper.setOrReset(reasoner);
 		InequalityHelper.addUnequalConstantsToReasoner(tripleSet.getStatementIDs());
+		InequalityHelper.addUnequalConstantsToReasoner(tripleSet.getQualifierValues());
 	}
 
 	@Override
