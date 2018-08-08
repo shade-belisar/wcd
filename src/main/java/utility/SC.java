@@ -28,6 +28,7 @@ public class SC {
 	public final static String R = "r";
 	
 	public static final String REQUIRE = "require";
+	public static final String REQUIRE_SECOND = "require_second";
 	
 	public static final String FIRST = "first";
 	public static final String NEXT = "next";
@@ -71,6 +72,7 @@ public class SC {
 	public final static Atom violation_reference_query = Expressions.makeAtom(violation_reference, s, p, v);
 	
 	public static final Predicate require = Expressions.makePredicate(REQUIRE, 2);
+	public static final Predicate require_second = Expressions.makePredicate(REQUIRE_SECOND, 2);
 	
 	public static final Predicate first = Expressions.makePredicate(FIRST, 2);
 	public static final Predicate next = Expressions.makePredicate(NEXT, 2);
