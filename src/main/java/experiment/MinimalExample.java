@@ -12,78 +12,66 @@ import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
-
 public class MinimalExample {
 	
-	static Variable s = Expressions.makeVariable("s");
-	static Variable i = Expressions.makeVariable("i");
-	static Variable p = Expressions.makeVariable("p");
-	static Variable v = Expressions.makeVariable("v");
+	static Predicate tripleEDB = Expressions.makePredicate("tripleEDB", 4);
+	static Predicate violation_triple = Expressions.makePredicate("violation_triple", 4);
+	static Predicate unequal = Expressions.makePredicate("unequal", 2);
 	
-	static Constant id = Expressions.makeConstant("id");
-	static Constant subject = Expressions.makeConstant("subject");
-	static Constant predicate = Expressions.makeConstant("predicate");
-	static Constant object = Expressions.makeConstant("object");
+	static Variable s = Expressions.makeVariable("S");
+	static Variable o = Expressions.makeVariable("O");
+	static Variable i = Expressions.makeVariable("I");
+	static Variable v = Expressions.makeVariable("V");
+	static Variable p = Expressions.makeVariable("P");
 	
-	static Constant required_property = Expressions.makeConstant("required_property");
+	static Constant id30 = Expressions.makeConstant("Q1$12345678-0030-abcd-efgh-ijklmnopqrst");
+	static Constant id31 = Expressions.makeConstant("Q1$12345678-0031-abcd-efgh-ijklmnopqrst");
+	static Constant Q1 = Expressions.makeConstant("http://www.wikidata.org/entity/Q1");
+	static Constant Q2 = Expressions.makeConstant("http://www.wikidata.org/entity/Q2"); 
+	static Constant P209 = Expressions.makeConstant("http://www.wikidata.org/entity/P209");
+	static Constant P518 = Expressions.makeConstant("http://www.wikidata.org/entity/P518");
 	
-	static Predicate tripleEDB = Expressions.makePredicate("tripleEDB", 4); 
-	static Predicate first = Expressions.makePredicate("first", 2);
-	static Predicate last = Expressions.makePredicate("last", 2);
-	static Predicate unequalEDB = Expressions.makePredicate("unequalEDB", 2);
-	static Predicate require = Expressions.makePredicate("require", 2);
-
 	public static void main(String[] args) throws Exception {
 		
 		Reasoner reasoner = Reasoner.getInstance();
 		
-		// loading database
-		Atom triplEDB_ISPO = Expressions.makeAtom(tripleEDB, id, subject, predicate, object);
+		Atom triple1 = Expressions.makeAtom(tripleEDB, id30, Q1, P209, Q1);
+		Atom triple2 = Expressions.makeAtom(tripleEDB, id31, Q1, P209, Q2);
+		Atom unequal1 = Expressions.makeAtom(unequal, id30, id31);
 		
-		Atom first_IS = Expressions.makeAtom(first, id, subject);
+		reasoner.addFacts(triple1, triple2, unequal1);
 		
-		Atom last_IS = Expressions.makeAtom(last, id, subject);
+		// violation_triple(?s, ?i, http://www.wikidata.org/entity/P209, ?v)
+		Atom violation_tripleSIpV = Expressions.makeAtom(violation_triple, s, i, P209, v);
 		
-		reasoner.addFacts(triplEDB_ISPO, first_IS, last_IS);
-
-		// establishing inequality by hand
-		Atom unequal_RP = Expressions.makeAtom(unequalEDB, required_property, predicate);
-		Atom unequal_PR = Expressions.makeAtom(unequalEDB, predicate, required_property);
+		// tripleEBD(?s, ?i, http://www.wikidata.org/entity/P209, ?v)
+		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, P209, v);
 		
-		reasoner.addFacts(unequal_PR, unequal_RP);
+		// tripleEBD(?o, ?i, http://www.wikidata.org/entity/P209, ?w)
+		Atom tripleEDB_OIpV = Expressions.makeAtom(tripleEDB, o, i, P209, v);
 		
-		// require(S, requiredTerm)
-		Atom require_Sr = Expressions.makeAtom(require, s, required_property);
+		// unequal(?s, ?o)
+		Atom unequal_SO = Expressions.makeAtom(unequal, s, o);
 		
-		// first(S, I)
-		Atom first_SI = Expressions.makeAtom(first, s, i);
+		// violation_triple(?s, ?i, http://www.wikidata.org/entity/P209, ?v) :-
+		//	tripleEBD(?s, ?i, http://www.wikidata.org/entity/P209, ?v),
+		//	tripleEBD(?o, ?i, http://www.wikidata.org/entity/P209, ?w),
+		//	unequal(?s, ?o),
+		Rule violation = Expressions.makeRule(violation_tripleSIpV, tripleEDB_SIpV, tripleEDB_OIpV, unequal_SO);
 		
-		// tripleEDB(S, I, P, V)
-		Atom tripleEDB_SIPV = Expressions.makeAtom(tripleEDB, s, i, p, v);
-		
-		// unequal(requiredTerm, P)
-		Atom unequal_rP = Expressions.makeAtom(unequalEDB, required_property, p);
-		
-		// This variant crashes
-		// require(S, requiredTerm) :- first(S, I), unequal(requiredTerm, P)
-		Rule firstRequire = Expressions.makeRule(require_Sr, first_SI, unequal_rP);
-		
-		// This variant does not result in any derivations but should, as far as I can see
-		// require(S, requiredTerm) :- first(S, I), tripleEDB(S, I, P, V), unequal(requiredTerm, P)
-		//Rule firstRequire = Expressions.makeRule(require_Sr, first_SI, tripleEDB_SIPV unequal_rP);
-		
-		reasoner.addRules(firstRequire);
+		reasoner.addRules(violation);
 		
 		reasoner.load();
 		
 		reasoner.reason();
 		
-		queries(reasoner, Expressions.makeAtom(require, s, i));
+		queries(reasoner, Expressions.makeAtom(tripleEDB, s, i, p, v), Expressions.makeAtom(unequal, s, i), Expressions.makeAtom(violation_triple, s, i, p, v));
 	}
 	
 	static void queries(Reasoner reasoner, Atom...queries) throws ReasonerStateException {
 		for (int i = 0; i < queries.length; i++) {
 			Atom query = queries[i];
+			System.out.println(query);
 			QueryResultIterator iterator = reasoner.answerQuery(query, true);
 			while (iterator.hasNext()) {
 				QueryResult queryResult = iterator.next();
@@ -92,7 +80,7 @@ public class MinimalExample {
 					triple += term.getName() + "\t";
 				}
 				
-				System.out.println(triple.substring(0, triple.length() - 1));
+				System.out.println("\t" + triple.substring(0, triple.length() - 1));
 			}
 		}
 	}
