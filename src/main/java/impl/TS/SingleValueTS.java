@@ -1,5 +1,6 @@
 package impl.TS;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,9 +25,48 @@ public class SingleValueTS extends TripleSet {
 	Set<String> qualifierValues = new HashSet<String>();
 	
 	Set<String> referenceValues = new HashSet<String>();
+	
+	TripleSetFile firstQualifier = new TripleSetFile(getTripleSetType(), "firstQualifier");
+	TripleSetFile nextQualifier = new TripleSetFile(getTripleSetType(), "nextQualifier");
+	TripleSetFile lastQualifier = new TripleSetFile(getTripleSetType(), "lastQualifier");
+	
+	String lastID;
+	String lastPredicate;
+	String lastValue;
 
 	public SingleValueTS(Map<String, Set<String>> qualifiers_) throws IOException {
 		qualifiers = qualifiers_;
+	}
+	
+	@Override
+	public boolean notEmpty() {
+		return super.notEmpty();
+	}
+	
+	public boolean firstQualifierNotEmpty() {
+		return firstQualifier.notEmpty();
+	}
+	
+	public boolean nextQualifierNotEmpty() {
+		return nextQualifier.notEmpty();
+	}
+	
+	public boolean lastQualifierNotEmpty() {
+		return lastQualifier.notEmpty() || lastID != null;
+	}
+	
+	public File getFirstQualifierFile() throws IOException {
+		return firstQualifier.getFile();
+	}
+	
+	public File getNextQualifierFile() throws IOException {
+		return nextQualifier.getFile();
+	}
+	
+	public File getLastQualifierFile() throws IOException {
+		if (!lastQualifier.isClosed() && lastID != null)
+			lastQualifier.write(lastID, lastPredicate, lastValue);
+		return lastQualifier.getFile();
 	}
 	
 	@Override
@@ -41,10 +81,8 @@ public class SingleValueTS extends TripleSet {
 				if (value != null) {
 					object = value.accept(new OutputValueVisitor());
 				}
-				if (qualifiers.containsKey(predicate)) {
+				if (qualifiers.containsKey(predicate))
 					triple(id, subject, predicate, object);
-					statementIDs.add(id);
-				}
 				
 				for (SnakGroup qualifier : statement.getClaim().getQualifiers()) {
 					String qualifier_predicate = qualifier.getProperty().getIri();
@@ -60,11 +98,8 @@ public class SingleValueTS extends TripleSet {
 								writeQualifier = true;
 						} else if (qualifiers.containsKey(qualifier_predicate))
 							writeQualifier = true;
-						if (writeQualifier) {
-							qualifier(id, qualifier_predicate, qualifier_object);
-							qualifierValues.add(qualifier_object);
-						}
-						
+						if (writeQualifier)
+							qualifier(id, qualifier_predicate, qualifier_object);						
 					}
 				}
 				for (Reference reference : statement.getReferences()) {
@@ -76,15 +111,64 @@ public class SingleValueTS extends TripleSet {
 							if (reference_value != null) {
 								reference_object = reference_value.accept(new OutputValueVisitor());
 							}
-							if (!qualifiers.containsKey(reference_predicate))
-								continue;
-							reference(id, reference_predicate, reference_object);
-							referenceValues.add(reference_object);
+							if (qualifiers.containsKey(reference_predicate))
+								reference(id, reference_predicate, reference_object);
 						}
 					}
 				}
 			}
 		}
+	}
+	
+	@Override
+	protected void triple(String id, String subject, String predicate, String object) {
+		super.triple(id, subject, predicate, object);
+		statementIDs.add(id);
+	}
+	
+	@Override
+	protected void qualifier(String id, String predicate, String object) {
+		super.qualifier(id, predicate, object);
+		
+		qualifierValues.add(object);
+		
+		if (lastID == null)
+			firstQualifier.write(id, predicate, object);
+		else if (!lastID.equals(id)) {
+			lastQualifier.write(lastID, lastPredicate, lastValue);
+			firstQualifier.write(id, predicate, object);
+		} else {
+			nextQualifier.write(lastID, lastPredicate, lastValue, id, predicate, object);
+		}
+			
+		lastID = id;
+		lastPredicate = predicate;
+		lastValue = object;
+	}
+	
+	@Override
+	protected void reference(String id, String predicate, String object) {
+		super.reference(id, predicate, object);
+		referenceValues.add(object);
+	}
+	
+	@Override
+	public void delete() throws IOException {
+		super.delete();
+		firstQualifier.deleteRawFile();
+		nextQualifier.deleteRawFile();
+		lastQualifier.deleteRawFile();
+	}
+	
+	@Override
+	public void close() throws IOException {
+		super.close();
+		firstQualifier.close();
+		nextQualifier.close();
+		if (!lastQualifier.isClosed() && lastID != null) {
+			lastQualifier.write(lastID, lastPredicate, lastValue);
+		}
+		lastQualifier.close();
 	}
 	
 	public Set<String> getStatementIDs() {
