@@ -7,7 +7,7 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class SC {
 	
-	public final static String TRIPLE = "tripleEBD";
+	public final static String TRIPLE = "tripleEDB";
 	public final static String QUALIFIER = "qualifierEDB";
 	public final static String REFERENCE = "referenceEDB";
 	
