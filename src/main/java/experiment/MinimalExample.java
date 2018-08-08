@@ -22,6 +22,7 @@ public class MinimalExample {
 	static Variable o = Expressions.makeVariable("O");
 	static Variable i = Expressions.makeVariable("I");
 	static Variable v = Expressions.makeVariable("V");
+	static Variable w = Expressions.makeVariable("W");
 	static Variable p = Expressions.makeVariable("P");
 	
 	static Constant id30 = Expressions.makeConstant("Q1$12345678-0030-abcd-efgh-ijklmnopqrst");
@@ -48,7 +49,7 @@ public class MinimalExample {
 		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, P209, v);
 		
 		// tripleEBD(?o, ?i, http://www.wikidata.org/entity/P209, ?w)
-		Atom tripleEDB_OIpV = Expressions.makeAtom(tripleEDB, o, i, P209, v);
+		Atom tripleEDB_OIpW = Expressions.makeAtom(tripleEDB, o, i, P209, w);
 		
 		// unequal(?s, ?o)
 		Atom unequal_SO = Expressions.makeAtom(unequal, s, o);
@@ -56,8 +57,8 @@ public class MinimalExample {
 		// violation_triple(?s, ?i, http://www.wikidata.org/entity/P209, ?v) :-
 		//	tripleEBD(?s, ?i, http://www.wikidata.org/entity/P209, ?v),
 		//	tripleEBD(?o, ?i, http://www.wikidata.org/entity/P209, ?w),
-		//	unequal(?s, ?o),
-		Rule violation = Expressions.makeRule(violation_tripleSIpV, tripleEDB_SIpV, tripleEDB_OIpV, unequal_SO);
+		//	unequal(?s, ?o)
+		Rule violation = Expressions.makeRule(violation_tripleSIpV, tripleEDB_SIpV, tripleEDB_OIpW, unequal_SO);
 		
 		reasoner.addRules(violation);
 		
