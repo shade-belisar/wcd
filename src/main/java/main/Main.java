@@ -63,24 +63,32 @@ public class Main {
 		options.addOption("l", "local", false, "Process local example dump.");
 		options.addOption("h", "help", false, "Displays this help.");
 		options.addOption("e", "extract", false, "Extract the necessary data from the dump.");
+		options.addOption("c", "constraints", true, "The constraint to check.");
+		options.addOption("n", "noviolations", false, "Do not compute violations.");
 		
 		CommandLineParser parser = new DefaultParser();
 	    CommandLine cmd;
+	    HelpFormatter formatter = new HelpFormatter();
 	    
 	    try {
 			cmd = parser.parse(options, args);
 		} catch (ParseException e) {
 			System.out.println("There was an error while parsing the command line input.");
-		    HelpFormatter formatter = new HelpFormatter();
 		    formatter.printHelp("help", options);
 		    return;
 		}
 	    
 	    if (cmd.hasOption("help")) {
-	    	HelpFormatter formatter = new HelpFormatter();
 	        formatter.printHelp("help", options);
 	        return;
 	    }
+	    
+	    if (!cmd.hasOption("constraints")) {
+	    	System.out.println("Please specify the constraints.");
+		    formatter.printHelp("help", options);
+		    return;
+	    }
+	    	
 	    
 	    if (cmd.hasOption("extract"))
 	    	extract = true; 
@@ -96,17 +104,46 @@ public class Main {
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
 		try {
-			//checkers.add(new ScopeCC());
-			//checkers.add(new ConflictsWithCC());
-			//checkers.add(new AllowedEntityTypesCC());
-			//checkers.add(new NoneOfCC());
-			//checkers.add(new DistinctValuesCC());
-			//checkers.add(new AllowedUnitsCC());
-			//checkers.add(new AllowedQualifiersCC());
-			//checkers.add(new OneOfCC());
-			//checkers.add(new OneOfQualifierValueCC());
-			//checkers.add(new ItemRequiresStatementCC());
-			checkers.add(new SingleValueCC());
+			for (String constraintName : cmd.getOptionValue("constraints").trim().split(",")) {
+				switch (constraintName.toLowerCase()) {
+				case "scope":
+					checkers.add(new ScopeCC());
+					break;
+				case "conflictswith":
+					checkers.add(new ConflictsWithCC());
+					break;
+				case "allowedentitytypes":
+					checkers.add(new AllowedEntityTypesCC());
+					break;
+				case "noneof":
+					checkers.add(new NoneOfCC());
+					break;
+				case "distinctvalues":
+					checkers.add(new DistinctValuesCC());
+					break;
+				case "allowedunits":
+					checkers.add(new AllowedUnitsCC());
+					break;
+				case "allwoedqualifiers":
+					checkers.add(new AllowedQualifiersCC());
+					break;
+				case "oneof":
+					checkers.add(new OneOfCC());
+					break;
+				case "oneofqualifiervalue":
+					checkers.add(new OneOfQualifierValueCC());
+					break;
+				case "itemrequiresstatement":
+					checkers.add(new ItemRequiresStatementCC());
+					break;
+				case "singlevalue":
+					checkers.add(new SingleValueCC());
+					break;
+				default:
+					System.out.println("Constraint " + constraintName + " is unknown.");
+					return;
+				}
+			}
 		} catch (IOException e) {
 			logger.error("Could not open a file, see the error message for details.", e);
 			return;
@@ -114,7 +151,7 @@ public class Main {
 		
 		if (extract) {
 			// Add timer for progress
-			EntityTimerProcessor time = new EntityTimerProcessor(0);
+			EntityTimerProcessor time = new EntityTimerProcessor(1);
 			dumpProcessingController.registerEntityDocumentProcessor(time, null, onlyCurrentRevisions);
 			
 			MwDumpFile mwDumpFile;
@@ -128,19 +165,21 @@ public class Main {
 
 		}
 		
-		try {
-			for(ConstraintChecker checker : checkers) {
-				String violations = checker.violations();
-				if (!violations.equals("")) {
-					System.out.println(violations);
+		if (!cmd.hasOption("noviolations")) {
+			try {
+				for(ConstraintChecker checker : checkers) {
+					String violations = checker.violations();
+					if (!violations.equals("")) {
+						System.out.println(violations);
+					}
 				}
+			} catch (ReasonerStateException e) {
+				logger.error("Reasoner was called in the wrong state.", e);
+				return;
+			} catch (IOException e) {
+				logger.error("Could not open a file", e);
+				return;
 			}
-		} catch (ReasonerStateException e) {
-			logger.error("Reasoner was called in the wrong state.", e);
-			return;
-		} catch (IOException e) {
-			logger.error("Could not open a file", e);
-			return;
 		}
 	}
 	
