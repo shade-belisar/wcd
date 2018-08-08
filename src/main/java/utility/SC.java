@@ -24,6 +24,8 @@ public class SC {
 	public final static String V = "v";
 	public final static String C = "c";
 	public final static String U = "u";
+	public final static String W = "w";
+	public final static String R = "r";
 	
 	public static final String REQUIRE = "require";
 	
@@ -42,6 +44,8 @@ public class SC {
 	
 	public final static String UNIT = "unit";
 	
+	public final static String DOES_NOT_HAVE = "does_not_have";
+	
 	public final static Predicate violation_triple = Expressions.makePredicate(VIOLATION_TRIPLE, 4);
 	public final static Predicate violation_qualifier = Expressions.makePredicate(VIOLATION_QUALIFIER, 3);
 	public final static Predicate violation_reference = Expressions.makePredicate(VIOLATION_REFERENCE, 3);
@@ -55,6 +59,8 @@ public class SC {
 	public final static Variable v = Expressions.makeVariable(V);
 	public final static Variable c = Expressions.makeVariable(C);
 	public final static Variable u = Expressions.makeVariable(U);
+	public final static Variable w = Expressions.makeVariable(W);
+	public final static Variable r = Expressions.makeVariable(R);
 	
 	public final static Predicate tripleEDB = Expressions.makePredicate(TRIPLE, 4);
 	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
@@ -80,4 +86,6 @@ public class SC {
 	public final static Predicate property = Expressions.makePredicate(PROPERTY, 1);
 	
 	public final static Predicate unit = Expressions.makePredicate(UNIT, 2);
+	
+	public final static Predicate does_not_have = Expressions.makePredicate(DOES_NOT_HAVE, 2);
 }
