@@ -134,7 +134,7 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 		for (Map<String, Set<String>> value : configuration.values()) {
 			properties.addAll(value.keySet());
 			for (Set<String> set : value.values()) {
-				
+				values.addAll(set);
 			}
 		}
 		InequalityHelper.addUnequalConstantsToReasoner(properties);
