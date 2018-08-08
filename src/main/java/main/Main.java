@@ -125,7 +125,7 @@ public class Main {
 				case "allowedunits":
 					checkers.add(new AllowedUnitsCC());
 					break;
-				case "allwoedqualifiers":
+				case "allowedqualifiers":
 					checkers.add(new AllowedQualifiersCC());
 					break;
 				case "oneof":
