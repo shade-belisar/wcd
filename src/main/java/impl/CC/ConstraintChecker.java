@@ -110,7 +110,7 @@ public abstract class ConstraintChecker {
 		while (results.hasNext()) {
 			QuerySolution solution = results.next();
 			//String property = solution.get("item").asResource().getLocalName();
-			//if (!(property.equals("P103"))) 
+			//if (!(property.equals("P209"))) 
 			//	continue;
 
 			process(solution);
@@ -129,6 +129,10 @@ public abstract class ConstraintChecker {
 			rulesToAdd.addAll(propertyConstraintChecker.rules());
 
 		}
+		//System.out.println(rulesToAdd.size());
+		//for (Rule rule : rulesToAdd) {
+		//	System.out.println(rule);
+		//}
 		try {
 			result += prepareAndExecuteQueries(rulesToAdd, queries());
 		} catch (PrepareQueriesException e) {
