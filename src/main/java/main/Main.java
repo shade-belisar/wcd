@@ -151,7 +151,7 @@ public class Main {
 		
 		if (extract) {
 			// Add timer for progress
-			EntityTimerProcessor time = new EntityTimerProcessor(1);
+			EntityTimerProcessor time = new EntityTimerProcessor(0);
 			dumpProcessingController.registerEntityDocumentProcessor(time, null, onlyCurrentRevisions);
 			
 			MwDumpFile mwDumpFile;
