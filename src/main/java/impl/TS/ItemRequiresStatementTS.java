@@ -44,7 +44,7 @@ public class ItemRequiresStatementTS extends TripleSet {
 	}
 	
 	public boolean lastNotEmpty() {
-		return next.notEmpty();
+		return last.notEmpty() || lastID != null;
 	}
 	
 	public File getFirstFile() throws IOException {
@@ -56,8 +56,9 @@ public class ItemRequiresStatementTS extends TripleSet {
 	}
 	
 	public File getLastFile() throws IOException {
-		if (!last.isClosed())
+		if (!last.isClosed() && lastID != null) {
 			last.write(lastID, lastSubject);
+		}
 		return last.getFile();
 	}
 	
