@@ -134,7 +134,7 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 					
 					// qualifierEDB(O, {X}, [X]}
 					Atom qualifierEBD_OXX = Expressions.makeAtom(qualifierEDB, o, hasQualifierConstant, hasQualifierVariable);
-					//conjunction.add(qualifierEBD_OXX);
+					conjunction.add(qualifierEBD_OXX);
 				}
 				for (String hasNotQualifier : hasNot) {
 					
