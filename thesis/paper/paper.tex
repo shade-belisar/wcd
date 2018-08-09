@@ -669,11 +669,11 @@ With this approach the statistics depend on the number of distinct characters \(
 \subsubsection{Demand-driven materialisation}
 The approaches outlined above will always result in all inequalities between the members of \(E\) being materialised. However, the purpose of determining inequality is to assist in finding violations of specific constraints. This means that only some inequalities -- the ones that actually appear in the dataset -- have to be evaluated. The rules can then be limited by introducing a new predicate req\_inequality\([2]\) which will only be derived if a condition occurs in which the inequality must be evaluated.\\
 
-To save space and avoid redundancy the following rules will not explicitly state the inequality requirement predicate. Instead, assume that for every premise with the form \(B_1 \wedge \ldots\wedge B_m \wedge I\) where \(B_1 .. B_m\) are arbitrary atoms, \(I\) is an atom of the form \(\text{unequal}(t_1, t_2)\) with \(t_1,t_2\) terms and all of \(t_1,t_2\) that are variables appear in at least one of \(B_1 \ldots B_m\), the rule 
+To save space and avoid redundancy the following rules will not explicitly state the inequality requirement predicate. Instead, assume that for every premise with the form \(B_1 \wedge \ldots\wedge B_m \wedge I_1 \wedge I_n\) where \(B_1 .. B_m\) are arbitrary atoms, \(I_1 .. I_n\) are atoms of the form \(\text{unequal}(t_{n_1}, t_{n_2})\) with \(t_{n_1}, t_{n_2}\) terms and all of \(t_{n_1}, t_{n_2}\) that are variables appear in at least one of \(B_1 \ldots B_m\), the rules 
 \begin{equation*}
-\text{req\_inequality}(t_1, t_2)
+\text{req\_inequality}(t_{n_1}, t_{n_2})
  \leftarrow B_1 \wedge \ldots \wedge B_m
-\end{equation*} is introduced.\\
+\end{equation*} for all \(n\) are introduced.\\
 
 The rules outlined in section \ref{subsubsec_encoding} are changed to utilise this new requirement.
 \begin{equation*}
