@@ -218,13 +218,13 @@ public abstract class ConstraintChecker {
 
 	protected abstract void process(QuerySolution solution);
 	
-	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
-	
 	abstract void prepareFacts() throws ReasonerStateException, IOException;
 	
 	abstract void delete() throws IOException;
 	
 	abstract void close() throws IOException;
+	
+	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
 	
 	protected <T> Set<T> asSet(T...type) {
 		return new HashSet<T>(Arrays.asList(type));
