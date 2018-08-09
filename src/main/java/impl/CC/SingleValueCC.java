@@ -71,6 +71,27 @@ public class SingleValueCC extends ConstraintChecker {
 		return asSet(violation_triple_query);
 		//return asSet(Expressions.makeAtom(tripleEDB, s, i, p, v));
 	}
+	
+	@Override
+	protected void process(QuerySolution solution) {
+		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
+		
+		if (!propertiesAndSeparators.containsKey(property))
+			propertiesAndSeparators.put(property, new HashSet<String>());
+
+		RDFNode node = solution.get(SEPARATOR);
+		if (node.isLiteral()) {
+			Literal literal = node.asLiteral();
+			String content = literal.getString();
+			if (content.equals(""))
+				return;
+			for (String value : literal.getString().split(",")) {
+				propertiesAndSeparators.get(property).add(value);				
+			}
+		} else {
+			logger.error("Node " + node + " is no a literal.");
+		}
+	}
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
@@ -105,27 +126,6 @@ public class SingleValueCC extends ConstraintChecker {
 	@Override
 	void close() throws IOException {
 		tripleSet.close();
-	}
-
-	@Override
-	protected void process(QuerySolution solution) {
-		String property = Utility.addBaseURI(solution.get("item").asResource().getLocalName());
-		
-		if (!propertiesAndSeparators.containsKey(property))
-			propertiesAndSeparators.put(property, new HashSet<String>());
-
-		RDFNode node = solution.get(SEPARATOR);
-		if (node.isLiteral()) {
-			Literal literal = node.asLiteral();
-			String content = literal.getString();
-			if (content.equals(""))
-				return;
-			for (String value : literal.getString().split(",")) {
-				propertiesAndSeparators.get(property).add(value);				
-			}
-		} else {
-			logger.error("Node " + node + " is no a literal.");
-		}
 	}
 	
 	@Override
