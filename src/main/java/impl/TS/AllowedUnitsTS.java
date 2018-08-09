@@ -82,12 +82,13 @@ public class AllowedUnitsTS extends TripleSet {
 						for (Snak snak : rGroup) {
 							Value reference_value = snak.getValue();
 							String reference_object = "";
-							if (reference_value != null) {
+							if (reference_value != null)
 								reference_object = reference_value.accept(new OutputValueVisitor());
-							}
 							if (properties.contains(reference_predicate)) {
 								reference(id, reference_predicate, reference_object);
-								String reference_unit = reference_value.accept(new OutputUnitVisitor());
+								String reference_unit = "";
+								if (reference_value != null)
+									reference_unit = reference_value.accept(new OutputUnitVisitor());
 								if (reference_unit != null) {
 									unitsFile.write(reference_object, reference_unit);
 									units.add(reference_unit);
