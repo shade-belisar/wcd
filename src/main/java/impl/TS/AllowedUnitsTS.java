@@ -65,7 +65,10 @@ public class AllowedUnitsTS extends TripleSet {
 						}
 						if (properties.contains(qualifier_predicate)) {
 							qualifier(id, qualifier_predicate, qualifier_object);
-							String qualifier_unit = qualifier_value.accept(new OutputUnitVisitor());
+							String qualifier_unit = null;
+							if (qualifier_value != null) {
+								qualifier_unit = qualifier_value.accept(new OutputUnitVisitor());
+							}
 							if (qualifier_unit  != null) {
 								unitsFile.write(qualifier_object, qualifier_unit);
 								units.add(qualifier_unit);
