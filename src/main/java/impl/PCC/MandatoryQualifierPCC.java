@@ -1,5 +1,14 @@
 package impl.PCC;
 
+import static utility.SC.c;
+import static utility.SC.last_qualifier;
+import static utility.SC.p;
+import static utility.SC.q;
+import static utility.SC.qualifierEDB;
+import static utility.SC.require_qualifier;
+import static utility.SC.s;
+import static utility.SC.v;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +22,6 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 import utility.InequalityHelper;
 import utility.StatementNonExistenceHelper;
-
-import static utility.SC.qualifierEDB;
-import static utility.SC.last_qualifier;
-import static utility.SC.require_qualifier;
-
-import static utility.SC.s;
-import static utility.SC.p;
-import static utility.SC.q;
-import static utility.SC.v;
-import static utility.SC.c;
 
 public class MandatoryQualifierPCC extends PropertyConstraintChecker {
 	

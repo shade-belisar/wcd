@@ -1,5 +1,10 @@
 package impl.PCC;
 
+import static utility.SC.c;
+import static utility.SC.i;
+import static utility.SC.o;
+import static utility.SC.tripleEDB;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,11 +20,6 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import impl.TS.ConflictsWithTS;
 import impl.TS.TripleSet;
 import utility.Utility;
-
-import static utility.SC.tripleEDB;
-import static utility.SC.o;
-import static utility.SC.i;
-import static utility.SC.c;
 
 public class ConflictsWithPCC extends PropertyConstraintChecker {
 	

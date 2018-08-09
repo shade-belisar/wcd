@@ -1,5 +1,10 @@
 package impl.CC;
 
+import static utility.SC.first_qualifier;
+import static utility.SC.last_qualifier;
+import static utility.SC.next_qualifier;
+import static utility.SC.violation_triple_query;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +18,6 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
@@ -23,18 +27,6 @@ import impl.PCC.SingleValuePCC;
 import impl.TS.SingleValueTS;
 import utility.InequalityHelper;
 import utility.Utility;
-
-import static utility.SC.first_qualifier;
-import static utility.SC.next_qualifier;
-import static utility.SC.last_qualifier;
-
-import static utility.SC.violation_triple_query;
-
-import static utility.SC.tripleEDB;
-import static utility.SC.s;
-import static utility.SC.i;
-import static utility.SC.p;
-import static utility.SC.v;
 
 public class SingleValueCC extends ConstraintChecker {
 	

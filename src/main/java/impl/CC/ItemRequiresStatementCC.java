@@ -1,5 +1,10 @@
 package impl.CC;
 
+import static utility.SC.first;
+import static utility.SC.last;
+import static utility.SC.next;
+import static utility.SC.violation_triple_query;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,9 +18,6 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.model.api.Constant;
-import org.semanticweb.vlog4j.core.model.api.Term;
-import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
@@ -24,22 +26,7 @@ import impl.PCC.ItemRequiresStatementPCC;
 import impl.PCC.PropertyConstraintChecker;
 import impl.TS.ItemRequiresStatementTS;
 import utility.InequalityHelper;
-import utility.StatementNonExistenceHelper;
 import utility.Utility;
-
-import static utility.SC.violation_triple_query;
-
-import static utility.SC.first;
-import static utility.SC.next;
-import static utility.SC.last;
-import static utility.SC.tripleEDB;
-
-import static utility.SC.s;
-import static utility.SC.i;
-import static utility.SC.p;
-import static utility.SC.v;
-
-import static utility.SC.require;
 
 public class ItemRequiresStatementCC extends ConstraintChecker {
 	

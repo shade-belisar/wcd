@@ -1,5 +1,10 @@
 package impl.CC;
 
+import static utility.SC.unit;
+import static utility.SC.violation_qualifier_query;
+import static utility.SC.violation_reference_query;
+import static utility.SC.violation_triple_query;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,12 +26,6 @@ import impl.PCC.PropertyConstraintChecker;
 import impl.TS.AllowedUnitsTS;
 import utility.InequalityHelper;
 import utility.Utility;
-
-import static utility.SC.violation_triple_query;
-import static utility.SC.violation_qualifier_query;
-import static utility.SC.violation_reference_query;
-
-import static utility.SC.unit;
 
 public class AllowedUnitsCC extends ConstraintChecker {
 	

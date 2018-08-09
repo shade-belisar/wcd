@@ -1,8 +1,9 @@
 package impl.CC;
 
+import static utility.SC.violation_triple_query;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +18,6 @@ import impl.PCC.PropertyConstraintChecker;
 import impl.TS.DistinctValuesTS;
 import utility.InequalityHelper;
 import utility.Utility;
-
-import static utility.SC.violation_triple_query;
 
 public class DistinctValuesCC extends ConstraintChecker {
 

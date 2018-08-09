@@ -1,5 +1,19 @@
 package utility;
 
+import static utility.SC.c;
+import static utility.SC.first;
+import static utility.SC.first_qualifier;
+import static utility.SC.i;
+import static utility.SC.next;
+import static utility.SC.next_qualifier;
+import static utility.SC.o;
+import static utility.SC.p;
+import static utility.SC.require;
+import static utility.SC.require_qualifier;
+import static utility.SC.s;
+import static utility.SC.v;
+import static utility.SC.x;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,23 +22,6 @@ import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Term;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import org.semanticweb.vlog4j.core.reasoner.Reasoner;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-
-import static utility.SC.require;
-import static utility.SC.require_qualifier;
-import static utility.SC.first;
-import static utility.SC.first_qualifier;
-import static utility.SC.next;
-import static utility.SC.next_qualifier;
-
-import static utility.SC.s;
-import static utility.SC.o;
-import static utility.SC.i;
-import static utility.SC.x;
-import static utility.SC.p;
-import static utility.SC.v;
-import static utility.SC.c;
 
 
 public class StatementNonExistenceHelper {	

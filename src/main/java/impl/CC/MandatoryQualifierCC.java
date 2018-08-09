@@ -1,5 +1,10 @@
 package impl.CC;
 
+import static utility.SC.first_qualifier;
+import static utility.SC.last_qualifier;
+import static utility.SC.next_qualifier;
+import static utility.SC.violation_triple_query;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,11 +27,6 @@ import impl.PCC.PropertyConstraintChecker;
 import impl.TS.MandatoryQualifierTS;
 import utility.InequalityHelper;
 import utility.Utility;
-
-import static utility.SC.first_qualifier;
-import static utility.SC.last_qualifier;
-import static utility.SC.next_qualifier;
-import static utility.SC.violation_triple_query;
 
 public class MandatoryQualifierCC extends ConstraintChecker {
 	

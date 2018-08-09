@@ -1,8 +1,17 @@
 package impl.PCC;
 
+import static utility.SC.i;
+import static utility.SC.last;
+import static utility.SC.o;
+import static utility.SC.p;
+import static utility.SC.require;
+import static utility.SC.s;
+import static utility.SC.tripleEDB;
+import static utility.SC.v;
+import static utility.SC.x;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,16 +25,6 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import utility.InequalityHelper;
 import utility.StatementNonExistenceHelper;
 import utility.Utility;
-
-import static utility.SC.tripleEDB;
-import static utility.SC.v;
-import static utility.SC.last;
-import static utility.SC.require;
-import static utility.SC.s;
-import static utility.SC.o;
-import static utility.SC.i;
-import static utility.SC.p;
-import static utility.SC.x;
 
 public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 	

@@ -1,5 +1,7 @@
 package impl.CC;
 
+import static utility.SC.violation_triple_query;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +21,6 @@ import impl.PCC.ConflictsWithPCC;
 import impl.PCC.PropertyConstraintChecker;
 import impl.TS.ConflictsWithTS;
 import utility.Utility;
-
-import static utility.SC.violation_triple_query;
 
 public class ConflictsWithCC extends ConstraintChecker {
 	

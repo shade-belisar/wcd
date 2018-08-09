@@ -1,5 +1,10 @@
 package impl.PCC;
 
+import static utility.SC.o;
+import static utility.SC.q;
+import static utility.SC.qualifierEDB;
+import static utility.SC.s;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +15,8 @@ import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import utility.InequalityHelper;
-import static utility.SC.qualifierEDB;
 
-import static utility.SC.s;
-import static utility.SC.q;
-import static utility.SC.o;
+import utility.InequalityHelper;
 
 public class AllowedQualifiersPCC extends PropertyConstraintChecker {
 	

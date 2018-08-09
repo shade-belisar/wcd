@@ -1,10 +1,14 @@
 package impl.CC;
 
+import static utility.SC.first;
+import static utility.SC.last;
+import static utility.SC.next;
+import static utility.SC.violation_triple_query;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.jena.query.QuerySolution;
@@ -16,15 +20,9 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.MultiValuePCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.PCC.ScopePCC;
 import impl.TS.MultiValueTS;
 import utility.InequalityHelper;
 import utility.Utility;
-
-import static utility.SC.first;
-import static utility.SC.last;
-import static utility.SC.next;
-import static utility.SC.violation_triple_query;
 
 public class MultiValueCC extends ConstraintChecker {
 	

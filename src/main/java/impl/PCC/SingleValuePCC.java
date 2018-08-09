@@ -1,5 +1,21 @@
 package impl.PCC;
 
+import static utility.SC.c;
+import static utility.SC.does_not_have;
+import static utility.SC.i;
+import static utility.SC.last_qualifier;
+import static utility.SC.o;
+import static utility.SC.p;
+import static utility.SC.qualifierEDB;
+import static utility.SC.r;
+import static utility.SC.referenceEDB;
+import static utility.SC.require_qualifier;
+import static utility.SC.s;
+import static utility.SC.tripleEDB;
+import static utility.SC.v;
+import static utility.SC.w;
+import static utility.SC.x;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,24 +33,6 @@ import com.google.common.collect.Sets;
 
 import utility.InequalityHelper;
 import utility.StatementNonExistenceHelper;
-
-import static utility.SC.tripleEDB;
-import static utility.SC.qualifierEDB;
-import static utility.SC.referenceEDB;
-
-import static utility.SC.does_not_have;
-import static utility.SC.last_qualifier;
-import static utility.SC.require_qualifier;
-
-import static utility.SC.s;
-import static utility.SC.o;
-import static utility.SC.i;
-import static utility.SC.p;
-import static utility.SC.v;
-import static utility.SC.c;
-import static utility.SC.x;
-import static utility.SC.w;
-import static utility.SC.r;
 
 public class SingleValuePCC extends PropertyConstraintChecker {
 	

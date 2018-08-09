@@ -1,5 +1,14 @@
 package impl.PCC;
 
+import static utility.SC.i;
+import static utility.SC.qualifierEDB;
+import static utility.SC.referenceEDB;
+import static utility.SC.s;
+import static utility.SC.tripleEDB;
+import static utility.SC.violation_qualifier;
+import static utility.SC.violation_reference;
+import static utility.SC.violation_triple;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,18 +19,8 @@ import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
+
 import utility.Utility;
-
-import static utility.SC.violation_triple;
-import static utility.SC.violation_qualifier;
-import static utility.SC.violation_reference;
-
-import static utility.SC.tripleEDB;
-import static utility.SC.qualifierEDB;
-import static utility.SC.referenceEDB;
-
-import static utility.SC.s;
-import static utility.SC.i;
 
 public class NoneOfPCC extends PropertyConstraintChecker {
 	

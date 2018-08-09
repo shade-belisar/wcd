@@ -1,29 +1,21 @@
 package impl.PCC;
 
+import static utility.SC.o;
+import static utility.SC.s;
+import static utility.SC.tripleEDB;
+import static utility.SC.v;
+import static utility.SC.x;
+
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
-import impl.TS.DistinctValuesTS;
-import impl.TS.TripleSet;
 import utility.InequalityHelper;
-import utility.PrepareQueriesException;
-
-import static utility.SC.tripleEDB;
-
-import static utility.SC.s;
-import static utility.SC.o;
-import static utility.SC.x;
-import static utility.SC.v;
 
 public class DistinctValuesPCC extends PropertyConstraintChecker {
 	

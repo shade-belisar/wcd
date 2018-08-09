@@ -3,6 +3,10 @@
  */
 package impl.PCC;
 
+import static utility.SC.violation_qualifier_query;
+import static utility.SC.violation_reference_query;
+import static utility.SC.violation_triple_query;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,9 +18,6 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 import impl.CC.ScopeCC;
-import static utility.SC.violation_triple_query;
-import static utility.SC.violation_qualifier_query;
-import static utility.SC.violation_reference_query;
 
 /**
  * @author adrian
