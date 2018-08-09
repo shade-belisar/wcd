@@ -39,6 +39,7 @@ import impl.CC.OneOfCC;
 import impl.CC.OneOfQualifierValueCC;
 import impl.CC.ScopeCC;
 import impl.CC.SingleValueCC;
+import utility.InequalityHelper;
 
 /**
  * @author adrian
@@ -70,6 +71,7 @@ public class Main {
 		options.addOption("c", "constraints", true, "The constraint to check.");
 		options.addOption("n", "noviolations", false, "Do not compute violations.");
 		options.addOption("s", "stringResults", false, "Output violations as string.");
+		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is encoded.");
 		
 		CommandLineParser parser = new DefaultParser();
 	    CommandLine cmd;
@@ -92,6 +94,26 @@ public class Main {
 	    	System.out.println("Please specify the constraints.");
 		    formatter.printHelp("help", options);
 		    return;
+	    }
+	    
+	    if (!cmd.hasOption("inequalityMode"))
+	    	InequalityHelper.mode = InequalityHelper.Mode.ENCODED;
+	    else {
+	    	String inequalityMode = cmd.getOptionValue("inequalityMode").toLowerCase();
+	    	switch (inequalityMode) {
+			case "naive":
+				InequalityHelper.mode = InequalityHelper.Mode.NAIVE;
+				break;
+			case "encoded":
+				InequalityHelper.mode = InequalityHelper.Mode.ENCODED;
+				break;
+			case "demanded":
+				InequalityHelper.mode = InequalityHelper.Mode.DEMANDED;
+				break;
+			default:
+				System.out.println("Inequality mode " + inequalityMode + " is unknown.");
+				return;
+			}
 	    }
 	    	
 	    

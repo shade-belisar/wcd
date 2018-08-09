@@ -97,7 +97,7 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 				values.addAll(entry2.getValue());
 			}
 		}
-		InequalityHelper.addUnequalConstantsToReasoner(values);
+		InequalityHelper.establishInequality(values);
 	}
 
 	@Override

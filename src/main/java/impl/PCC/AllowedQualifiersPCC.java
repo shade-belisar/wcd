@@ -17,6 +17,7 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 import utility.InequalityHelper;
+import utility.Utility;
 
 public class AllowedQualifiersPCC extends PropertyConstraintChecker {
 	
@@ -48,7 +49,7 @@ public class AllowedQualifiersPCC extends PropertyConstraintChecker {
 		}
 		
 		// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V), qualifierEDB(S, Q, O), unequal({A}, Q)
-		Rule violation = Expressions.makeRule(violation_triple_SIpV, toArray(violation_conjunction));
+		Rule violation = Expressions.makeRule(violation_triple_SIpV, Utility.toArray(violation_conjunction));
 		rules.add(violation);
 
 		return rules;

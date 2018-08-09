@@ -33,6 +33,7 @@ import com.google.common.collect.Sets;
 
 import utility.InequalityHelper;
 import utility.StatementNonExistenceHelper;
+import utility.Utility;
 
 public class SingleValuePCC extends PropertyConstraintChecker {
 	
@@ -156,7 +157,7 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 				//	qualifierEDB(O, {X}, [X]),
 				//	does_not_have(S, {Y}),
 				//	does_not_have(O, {Y})
-				Rule violation = Expressions.makeRule(violation_triple_SIpV, toArray(conjunction));
+				Rule violation = Expressions.makeRule(violation_triple_SIpV, Utility.toArray(conjunction));
 				if (hasNot.size() > 0)
 					continue;
 				rules.add(violation);

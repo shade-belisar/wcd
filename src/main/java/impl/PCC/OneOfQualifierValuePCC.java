@@ -51,7 +51,7 @@ public class OneOfQualifierValuePCC extends PropertyConstraintChecker {
 			}
 			
 			// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V), qualifierEDB(S, qualifierPropertyConstant, O), unequal({A}, O)
-			Rule violation = Expressions.makeRule(violation_triple_SIpV, toArray(violation_conjunction));
+			Rule violation = Expressions.makeRule(violation_triple_SIpV, Utility.toArray(violation_conjunction));
 			rules.add(violation);
 		}
 

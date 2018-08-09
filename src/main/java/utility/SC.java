@@ -15,6 +15,8 @@ public class SC {
 	public final static String VIOLATION_QUALIFIER = "violation_qualifier";
 	public final static String VIOLATION_REFERENCE = "violation_reference";
 	
+	public final static String REQUIRE_INEQUALITY = "require_inequality";
+	
 	public final static String S = "s";
 	public final static String O = "o";
 	public final static String I = "i";
@@ -47,9 +49,15 @@ public class SC {
 	
 	public final static String DOES_NOT_HAVE = "does_not_have";
 	
+	public final static Predicate tripleEDB = Expressions.makePredicate(TRIPLE, 4);
+	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
+	public final static Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 3);
+	
 	public final static Predicate violation_triple = Expressions.makePredicate(VIOLATION_TRIPLE, 4);
 	public final static Predicate violation_qualifier = Expressions.makePredicate(VIOLATION_QUALIFIER, 3);
 	public final static Predicate violation_reference = Expressions.makePredicate(VIOLATION_REFERENCE, 3);
+	
+	public final static Predicate require_inequality = Expressions.makePredicate(REQUIRE_INEQUALITY, 2);
 	
 	public final static Variable s = Expressions.makeVariable(S);
 	public final static Variable o = Expressions.makeVariable(O);
@@ -62,10 +70,6 @@ public class SC {
 	public final static Variable u = Expressions.makeVariable(U);
 	public final static Variable w = Expressions.makeVariable(W);
 	public final static Variable r = Expressions.makeVariable(R);
-	
-	public final static Predicate tripleEDB = Expressions.makePredicate(TRIPLE, 4);
-	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
-	public final static Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 3);
 	
 	public final static Atom violation_triple_query = Expressions.makeAtom(violation_triple, s, i, p, v);
 	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);

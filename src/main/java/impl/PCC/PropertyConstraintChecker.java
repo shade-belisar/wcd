@@ -65,9 +65,5 @@ public abstract class PropertyConstraintChecker {
 		referenceEDB_SpV = Expressions.makeAtom(referenceEDB, s, propertyConstant, v);
 	}
 	
-	protected static Atom[] toArray(List<Atom> list) {
-		return list.toArray(new Atom[list.size()]);
-	}
-	
 	public abstract List<Rule> rules();
 }

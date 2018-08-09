@@ -62,7 +62,7 @@ public class DistinctValuesCC extends ConstraintChecker {
 	void prepareFacts() throws ReasonerStateException, IOException {
 		loadTripleSets(tripleSet);
 		InequalityHelper.setOrReset(reasoner);
-		InequalityHelper.addUnequalConstantsToReasoner(tripleSet.getStatements());
+		InequalityHelper.establishInequality(tripleSet.getStatements());
 	}
 
 	@Override

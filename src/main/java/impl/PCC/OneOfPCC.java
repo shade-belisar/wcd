@@ -14,6 +14,7 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 import utility.InequalityHelper;
+import utility.Utility;
 
 public class OneOfPCC extends PropertyConstraintChecker {
 	
@@ -44,21 +45,21 @@ public class OneOfPCC extends PropertyConstraintChecker {
 		violation_triple_conjunction.addAll(unequal_conjunction);
 
 		// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V), unequal({A}, V)
-		Rule violationTriple = Expressions.makeRule(violation_triple_SIpV, toArray(violation_triple_conjunction));
+		Rule violationTriple = Expressions.makeRule(violation_triple_SIpV, Utility.toArray(violation_triple_conjunction));
 		
 		List<Atom> violation_qualifier_conjunction = new ArrayList<Atom>();
 		violation_qualifier_conjunction.add(qualifierEDB_SpV);
 		violation_qualifier_conjunction.addAll(unequal_conjunction);
 		
 		// violation_qualifier(S, propertyConstant, V) :- qualifierEDB(S, propertyConstant, V), unequal({A}, V)
-		Rule violationQualifier = Expressions.makeRule(violation_qualifier_SpV, toArray(violation_qualifier_conjunction));
+		Rule violationQualifier = Expressions.makeRule(violation_qualifier_SpV, Utility.toArray(violation_qualifier_conjunction));
 		
 		List<Atom> violation_reference_conjunction = new ArrayList<Atom>();
 		violation_reference_conjunction.add(referenceEDB_SpV);
 		violation_reference_conjunction.addAll(unequal_conjunction);
 		
 		// violation_reference(S, propertyConstant, V) :- referenceEDB(S, propertyConstant, V), unequal({A}, V)
-		Rule violationReference = Expressions.makeRule(violation_qualifier_SpV, toArray(violation_reference_conjunction));
+		Rule violationReference = Expressions.makeRule(violation_qualifier_SpV, Utility.toArray(violation_reference_conjunction));
 		
 		rules.add(violationTriple);
 		rules.add(violationQualifier);

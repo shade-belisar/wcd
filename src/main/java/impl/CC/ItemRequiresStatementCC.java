@@ -124,8 +124,8 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 				values.addAll(set);
 			}
 		}
-		InequalityHelper.addUnequalConstantsToReasoner(properties);
-		InequalityHelper.addUnequalConstantsToReasoner(values);
+		InequalityHelper.establishInequality(properties);
+		InequalityHelper.establishInequality(values);
 		
 	}
 

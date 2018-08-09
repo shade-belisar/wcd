@@ -88,7 +88,7 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 		for (Set<String> qualifierSet : allowedQualifiers.values()) {
 			qualifiers.addAll(qualifierSet);
 		}
-		InequalityHelper.addUnequalConstantsToReasoner(qualifiers);
+		InequalityHelper.establishInequality(qualifiers);
 	}
 
 	@Override

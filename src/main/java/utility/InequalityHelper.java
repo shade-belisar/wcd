@@ -14,7 +14,15 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
+import static utility.SC.require_inequality;
+
 public class InequalityHelper {
+	
+	public enum Mode {
+		NAIVE,
+		ENCODED,
+		DEMANDED
+	}
 	
 	final static String NONE = "none";
 	
@@ -41,6 +49,9 @@ public class InequalityHelper {
 	// unequal(CON1, CON2)
 	final static Atom unequal_CC = Expressions.makeAtom(unequal, con1, con2);
 	
+	// require_inequality(CON1, CON2)
+	final static Atom require_inequality_CC = Expressions.makeAtom(require_inequality, con1, con2);
+	
 	// unequal(X, Y)
 	final static Atom unequal_XY = Expressions.makeAtom(unequal, x, y);
 	
@@ -52,21 +63,54 @@ public class InequalityHelper {
 	
 	static Reasoner reasoner;
 	
+	public static Mode mode = Mode.ENCODED;
+	
 	public static void setOrReset(Reasoner reasoner_) {
 		reasoner = reasoner_;
 		ITH_LETTER.clear();
 		ith_letter.clear();
 	}
 	
-	public static void addUnequalConstantsToReasoner(String...unequalConstants) throws ReasonerStateException {
+	public static void establishInequality(String...unequalConstants) throws ReasonerStateException {
 		Set<String> unequalConstantsSet = new HashSet<String>();
 		for (int i = 0; i < unequalConstants.length; i++) {
 			unequalConstantsSet.add(unequalConstants[i]);
 		}
-		addUnequalConstantsToReasoner(unequalConstantsSet);
+		establishInequality(unequalConstantsSet);
 	}
 	
-	public static void addUnequalConstantsToReasoner(Set<String> unequalConstants) throws ReasonerStateException {
+	public static void establishInequality(Set<String> unequalConstants) throws ReasonerStateException {
+		reasoner.addRules(unequal_IDB_EDB, inverse);
+		
+		switch (mode) {
+		case NAIVE:
+			naive(unequalConstants);
+			break;
+		case ENCODED:
+			encoded(unequalConstants, false);
+			break;
+		case DEMANDED:
+			encoded(unequalConstants, true);
+			break;
+		}
+	}
+	
+	static void naive (Set<String> unequalConstants) throws ReasonerStateException {
+		List<Constant> unequals = new ArrayList<Constant>();
+		for (String string : unequalConstants) {
+			unequals.add(Expressions.makeConstant(string));
+		}
+		for (int first = 0; first < unequals.size(); first++) {
+			Constant firstConstant = unequals.get(first);
+			for (int second = first + 1; second < unequals.size(); second++) {
+				Constant secondConstant = unequals.get(second);
+				
+				reasoner.addFacts(Expressions.makeAtom(unequal_EDB, firstConstant, secondConstant));
+			}
+		}
+	}
+	
+	static void encoded(Set<String> unequalConstants, boolean demand) throws ReasonerStateException {
 		int maxLength = 0;
 		for (String	string : unequalConstants) {
 			int length = string.length();
@@ -74,10 +118,7 @@ public class InequalityHelper {
 				maxLength = length;
 		}
 		
-		reasoner.addRules(unequal_IDB_EDB, inverse);
-		
 		for (int i = ITH_LETTER.size(); i < maxLength; i++) {
-			// TODO Change to including the previous letters as conditions
 			
 			ITH_LETTER.add("letter" + i);
 			ith_letter.add(Expressions.makePredicate(ITH_LETTER.get(i), 2));
@@ -89,9 +130,14 @@ public class InequalityHelper {
 			
 			// letteri(CON2, Y)
 			Atom letteri_CY = Expressions.makeAtom(letteri, con2, y);
-			
-			// unequal(CON1, CON2) :- letteri(CON1, X), letteri(CON2, Y), unequal(X, Y)
-			Rule unequal = Expressions.makeRule(unequal_CC, letteri_CX, letteri_CY, unequal_XY);
+
+			Rule unequal;
+			if (demand)
+				// unequal(CON1, CON2) :- require_inequality(CON1, CON2), letteri(CON1, X), letteri(CON2, Y), unequal(X, Y)
+				unequal = Expressions.makeRule(unequal_CC, require_inequality_CC, letteri_CX, letteri_CY, unequal_XY);
+			else
+				// unequal(CON1, CON2) :- letteri(CON1, X), letteri(CON2, Y), unequal(X, Y)
+				unequal = Expressions.makeRule(unequal_CC, letteri_CX, letteri_CY, unequal_XY);
 			
 			reasoner.addRules(unequal);
 		}
@@ -141,4 +187,6 @@ public class InequalityHelper {
 		
 		return atoms;
 	}
+	
+	
 }

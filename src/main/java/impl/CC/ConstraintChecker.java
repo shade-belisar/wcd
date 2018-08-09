@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.jena.query.Query;
@@ -19,9 +20,12 @@ import org.apache.jena.query.ResultSet;
 import org.apache.jena.riot.web.HttpOp;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.model.api.Conjunction;
 import org.semanticweb.vlog4j.core.model.api.QueryResult;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Term;
+import org.semanticweb.vlog4j.core.model.api.Variable;
+import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.Algorithm;
 import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
@@ -34,8 +38,12 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 import impl.PCC.PropertyConstraintChecker;
 import impl.TS.TripleSet;
 import main.Main;
+import utility.InequalityHelper;
 import utility.PrepareQueriesException;
 import utility.SC;
+import utility.Utility;
+
+import static utility.SC.require_inequality;
 
 /**
  * @author adrian
@@ -134,12 +142,53 @@ public abstract class ConstraintChecker {
 		//for (Rule rule : rulesToAdd) {
 		//	System.out.println(rule);
 		//}
+		if (InequalityHelper.mode.equals(InequalityHelper.Mode.DEMANDED)) {
+			rulesToAdd.addAll(addRequireInequality(rulesToAdd));
+		}
+		 
 		try {
 			prepareAndExecuteQueries(rulesToAdd, queries());
 		} catch (PrepareQueriesException e) {
 			resultString += e.getMessage();
 		}
 		delete();
+	}
+	
+	List<Rule> addRequireInequality(List<Rule> rules) {
+		List<Rule> result = new ArrayList<Rule>();
+		for (Rule rule : rules) {
+			List<Atom> unequalAtoms = new ArrayList<Atom>();
+			List<Atom> otherAtoms = new ArrayList<Atom>();
+			Set<Variable> otherVariables = new HashSet<Variable>();
+			Conjunction body = rule.getBody();
+			for (Atom bodyAtom : body.getAtoms()) {
+				if (bodyAtom.getPredicate().equals(InequalityHelper.unequal)) {
+					unequalAtoms.add(bodyAtom);
+				} else {
+					otherAtoms.add(bodyAtom);
+					otherVariables.addAll(bodyAtom.getVariables());
+				}
+			}
+			for (Atom unequalAtom : unequalAtoms) {
+				if (otherVariables.containsAll(unequalAtom.getVariables())) {
+					if (unequalAtom.getTerms().size() != 2) {
+						logger.error("Atom with unequal predicate had an arity different from 2: " + unequalAtom.toString());
+						continue;
+					}
+					
+					Term t1 = unequalAtom.getTerms().get(0);
+					Term t2 = unequalAtom.getTerms().get(1);
+						
+					// require_inequality(t1, t2)
+					Atom require_inequality_tt = Expressions.makeAtom(require_inequality, t1, t2);
+					
+					// require_inequality(t1, t2) :- otherAtoms
+					Rule require = Expressions.makeRule(require_inequality_tt, Utility.toArray(otherAtoms));
+					result.add(require);
+				}
+			}
+		}
+		return result;
 	}
 	
 	protected void loadTripleSets(TripleSet... sets) throws ReasonerStateException, IOException {

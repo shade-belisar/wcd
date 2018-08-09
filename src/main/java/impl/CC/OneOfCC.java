@@ -89,7 +89,7 @@ public class OneOfCC extends ConstraintChecker {
 		for (Set<String> valuesSet : allowedValues.values()) {
 			values.addAll(valuesSet);
 		}
-		InequalityHelper.addUnequalConstantsToReasoner(values);
+		InequalityHelper.establishInequality(values);
 	}
 
 	@Override

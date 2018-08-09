@@ -93,7 +93,7 @@ public class AllowedUnitsCC extends ConstraintChecker {
 		for (Set<String> unitsSet : allowedUnits.values()) {
 			units.addAll(unitsSet);
 		}
-		InequalityHelper.addUnequalConstantsToReasoner(units);
+		InequalityHelper.establishInequality(units);
 	}
 
 	@Override

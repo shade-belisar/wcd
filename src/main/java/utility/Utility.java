@@ -1,5 +1,8 @@
 package utility;
 
+import java.util.List;
+
+import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
@@ -16,5 +19,9 @@ public class Utility {
 			return string;
 		else
 			return BASE_URI + string;
+	}
+	
+	public static Atom[] toArray(List<Atom> list) {
+		return list.toArray(new Atom[list.size()]);
 	}
 }

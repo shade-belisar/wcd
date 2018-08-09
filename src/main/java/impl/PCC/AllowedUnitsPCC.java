@@ -16,6 +16,7 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 import utility.InequalityHelper;
+import utility.Utility;
 
 public class AllowedUnitsPCC extends PropertyConstraintChecker {
 	
@@ -50,7 +51,7 @@ public class AllowedUnitsPCC extends PropertyConstraintChecker {
 		violation_triple_conjunction.addAll(unequal_conjunction);
 		
 		// violation_triple(S, I, propertyConstant, V) :-  tripleEDB(S, I, propertyConstant, V), unit(V, U), unequal({A}, U)
-		Rule tripleViolation = Expressions.makeRule(violation_triple_SIpV, toArray(violation_triple_conjunction));
+		Rule tripleViolation = Expressions.makeRule(violation_triple_SIpV, Utility.toArray(violation_triple_conjunction));
 		rules.add(tripleViolation);
 	
 		List<Atom> violation_qualifier_conjunction = new ArrayList<Atom>();
@@ -58,7 +59,7 @@ public class AllowedUnitsPCC extends PropertyConstraintChecker {
 		violation_qualifier_conjunction.addAll(unequal_conjunction);
 		
 		// violation_qualifier(S, propertyConstant, V) :- qualifierEDB(S, propertyConstant, V), unit(V, U), unequal({A}, U)
-		Rule qualifierViolation = Expressions.makeRule(violation_qualifier_SpV, toArray(violation_qualifier_conjunction));
+		Rule qualifierViolation = Expressions.makeRule(violation_qualifier_SpV, Utility.toArray(violation_qualifier_conjunction));
 		rules.add(qualifierViolation);
 		
 		List<Atom> violation_reference_conjunction = new ArrayList<Atom>();
@@ -66,7 +67,7 @@ public class AllowedUnitsPCC extends PropertyConstraintChecker {
 		violation_reference_conjunction.addAll(unequal_conjunction);
 		
 		// violation_reference(S, propertyConstant, V) :- referenceEDB(S, propertyConstant, V), unit(V, U), unequal({A}, U)
-		Rule referenceViolation = Expressions.makeRule(violation_reference_SpV, toArray(violation_reference_conjunction));
+		Rule referenceViolation = Expressions.makeRule(violation_reference_SpV, Utility.toArray(violation_reference_conjunction));
 		rules.add(referenceViolation);
 		
 		return rules;

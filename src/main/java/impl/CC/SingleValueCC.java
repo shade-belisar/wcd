@@ -102,12 +102,12 @@ public class SingleValueCC extends ConstraintChecker {
 		}
 	
 		InequalityHelper.setOrReset(reasoner);
-		InequalityHelper.addUnequalConstantsToReasoner(tripleSet.getStatementIDs());
+		InequalityHelper.establishInequality(tripleSet.getStatementIDs());
 		Set<String> values = tripleSet.getQualifierValues();
 		for (Set<String> valuesSet : propertiesAndSeparators.values()) {
 			values.addAll(valuesSet);
 		}
-		InequalityHelper.addUnequalConstantsToReasoner(values);
+		InequalityHelper.establishInequality(values);
 	}
 
 	@Override
