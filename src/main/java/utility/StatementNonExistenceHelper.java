@@ -83,7 +83,7 @@ public class StatementNonExistenceHelper {
 		
 		// require_qualifier(S, P, V, requiredTerm) :- first_qualifier(S, P, V), conjunctionAtoms
 		Rule firstRequire = Expressions.makeRule(require_qualifier_SPVr, toArray(firstConjunctionAtoms));
-		
+
 		// next_qualifier(O, X, C, S, P, V)
 		Atom next_qualifier_OXCSPV = Expressions.makeAtom(next_qualifier, o, x, c, s, p, v);
 		
