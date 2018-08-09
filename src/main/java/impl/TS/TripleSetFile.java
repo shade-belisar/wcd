@@ -50,7 +50,7 @@ public class TripleSetFile {
 		
 		closed = false;
 		
-		if (Main.extract())
+		if (Main.getExtract())
 			writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tripleSetFileGz, false)))), CSVFormat.DEFAULT);
 	}
 	

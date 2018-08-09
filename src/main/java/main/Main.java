@@ -55,6 +55,8 @@ public class Main {
 	static boolean onlyCurrentRevisions = true;
 	
 	static boolean extract = false;
+	
+	static boolean stringResults = false;
 
 	/**
 	 * @param args
@@ -67,6 +69,7 @@ public class Main {
 		options.addOption("e", "extract", false, "Extract the necessary data from the dump.");
 		options.addOption("c", "constraints", true, "The constraint to check.");
 		options.addOption("n", "noviolations", false, "Do not compute violations.");
+		options.addOption("s", "stringResults", false, "Output violations as string.");
 		
 		CommandLineParser parser = new DefaultParser();
 	    CommandLine cmd;
@@ -92,8 +95,8 @@ public class Main {
 	    }
 	    	
 	    
-	    if (cmd.hasOption("extract"))
-	    	extract = true; 
+	    extract = cmd.hasOption("extract");
+	    stringResults = cmd.hasOption("stringResults");
 		
 		configureLogging();
 		
@@ -176,10 +179,11 @@ public class Main {
 		if (!cmd.hasOption("noviolations")) {
 			try {
 				for(ConstraintChecker checker : checkers) {
-					String violations = checker.violations();
-					if (!violations.equals("")) {
-						System.out.println(violations);
-					}
+					checker.violations();
+					System.out.println(checker.identify() + ", violations: " + checker.getResultSize());
+					if (getStringResult())
+						System.out.println(checker.getResultString());
+					
 				}
 			} catch (ReasonerStateException e) {
 				logger.error("Reasoner was called in the wrong state.", e);
@@ -209,8 +213,12 @@ public class Main {
 		Logger.getRootLogger().addAppender(consoleAppender);
 	}
 	
-	public static boolean extract() {
+	public static boolean getExtract() {
 		return extract;
+	}
+	
+	public static boolean getStringResult() {
+		return stringResults;
 	}
 
 }

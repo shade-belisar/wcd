@@ -35,6 +35,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 import impl.PCC.PropertyConstraintChecker;
 import impl.TS.TripleSet;
+import main.Main;
 import impl.TS.TripleSet;
 import utility.PrepareQueriesException;
 import utility.SC;
@@ -54,6 +55,10 @@ public abstract class ConstraintChecker {
 	protected final String internalError;
 	
 	protected List<PropertyConstraintChecker> propertyCheckers;
+	
+	int resultSize = 0;
+	
+	String resultString = "";
 	
 	public ConstraintChecker(String constraint_) throws IOException {
 		constraint = constraint_;
@@ -120,10 +125,9 @@ public abstract class ConstraintChecker {
 		propertyCheckers = propertyCheckers();
 	}
 	
-	public String violations() throws ReasonerStateException, IOException {
+	public void violations() throws ReasonerStateException, IOException {
 		close();
 		prepareFacts();
-		String result = "Constraint: " + constraint + "\n";
 		List<Rule> rulesToAdd = new ArrayList<Rule>();
 		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
 			rulesToAdd.addAll(propertyConstraintChecker.rules());
@@ -134,12 +138,11 @@ public abstract class ConstraintChecker {
 		//	System.out.println(rule);
 		//}
 		try {
-			result += prepareAndExecuteQueries(rulesToAdd, queries());
+			prepareAndExecuteQueries(rulesToAdd, queries());
 		} catch (PrepareQueriesException e) {
-			return e.getMessage();
+			resultString += e.getMessage();
 		}
 		delete();
-		return result;
 	}
 	
 	protected void loadTripleSets(TripleSet... sets) throws ReasonerStateException, IOException {
@@ -159,7 +162,7 @@ public abstract class ConstraintChecker {
 		}	
 	}
 	
-	protected String prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
+	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
 		try {
 			reasoner.addRules(rules);
 		} catch (ReasonerStateException e) {
@@ -183,31 +186,37 @@ public abstract class ConstraintChecker {
 			logger.error("Trying to reason in the wrong state for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
-		String result = "";
 		for (Atom query : queries) {
 	    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
-	    		result += result(iterator);
+	    		while (iterator.hasNext()) {
+	    			QueryResult queryResult = iterator.next();
+	    			resultSize++;
+	    			if (Main.getStringResult()) {
+	    				String triple = "";
+		    			for (Term term : queryResult.getTerms()) {
+		    				triple += term.getName() + "\t";
+		    			}
+		    			
+		    			resultString += "\t" + triple.substring(0, triple.length() - 1) + "\n";
+	    			}
+	    		}
 	    	} catch (ReasonerStateException e) {
 				logger.error("Trying to answer query in the wrong state for constraint " + constraint + ".", e);
 				throw new PrepareQueriesException(internalError);
 			}
 		}
-
-    	return result;
 	}
 	
-	protected String result(QueryResultIterator queryResultIterator) {
-		String result = ""; 
-		while (queryResultIterator.hasNext()) {
-			QueryResult queryResult = queryResultIterator.next();
-			String triple = "";
-			for (Term term : queryResult.getTerms()) {
-				triple += term.getName() + "\t";
-			}
-			
-			result += triple.substring(0, triple.length() - 1) + "\n";
-		}
-		return result;
+	public int getResultSize() {
+		return resultSize;
+	}
+	
+	public String getResultString() {
+		return resultString;
+	}
+	
+	public String identify() {
+		return "Constraint: " + constraint;
 	}
 	
 	protected abstract Set<Atom> queries();
