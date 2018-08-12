@@ -14,6 +14,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import main.Main;
 import utility.OutputValueVisitor;
 
 public class SingleValueTS extends TripleSet {
@@ -171,12 +172,25 @@ public class SingleValueTS extends TripleSet {
 		lastQualifier.close();
 	}
 	
-	public Set<String> getStatementIDs() {
-		return statementIDs;
+	public Set<String> getStatementIDs() throws IOException {
+		if (Main.getExtract())
+			return statementIDs;
+		else 
+			return triple.getEntrySet(0);
 	}
 	
-	public Set<String> getQualifierValues() {
-		return qualifierValues;
+	public Set<String> getQualifierValues() throws IOException {
+		if (Main.getExtract())
+			return qualifierValues;
+		else
+			return qualifier.getEntrySet(2);
+	}
+	
+	public Set<String> getReferenceValues() throws IOException {
+		if (Main.getExtract())
+			return referenceValues;
+		else
+			return reference.getEntrySet(2);
 	}
 
 	@Override

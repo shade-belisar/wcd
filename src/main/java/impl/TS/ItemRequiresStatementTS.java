@@ -10,6 +10,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import main.Main;
 import utility.OutputValueVisitor;
 
 public class ItemRequiresStatementTS extends TripleSet {
@@ -62,12 +63,18 @@ public class ItemRequiresStatementTS extends TripleSet {
 		return last.getFile();
 	}
 	
-	public Set<String> allProperties() {
-		return allProperties;
+	public Set<String> allProperties() throws IOException {
+		if (Main.getExtract())
+			return allProperties;
+		else
+			return triple.getEntrySet(2);
 	}
 	
-	public Set<String> allValues() {
-		return allValues;
+	public Set<String> allValues() throws IOException {
+		if (Main.getExtract())
+			return allValues;
+		else
+			return triple.getEntrySet(3);
 	}
 	
 	@Override

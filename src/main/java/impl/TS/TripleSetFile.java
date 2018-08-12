@@ -3,15 +3,20 @@ package impl.TS;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +104,30 @@ public class TripleSetFile {
 
 		return tripleSetFile;
 	}
+	
+	public Set<String> getEntrySet(int i) throws IOException {
+		if (Main.getExtract()) {
+			logger.warn("Fetching entry set during extraction mode, could have been saved during processing for efficiency.");
+			close();
+		}
+		
+		Set<String> result = new HashSet<String>();
+		FileInputStream inputStream;
+		try {
+			inputStream = new FileInputStream(tripleSetFileGz);
+		} catch (FileNotFoundException e) {
+			return result;
+		}
+		
+		
+		GZIPInputStream gzippedInput = new GZIPInputStream(inputStream);
+		InputStreamReader reader = new InputStreamReader(gzippedInput);
+		Iterable<CSVRecord> record = CSVFormat.DEFAULT.parse(reader);
+		for (CSVRecord csvRecord : record) {
+			result.add(csvRecord.get(i));
+		}
+		return result;
+	}
 
 	public void deleteRawFile() {
 		new File(getFileName()).delete();
@@ -108,9 +137,9 @@ public class TripleSetFile {
 		if (writer != null) {
 			writer.close();
 			closed = true;
-			if (!notEmpty()) {
-				new File(getFileNameGz()).delete();
-			}
+		}
+		if (!notEmpty()) {
+			new File(getFileNameGz()).delete();
 		}
 	}
 	

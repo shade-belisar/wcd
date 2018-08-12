@@ -10,6 +10,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import main.Main;
 import utility.OutputValueVisitor;
 
 public class MultiValueTS extends TripleSet {
@@ -29,8 +30,11 @@ public class MultiValueTS extends TripleSet {
 		properties = properties_;
 	}
 	
-	public Set<String> getStatementProperties() {
-		return statementProperties;
+	public Set<String> getStatementProperties() throws IOException {
+		if (Main.getExtract())
+			return statementProperties;
+		else
+			return triple.getEntrySet(2);
 	}
 	
 	public boolean notEmpty() {

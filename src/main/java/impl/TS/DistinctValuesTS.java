@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import main.Main;
+
 public class DistinctValuesTS extends TripleSet {
 
 	Set<String> statements = new HashSet<String>();
@@ -14,8 +16,11 @@ public class DistinctValuesTS extends TripleSet {
 		properties = properties_;
 	}
 	
-	public Set<String> getStatements() {
-		return statements;
+	public Set<String> getStatements() throws IOException {
+		if (Main.getExtract())
+			return statements;
+		else
+			return triple.getEntrySet(0);
 	}
 	
 	@Override
@@ -24,7 +29,6 @@ public class DistinctValuesTS extends TripleSet {
 			super.triple(id, subject, predicate, object);
 			statements.add(id);
 		}
-			
 	}
 	
 	@Override

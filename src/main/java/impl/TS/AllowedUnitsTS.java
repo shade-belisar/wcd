@@ -13,6 +13,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import main.Main;
 import utility.OutputUnitVisitor;
 import utility.OutputValueVisitor;
 
@@ -29,8 +30,11 @@ public class AllowedUnitsTS extends TripleSet {
 		properties = properties_;		
 	}
 	
-	public Set<String> getUnits() {
-		return units;
+	public Set<String> getUnits() throws IOException {
+		if (Main.getExtract())
+			return units;
+		else
+			return unitsFile.getEntrySet(1);
 	}
 	
 	@Override

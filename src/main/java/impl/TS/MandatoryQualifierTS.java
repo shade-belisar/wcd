@@ -12,6 +12,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import main.Main;
 import utility.OutputValueVisitor;
 
 public class MandatoryQualifierTS extends TripleSet {
@@ -133,8 +134,11 @@ public class MandatoryQualifierTS extends TripleSet {
 		lastQualifier.close();
 	}
 	
-	public Set<String> getQualifierProperties() {
-		return qualifierProperties;
+	public Set<String> getQualifierProperties() throws IOException {
+		if (Main.getExtract())
+			return qualifierProperties;
+		else
+			return qualifier.getEntrySet(1);
 	}
 	
 	@Override

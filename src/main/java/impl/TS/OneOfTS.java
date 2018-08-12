@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import main.Main;
+
 public class OneOfTS extends TripleSet {
 	
 	Set<String> values = new HashSet<String>();
@@ -14,8 +16,15 @@ public class OneOfTS extends TripleSet {
 		properties = properties_;
 	}
 	
-	public Set<String> getValues() {
-		return values;
+	public Set<String> getValues() throws IOException {
+		if (Main.getExtract())
+			return values;
+		else {
+			Set<String> result = triple.getEntrySet(3);
+			result.addAll(qualifier.getEntrySet(2));
+			result.addAll(reference.getEntrySet(2));
+			return result;
+		}
 	}
 	
 	@Override

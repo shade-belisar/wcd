@@ -12,6 +12,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
+import main.Main;
 import utility.OutputValueVisitor;
 
 public class OneOfQualifierValueTS extends TripleSet {
@@ -24,8 +25,11 @@ public class OneOfQualifierValueTS extends TripleSet {
 		qualifierProperties = qualifierProperties_;
 	}
 	
-	public Set<String> getValues() {
-		return values;
+	public Set<String> getValues() throws IOException {
+		if (Main.getExtract())
+			return values;
+		else
+			return qualifier.getEntrySet(2);
 	}
 	
 	@Override
