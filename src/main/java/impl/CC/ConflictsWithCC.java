@@ -19,7 +19,6 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.ConflictsWithPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.ConflictsWithTS;
 import utility.Utility;
 
 public class ConflictsWithCC extends ConstraintChecker {
@@ -30,12 +29,9 @@ public class ConflictsWithCC extends ConstraintChecker {
 	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "P2305";
 	
 	Map<String, HashMap<String, HashSet<String>>> configuration;
-	
-	final ConflictsWithTS tripleSet;
 
 	public ConflictsWithCC() throws IOException {
 		super("Q21502838");
-		tripleSet = new ConflictsWithTS(configuration.keySet());
 	}
 	
 	@Override
@@ -84,17 +80,6 @@ public class ConflictsWithCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
-	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
 	}
 
 	@Override

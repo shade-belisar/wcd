@@ -24,7 +24,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.MandatoryQualifierPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.MandatoryQualifierTS;
+import main.Main;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -35,12 +35,9 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 	public static final String REQUIRED_PROPERTY = "P2306";
 	
 	Map<String, Set<String>> propertiesAndQualifiers;
-	
-	final MandatoryQualifierTS tripleSet;
 
 	public MandatoryQualifierCC() throws IOException {
 		super("Q21510856");
-		tripleSet = new MandatoryQualifierTS(propertiesAndQualifiers.keySet());
 	}
 
 	@Override
@@ -86,36 +83,21 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
-		if (tripleSet.firstQualifierNotEmpty()) {
-			DataSource firstQualifierEDBPath = new CsvFileDataSource(tripleSet.getFirstQualifierFile());
-			reasoner.addFactsFromDataSource(first_qualifier, firstQualifierEDBPath);
-		}
-		if (tripleSet.nextQualifierNotEmpty()) {
-			DataSource nextQualifierEDBPath = new CsvFileDataSource(tripleSet.getNextQualifierFile());
-			reasoner.addFactsFromDataSource(next_qualifier, nextQualifierEDBPath);
-		}
-		if (tripleSet.lastQualifierNotEmpty()) {
-			DataSource lastQualifierEDBPath = new CsvFileDataSource(tripleSet.getLastQualifierFile());
-			reasoner.addFactsFromDataSource(last_qualifier, lastQualifierEDBPath);
-		}
+		DataSource firstQualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getFirstQualifierFile());
+		reasoner.addFactsFromDataSource(first_qualifier, firstQualifierEDBPath);
+		
+		DataSource nextQualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getNextQualifierFile());
+		reasoner.addFactsFromDataSource(next_qualifier, nextQualifierEDBPath);
+
+		DataSource lastQualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getLastQualifierFile());
+		reasoner.addFactsFromDataSource(last_qualifier, lastQualifierEDBPath);
 	
 		InequalityHelper.setOrReset(reasoner);
-		Set<String> qualifierProperties = tripleSet.getQualifierProperties();
+		Set<String> qualifierProperties = new HashSet<String>();
 		for (Set<String> propertySet : propertiesAndQualifiers.values()) {
 			qualifierProperties.addAll(propertySet);
 		}
-		InequalityHelper.establishInequality(qualifierProperties);
-	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
+		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 1, qualifierProperties);
 	}
 
 	@Override

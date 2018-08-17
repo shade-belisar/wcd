@@ -49,7 +49,7 @@ public class OutputValueVisitor implements ValueVisitor<String> {
 		String unit = "None";
 		if (value.getUnit() != null)
 			unit = value.getUnit().toString();
-		String result = numericValue + " Lower: " + lowerBound + " Upper: " + upperBound + " Unit: " + unit;
+		String result = numericValue + "_Lower:_" + lowerBound + "_Upper:_" + upperBound + "_Unit:_" + unit;
 		return result;
 	}
 

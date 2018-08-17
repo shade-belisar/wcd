@@ -24,7 +24,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.PropertyConstraintChecker;
 import impl.PCC.SingleValuePCC;
-import impl.TS.SingleValueTS;
+import main.Main;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -35,12 +35,9 @@ public class SingleValueCC extends ConstraintChecker {
 	public static final String SEPARATOR = "P4155";
 	
 	Map<String, Set<String>> propertiesAndSeparators;
-	
-	final SingleValueTS tripleSet;
 
 	public SingleValueCC() throws IOException {
 		super("Q19474404");
-		tripleSet = new SingleValueTS(propertiesAndSeparators);
 	}
 
 	@Override
@@ -87,37 +84,22 @@ public class SingleValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
-		if (tripleSet.firstQualifierNotEmpty()) {
-			DataSource firstQualifierEDBPath = new CsvFileDataSource(tripleSet.getFirstQualifierFile());
-			reasoner.addFactsFromDataSource(first_qualifier, firstQualifierEDBPath);
-		}
-		if (tripleSet.nextQualifierNotEmpty()) {
-			DataSource nextQualifierEDBPath = new CsvFileDataSource(tripleSet.getNextQualifierFile());
-			reasoner.addFactsFromDataSource(next_qualifier, nextQualifierEDBPath);
-		}
-		if (tripleSet.lastQualifierNotEmpty()) {
-			DataSource lastQualifierEDBPath = new CsvFileDataSource(tripleSet.getLastQualifierFile());
-			reasoner.addFactsFromDataSource(last_qualifier, lastQualifierEDBPath);
-		}
-	
+		DataSource firstQualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getFirstQualifierFile());
+		reasoner.addFactsFromDataSource(first_qualifier, firstQualifierEDBPath);
+
+		DataSource nextQualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getNextQualifierFile());
+		reasoner.addFactsFromDataSource(next_qualifier, nextQualifierEDBPath);
+
+		DataSource lastQualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getLastQualifierFile());
+		reasoner.addFactsFromDataSource(last_qualifier, lastQualifierEDBPath);
+
 		InequalityHelper.setOrReset(reasoner);
-		InequalityHelper.establishInequality(tripleSet.getStatementIDs());
-		Set<String> values = tripleSet.getQualifierValues();
+		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 0);
+		Set<String> values = new HashSet<String>();
 		for (Set<String> valuesSet : propertiesAndSeparators.values()) {
 			values.addAll(valuesSet);
 		}
-		InequalityHelper.establishInequality(values);
-	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
+		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 2, values);
 	}
 	
 	@Override

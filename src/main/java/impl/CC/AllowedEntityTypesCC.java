@@ -22,7 +22,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.AllowedEntityTypesPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.AllowedEntityTypesTS;
+import main.Main;
 import utility.Utility;
 
 public class AllowedEntityTypesCC extends ConstraintChecker {
@@ -33,12 +33,9 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 	public static final String AS_PROPERTY = Utility.BASE_URI + " Q29934218";
 	
 	Map<String, HashSet<String>> allowedEntityTypes;
-	
-	final AllowedEntityTypesTS tripleSet;
 
 	public AllowedEntityTypesCC() throws IOException {
 		super("Q52004125");
-		tripleSet = new AllowedEntityTypesTS(allowedEntityTypes.keySet());
 	}
 	
 	@Override
@@ -84,25 +81,11 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
-		if (tripleSet.itemsNotEmpty()) {
-			final DataSource itemEDBPath = new CsvFileDataSource(tripleSet.getItemsFile());
-			reasoner.addFactsFromDataSource(item, itemEDBPath);
-		}
-		if (tripleSet.propertiesNotEmpty()) {
-			final DataSource propertyEDBPath = new CsvFileDataSource(tripleSet.getPropertiesFile());
-			reasoner.addFactsFromDataSource(property, propertyEDBPath);
-		}	
-	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
+		final DataSource itemEDBPath = new CsvFileDataSource(Main.tripleSet.getItemsFile());
+		reasoner.addFactsFromDataSource(item, itemEDBPath);
+		
+		final DataSource propertyEDBPath = new CsvFileDataSource(Main.tripleSet.getPropertiesFile());
+		reasoner.addFactsFromDataSource(property, propertyEDBPath);	
 	}
 
 	@Override

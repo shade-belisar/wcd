@@ -21,7 +21,6 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.PropertyConstraintChecker;
 import impl.PCC.ScopePCC;
-import impl.TS.ScopeTS;
 import utility.Utility;
 
 public class ScopeCC extends ConstraintChecker {
@@ -35,12 +34,9 @@ public class ScopeCC extends ConstraintChecker {
 	public static final String AS_REFERENCE = Utility.BASE_URI + "Q54828450";
 	
 	Map<String, HashSet<String>> propertiesAndScopes;
-	
-	final ScopeTS tripleSet;
 
 	public ScopeCC() throws IOException {
 		super("Q53869507");
-		tripleSet = new ScopeTS(propertiesAndScopes.keySet());
 	}
 
 	@Override
@@ -82,17 +78,6 @@ public class ScopeCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
-	}
-	
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
-	}
-	
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
 	}
 
 	@Override

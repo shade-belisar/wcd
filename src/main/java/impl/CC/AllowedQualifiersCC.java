@@ -19,7 +19,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.AllowedQualifiersPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.AllowedQualifiersTS;
+import main.Main;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -31,11 +31,8 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 	
 	Map<String, HashSet<String>> allowedQualifiers;
 	
-	final AllowedQualifiersTS tripleSet;
-	
 	public AllowedQualifiersCC() throws IOException {
 		super("Q21510851");
-		tripleSet = new AllowedQualifiersTS(allowedQualifiers.keySet());
 	}
 	
 	@Override
@@ -82,23 +79,12 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
 		InequalityHelper.setOrReset(reasoner);
-		Set<String> qualifiers = tripleSet.getQualifierProperties();
+		Set<String> qualifiers = new HashSet<String>();
 		for (Set<String> qualifierSet : allowedQualifiers.values()) {
 			qualifiers.addAll(qualifierSet);
 		}
-		InequalityHelper.establishInequality(qualifiers);
-	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
+		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 1, qualifiers);
 	}
 
 	@Override

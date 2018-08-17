@@ -28,8 +28,6 @@ public class TripleSetFile {
 	
 	static String BASE_LOCATION = "./resources/tripleSets/";
 	
-	String folder;
-	
 	String name;
 	
 	final String fileName;
@@ -44,10 +42,9 @@ public class TripleSetFile {
 	
 	boolean tripleNotEmpty = false;
 	
-	public TripleSetFile(String folder_, String name_) throws IOException {
-		folder = folder_;
+	public TripleSetFile(String name_) throws IOException {
 		name = name_;
-		fileName = BASE_LOCATION + folder + "/" + name + ".csv";
+		fileName = BASE_LOCATION + "/" + name + ".csv";
 		
 		tripleSetFileGz = new File(fileName + ".gz");
 		tripleSetFileGz.getParentFile().mkdirs();

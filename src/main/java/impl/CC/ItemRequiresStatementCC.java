@@ -24,7 +24,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.ItemRequiresStatementPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.ItemRequiresStatementTS;
+import main.Main;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -36,12 +36,9 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 	public static final String ALLOWED_VALUE = "P2305";
 	
 	Map<String, Map<String, Set<String>>> configuration;
-	
-	final ItemRequiresStatementTS tripleSet;
 
 	public ItemRequiresStatementCC() throws IOException {
 		super("Q21503247");
-		tripleSet = new ItemRequiresStatementTS(configuration.keySet());
 	}
 
 	@Override
@@ -100,43 +97,27 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
-		if (tripleSet.firstNotEmpty()) {
-			final DataSource firstEDBPath = new CsvFileDataSource(tripleSet.getFirstFile());
-			reasoner.addFactsFromDataSource(first, firstEDBPath);
-		}
-		if (tripleSet.nextNotEmpty()) {
-			final DataSource nextEDBPath = new CsvFileDataSource(tripleSet.getNextFile());
-			reasoner.addFactsFromDataSource(next, nextEDBPath);
-		}
-		if (tripleSet.lastNotEmpty()) {
-			final DataSource lastEDBPath = new CsvFileDataSource(tripleSet.getLastFile());
-			reasoner.addFactsFromDataSource(last, lastEDBPath);
-		}
+		final DataSource firstEDBPath = new CsvFileDataSource(Main.tripleSet.getFirstFile());
+		reasoner.addFactsFromDataSource(first, firstEDBPath);
+
+		final DataSource nextEDBPath = new CsvFileDataSource(Main.tripleSet.getNextFile());
+		reasoner.addFactsFromDataSource(next, nextEDBPath);
+
+		final DataSource lastEDBPath = new CsvFileDataSource(Main.tripleSet.getLastFile());
+		reasoner.addFactsFromDataSource(last, lastEDBPath);
+
 		// Establishing inequality
 		InequalityHelper.setOrReset(reasoner);
 
-		Set<String> properties = tripleSet.allProperties();
-		Set<String> values = tripleSet.allValues();
+		Set<String> properties = new HashSet<String>();
+		Set<String> values = new HashSet<String>();
 		for (Map<String, Set<String>> value : configuration.values()) {
 			properties.addAll(value.keySet());
 			for (Set<String> set : value.values()) {
 				values.addAll(set);
 			}
 		}
-		InequalityHelper.establishInequality(properties);
-		InequalityHelper.establishInequality(values);
-		
+		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 2, properties);
+		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 3, values);	
 	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
-	}
-
 }

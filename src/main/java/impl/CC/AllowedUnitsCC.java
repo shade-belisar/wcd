@@ -23,7 +23,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.AllowedUnitsPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.AllowedUnitsTS;
+import main.Main;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -32,12 +32,9 @@ public class AllowedUnitsCC extends ConstraintChecker {
 	public static final String ALLOWED_UNIT =  "P2305";
 	
 	Map<String, HashSet<String>> allowedUnits;
-	
-	final AllowedUnitsTS tripleSet;
 
 	public AllowedUnitsCC() throws IOException {
 		super("Q21514353");
-		tripleSet = new AllowedUnitsTS(allowedUnits.keySet());
 	}
 
 	@Override
@@ -83,29 +80,16 @@ public class AllowedUnitsCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
-		if (tripleSet.unitsNotEmpty()) {
-			final DataSource unitsEDBPath = new CsvFileDataSource(tripleSet.getUnitsFile());
-			reasoner.addFactsFromDataSource(unit, unitsEDBPath);
-		}
+		final DataSource unitsEDBPath = new CsvFileDataSource(Main.tripleSet.getUnitsFile());
+		reasoner.addFactsFromDataSource(unit, unitsEDBPath);
+
 		InequalityHelper.setOrReset(reasoner);
-		Set<String> units = tripleSet.getUnits();
+		Set<String> units = new HashSet<String>();
 		for (Set<String> unitsSet : allowedUnits.values()) {
 			units.addAll(unitsSet);
 		}
-		InequalityHelper.establishInequality(units);
+		InequalityHelper.establishInequality(Main.tripleSet.getUnitsFile(), 1, units);
 	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
-	}
-
 
 	@Override
 	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {

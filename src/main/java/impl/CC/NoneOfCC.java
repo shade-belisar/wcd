@@ -21,7 +21,6 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.NoneOfPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.NoneOfTS;
 import utility.Utility;
 
 public class NoneOfCC extends ConstraintChecker {
@@ -31,12 +30,9 @@ public class NoneOfCC extends ConstraintChecker {
 	public static final String ITEM_OF_PROPERTY_CONSTRAINT = "P2305";
 	
 	Map<String, HashSet<String>> notAllowedValues;
-	
-	final NoneOfTS tripleSet;
 
 	public NoneOfCC() throws IOException {
 		super("Q52558054");
-		tripleSet = new NoneOfTS(notAllowedValues.keySet());
 	}
 
 	@Override
@@ -82,17 +78,6 @@ public class NoneOfCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
-	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
 	}
 
 	@Override

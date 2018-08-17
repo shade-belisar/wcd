@@ -15,7 +15,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.DistinctValuesPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.DistinctValuesTS;
+import main.Main;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -24,12 +24,9 @@ public class DistinctValuesCC extends ConstraintChecker {
 	final static Logger logger = Logger.getLogger(DistinctValuesCC.class);
 	
 	Set<String> properties;
-	
-	final DistinctValuesTS tripleSet;
 
 	public DistinctValuesCC() throws IOException {
 		super("Q21502410");
-		tripleSet = new DistinctValuesTS(properties);
 	}
 
 	@Override
@@ -60,20 +57,10 @@ public class DistinctValuesCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
 		InequalityHelper.setOrReset(reasoner);
-		InequalityHelper.establishInequality(tripleSet.getStatements());
+		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 0);
 	}
 
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
-	}
 	@Override
 	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
 		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();

@@ -1,10 +1,18 @@
 package utility;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
@@ -71,49 +79,63 @@ public class InequalityHelper {
 		ith_letter.clear();
 	}
 	
-	public static void establishInequality(String...unequalConstants) throws ReasonerStateException {
-		Set<String> unequalConstantsSet = new HashSet<String>();
-		for (int i = 0; i < unequalConstants.length; i++) {
-			unequalConstantsSet.add(unequalConstants[i]);
-		}
-		establishInequality(unequalConstantsSet);
+	public static void establishInequality(File inequalityFile, int inequalityIndex) throws ReasonerStateException, IOException {
+		establishInequality(inequalityFile, inequalityIndex, new HashSet<String>());
 	}
 	
-	public static void establishInequality(Set<String> unequalConstants) throws ReasonerStateException {
+	public static void establishInequality(File inequalityFile, int inequalityIndex, Set<String> additionalValues) throws ReasonerStateException, IOException {
 		reasoner.addRules(unequal_IDB_EDB, inverse);
 		
 		switch (mode) {
 		case NAIVE:
-			naive(unequalConstants);
+			naive(inequalityFile, inequalityIndex, additionalValues);
 			break;
 		case ENCODED:
-			encoded(unequalConstants, false);
+			encoded(inequalityFile, inequalityIndex,additionalValues, false);
 			break;
 		case DEMANDED:
-			encoded(unequalConstants, true);
+			encoded(inequalityFile, inequalityIndex, additionalValues, true);
 			break;
 		}
 	}
-	
-	static void naive (Set<String> unequalConstants) throws ReasonerStateException {
-		List<Constant> unequals = new ArrayList<Constant>();
-		for (String string : unequalConstants) {
-			unequals.add(Expressions.makeConstant(string));
-		}
-		for (int first = 0; first < unequals.size(); first++) {
-			Constant firstConstant = unequals.get(first);
-			for (int second = first + 1; second < unequals.size(); second++) {
-				Constant secondConstant = unequals.get(second);
+
+	static Iterator<CSVRecord> iteratorFromFile(File file) throws IOException {
+		return CSVFormat.DEFAULT.parse(new InputStreamReader(new FileInputStream(file))).iterator();
+	}
+
+	static void naive (File inequalityFile, int inequalityIndex, Set<String> additionalValues) throws ReasonerStateException, IOException {
+		Iterator<String> firstIterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, additionalValues.iterator());
+		
+		int first = 0;
+		while(firstIterator.hasNext()) {
+			String firstEntry = firstIterator.next();
+			
+			Iterator<String> secondIterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, additionalValues.iterator());
+			
+			for (int second = 0; second <= first; second++) {
+				if (secondIterator.hasNext())
+					secondIterator.next();
+			}
+			
+			while (secondIterator.hasNext()) {
+				String secondEntry = secondIterator.next();
+				
+				Constant firstConstant = Expressions.makeConstant(firstEntry);
+				Constant secondConstant = Expressions.makeConstant(secondEntry);
 				
 				reasoner.addFacts(Expressions.makeAtom(unequal_EDB, firstConstant, secondConstant));
 			}
+			
+			first++;
 		}
 	}
-	
-	static void encoded(Set<String> unequalConstants, boolean demand) throws ReasonerStateException {
+
+	static void encoded(File inequalityFile, int inequalityIndex, Set<String> additionalValues, boolean demand) throws ReasonerStateException, IOException {
+		Iterator<String> iterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, additionalValues.iterator());
+		
 		int maxLength = 0;
-		for (String	string : unequalConstants) {
-			int length = string.length();
+		while(iterator.hasNext()) {
+			int length = iterator.next().length();
 			if (length > maxLength)
 				maxLength = length;
 		}
@@ -146,7 +168,10 @@ public class InequalityHelper {
 		
 		Set<String> characters = new HashSet<String>();
 		
-		for (String string : unequalConstants) {
+		iterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, additionalValues.iterator());
+		
+		while (iterator.hasNext()) {
+			String string = iterator.next();
 			Constant constant = Expressions.makeConstant(string);
 			for (int i = 0; i < maxLength; i++) {
 				String character;
@@ -158,6 +183,7 @@ public class InequalityHelper {
 				
 				characters.add(character);
 				Constant characterConstant = Expressions.makeConstant(character);
+				
 				Atom toAdd = Expressions.makeAtom(ith_letter.get(i), constant, characterConstant);
 				letters.add(toAdd);
 			}

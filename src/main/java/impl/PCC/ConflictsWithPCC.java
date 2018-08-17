@@ -17,22 +17,17 @@ import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
-import impl.TS.ConflictsWithTS;
-import impl.TS.TripleSet;
 import utility.Utility;
 
 public class ConflictsWithPCC extends PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(ConflictsWithPCC.class);
 	
-	final TripleSet tripleSet;
-	
 	final Map<String, HashSet<String>> conflicts;
 
 	public ConflictsWithPCC(String property_, Map<String, HashSet<String>> qualifiers_) throws IOException {
 		super(property_);
 		conflicts = qualifiers_;
-		tripleSet = new ConflictsWithTS(conflicts.keySet());
 	}
 
 	@Override

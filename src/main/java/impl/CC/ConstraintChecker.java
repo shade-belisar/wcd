@@ -131,7 +131,8 @@ public abstract class ConstraintChecker {
 	}
 	
 	public void violations() throws ReasonerStateException, IOException {
-		close();
+		Main.tripleSet.close();
+		loadTripleSet();
 		prepareFacts();
 		List<Rule> rulesToAdd = new ArrayList<Rule>();
 		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
@@ -151,7 +152,7 @@ public abstract class ConstraintChecker {
 		} catch (PrepareQueriesException e) {
 			resultString += e.getMessage();
 		}
-		delete();
+		Main.tripleSet.delete();
 	}
 	
 	List<Rule> addRequireInequality(List<Rule> rules) {
@@ -191,21 +192,15 @@ public abstract class ConstraintChecker {
 		return result;
 	}
 	
-	protected void loadTripleSets(TripleSet... sets) throws ReasonerStateException, IOException {
-		for (TripleSet tripleSet : sets) {
-			if (tripleSet.tripleNotEmpty()) {
-				final DataSource tripleEDBPath = new CsvFileDataSource(tripleSet.getTripleFile());
-				reasoner.addFactsFromDataSource(SC.tripleEDB, tripleEDBPath);
-			}
-			if (tripleSet.qualifierNotEmpty()) {
-				final DataSource qualifierEDBPath = new CsvFileDataSource(tripleSet.getQualifierFile());
-				reasoner.addFactsFromDataSource(SC.qualifierEDB, qualifierEDBPath);
-			}
-			if (tripleSet.referenceNotEmpty()) {
-				final DataSource referenceEDBPath = new CsvFileDataSource(tripleSet.getReferenceFile());
-				reasoner.addFactsFromDataSource(SC.referenceEDB, referenceEDBPath);				
-			}
-		}	
+	void loadTripleSet() throws ReasonerStateException, IOException {		
+		final DataSource tripleEDBPath = new CsvFileDataSource(Main.tripleSet.getTripleFile());
+		reasoner.addFactsFromDataSource(SC.tripleEDB, tripleEDBPath);
+
+		final DataSource qualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getQualifierFile());
+		reasoner.addFactsFromDataSource(SC.qualifierEDB, qualifierEDBPath);
+
+		final DataSource referenceEDBPath = new CsvFileDataSource(Main.tripleSet.getReferenceFile());
+		reasoner.addFactsFromDataSource(SC.referenceEDB, referenceEDBPath);					
 	}
 	
 	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
@@ -274,10 +269,6 @@ public abstract class ConstraintChecker {
 	protected abstract void process(QuerySolution solution);
 	
 	abstract void prepareFacts() throws ReasonerStateException, IOException;
-	
-	abstract void delete() throws IOException;
-	
-	abstract void close() throws IOException;
 	
 	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
 	

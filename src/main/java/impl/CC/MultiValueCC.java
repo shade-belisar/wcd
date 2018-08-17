@@ -20,7 +20,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.MultiValuePCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.MultiValueTS;
+import main.Main;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -30,11 +30,8 @@ public class MultiValueCC extends ConstraintChecker {
 	
 	Set<String> properties;
 	
-	final MultiValueTS tripleSet;
-	
 	public MultiValueCC() throws IOException {
 		super("Q21510857");
-		tripleSet = new MultiValueTS(properties);
 	}
 
 	@Override
@@ -74,35 +71,18 @@ public class MultiValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
-		if (tripleSet.firstNotEmpty()) {
-			final DataSource firstEDBPath = new CsvFileDataSource(tripleSet.getFirstFile());
-			reasoner.addFactsFromDataSource(first, firstEDBPath);
-		}
-		if (tripleSet.nextNotEmpty()) {
-			final DataSource nextEDBPath = new CsvFileDataSource(tripleSet.getNextFile());
-			reasoner.addFactsFromDataSource(next, nextEDBPath);
-		}
-		if (tripleSet.lastNotEmpty()) {
-			final DataSource lastEDBPath = new CsvFileDataSource(tripleSet.getLastFile());
-			reasoner.addFactsFromDataSource(last, lastEDBPath);
-		}
+		final DataSource firstEDBPath = new CsvFileDataSource(Main.tripleSet.getFirstFile());
+		reasoner.addFactsFromDataSource(first, firstEDBPath);
+
+		final DataSource nextEDBPath = new CsvFileDataSource(Main.tripleSet.getNextFile());
+		reasoner.addFactsFromDataSource(next, nextEDBPath);
+
+		final DataSource lastEDBPath = new CsvFileDataSource(Main.tripleSet.getLastFile());
+		reasoner.addFactsFromDataSource(last, lastEDBPath);
 		
 		// Establishing inequality
 		InequalityHelper.setOrReset(reasoner);
 
-		InequalityHelper.establishInequality(tripleSet.getStatementProperties());
-
+		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 0);
 	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
-	}
-
 }

@@ -39,6 +39,7 @@ import impl.CC.OneOfCC;
 import impl.CC.OneOfQualifierValueCC;
 import impl.CC.ScopeCC;
 import impl.CC.SingleValueCC;
+import impl.TS.TripleSet;
 import utility.InequalityHelper;
 
 /**
@@ -58,6 +59,8 @@ public class Main {
 	static boolean extract = false;
 	
 	static boolean stringResults = false;
+	
+	public static TripleSet tripleSet;
 
 	/**
 	 * @param args
@@ -127,7 +130,13 @@ public class Main {
 			dumpProcessingController.setOfflineMode(false);
 		} else {
 			dumpProcessingController.setOfflineMode(true);
-		}		
+		}
+		
+		try {
+			tripleSet = new TripleSet();
+		} catch (IOException e) {
+			logger.error("Could not open a file, see the error message for details.", e);
+		}
 
 		List<ConstraintChecker> checkers = new ArrayList<ConstraintChecker>();
 		try {
@@ -182,7 +191,7 @@ public class Main {
 			return;
 		}
 		
-		if (extract) {
+		if (extract) {			
 			// Add timer for progress
 			EntityTimerProcessor time = new EntityTimerProcessor(0);
 			dumpProcessingController.registerEntityDocumentProcessor(time, null, onlyCurrentRevisions);

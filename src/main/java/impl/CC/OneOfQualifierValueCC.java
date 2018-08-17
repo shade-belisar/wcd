@@ -19,7 +19,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.OneOfQualifierValuePCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.OneOfQualifierValueTS;
+import main.Main;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -31,8 +31,6 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 	public static final String QUALIFIER_VALUE = "P2305";
 	
 	Map<String, Map<String, Set<String>>> qualifiersAndValues;
-	
-	final OneOfQualifierValueTS tripleSet;
 
 	public OneOfQualifierValueCC() throws IOException {
 		super("Q52712340");
@@ -40,7 +38,6 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 		for (Map.Entry<String, Map<String, Set<String>>> entry : qualifiersAndValues.entrySet()) {
 			temp.put(entry.getKey(), entry.getValue().keySet());
 		}
-		tripleSet = new OneOfQualifierValueTS(temp);
 	}
 
 	@Override
@@ -89,25 +86,14 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
 		InequalityHelper.setOrReset(reasoner);
-		Set<String> values = tripleSet.getValues();
+		Set<String> values = new HashSet<String>();
 		for (Map.Entry<String, Map<String, Set<String>>> entry1 : qualifiersAndValues.entrySet()) {
 			for (Map.Entry<String, Set<String>> entry2 : entry1.getValue().entrySet()) {
 				values.addAll(entry2.getValue());
 			}
 		}
-		InequalityHelper.establishInequality(values);
-	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
+		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 2, values);
 	}
 
 	@Override

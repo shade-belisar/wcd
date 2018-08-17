@@ -21,7 +21,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.OneOfPCC;
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.OneOfTS;
+import main.Main;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -32,12 +32,9 @@ public class OneOfCC extends ConstraintChecker {
 	public static final String ALLOWED_VALUES = "P2305";
 	
 	Map<String, HashSet<String>> allowedValues;
-	
-	final OneOfTS tripleSet;
 
 	public OneOfCC() throws IOException {
 		super("Q21510859");
-		tripleSet = new OneOfTS(allowedValues.keySet());
 	}
 
 	@Override
@@ -83,23 +80,14 @@ public class OneOfCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		loadTripleSets(tripleSet);
 		InequalityHelper.setOrReset(reasoner);
-		Set<String> values = tripleSet.getValues();
+		Set<String> values = new HashSet<String>();
 		for (Set<String> valuesSet : allowedValues.values()) {
 			values.addAll(valuesSet);
 		}
-		InequalityHelper.establishInequality(values);
-	}
-
-	@Override
-	void delete() throws IOException {
-		tripleSet.delete();
-	}
-
-	@Override
-	void close() throws IOException {
-		tripleSet.close();
+		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 3, values);
+		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 2, values);
+		InequalityHelper.establishInequality(Main.tripleSet.getReferenceFile(), 2, values);
 	}
 
 	@Override
