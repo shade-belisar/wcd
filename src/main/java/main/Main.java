@@ -204,7 +204,13 @@ public class Main {
 			}
 
 			dumpProcessingController.processDump(mwDumpFile);
-
+			
+			try {
+				Main.tripleSet.close();
+			} catch (IOException e) {
+				logger.error("Error closing the triple set files.", e);
+				return;
+			}
 		}
 		
 		if (!cmd.hasOption("noviolations")) {

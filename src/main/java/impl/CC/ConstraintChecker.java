@@ -131,7 +131,6 @@ public abstract class ConstraintChecker {
 	}
 	
 	public void violations() throws ReasonerStateException, IOException {
-		Main.tripleSet.close();
 		loadTripleSet();
 		prepareFacts();
 		List<Rule> rulesToAdd = new ArrayList<Rule>();
