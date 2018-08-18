@@ -47,6 +47,11 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 	}
 	
 	@Override
+	protected Set<Atom> queries() {
+		return asSet(violation_triple_query);
+	}
+	
+	@Override
 	protected Set<String> qualifiers() {
 		return asSet(REQUIRED_PROPERTY);
 	}
@@ -82,20 +87,6 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 	}
 
 	@Override
-	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
-		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
-		for(Map.Entry<String, Map<String, Set<String>>> entry : configuration.entrySet()) {
-			result.add(new ItemRequiresStatementPCC(entry.getKey(), entry.getValue()));
-		}
-		return result;
-	}
-
-	@Override
-	protected Set<Atom> queries() {
-		return asSet(violation_triple_query);
-	}
-
-	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
 		final DataSource firstEDBPath = new CsvFileDataSource(Main.tripleSet.getFirstFile());
 		reasoner.addFactsFromDataSource(first, firstEDBPath);
@@ -119,5 +110,14 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 		}
 		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 2, properties);
 		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 3, values);	
+	}
+	
+	@Override
+	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
+		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
+		for(Map.Entry<String, Map<String, Set<String>>> entry : configuration.entrySet()) {
+			result.add(new ItemRequiresStatementPCC(entry.getKey(), entry.getValue()));
+		}
+		return result;
 	}
 }
