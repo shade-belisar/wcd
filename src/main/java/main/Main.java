@@ -39,6 +39,7 @@ import impl.CC.OneOfCC;
 import impl.CC.OneOfQualifierValueCC;
 import impl.CC.ScopeCC;
 import impl.CC.SingleValueCC;
+import impl.CC.ValueRequiresStatementCC;
 import impl.TS.TripleSet;
 import utility.InequalityHelper;
 
@@ -171,6 +172,9 @@ public class Main {
 					break;
 				case "itemrequiresstatement":
 					checkers.add(new ItemRequiresStatementCC());
+					break;
+				case "valuerequiresstatement":
+					checkers.add(new ValueRequiresStatementCC());
 					break;
 				case "multivalue":
 					checkers.add(new MultiValueCC());
