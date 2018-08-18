@@ -82,7 +82,7 @@ public class MultiValueCC extends ConstraintChecker {
 		
 		// Establishing inequality
 		InequalityHelper.setOrReset(reasoner);
-
-		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 0);
+		
+		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 2, properties);
 	}
 }

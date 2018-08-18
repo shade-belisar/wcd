@@ -68,7 +68,7 @@ public class MultiValuePCC extends PropertyConstraintChecker {
 		//	tripleEDB(R, I, propertyConstant, C),
 		//	tripleEDB(S, I, P, V),
 		//	unequal(propertyConstant, P)
-		Rule require1 = Expressions.makeRule(require_second_Sp, next_QR, next_RS, tripleEDB_RIpC, tripleEDB_SIPV, unequal_pP);
+		Rule require1 = Expressions.makeRule(require_second_Sp, next_QR, next_RS, require_Qp, tripleEDB_RIpC, tripleEDB_SIPV, unequal_pP);
 		rules.add(require1);
 		
 		// require_second(R, propertyConstant)
