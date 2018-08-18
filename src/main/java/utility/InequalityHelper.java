@@ -104,13 +104,18 @@ public class InequalityHelper {
 	}
 
 	static void naive (File inequalityFile, int inequalityIndex, Set<String> additionalValues) throws ReasonerStateException, IOException {
-		Iterator<String> firstIterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, additionalValues.iterator());
+		List<String> fixedOrderValues = new ArrayList<String>(additionalValues);
+		
+		Iterator<String> firstIterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, fixedOrderValues.iterator());
+		
+		if (additionalValues.contains("http://www.wikidata.org/entity/Q7269"))
+			System.out.println("Contains");
 		
 		int first = 0;
 		while(firstIterator.hasNext()) {
 			String firstEntry = firstIterator.next();
 			
-			Iterator<String> secondIterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, additionalValues.iterator());
+			Iterator<String> secondIterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, fixedOrderValues.iterator());
 			
 			for (int second = 0; second <= first; second++) {
 				if (secondIterator.hasNext())
@@ -119,6 +124,8 @@ public class InequalityHelper {
 			
 			while (secondIterator.hasNext()) {
 				String secondEntry = secondIterator.next();
+				if (secondEntry.equals(firstEntry))
+					continue;
 				
 				Constant firstConstant = Expressions.makeConstant(firstEntry);
 				Constant secondConstant = Expressions.makeConstant(secondEntry);
