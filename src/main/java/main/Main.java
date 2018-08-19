@@ -13,6 +13,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -24,6 +25,8 @@ import org.wikidata.wdtk.dumpfiles.DumpProcessingController;
 import org.wikidata.wdtk.dumpfiles.EntityTimerProcessor;
 import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
+
+import com.google.common.base.Stopwatch;
 
 import impl.CC.AllowedEntityTypesCC;
 import impl.CC.AllowedQualifiersCC;
@@ -228,7 +231,11 @@ public class Main {
 		if (!cmd.hasOption("noviolations")) {
 			try {
 				for(ConstraintChecker checker : checkers) {
+					StopWatch watch = new StopWatch();
+					watch.start();
 					checker.violations();
+					watch.stop();
+					System.out.println("Total time elapsed: " + watch.getTime() + "ms");
 					System.out.println(checker.identify() + ", violations: " + checker.getResultSize());
 					if (getStringResult())
 						System.out.println(checker.getResultString());
