@@ -31,6 +31,7 @@ import impl.CC.AllowedUnitsCC;
 import impl.CC.ConflictsWithCC;
 import impl.CC.ConstraintChecker;
 import impl.CC.DistinctValuesCC;
+import impl.CC.InverseCC;
 import impl.CC.ItemRequiresStatementCC;
 import impl.CC.MandatoryQualifierCC;
 import impl.CC.MultiValueCC;
@@ -175,6 +176,9 @@ public class Main {
 					break;
 				case "valuerequiresstatement":
 					checkers.add(new ValueRequiresStatementCC());
+					break;
+				case "inverse":
+					checkers.add(new InverseCC());
 					break;
 				case "multivalue":
 					checkers.add(new MultiValueCC());

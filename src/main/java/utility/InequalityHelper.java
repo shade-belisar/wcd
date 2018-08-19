@@ -83,30 +83,40 @@ public class InequalityHelper {
 		establishInequality(inequalityFile, inequalityIndex, new HashSet<String>());
 	}
 	
+	public static void establishInequality(File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2) throws ReasonerStateException, IOException {
+		establishInequality(inequalityFile1, inequalityIndex1, inequalityFile2, inequalityIndex2, new HashSet<String>());
+	}
+	
 	public static void establishInequality(File inequalityFile, int inequalityIndex, Set<String> additionalValues) throws ReasonerStateException, IOException {
+		establishInequality(inequalityFile, inequalityIndex, null, 0, new HashSet<String>());
+	}
+	
+	static void establishInequality(File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2, Set<String> additionalValues) throws ReasonerStateException, IOException {
 		reasoner.addRules(unequal_IDB_EDB, inverse);
 		
 		switch (mode) {
 		case NAIVE:
-			naive(inequalityFile, inequalityIndex, additionalValues);
+			naive(inequalityFile1, inequalityIndex1, inequalityFile2, inequalityIndex2, additionalValues);
 			break;
 		case ENCODED:
-			encoded(inequalityFile, inequalityIndex,additionalValues, false);
+			encoded(inequalityFile1, inequalityIndex1, inequalityFile2, inequalityIndex2, additionalValues, false);
 			break;
 		case DEMANDED:
-			encoded(inequalityFile, inequalityIndex, additionalValues, true);
+			encoded(inequalityFile1, inequalityIndex1, inequalityFile2, inequalityIndex2, additionalValues, true);
 			break;
 		}
 	}
 
 	static Iterator<CSVRecord> iteratorFromFile(File file) throws IOException {
+		if (file == null)
+			return null;
 		return CSVFormat.DEFAULT.parse(new InputStreamReader(new FileInputStream(file))).iterator();
 	}
 
-	static void naive (File inequalityFile, int inequalityIndex, Set<String> additionalValues) throws ReasonerStateException, IOException {
+	static void naive (File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2, Set<String> additionalValues) throws ReasonerStateException, IOException {
 		List<String> fixedOrderValues = new ArrayList<String>(additionalValues);
 		
-		Iterator<String> firstIterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, fixedOrderValues.iterator());
+		Iterator<String> firstIterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, fixedOrderValues.iterator());
 		
 		if (additionalValues.contains("http://www.wikidata.org/entity/Q7269"))
 			System.out.println("Contains");
@@ -115,7 +125,7 @@ public class InequalityHelper {
 		while(firstIterator.hasNext()) {
 			String firstEntry = firstIterator.next();
 			
-			Iterator<String> secondIterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, fixedOrderValues.iterator());
+			Iterator<String> secondIterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, fixedOrderValues.iterator());
 			
 			for (int second = 0; second <= first; second++) {
 				if (secondIterator.hasNext())
@@ -137,8 +147,8 @@ public class InequalityHelper {
 		}
 	}
 
-	static void encoded(File inequalityFile, int inequalityIndex, Set<String> additionalValues, boolean demand) throws ReasonerStateException, IOException {
-		Iterator<String> iterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, additionalValues.iterator());
+	static void encoded(File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2, Set<String> additionalValues, boolean demand) throws ReasonerStateException, IOException {
+		Iterator<String> iterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, additionalValues.iterator());
 		
 		int maxLength = 0;
 		while(iterator.hasNext()) {
@@ -175,7 +185,7 @@ public class InequalityHelper {
 		
 		Set<String> characters = new HashSet<String>();
 		
-		iterator = new CombinedIterator(iteratorFromFile(inequalityFile), inequalityIndex, additionalValues.iterator());
+		iterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, additionalValues.iterator());
 		
 		while (iterator.hasNext()) {
 			String string = iterator.next();
