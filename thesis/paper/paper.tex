@@ -775,40 +775,50 @@ Multiple statements are violated if specific statements do not exist in relation
 
 If qualifier non-existence should be tested the predicates have to be adapted, since they do not have a unique identifier. Their order has to be established using the entire set of statement ID, property and value. For this the predicates first\_qualifier\([3]\) and last\_qualifier\([3]\) taking the statement ID, the property and the value and next\_qualifier\([6]\) with ID, property and value for the current and next qualifier are introduced.\\
 
-Using this pre-processed data the approach is to apply a require-predicate to each statement or qualifier. This is require\([2]\) for statements, connecting the statement ID with a required term \(t\) and require\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the term \(t\).\\
+Using this pre-processed data the approach is to apply a require-predicate to each statement or qualifier. This is require\([3]\) for statements, connecting the statement ID with the constrained property \(p\) and the required term \(t\) and require\([5]\) taking the statement ID, property, and value of a qualifier and linking this with \(p\) and \(t\).\\
 
 For statements the pattern consists of two rules, both utilising the same conjunction \(c = C_1 \wedge .. \wedge C_m\) with arbitrary atoms \(C_n\) which is used to test if the statement does not fulfil the requirement. Then rule one
 \begin{equation*}
-\text{require}(S, t) \leftarrow \text{first}(S, I) \wedge c
+\text{require}(S, p, t) \leftarrow \text{first}(S, I) \wedge c
 \end{equation*}
 states that the statement requires the condition and
 \begin{equation*}
-\text{require}(S, t) \leftarrow \text{next}(O, S) \wedge \text{require}(O, t) \wedge c
+\text{require}(S, p, t) \leftarrow \text{next}(O, S) \wedge \text{require}(O, p, t) \wedge c
 \end{equation*}
 propagates this down the statement chain.
 
 For qualifiers the rules are
 \begin{equation*}
-\text{require}(S, P, V, t) \leftarrow \text{first}(S, P, V) \wedge c
+\text{require}(S, P, V, p, t) \leftarrow \text{first}(S, P, V) \wedge c
 \end{equation*}
 \begin{equation*}
-\text{require}(S, P, V, t) \leftarrow \text{next}(O, X, C, S, P, V) \wedge \text{require}(O, X, C, t) \wedge c
+\text{require}(S, P, V, p, t) \leftarrow \text{next}(O, X, C, S, P, V) \wedge \text{require}(O, X, C, p, t) \wedge c
 \end{equation*}
 
 If the last statement of an item or the last qualifier of a statement has require the violation occurred. In the following constraints only the conjunction \(c\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
 
 \subsection{Item requires statement (Q21503247)}
-The item requires statement constraint requires the pre-processing of all item statements. Additionally, inequality between all properties of item statements and the required property as well as between all values and the allowed values has to be established. It occurs in two varieties, depending on if allowed values have been specified or not. The required term \(t\) is the  required property. Without separators the conjunction is \(c_1 = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)\).\\
-
-If a set of allowed values \(A\) has been specified, a second set of require-rules have to be introduced with \(c_2 = \text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)\). Note that the first set of rules is still required, since the preceding statements do not need to have the required property.\\
-
-In both cases violations can be found with
+The item requires statement constraint requires the pre-processing of all item statements. Additionally, inequality between all properties of item statements and the required property as well as between all values and the allowed values has to be established. It occurs in two varieties, depending on if allowed values have been specified or not. The required term \(t\) is the  required property. Without separators the conjunction is
+\begin{equation*}
+\begin{split}
+c_1 = &\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+&\text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
+\end{split}
+\end{equation*} \(\)
+If a set of allowed values \(A\) has been specified, a second set of require-rules have to be introduced with
+\begin{equation*}
+\begin{split}
+c_2 = &\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+&\text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+\end{split}
+\end{equation*}
+Note that the first set of rules is still required, since the preceding statements do not need to have the required property. In both cases violations can be found with
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{tripleEDB}(O, I, P, X) \wedge \text{last}(O, I) \wedge \\
-&\text{require}(O, \text{requiredPropertyConstant})
+&\text{require}(O, \text{propertyConstant}, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
 
@@ -819,18 +829,22 @@ The value requires statement constraint is syntactically very similar to the pre
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{tripleEDB}(O, V, P, X) \wedge \text{last}(O, V) \wedge \\
-&\text{require}(O, \text{requiredPropertyConstant})
+&\text{require}(O, text{propertyConstant}, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
 
 \subsection{Inverse (Q21510855)}
-The inverse constraint is similar to the value requires statement constraint in requiring a statement on a constrained value with a specific property. However, instead of putting no constraint or a list of fixed values on the required statements value it set a relative requirement: the constrained item. The pre-processing and inequalities thus remain the same, but the conjunctions change to 
+The inverse constraint is similar to the value requires statement constraint in requiring a statement on a constrained value with a specific property. However, instead of putting no constraint or a list of fixed values on the required statements value it set a relative requirement: the constrained item, meaning \(t = R\). The pre-processing and inequalities thus remain the same, but the conjunctions change to 
 \begin{equation*}
-c_1 = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{inversePropertyConstant}, P)
+\begin{split}
+c_1 = &\text{tripleEDB}(O, R, \text{propertyConstant}, I) \wedge \\
+&\text{tripleEDB}(S, I, P, V) \wedge \\
+&\text{unequal}(\text{inversePropertyConstant}, P)
+\end{split}
 \end{equation*}
 \begin{equation*}
 \begin{split}
-c_2 = &\text{tripleEDB}(O, R, \text{propertyConstant}, X) \wedge \\
+c_2 = &\text{tripleEDB}(O, R, \text{propertyConstant}, I) \wedge \\
 &\text{tripleEDB}(S, I, \text{inversePropertyConstant}, V) \wedge \\
 &\text{unequal}(R, V)
 \end{split}
