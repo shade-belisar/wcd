@@ -5,6 +5,7 @@ import static utility.SC.last;
 import static utility.SC.o;
 import static utility.SC.r;
 import static utility.SC.p;
+import static utility.SC.q;
 import static utility.SC.require;
 import static utility.SC.s;
 import static utility.SC.tripleEDB;
@@ -43,8 +44,8 @@ public class InversePCC extends PropertyConstraintChecker {
 		for (String inverseProperty : configuration) {
 			Term inversePropertyConstant = Utility.makeConstant(inverseProperty);
 			
-			// tripleEDB(O, R, propertyConstant, I)
-			Atom tripleEDB_ORpI = Expressions.makeAtom(tripleEDB, o, r, propertyConstant, i);
+			// tripleEDB(Q, R, propertyConstant, I)
+			Atom tripleEDB_QRpI = Expressions.makeAtom(tripleEDB, q, r, propertyConstant, i);
 		
 			// tripleEDB(S, I, P, V)
 			Atom tripleEDB_SIPV = Expressions.makeAtom(tripleEDB, s, i, p, v);
@@ -52,7 +53,7 @@ public class InversePCC extends PropertyConstraintChecker {
 			// unequal(inversePropertyConstant, P)
 			Atom unequal_iP = Expressions.makeAtom(InequalityHelper.unequal, inversePropertyConstant, p);
 		
-			rules.addAll(StatementNonExistenceHelper.initRequireTriple(inversePropertyConstant, r, tripleEDB_ORpI, tripleEDB_SIPV, unequal_iP));
+			rules.addAll(StatementNonExistenceHelper.initRequireTriple(inversePropertyConstant, r, tripleEDB_QRpI, tripleEDB_SIPV, unequal_iP));
 			
 			// tripleEDB(S, I, inversePropertyConstant, V)
 			Atom tripleEDB_SIiV = Expressions.makeAtom(tripleEDB, s, i, inversePropertyConstant, v);
@@ -60,7 +61,7 @@ public class InversePCC extends PropertyConstraintChecker {
 			// unequal(R, V)
 			Atom unequal_RV = Expressions.makeAtom(InequalityHelper.unequal, r, v);
 			
-			rules.addAll(StatementNonExistenceHelper.initRequireTriple(inversePropertyConstant, r, tripleEDB_ORpI, tripleEDB_SIiV, unequal_RV));
+			rules.addAll(StatementNonExistenceHelper.initRequireTriple(inversePropertyConstant, r, tripleEDB_QRpI, tripleEDB_SIiV, unequal_RV));
 		}
 		
 		for (String inverseProperty : configuration) {
