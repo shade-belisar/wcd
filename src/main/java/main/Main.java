@@ -40,6 +40,7 @@ import impl.CC.OneOfCC;
 import impl.CC.OneOfQualifierValueCC;
 import impl.CC.ScopeCC;
 import impl.CC.SingleValueCC;
+import impl.CC.SymmetricCC;
 import impl.CC.ValueRequiresStatementCC;
 import impl.TS.TripleSet;
 import utility.InequalityHelper;
@@ -179,6 +180,9 @@ public class Main {
 					break;
 				case "inverse":
 					checkers.add(new InverseCC());
+					break;
+				case "symmetric":
+					checkers.add(new SymmetricCC());
 					break;
 				case "multivalue":
 					checkers.add(new MultiValueCC());
