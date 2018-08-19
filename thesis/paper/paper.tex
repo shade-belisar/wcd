@@ -801,14 +801,14 @@ If the last statement of an item or the last qualifier of a statement has requir
 The item requires statement constraint requires the pre-processing of all item statements. Additionally, inequality between all properties of item statements and the required property as well as between all values and the allowed values has to be established. It occurs in two varieties, depending on if allowed values have been specified or not. The required term \(t\) is the  required property. Without separators the conjunction is
 \begin{equation*}
 \begin{split}
-c_1 = &\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+c_1 = &\text{tripleEDB}(Q, I, \text{propertyConstant}, X) \wedge \\
 &\text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
 \end{split}
 \end{equation*} \(\)
 If a set of allowed values \(A\) has been specified, a second set of require-rules have to be introduced with
 \begin{equation*}
 \begin{split}
-c_2 = &\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+c_2 = &\text{tripleEDB}(Q, I, \text{propertyConstant}, X) \wedge \\
 &\text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
 \end{equation*}
@@ -837,14 +837,14 @@ The value requires statement constraint is syntactically very similar to the pre
 The inverse constraint is similar to the value requires statement constraint in requiring a statement on a constrained value with a specific property. However, instead of putting no constraint or a list of fixed values on the required statements value it set a relative requirement: the constrained item, meaning \(t = R\). The pre-processing and inequalities thus remain the same, but the conjunctions change to 
 \begin{equation*}
 \begin{split}
-c_1 = &\text{tripleEDB}(O, R, \text{propertyConstant}, I) \wedge \\
+c_1 = &\text{tripleEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
 &\text{tripleEDB}(S, I, P, V) \wedge \\
 &\text{unequal}(\text{inversePropertyConstant}, P)
 \end{split}
 \end{equation*}
 \begin{equation*}
 \begin{split}
-c_2 = &\text{tripleEDB}(O, R, \text{propertyConstant}, I) \wedge \\
+c_2 = &\text{tripleEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
 &\text{tripleEDB}(S, I, \text{inversePropertyConstant}, V) \wedge \\
 &\text{unequal}(R, V)
 \end{split}
