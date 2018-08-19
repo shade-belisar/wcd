@@ -26,13 +26,13 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class StatementNonExistenceHelper {	
 	
-	public static List<Rule> initRequireTriple(Term requiredTerm, Atom...conjunctionAtoms) {
-		return initRequireTriple(requiredTerm, Arrays.asList(conjunctionAtoms));
+	public static List<Rule> initRequireTriple(Term requiringTerm, Term requiredTerm, Atom...conjunctionAtoms) {
+		return initRequireTriple(requiringTerm, requiredTerm, Arrays.asList(conjunctionAtoms));
 	}
 	
-	public static List<Rule> initRequireTriple(Term requiredTerm, List<Atom> conjunctionAtoms) {
-		// require(S, requiredTerm)
-		Atom require_Sr = Expressions.makeAtom(require, s, requiredTerm);
+	public static List<Rule> initRequireTriple(Term requiringTerm, Term requiredTerm, List<Atom> conjunctionAtoms) {
+		// require(S, requiringTerm, requiredTerm)
+		Atom require_Srr = Expressions.makeAtom(require, s, requiringTerm, requiredTerm);
 		
 		// first(S, I)
 		Atom first_SI = Expressions.makeAtom(first, s, i);
@@ -42,22 +42,22 @@ public class StatementNonExistenceHelper {
 		firstConjunctionAtoms.add(first_SI);
 		firstConjunctionAtoms.addAll(conjunctionAtoms);
 		
-		// require(S, requiredTerm) :- first(S, I), conjunctionAtoms
-		Rule firstRequire = Expressions.makeRule(require_Sr, toArray(firstConjunctionAtoms));
+		// require(S, requiringTerm, requiredTerm) :- first(S, I), conjunctionAtoms
+		Rule firstRequire = Expressions.makeRule(require_Srr, toArray(firstConjunctionAtoms));
 		
 		// next(O, S)
 		Atom next_OS = Expressions.makeAtom(next, o, s);
 		
-		// require(O, requiredTerm)
-		Atom require_Or = Expressions.makeAtom(require, o, requiredTerm);
+		// require(O, requiringTerm, requiredTerm)
+		Atom require_Orr = Expressions.makeAtom(require, o, requiringTerm, requiredTerm);
 		
 		List<Atom> nextConjunctionAtoms = new ArrayList<Atom>();
 		nextConjunctionAtoms.add(next_OS);
-		nextConjunctionAtoms.add(require_Or);
+		nextConjunctionAtoms.add(require_Orr);
 		nextConjunctionAtoms.addAll(conjunctionAtoms);
 		
-		// require(S, requiredTerm) :- next(O, S), require(O, requiredTerm), conjunctionAtoms
-		Rule nextRequire = Expressions.makeRule(require_Sr, toArray(nextConjunctionAtoms));
+		// require(S, requiringTerm, requiredTerm) :- next(O, S), require(O, requiringTerm, requiredTerm), conjunctionAtoms
+		Rule nextRequire = Expressions.makeRule(require_Srr, toArray(nextConjunctionAtoms));
 		
 		return Arrays.asList(firstRequire, nextRequire);
 	}

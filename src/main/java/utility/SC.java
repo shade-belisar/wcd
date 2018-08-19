@@ -75,8 +75,8 @@ public class SC {
 	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);
 	public final static Atom violation_reference_query = Expressions.makeAtom(violation_reference, s, p, v);
 	
-	public static final Predicate require = Expressions.makePredicate(REQUIRE, 2);
-	public static final Predicate require_second = Expressions.makePredicate(REQUIRE_SECOND, 2);
+	public static final Predicate require = Expressions.makePredicate(REQUIRE, 3);
+	public static final Predicate require_second = Expressions.makePredicate(REQUIRE_SECOND, 3);
 	
 	public static final Predicate first = Expressions.makePredicate(FIRST, 2);
 	public static final Predicate next = Expressions.makePredicate(NEXT, 2);

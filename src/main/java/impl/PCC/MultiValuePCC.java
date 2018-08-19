@@ -45,10 +45,10 @@ public class MultiValuePCC extends PropertyConstraintChecker {
 		// unequal(propertyConstant, P)
 		Atom unequal_pP = Expressions.makeAtom(InequalityHelper.unequal, propertyConstant, p);
 		
-		rules.addAll(StatementNonExistenceHelper.initRequireTriple(propertyConstant, tripleEDB_SIPV, unequal_pP));
+		rules.addAll(StatementNonExistenceHelper.initRequireTriple(propertyConstant, propertyConstant, tripleEDB_SIPV, unequal_pP));
 		
-		// require_second(S, propertyConstant)
-		Atom require_second_Sp = Expressions.makeAtom(require_second, s, propertyConstant);
+		// require_second(S, propertyConstant, propertyConstant)
+		Atom require_second_Spp = Expressions.makeAtom(require_second, s, propertyConstant, propertyConstant);
 		
 		// next(Q, R)
 		Atom next_QR = Expressions.makeAtom(next, q, r);
@@ -56,30 +56,30 @@ public class MultiValuePCC extends PropertyConstraintChecker {
 		// next(R, S)
 		Atom next_RS = Expressions.makeAtom(next, r, s);
 		
-		// require(Q, propertyConstant)
-		Atom require_Qp = Expressions.makeAtom(require, q, propertyConstant);
+		// require(Q, propertyConstant, propertyConstant)
+		Atom require_Qpp = Expressions.makeAtom(require, q, propertyConstant, propertyConstant);
 		
 		// tripleEDB(R, I, propertyConstant, C)
 		Atom tripleEDB_RIpC = Expressions.makeAtom(tripleEDB, r, i, propertyConstant, c);
 		
-		// require_second(S, propertyConstant) :-
+		// require_second(S, propertyConstant, propertyConstant) :-
 		//	next(Q, R), next(R, S),
-		//	require(Q, propertyConstant),
+		//	require(Q, propertyConstant, propertyConstant),
 		//	tripleEDB(R, I, propertyConstant, C),
 		//	tripleEDB(S, I, P, V),
 		//	unequal(propertyConstant, P)
-		Rule require1 = Expressions.makeRule(require_second_Sp, next_QR, next_RS, require_Qp, tripleEDB_RIpC, tripleEDB_SIPV, unequal_pP);
+		Rule require1 = Expressions.makeRule(require_second_Spp, next_QR, next_RS, require_Qpp, tripleEDB_RIpC, tripleEDB_SIPV, unequal_pP);
 		rules.add(require1);
 		
-		// require_second(R, propertyConstant)
-		Atom require_second_Rp = Expressions.makeAtom(require_second, r, propertyConstant);
+		// require_second(R, propertyConstant, propertyConstant)
+		Atom require_second_Rpp = Expressions.makeAtom(require_second, r, propertyConstant, propertyConstant);
 		
-		// require_second(S, propertyConstant) :-
+		// require_second(S, propertyConstant, propertyConstant) :-
 		//	next(R, S),
-		//	require_second(R, propertyConstant),
+		//	require_second(R, propertyConstant, propertyConstant),
 		//	tripleEDB(S, I, P, V),
 		//	unequal(propertyConstant, P)
-		Rule require2 = Expressions.makeRule(require_second_Sp, next_RS, require_second_Rp, tripleEDB_SIPV, unequal_pP);
+		Rule require2 = Expressions.makeRule(require_second_Spp, next_RS, require_second_Rpp, tripleEDB_SIPV, unequal_pP);
 		rules.add(require2);
 		
 		// tripleEDB(O, I, P, X)
@@ -88,14 +88,14 @@ public class MultiValuePCC extends PropertyConstraintChecker {
 		// last(O, I)
 		Atom last_OI = Expressions.makeAtom(last, o, i);
 		
-		// require_second(O, propertyConstant)
-		Atom require_second_Op = Expressions.makeAtom(require_second, o, propertyConstant);
+		// require_second(O, propertyConstant, propertyConstant)
+		Atom require_second_Opp = Expressions.makeAtom(require_second, o, propertyConstant, propertyConstant);
 		
 		// violation_triple(S, I, propertyConstant, V) :-
 		//	tripleEDB(S, I, propertyConstant, V),
 		//	tripleEDB(O, I, P, X), last(O, I),
-		//	require_second(O, propertyConstant)
-		Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OIPX, last_OI, require_second_Op);
+		//	require_second(O, propertyConstant, propertyConstant)
+		Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OIPX, last_OI, require_second_Opp);
 		rules.add(violation);
 		
 		return rules;

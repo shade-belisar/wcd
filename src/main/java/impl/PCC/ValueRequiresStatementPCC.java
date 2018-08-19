@@ -48,7 +48,7 @@ public class ValueRequiresStatementPCC extends PropertyConstraintChecker {
 			// unequal(requiredPropertyConstant, P)
 			Atom unequal_rP = Expressions.makeAtom(InequalityHelper.unequal, requiredPropertyConstant, p);
 		
-			rules.addAll(StatementNonExistenceHelper.initRequireTriple(requiredPropertyConstant, tripleEDB_SIPV, unequal_rP));
+			rules.addAll(StatementNonExistenceHelper.initRequireTriple(propertyConstant, requiredPropertyConstant, tripleEDB_SIPV, unequal_rP));
 			
 			Set<String> allowedValues = entry.getValue();				
 			if (allowedValues.size() != 0) {
@@ -63,7 +63,7 @@ public class ValueRequiresStatementPCC extends PropertyConstraintChecker {
 					conjunction.add(Expressions.makeAtom(InequalityHelper.unequal, allowedValueConstant, v));
 				}
 				
-				rules.addAll(StatementNonExistenceHelper.initRequireTriple(requiredPropertyConstant, conjunction));
+				rules.addAll(StatementNonExistenceHelper.initRequireTriple(propertyConstant, requiredPropertyConstant, conjunction));
 			}
 		}
 		
@@ -76,14 +76,14 @@ public class ValueRequiresStatementPCC extends PropertyConstraintChecker {
 			// last(O, V)
 			Atom last_OV = Expressions.makeAtom(last, o, v);
 			
-			// require(O, requiredPropertyConstant)
-			Atom require_Or = Expressions.makeAtom(require, o, requiredPropertyConstant);
+			// require(O, propertyConstant, requiredPropertyConstant)
+			Atom require_Orr = Expressions.makeAtom(require, o, propertyConstant, requiredPropertyConstant);
 			
 			// violation_triple(S, I, propertyConstant, V) :-
 			//	tripleEDB(S, I, propertyConstant, V),
 			//	tripleEDB(O, V, P, X), last(O, V),
-			//	require(O, requiredPropertyConstant)
-			Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OVPX, last_OV, require_Or);
+			//	require(O, propertyConstant, requiredPropertyConstant)
+			Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OVPX, last_OV, require_Orr);
 			rules.add(violation);
 		}
 		
