@@ -151,6 +151,7 @@ public abstract class ConstraintChecker {
 		} catch (PrepareQueriesException e) {
 			resultString += e.getMessage();
 		}
+		reasoner.close();
 	}
 	
 	List<Rule> addRequireInequality(List<Rule> rules) {
