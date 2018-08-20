@@ -40,7 +40,7 @@ public class TripleSetFile {
 	
 	boolean closed = true;
 	
-	boolean tripleNotEmpty = false;
+	boolean unzipped = false;
 	
 	public TripleSetFile(String name_) throws IOException {
 		name = name_;
@@ -48,7 +48,7 @@ public class TripleSetFile {
 		
 		tripleSetFileGz = new File(fileName + ".gz");
 		tripleSetFileGz.getParentFile().mkdirs();
-		tripleNotEmpty = !tripleSetFileGz.createNewFile();
+		tripleSetFileGz.createNewFile();
 		
 		closed = false;
 		
@@ -73,17 +73,12 @@ public class TripleSetFile {
 		try {
 			writer.printRecord(Arrays.asList(strings));
 			writer.flush();
-			tripleNotEmpty = true;
 		} catch (IOException e) {
 			logger.error("Could not write line to file " + tripleSetFileGz.getAbsolutePath(), e);
 		}
 	}
 	
-	public boolean notEmpty() {
-		return tripleNotEmpty;
-	}
-	
-	public File getFile() throws IOException {
+	public void openUnzipped() throws IOException {
 		close();
 
 		tripleSetFile = new File(fileName); 
@@ -98,35 +93,19 @@ public class TripleSetFile {
 		gzippedInput.close();
 
 		unzippedOutput.close();
+	}
+	
+	public File getFile() throws IOException {
+		close();
+
+		if (tripleSetFile == null)
+			openUnzipped();
 
 		return tripleSetFile;
 	}
-	
-	public Set<String> getEntrySet(int i) throws IOException {
-		if (Main.getExtract()) {
-			logger.warn("Fetching entry set during extraction mode, could have been saved during processing for efficiency.");
-			close();
-		}
-		
-		Set<String> result = new HashSet<String>();
-		FileInputStream inputStream;
-		try {
-			inputStream = new FileInputStream(tripleSetFileGz);
-		} catch (FileNotFoundException e) {
-			return result;
-		}
-		
-		
-		GZIPInputStream gzippedInput = new GZIPInputStream(inputStream);
-		InputStreamReader reader = new InputStreamReader(gzippedInput);
-		Iterable<CSVRecord> record = CSVFormat.DEFAULT.parse(reader);
-		for (CSVRecord csvRecord : record) {
-			result.add(csvRecord.get(i));
-		}
-		return result;
-	}
 
 	public void deleteRawFile() {
+		tripleSetFile = null;
 		new File(getFileName()).delete();
 	}
 
@@ -134,9 +113,6 @@ public class TripleSetFile {
 		if (writer != null) {
 			writer.close();
 			closed = true;
-		}
-		if (!notEmpty()) {
-			new File(getFileNameGz()).delete();
 		}
 	}
 	

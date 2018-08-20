@@ -230,6 +230,12 @@ public class Main {
 		
 		if (!cmd.hasOption("noviolations")) {
 			try {
+				tripleSet.open();
+			} catch (IOException e) {
+				logger.error("Could not unzip a file for processing.", e);
+				return;
+			}
+			try {
 				for(ConstraintChecker checker : checkers) {
 					StopWatch watch = new StopWatch();
 					watch.start();
@@ -243,10 +249,13 @@ public class Main {
 				}
 			} catch (ReasonerStateException e) {
 				logger.error("Reasoner was called in the wrong state.", e);
-				return;
 			} catch (IOException e) {
 				logger.error("Could not open a file", e);
-				return;
+			}
+			try {
+				tripleSet.delete();
+			} catch (IOException e) {
+				logger.warn("Could not delete an unzipped file. Manual cleanup might be necessary.", e);
 			}
 		}
 	}

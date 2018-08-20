@@ -151,7 +151,6 @@ public abstract class ConstraintChecker {
 		} catch (PrepareQueriesException e) {
 			resultString += e.getMessage();
 		}
-		Main.tripleSet.delete();
 	}
 	
 	List<Rule> addRequireInequality(List<Rule> rules) {
