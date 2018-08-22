@@ -81,6 +81,7 @@ public class Main {
 		options.addOption("n", "noviolations", false, "Do not compute violations.");
 		options.addOption("s", "stringResults", false, "Output violations as string.");
 		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is encoded.");
+		options.addOption("u", "unzipped", false, "Keep unzipped files.");
 		
 		CommandLineParser parser = new DefaultParser();
 	    CommandLine cmd;
@@ -252,10 +253,12 @@ public class Main {
 			} catch (IOException e) {
 				logger.error("Could not open a file", e);
 			}
-			try {
-				tripleSet.delete();
-			} catch (IOException e) {
-				logger.warn("Could not delete an unzipped file. Manual cleanup might be necessary.", e);
+			if (!cmd.hasOption("unzipped")) {
+				try {
+					tripleSet.delete();
+				} catch (IOException e) {
+					logger.warn("Could not delete an unzipped file. Manual cleanup might be necessary.", e);
+				}
 			}
 		}
 	}

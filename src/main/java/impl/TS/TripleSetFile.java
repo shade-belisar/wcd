@@ -81,7 +81,10 @@ public class TripleSetFile {
 	public void openUnzipped() throws IOException {
 		close();
 
-		tripleSetFile = new File(fileName); 
+		tripleSetFile = new File(fileName);
+		
+		if (tripleSetFile.exists() && !Main.getExtract())
+			return;
 
 		GZIPInputStream gzippedInput = new GZIPInputStream(new FileInputStream(tripleSetFileGz));
 		FileOutputStream unzippedOutput = new FileOutputStream(tripleSetFile);
@@ -97,8 +100,10 @@ public class TripleSetFile {
 	
 	public File getFile() throws IOException {
 		close();
+		
+		tripleSetFile = new File(fileName);
 
-		if (tripleSetFile == null)
+		if (!tripleSetFile.exists())
 			openUnzipped();
 
 		return tripleSetFile;
