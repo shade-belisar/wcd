@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.csv.CSVFormat;
@@ -55,13 +56,17 @@ public class TripleSetFile {
 	}
 	
 	public void write(String...strings) {
+		write(Arrays.asList(strings));
+	}
+	
+	public void write(List<String> strings) {
 		if (writer == null) {
 			logger.warn("Trying to write to file " + fileName + " but extraction has not been activated.");
 			return;
 		}
 			
 		try {
-			writer.printRecord(Arrays.asList(strings));
+			writer.printRecord(strings);
 			writer.flush();
 		} catch (IOException e) {
 			logger.error("Could not write line to file " + tripleSetFileGz.getAbsolutePath(), e);

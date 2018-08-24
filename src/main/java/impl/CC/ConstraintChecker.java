@@ -53,7 +53,7 @@ public abstract class ConstraintChecker {
 	
 	String constraint;
 	
-	protected final Reasoner reasoner = Reasoner.getInstance();
+	protected final Reasoner reasoner;
 	
 	protected final String internalError;
 	
@@ -66,6 +66,7 @@ public abstract class ConstraintChecker {
 	public ConstraintChecker(String constraint_) throws IOException {
 		constraint = constraint_;
 		internalError = "INTERNAL_ERROR for constraint " + constraint + ".";
+		reasoner = Reasoner.getInstance();
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
 		initDataField();
 		init();
@@ -129,6 +130,7 @@ public abstract class ConstraintChecker {
 	}
 	
 	public void violations() throws ReasonerStateException, IOException {
+		InequalityHelper.setOrReset(reasoner);
 		loadTripleSet();
 		prepareFacts();
 		List<Rule> rulesToAdd = new ArrayList<Rule>();
@@ -197,6 +199,13 @@ public abstract class ConstraintChecker {
 	
 	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
 		try {
+			InequalityHelper.load();
+		} catch (ReasonerStateException e) {
+			logger.error("Trying to load in the wrong state for constraint " + constraint + ".", e);
+			throw new PrepareQueriesException(internalError);
+		}
+		
+		try {
 			reasoner.addRules(rules);
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to add rules in the wrong state for constraint " + constraint + ".", e);
@@ -238,6 +247,8 @@ public abstract class ConstraintChecker {
 				throw new PrepareQueriesException(internalError);
 			}
 		}
+
+		InequalityHelper.delete();
 	}
 	
 	public int getResultSize() {

@@ -2,7 +2,6 @@ package utility;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -18,10 +17,13 @@ import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Rule;
+import org.semanticweb.vlog4j.core.model.api.Term;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
+
+import impl.TS.TripleSetFile;
 
 import static utility.SC.require_inequality;
 
@@ -33,6 +35,8 @@ public class InequalityHelper {
 		DEMANDED
 	}
 	
+	final static int chunkSize = 7;
+	
 	final static String NONE = "none";
 	
 	final static String X = "x";
@@ -43,23 +47,17 @@ public class InequalityHelper {
 	
 	final static String UNEQUAL_EDB = "unequal_EDB";
 	final static String UNEQUAL = "unequal";
-	final static List<String> ITH_LETTER = new ArrayList<String>();
 	
 	final static Variable x = Expressions.makeVariable(X);
 	final static Variable y = Expressions.makeVariable(Y);
 	
-	final static Variable con1 = Expressions.makeVariable(CON1);
-	final static Variable con2 = Expressions.makeVariable(CON2);
-	
 	final static Predicate unequal_EDB = Expressions.makePredicate(UNEQUAL_EDB, 2);
 	public final static Predicate unequal = Expressions.makePredicate(UNEQUAL, 2);
-	final static List<Predicate> ith_letter = new ArrayList<Predicate>();
 	
-	// unequal(CON1, CON2)
-	final static Atom unequal_CC = Expressions.makeAtom(unequal, con1, con2);
+	final static List<TripleSetFile> files = new ArrayList<>();
 	
-	// require_inequality(CON1, CON2)
-	final static Atom require_inequality_CC = Expressions.makeAtom(require_inequality, con1, con2);
+	// require_inequality(X, Y)
+	final static Atom require_inequality_XY = Expressions.makeAtom(require_inequality, x, y);
 	
 	// unequal(X, Y)
 	final static Atom unequal_XY = Expressions.makeAtom(unequal, x, y);
@@ -76,8 +74,7 @@ public class InequalityHelper {
 	
 	public static void setOrReset(Reasoner reasoner_) {
 		reasoner = reasoner_;
-		ITH_LETTER.clear();
-		ith_letter.clear();
+		files.clear();
 	}
 	
 	public static void establishInequality(File inequalityFile, int inequalityIndex) throws ReasonerStateException, IOException {
@@ -90,6 +87,18 @@ public class InequalityHelper {
 	
 	public static void establishInequality(File inequalityFile, int inequalityIndex, Set<String> additionalValues) throws ReasonerStateException, IOException {
 		establishInequality(inequalityFile, inequalityIndex, null, 0, new HashSet<String>());
+	}
+	
+	public static void load() throws ReasonerStateException, IOException {
+		for (TripleSetFile tripleSetFile : files) {
+			tripleSetFile.loadFile(reasoner);
+		}
+	}
+	
+	public static void delete() throws IOException {
+		for (TripleSetFile tripleSetFile : files) {
+			tripleSetFile.getFile().delete();
+		}
 	}
 	
 	static void establishInequality(File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2, Set<String> additionalValues) throws ReasonerStateException, IOException {
@@ -155,60 +164,110 @@ public class InequalityHelper {
 				maxLength = length;
 		}
 		
-		for (int i = ITH_LETTER.size(); i < maxLength; i++) {
-			
-			ITH_LETTER.add("letter" + i);
-			ith_letter.add(Expressions.makePredicate(ITH_LETTER.get(i), 2));
-			
-			Predicate letteri = ith_letter.get(i);
-			
-			// letteri(CON1, X)
-			Atom letteri_CX = Expressions.makeAtom(letteri, con1, x);
-			
-			// letteri(CON2, Y)
-			Atom letteri_CY = Expressions.makeAtom(letteri, con2, y);
-
-			Rule unequal;
-			if (demand)
-				// unequal(CON1, CON2) :- require_inequality(CON1, CON2), letteri(CON1, X), letteri(CON2, Y), unequal(X, Y)
-				unequal = Expressions.makeRule(unequal_CC, require_inequality_CC, letteri_CX, letteri_CY, unequal_XY);
-			else
-				// unequal(CON1, CON2) :- letteri(CON1, X), letteri(CON2, Y), unequal(X, Y)
-				unequal = Expressions.makeRule(unequal_CC, letteri_CX, letteri_CY, unequal_XY);
-			
-			reasoner.addRules(unequal);
-		}
-		
-		List<Atom> letters = new ArrayList<Atom>();
+		updateMaxLength(maxLength, demand);
 		
 		Set<String> characters = new HashSet<String>();
+		characters.add(NONE);
 		
 		iterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, additionalValues.iterator());
 		
 		while (iterator.hasNext()) {
 			String string = iterator.next();
-			Constant constant = Expressions.makeConstant(string);
-			for (int i = 0; i < maxLength; i++) {
-				String character;
-				if (i < string.length()) {
-					character = string.substring(i, i+1);
-				} else {
-					character = NONE;
-				}
-				
-				characters.add(character);
-				Constant characterConstant = Expressions.makeConstant(character);
-				
-				Atom toAdd = Expressions.makeAtom(ith_letter.get(i), constant, characterConstant);
-				letters.add(toAdd);
+			for (int i = 0; i < string.length(); i++) {
+				characters.add(string.substring(i, i+1));
+			}
+			int i = 0;
+			for (List<String> chunk : chunks(string)) {
+				TripleSetFile file = files.get(i);
+				List<String> line = new ArrayList<>();
+				line.add(string);
+				line.addAll(chunk);
+				file.write(line);
+				i++;
 			}
 		}
-		
-		reasoner.addFacts(allCharactersUnequal(characters));
-		
-		reasoner.addFacts(letters);
+		List<Atom> facts = allCharactersUnequal(characters);
+		reasoner.addFacts(facts);
 	}
 	
+	static void updateMaxLength(int maxLength, boolean demand) throws IOException, ReasonerStateException {
+		int maxLetter = (int) Math.ceil(maxLength / (double) chunkSize);
+		for (int i = files.size(); i < maxLetter; i++) {
+			String LETTER_I = "letter" + i * chunkSize;
+			Predicate letter_i = Expressions.makePredicate(LETTER_I, chunkSize + 1);
+			TripleSetFile file = new TripleSetFile(LETTER_I, letter_i);
+			file.forceWrite();
+			files.add(file);
+			
+			List<Atom> inequalities = new ArrayList<>();
+			
+			// letter_i(X, Ai, Ai+1, ..., Ai+14)
+			List<Term> xVariables = new ArrayList<>();
+			xVariables.add(x);
+			// letter_i(Y, Bi, Bi+1, ..., Bi+14)
+			List<Term> yVariables = new ArrayList<>();
+			yVariables.add(y);
+			for (int j = i*chunkSize; j <= i*chunkSize + chunkSize - 1; j++) {
+				Variable ai = Expressions.makeVariable("a" + j);
+				Variable bi = Expressions.makeVariable("b" + j);
+				xVariables.add(ai);
+				yVariables.add(bi);
+				
+				// unequal(Ai, Bi)
+				Atom unequal_AB = Expressions.makeAtom(unequal, ai, bi);
+				inequalities.add(unequal_AB);
+			}
+			
+			Atom letter_i_XA = Expressions.makeAtom(letter_i, xVariables);
+			Atom letter_i_YB = Expressions.makeAtom(letter_i, yVariables);
+			
+			for (Atom inequality : inequalities) {
+				List<Atom> body = new ArrayList<>();
+				if (demand)
+					body.add(require_inequality_XY);
+				body.add(letter_i_XA);
+				body.add(letter_i_YB);
+				body.add(inequality);
+
+				Rule unequal = Expressions.makeRule(unequal_XY, body.toArray(new Atom[body.size()]));
+				reasoner.addRules(unequal);
+			}
+		}
+	}
+	
+	static List<List<String>> chunks (String string) {
+		List<List<String>> result = new ArrayList<>();
+		
+		List<String> list = toList(string);
+		list.add(NONE);
+
+		for (int i = 0; i < list.size(); i += chunkSize) {
+			List<String> part = new ArrayList<>();
+			for (int j = i; j < i + chunkSize; j++) {
+				if (list.size() <= j)
+					break;
+				part.add(list.get(j));
+			}
+			fillUp(part);
+			result.add(part);
+		}
+		return result;
+	}
+	
+	static List<String> toList(String string) {
+		List<String> result = new ArrayList<>();
+		for (int i = 0; i < string.length(); i++) {
+			result.add(string.substring(i, i+1));
+		}
+		return result;
+	}
+	
+	static void fillUp(List<String> list) {
+		for (int i = list.size(); i < chunkSize; i++) {
+			list.add(NONE);
+		}
+	}
+
 	static List<Atom> allCharactersUnequal(Set<String> characters) {
 		List<Atom> atoms = new ArrayList<Atom>();
 		

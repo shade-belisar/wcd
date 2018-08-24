@@ -68,8 +68,6 @@ public class SymmetricCC extends ConstraintChecker {
 		Main.tripleSet.loadLastFile(reasoner);
 
 		// Establishing inequality
-		InequalityHelper.setOrReset(reasoner);
-
 		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 2, configuration);
 		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 1, Main.tripleSet.getTripleFile(), 3);
 	}
