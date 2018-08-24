@@ -86,7 +86,7 @@ public class InequalityHelper {
 	}
 	
 	public static void establishInequality(File inequalityFile, int inequalityIndex, Set<String> additionalValues) throws ReasonerStateException, IOException {
-		establishInequality(inequalityFile, inequalityIndex, null, 0, new HashSet<String>());
+		establishInequality(inequalityFile, inequalityIndex, null, 0, additionalValues);
 	}
 	
 	public static void load() throws ReasonerStateException, IOException {
