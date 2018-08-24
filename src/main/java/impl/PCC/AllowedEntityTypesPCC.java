@@ -14,6 +14,7 @@ import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 import impl.CC.AllowedEntityTypesCC;
+import utility.SC;
 
 
 
@@ -39,7 +40,7 @@ public class AllowedEntityTypesPCC extends PropertyConstraintChecker {
 		Rule notItem = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, item_I);
 		
 		// property(I)
-		Atom property_I = Expressions.makeAtom(property, i);
+		Atom property_I = Expressions.makeAtom(SC.property, i);
 		
 		// violation_triple(S, I, propertyConstant, V ) :- tripleEDB(S, I, propertyConstant, V ), property(I)
 		Rule notProperty = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, property_I);
@@ -49,7 +50,7 @@ public class AllowedEntityTypesPCC extends PropertyConstraintChecker {
 		
 		if (!allowedEntityTypes.contains(AllowedEntityTypesCC.AS_PROPERTY))
 			rules.add(notProperty);
-		
+
 		return rules;
 	}
 }
