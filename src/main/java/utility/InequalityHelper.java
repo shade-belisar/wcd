@@ -164,8 +164,6 @@ public class InequalityHelper {
 				maxLength = length;
 		}
 		
-		updateMaxLength(maxLength, demand);
-		
 		Set<String> characters = new HashSet<String>();
 		characters.add(NONE);
 		
@@ -178,7 +176,7 @@ public class InequalityHelper {
 			}
 			int i = 0;
 			for (List<String> chunk : chunks(string)) {
-				TripleSetFile file = files.get(i);
+				TripleSetFile file = getChunkFile(i, demand);
 				List<String> line = new ArrayList<>();
 				line.add(string);
 				line.addAll(chunk);
@@ -190,49 +188,52 @@ public class InequalityHelper {
 		reasoner.addFacts(facts);
 	}
 	
-	static void updateMaxLength(int maxLength, boolean demand) throws IOException, ReasonerStateException {
-		int maxLetter = (int) Math.ceil(maxLength / (double) chunkSize);
-		for (int i = files.size(); i < maxLetter; i++) {
-			String LETTER_I = "letter" + i * chunkSize;
-			Predicate letter_i = Expressions.makePredicate(LETTER_I, chunkSize + 1);
-			TripleSetFile file = new TripleSetFile(LETTER_I, letter_i);
-			file.forceWrite();
-			files.add(file);
+	static TripleSetFile getChunkFile(int chunk, boolean demand) throws IOException, ReasonerStateException {
+		if (chunk < files.size())
+			return files.get(chunk);
+	
+		int chunkAdress = chunk * chunkSize;
+		String LETTER_I = "letter" + chunkAdress;
+		Predicate letter_i = Expressions.makePredicate(LETTER_I, chunkSize + 1);
+		TripleSetFile file = new TripleSetFile(LETTER_I, letter_i);
+		file.forceWrite();
+		files.add(file);
+		
+		List<Atom> inequalities = new ArrayList<>();
+		
+		// letter_i(X, Ai, Ai+1, ..., Ai+14)
+		List<Term> xVariables = new ArrayList<>();
+		xVariables.add(x);
+		// letter_i(Y, Bi, Bi+1, ..., Bi+14)
+		List<Term> yVariables = new ArrayList<>();
+		yVariables.add(y);
+		for (int j = chunkAdress; j <= chunkAdress + chunkSize - 1; j++) {
+			Variable ai = Expressions.makeVariable("a" + j);
+			Variable bi = Expressions.makeVariable("b" + j);
+			xVariables.add(ai);
+			yVariables.add(bi);
 			
-			List<Atom> inequalities = new ArrayList<>();
-			
-			// letter_i(X, Ai, Ai+1, ..., Ai+14)
-			List<Term> xVariables = new ArrayList<>();
-			xVariables.add(x);
-			// letter_i(Y, Bi, Bi+1, ..., Bi+14)
-			List<Term> yVariables = new ArrayList<>();
-			yVariables.add(y);
-			for (int j = i*chunkSize; j <= i*chunkSize + chunkSize - 1; j++) {
-				Variable ai = Expressions.makeVariable("a" + j);
-				Variable bi = Expressions.makeVariable("b" + j);
-				xVariables.add(ai);
-				yVariables.add(bi);
-				
-				// unequal(Ai, Bi)
-				Atom unequal_AB = Expressions.makeAtom(unequal, ai, bi);
-				inequalities.add(unequal_AB);
-			}
-			
-			Atom letter_i_XA = Expressions.makeAtom(letter_i, xVariables);
-			Atom letter_i_YB = Expressions.makeAtom(letter_i, yVariables);
-			
-			for (Atom inequality : inequalities) {
-				List<Atom> body = new ArrayList<>();
-				if (demand)
-					body.add(require_inequality_XY);
-				body.add(letter_i_XA);
-				body.add(letter_i_YB);
-				body.add(inequality);
-
-				Rule unequal = Expressions.makeRule(unequal_XY, body.toArray(new Atom[body.size()]));
-				reasoner.addRules(unequal);
-			}
+			// unequal(Ai, Bi)
+			Atom unequal_AB = Expressions.makeAtom(unequal, ai, bi);
+			inequalities.add(unequal_AB);
 		}
+		
+		Atom letter_i_XA = Expressions.makeAtom(letter_i, xVariables);
+		Atom letter_i_YB = Expressions.makeAtom(letter_i, yVariables);
+		
+		for (Atom inequality : inequalities) {
+			List<Atom> body = new ArrayList<>();
+			if (demand)
+				body.add(require_inequality_XY);
+			body.add(letter_i_XA);
+			body.add(letter_i_YB);
+			body.add(inequality);
+
+			Rule unequal = Expressions.makeRule(unequal_XY, body.toArray(new Atom[body.size()]));
+			reasoner.addRules(unequal);
+		}
+		
+		return file;
 	}
 	
 	static List<List<String>> chunks (String string) {
