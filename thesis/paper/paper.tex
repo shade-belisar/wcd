@@ -648,9 +648,10 @@ The naive approach with inverse would result in \(f(n) = \binom{n}{2}\) EDB fact
 \subsubsection{Encoding}\label{subsubsec_encoding}
 One option to determine inequality would be to utilise that all entities are strings of single characters. The idea is to determine the set of characters used in all entities \(C\), set them as unequal as outlined above in section \ref{subsubsec_naive} and associate each entity with their characters.\\
 
-An entity \(e \in E\) is always a string and can be written as \(c_0 \ldots c_{l - 1}\) with \(l = len(e)\) being the length of the string. Denote the set \(C = \{c | \exists e \in E: c \in e\}\)\todo{\(c \in e\) does not seem correct} as the set of characters occurring in entities. Then \(l_{\max} = \max\limits_{\forall e \in E}(len(e))\) is the length of the longest entity string. Based on this a group of predicates letter\_iEDB[2] is introduced where \(i \in \{0 \ldots l_{\max}-1\}\) and letter\_iEBD denotes the ith letter of the entity string.\\
+An entity \(e \in E\) is always a string and can be written as \(c_0 \ldots c_{l - 1}\) with \(l = len(e)\) being the length of the string. Denote the set \(C = \{c | \exists e \in E: c \in e\}\)\todo{\(c \in e\) does not seem correct} as the set of characters occurring in entities. Then \(l_{\max} = \max\limits_{\forall e \in E}(len(e))\) is the length of the longest entity string.
+Based on this a group of predicates letter\_i\_EDB[8] is introduced where \(0 \equiv i \mod 7\), \(0 \leq i < l_{max} \).
 
-For each entity string \(e = c_0 \ldots c_{l - 1}\) each predicate letter\_iEDB is created as \(\text{letter\_iEDB}(e, f(e, i))\), where
+For each entity string \(e = c_0 \ldots c_{l - 1}\) each predicate letter\_i\_EDB is created as \(\text{letter\_i\_EDB}(e, f(e, i), f(e, i+1), \ldots, f(e, i+6)\), where
 \begin{equation*}
 f(e, i) = 
 \begin{cases}
@@ -659,10 +660,14 @@ f(e, i) =
 \end{cases}
 \end{equation*}
 
-Now that inequality between all constitution characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates letter\_i:
+Now that inequality between all constitution characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates letter\_i (with \text{letters} short for \(\text{letter\_i}(X, A_i, \ldots, A_{i+14}) \wedge\text{letter\_i}(Y, B_i, \ldots, B_{i+6})\)):
 \begin{equation*}
-\text{unequal}(X, Y) \leftarrow \text{letter\_i}(X, A) \wedge \text{letter\_i}(Y, B) \wedge \text{unequal}(A, B)
+\text{unequal}(X, Y) \leftarrow \text{letters} \wedge \text{unequal}(A_i, B_i)
 \end{equation*}
+\begin{equation*}
+\text{unequal}(X, Y) \leftarrow \text{letters} \wedge \text{unequal}(A_{i+6}, B_{i+6})
+\end{equation*}
+
 
 With this approach the statistics depend on the number of distinct characters \(n_c = |C|\). The number of introduced EDB facts is \(f(n, n_c) = \binom{n_c}{2} + n*l_{\max}\) and the number of introduced rules \(r(n, n_c) = 1 + l_{\max}\). The effectiveness of this approach thus depends on the ratio between \(n\) and \(n_c\).
 
