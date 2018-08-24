@@ -3,10 +3,6 @@ package impl.CC;
 import static utility.SC.first;
 import static utility.SC.last;
 import static utility.SC.next;
-import static utility.SC.o;
-import static utility.SC.p;
-import static utility.SC.r;
-import static utility.SC.require;
 import static utility.SC.violation_triple_query;
 
 import java.io.IOException;
@@ -18,14 +14,13 @@ import java.util.Set;
 import org.apache.jena.query.QuerySolution;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.InversePCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
+import utility.CsvGzFileDataSource;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -68,13 +63,13 @@ public class SymmetricCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		final DataSource firstEDBPath = new CsvFileDataSource(Main.tripleSet.getFirstFile());
+		final DataSource firstEDBPath = new CsvGzFileDataSource(Main.tripleSet.getFirstFile());
 		reasoner.addFactsFromDataSource(first, firstEDBPath);
 
-		final DataSource nextEDBPath = new CsvFileDataSource(Main.tripleSet.getNextFile());
+		final DataSource nextEDBPath = new CsvGzFileDataSource(Main.tripleSet.getNextFile());
 		reasoner.addFactsFromDataSource(next, nextEDBPath);
 
-		final DataSource lastEDBPath = new CsvFileDataSource(Main.tripleSet.getLastFile());
+		final DataSource lastEDBPath = new CsvGzFileDataSource(Main.tripleSet.getLastFile());
 		reasoner.addFactsFromDataSource(last, lastEDBPath);
 
 		// Establishing inequality

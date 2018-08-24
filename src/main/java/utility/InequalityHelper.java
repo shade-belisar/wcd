@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -110,7 +111,7 @@ public class InequalityHelper {
 	static Iterator<CSVRecord> iteratorFromFile(File file) throws IOException {
 		if (file == null)
 			return null;
-		return CSVFormat.DEFAULT.parse(new InputStreamReader(new FileInputStream(file))).iterator();
+		return CSVFormat.DEFAULT.parse(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)))).iterator();
 	}
 
 	static void naive (File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2, Set<String> additionalValues) throws ReasonerStateException, IOException {

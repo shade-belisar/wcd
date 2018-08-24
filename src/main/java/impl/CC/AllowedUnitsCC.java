@@ -19,11 +19,11 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.AllowedUnitsPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
+import utility.CsvGzFileDataSource;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -80,7 +80,7 @@ public class AllowedUnitsCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		final DataSource unitsEDBPath = new CsvFileDataSource(Main.tripleSet.getUnitsFile());
+		final DataSource unitsEDBPath = new CsvGzFileDataSource(Main.tripleSet.getUnitsFile());
 		reasoner.addFactsFromDataSource(unit, unitsEDBPath);
 
 		InequalityHelper.setOrReset(reasoner);

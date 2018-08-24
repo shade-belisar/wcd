@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.jena.query.Query;
@@ -32,12 +31,11 @@ import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.EdbIdbSeparationException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.IncompatiblePredicateArityException;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 import impl.PCC.PropertyConstraintChecker;
-import impl.TS.TripleSet;
 import main.Main;
+import utility.CsvGzFileDataSource;
 import utility.InequalityHelper;
 import utility.PrepareQueriesException;
 import utility.SC;
@@ -192,13 +190,13 @@ public abstract class ConstraintChecker {
 	}
 	
 	void loadTripleSet() throws ReasonerStateException, IOException {		
-		final DataSource tripleEDBPath = new CsvFileDataSource(Main.tripleSet.getTripleFile());
+		final DataSource tripleEDBPath = new CsvGzFileDataSource(Main.tripleSet.getTripleFile());
 		reasoner.addFactsFromDataSource(SC.tripleEDB, tripleEDBPath);
 
-		final DataSource qualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getQualifierFile());
+		final DataSource qualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getQualifierFile());
 		reasoner.addFactsFromDataSource(SC.qualifierEDB, qualifierEDBPath);
 
-		final DataSource referenceEDBPath = new CsvFileDataSource(Main.tripleSet.getReferenceFile());
+		final DataSource referenceEDBPath = new CsvGzFileDataSource(Main.tripleSet.getReferenceFile());
 		reasoner.addFactsFromDataSource(SC.referenceEDB, referenceEDBPath);					
 	}
 	

@@ -20,11 +20,11 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.MandatoryQualifierPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
+import utility.CsvGzFileDataSource;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -83,13 +83,13 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		DataSource firstQualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getFirstQualifierFile());
+		DataSource firstQualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getFirstQualifierFile());
 		reasoner.addFactsFromDataSource(first_qualifier, firstQualifierEDBPath);
 		
-		DataSource nextQualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getNextQualifierFile());
+		DataSource nextQualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getNextQualifierFile());
 		reasoner.addFactsFromDataSource(next_qualifier, nextQualifierEDBPath);
 
-		DataSource lastQualifierEDBPath = new CsvFileDataSource(Main.tripleSet.getLastQualifierFile());
+		DataSource lastQualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getLastQualifierFile());
 		reasoner.addFactsFromDataSource(last_qualifier, lastQualifierEDBPath);
 	
 		InequalityHelper.setOrReset(reasoner);

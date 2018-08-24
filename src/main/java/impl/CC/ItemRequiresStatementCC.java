@@ -20,11 +20,11 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.ItemRequiresStatementPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
+import utility.CsvGzFileDataSource;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -88,13 +88,13 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		final DataSource firstEDBPath = new CsvFileDataSource(Main.tripleSet.getFirstFile());
+		final DataSource firstEDBPath = new CsvGzFileDataSource(Main.tripleSet.getFirstFile());
 		reasoner.addFactsFromDataSource(first, firstEDBPath);
 
-		final DataSource nextEDBPath = new CsvFileDataSource(Main.tripleSet.getNextFile());
+		final DataSource nextEDBPath = new CsvGzFileDataSource(Main.tripleSet.getNextFile());
 		reasoner.addFactsFromDataSource(next, nextEDBPath);
 
-		final DataSource lastEDBPath = new CsvFileDataSource(Main.tripleSet.getLastFile());
+		final DataSource lastEDBPath = new CsvGzFileDataSource(Main.tripleSet.getLastFile());
 		reasoner.addFactsFromDataSource(last, lastEDBPath);
 
 		// Establishing inequality

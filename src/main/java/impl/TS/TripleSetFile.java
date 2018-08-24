@@ -28,25 +28,18 @@ public class TripleSetFile {
 	
 	static String BASE_LOCATION = "./resources/tripleSets/";
 	
-	String name;
-	
-	final String fileName;
+	String fileName;
 	
 	File tripleSetFileGz;
-	
-	File tripleSetFile;
 	
 	CSVPrinter writer;
 	
 	boolean closed = true;
 	
-	boolean unzipped = false;
-	
-	public TripleSetFile(String name_) throws IOException {
-		name = name_;
-		fileName = BASE_LOCATION + "/" + name + ".csv";
+	public TripleSetFile(String name) throws IOException {
+		fileName = BASE_LOCATION + "/" + name + ".csv.gz";
 		
-		tripleSetFileGz = new File(fileName + ".gz");
+		tripleSetFileGz = new File(fileName);
 		tripleSetFileGz.getParentFile().mkdirs();
 		tripleSetFileGz.createNewFile();
 		
@@ -56,17 +49,9 @@ public class TripleSetFile {
 			writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tripleSetFileGz, false)))), CSVFormat.DEFAULT);
 	}
 	
-	String getFileName() {
-		return fileName;
-	}
-	
-	String getFileNameGz() {
-		return fileName + ".gz";
-	}
-	
 	public void write(String...strings) {
 		if (writer == null) {
-			logger.warn("Trying to write to file " + getFileNameGz() + " but extraction has not been activated.");
+			logger.warn("Trying to write to file " + fileName + " but extraction has not been activated.");
 			return;
 		}
 			
@@ -78,40 +63,10 @@ public class TripleSetFile {
 		}
 	}
 	
-	public void openUnzipped() throws IOException {
-		close();
-
-		tripleSetFile = new File(fileName);
-		
-		if (tripleSetFile.exists() && !Main.getExtract())
-			return;
-
-		GZIPInputStream gzippedInput = new GZIPInputStream(new FileInputStream(tripleSetFileGz));
-		FileOutputStream unzippedOutput = new FileOutputStream(tripleSetFile);
-		byte[] buffer = new byte[1024];
-		int len;
-		while ((len = gzippedInput.read(buffer)) != -1) {
-			unzippedOutput.write(buffer, 0, len);
-		}
-		gzippedInput.close();
-
-		unzippedOutput.close();
-	}
-	
 	public File getFile() throws IOException {
 		close();
 		
-		tripleSetFile = new File(fileName);
-
-		if (!tripleSetFile.exists())
-			openUnzipped();
-
-		return tripleSetFile;
-	}
-
-	public void deleteRawFile() {
-		tripleSetFile = null;
-		new File(getFileName()).delete();
+		return tripleSetFileGz;
 	}
 
 	public void close() throws IOException {

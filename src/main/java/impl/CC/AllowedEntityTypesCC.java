@@ -18,11 +18,11 @@ import org.apache.jena.rdf.model.RDFNode;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
-import org.semanticweb.vlog4j.core.reasoner.implementation.CsvFileDataSource;
 
 import impl.PCC.AllowedEntityTypesPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
+import utility.CsvGzFileDataSource;
 import utility.Utility;
 
 public class AllowedEntityTypesCC extends ConstraintChecker {
@@ -81,10 +81,10 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		final DataSource itemEDBPath = new CsvFileDataSource(Main.tripleSet.getItemsFile());
+		final DataSource itemEDBPath = new CsvGzFileDataSource(Main.tripleSet.getItemsFile());
 		reasoner.addFactsFromDataSource(item, itemEDBPath);
 		
-		final DataSource propertyEDBPath = new CsvFileDataSource(Main.tripleSet.getPropertiesFile());
+		final DataSource propertyEDBPath = new CsvGzFileDataSource(Main.tripleSet.getPropertiesFile());
 		reasoner.addFactsFromDataSource(property, propertyEDBPath);	
 	}
 

@@ -227,44 +227,6 @@ public class TripleSet implements EntityDocumentProcessor {
 		processStatementDocument(propertyDocument);
 	}
 	
-	public void open() throws IOException {
-		tripleFile.openUnzipped();
-		qualifierFile.openUnzipped();
-		referenceFile.openUnzipped();
-
-		itemsFile.openUnzipped();
-		propertiesFile.openUnzipped();
-		
-		unitsFile.openUnzipped();
-		
-		firstFile.openUnzipped();
-		nextFile.openUnzipped();
-		lastFile.openUnzipped();
-		
-		firstQualifier.openUnzipped();
-		nextQualifier.openUnzipped();
-		lastQualifier.openUnzipped();
-	}
-	
-	public void delete() throws IOException {
-		tripleFile.deleteRawFile();
-		qualifierFile.deleteRawFile();
-		referenceFile.deleteRawFile();
-
-		itemsFile.deleteRawFile();
-		propertiesFile.deleteRawFile();
-		
-		unitsFile.deleteRawFile();
-		
-		firstFile.deleteRawFile();
-		nextFile.deleteRawFile();
-		lastFile.deleteRawFile();
-		
-		firstQualifier.deleteRawFile();
-		nextQualifier.deleteRawFile();
-		lastQualifier.deleteRawFile();
-	}
-	
 	public void close() throws IOException {
 		tripleFile.close();
 		qualifierFile.close();
