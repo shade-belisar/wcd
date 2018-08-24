@@ -83,15 +83,10 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		DataSource firstQualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getFirstQualifierFile());
-		reasoner.addFactsFromDataSource(first_qualifier, firstQualifierEDBPath);
-		
-		DataSource nextQualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getNextQualifierFile());
-		reasoner.addFactsFromDataSource(next_qualifier, nextQualifierEDBPath);
+		Main.tripleSet.loadFirstQualifierFile(reasoner);
+		Main.tripleSet.loadNextQualifierFile(reasoner);
+		Main.tripleSet.loadLastQualifierFile(reasoner);
 
-		DataSource lastQualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getLastQualifierFile());
-		reasoner.addFactsFromDataSource(last_qualifier, lastQualifierEDBPath);
-	
 		InequalityHelper.setOrReset(reasoner);
 		Set<String> qualifierProperties = new HashSet<String>();
 		for (Set<String> propertySet : propertiesAndQualifiers.values()) {

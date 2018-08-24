@@ -3,6 +3,8 @@ package impl.TS;
 import java.io.File;
 import java.io.IOException;
 
+import org.semanticweb.vlog4j.core.reasoner.Reasoner;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wikidata.wdtk.datamodel.interfaces.EntityDocumentProcessor;
@@ -19,6 +21,7 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import main.Main;
 import utility.OutputUnitVisitor;
 import utility.OutputValueVisitor;
+import utility.SC;
 
 public class TripleSet implements EntityDocumentProcessor {
 	
@@ -50,22 +53,22 @@ public class TripleSet implements EntityDocumentProcessor {
 
 	public TripleSet() throws IOException {
 		
-		tripleFile = new TripleSetFile("triple");
-		qualifierFile = new TripleSetFile("qualifier");
-		referenceFile = new TripleSetFile("reference");
+		tripleFile = new TripleSetFile("triple", SC.tripleEDB);
+		qualifierFile = new TripleSetFile("qualifier", SC.qualifierEDB);
+		referenceFile = new TripleSetFile("reference", SC.referenceEDB);
 		
-		itemsFile = new TripleSetFile("items");
-		propertiesFile = new TripleSetFile("properties");
+		itemsFile = new TripleSetFile("items", SC.item);
+		propertiesFile = new TripleSetFile("properties", SC.property);
 		
-		unitsFile = new TripleSetFile("units");
+		unitsFile = new TripleSetFile("units", SC.unit);
 		
-		firstFile = new TripleSetFile("first");
-		nextFile = new TripleSetFile("next");
-		lastFile = new TripleSetFile("last");
+		firstFile = new TripleSetFile("first", SC.first);
+		nextFile = new TripleSetFile("next", SC.next);
+		lastFile = new TripleSetFile("last", SC.last);
 		
-		firstQualifier = new TripleSetFile("firstQualifier");
-		nextQualifier = new TripleSetFile("nextQualifier");
-		lastQualifier = new TripleSetFile("lastQualifier");
+		firstQualifier = new TripleSetFile("firstQualifier", SC.first_qualifier);
+		nextQualifier = new TripleSetFile("nextQualifier", SC.next_qualifier);
+		lastQualifier = new TripleSetFile("lastQualifier", SC.last_qualifier);
 		
 		Main.registerProcessor(this);
 	}
@@ -81,7 +84,7 @@ public class TripleSet implements EntityDocumentProcessor {
 	public File getReferenceFile() throws IOException {
 		return referenceFile.getFile();
 	}
-
+	
 	public File getItemsFile() throws IOException {
 		return itemsFile.getFile();
 	}
@@ -94,33 +97,57 @@ public class TripleSet implements EntityDocumentProcessor {
 		return unitsFile.getFile();
 	}
 	
-	public File getFirstFile() throws IOException {
-		return firstFile.getFile();
+	public void loadTripleFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		tripleFile.loadFile(reasoner);
 	}
 	
-	public File getNextFile() throws IOException {
-		return nextFile.getFile();
+	public void loadQualifierFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		qualifierFile.loadFile(reasoner);
 	}
 	
-	public File getLastFile() throws IOException {
+	public void loadReferenceFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		referenceFile.loadFile(reasoner);
+	}
+
+	public void loadItemsFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		itemsFile.loadFile(reasoner);
+	}
+	
+	public void loadPropertiesFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		propertiesFile.loadFile(reasoner);
+	}
+	
+	public void loadUnitsFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		unitsFile.loadFile(reasoner);
+	}
+	
+	public void loadFirstFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		firstFile.loadFile(reasoner);
+	}
+	
+	public void loadNextFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		nextFile.loadFile(reasoner);
+	}
+	
+	public void loadLastFile(Reasoner reasoner) throws IOException, ReasonerStateException {
 		if (!lastFile.isClosed() && lastID != null) {
 			lastFile.write(lastID, lastSubject);
 		}
-		return lastFile.getFile();
+		lastFile.loadFile(reasoner);
 	}
 	
-	public File getFirstQualifierFile() throws IOException {
-		return firstQualifier.getFile();
+	public void loadFirstQualifierFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		firstQualifier.loadFile(reasoner);
 	}
 	
-	public File getNextQualifierFile() throws IOException {
-		return nextQualifier.getFile();
+	public void loadNextQualifierFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		nextQualifier.loadFile(reasoner);
 	}
 	
-	public File getLastQualifierFile() throws IOException {
+	public void loadLastQualifierFile(Reasoner reasoner) throws IOException, ReasonerStateException {
 		if (!lastQualifier.isClosed() && lastQualifierID != null)
 			lastQualifier.write(lastQualifierID, lastQualifierPredicate, lastQualifierValue);
-		return lastQualifier.getFile();
+		lastQualifier.loadFile(reasoner);
 	}
 	
 	void processTriple(String id, String subject, String predicate, String object) {

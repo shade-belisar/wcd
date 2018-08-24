@@ -81,11 +81,8 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		final DataSource itemEDBPath = new CsvGzFileDataSource(Main.tripleSet.getItemsFile());
-		reasoner.addFactsFromDataSource(item, itemEDBPath);
-		
-		final DataSource propertyEDBPath = new CsvGzFileDataSource(Main.tripleSet.getPropertiesFile());
-		reasoner.addFactsFromDataSource(property, propertyEDBPath);	
+		Main.tripleSet.loadItemsFile(reasoner);
+		Main.tripleSet.loadPropertiesFile(reasoner);	
 	}
 
 	@Override

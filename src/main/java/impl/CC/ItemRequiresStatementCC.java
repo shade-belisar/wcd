@@ -88,14 +88,9 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		final DataSource firstEDBPath = new CsvGzFileDataSource(Main.tripleSet.getFirstFile());
-		reasoner.addFactsFromDataSource(first, firstEDBPath);
-
-		final DataSource nextEDBPath = new CsvGzFileDataSource(Main.tripleSet.getNextFile());
-		reasoner.addFactsFromDataSource(next, nextEDBPath);
-
-		final DataSource lastEDBPath = new CsvGzFileDataSource(Main.tripleSet.getLastFile());
-		reasoner.addFactsFromDataSource(last, lastEDBPath);
+		Main.tripleSet.loadFirstFile(reasoner);
+		Main.tripleSet.loadNextFile(reasoner);
+		Main.tripleSet.loadLastFile(reasoner);
 
 		// Establishing inequality
 		InequalityHelper.setOrReset(reasoner);

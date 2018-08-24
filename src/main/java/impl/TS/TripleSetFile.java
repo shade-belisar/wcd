@@ -2,25 +2,23 @@ package impl.TS;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
+import org.semanticweb.vlog4j.core.model.api.Predicate;
+import org.semanticweb.vlog4j.core.reasoner.Reasoner;
+import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import main.Main;
+import utility.CsvGzFileDataSource;
 
 public class TripleSetFile {
 	
@@ -30,14 +28,17 @@ public class TripleSetFile {
 	
 	String fileName;
 	
+	Predicate predicate;
+	
 	File tripleSetFileGz;
 	
 	CSVPrinter writer;
 	
 	boolean closed = true;
 	
-	public TripleSetFile(String name) throws IOException {
+	public TripleSetFile(String name, Predicate predicate_) throws IOException {
 		fileName = BASE_LOCATION + "/" + name + ".csv.gz";
+		predicate = predicate_;
 		
 		tripleSetFileGz = new File(fileName);
 		tripleSetFileGz.getParentFile().mkdirs();
@@ -47,6 +48,10 @@ public class TripleSetFile {
 		
 		if (Main.getExtract())
 			writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tripleSetFileGz, false)))), CSVFormat.DEFAULT);
+	}
+	
+	public void forceWrite() throws IOException {
+		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tripleSetFileGz, false)))), CSVFormat.DEFAULT);
 	}
 	
 	public void write(String...strings) {
@@ -63,9 +68,14 @@ public class TripleSetFile {
 		}
 	}
 	
+	public void loadFile(Reasoner reasoner) throws ReasonerStateException, IOException {
+		close();
+		CsvGzFileDataSource dataSource = new CsvGzFileDataSource(tripleSetFileGz);
+		reasoner.addFactsFromDataSource(predicate, dataSource);
+	}
+	
 	public File getFile() throws IOException {
 		close();
-		
 		return tripleSetFileGz;
 	}
 

@@ -84,14 +84,9 @@ public class SingleValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		DataSource firstQualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getFirstQualifierFile());
-		reasoner.addFactsFromDataSource(first_qualifier, firstQualifierEDBPath);
-
-		DataSource nextQualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getNextQualifierFile());
-		reasoner.addFactsFromDataSource(next_qualifier, nextQualifierEDBPath);
-
-		DataSource lastQualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getLastQualifierFile());
-		reasoner.addFactsFromDataSource(last_qualifier, lastQualifierEDBPath);
+		Main.tripleSet.loadFirstQualifierFile(reasoner);
+		Main.tripleSet.loadNextQualifierFile(reasoner);
+		Main.tripleSet.loadLastQualifierFile(reasoner);
 
 		InequalityHelper.setOrReset(reasoner);
 		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 0);

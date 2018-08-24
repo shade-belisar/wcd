@@ -80,8 +80,7 @@ public class AllowedUnitsCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		final DataSource unitsEDBPath = new CsvGzFileDataSource(Main.tripleSet.getUnitsFile());
-		reasoner.addFactsFromDataSource(unit, unitsEDBPath);
+		Main.tripleSet.loadUnitsFile(reasoner);
 
 		InequalityHelper.setOrReset(reasoner);
 		Set<String> units = new HashSet<String>();

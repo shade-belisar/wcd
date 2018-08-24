@@ -190,14 +190,9 @@ public abstract class ConstraintChecker {
 	}
 	
 	void loadTripleSet() throws ReasonerStateException, IOException {		
-		final DataSource tripleEDBPath = new CsvGzFileDataSource(Main.tripleSet.getTripleFile());
-		reasoner.addFactsFromDataSource(SC.tripleEDB, tripleEDBPath);
-
-		final DataSource qualifierEDBPath = new CsvGzFileDataSource(Main.tripleSet.getQualifierFile());
-		reasoner.addFactsFromDataSource(SC.qualifierEDB, qualifierEDBPath);
-
-		final DataSource referenceEDBPath = new CsvGzFileDataSource(Main.tripleSet.getReferenceFile());
-		reasoner.addFactsFromDataSource(SC.referenceEDB, referenceEDBPath);					
+		Main.tripleSet.loadTripleFile(reasoner);
+		Main.tripleSet.loadQualifierFile(reasoner);
+		Main.tripleSet.loadReferenceFile(reasoner);
 	}
 	
 	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
