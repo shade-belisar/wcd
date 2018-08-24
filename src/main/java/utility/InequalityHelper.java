@@ -119,9 +119,6 @@ public class InequalityHelper {
 		
 		Iterator<String> firstIterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, fixedOrderValues.iterator());
 		
-		if (additionalValues.contains("http://www.wikidata.org/entity/Q7269"))
-			System.out.println("Contains");
-		
 		int first = 0;
 		while(firstIterator.hasNext()) {
 			String firstEntry = firstIterator.next();
