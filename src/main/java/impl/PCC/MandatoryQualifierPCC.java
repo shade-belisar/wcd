@@ -1,12 +1,14 @@
 package impl.PCC;
 
 import static utility.SC.c;
+import static utility.SC.i;
 import static utility.SC.last_qualifier;
 import static utility.SC.p;
 import static utility.SC.q;
 import static utility.SC.qualifierEDB;
 import static utility.SC.require_qualifier;
 import static utility.SC.s;
+import static utility.SC.tripleEDB;
 import static utility.SC.v;
 
 import java.io.IOException;
@@ -38,6 +40,9 @@ public class MandatoryQualifierPCC extends PropertyConstraintChecker {
 	public List<Rule> rules() {
 		List<Rule> rules = new ArrayList<Rule>();
 		
+		// tripleEDB(S, I, propertyConstant, C)
+		Atom tripleEDB_SIpC = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, c);
+		
 		// qualifierEDB(S, P, V)
 		Atom qualifierEDB_SPV = Expressions.makeAtom(qualifierEDB, s, p, v);
 		
@@ -47,7 +52,7 @@ public class MandatoryQualifierPCC extends PropertyConstraintChecker {
 			// unequal(P, requiredPropertyConstant)
 			Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredPropertyConstant);
 			
-			rules.addAll(StatementNonExistenceHelper.initRequireQualifier(requiredPropertyConstant, qualifierEDB_SPV, unequal_Pr));
+			rules.addAll(StatementNonExistenceHelper.initRequireQualifier(requiredPropertyConstant, tripleEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
 			
 			// last_qualifier(S, Q, C)
 			Atom last_qualifier_SPV = Expressions.makeAtom(last_qualifier, s, q, c);

@@ -945,7 +945,14 @@ With qualifier non-existence established the violation can be found. Two stateme
 \end{equation*}
 
 \subsection{Mandatory qualifier (Q21510856)}
-The mandatory qualifier constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. All constrained statements and their qualifiers have to be extracted and the order of the qualifiers pre-processed. Inequality must be established between all qualifier properties and the conjunction is \(c = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})\). With the usual require-pattern for qualifiers and the does\_not\_have rule added for brevity the violations would be
+The mandatory qualifier constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. All constrained statements and their qualifiers have to be extracted and the order of the qualifiers pre-processed. Inequality must be established between all qualifier properties and the conjunction is 
+\begin{equation*}
+\begin{split}
+c = &\text{tripleEDB}(S, I, \text{propertyConstant}, C) \wedge \\
+&\text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})
+\end{split}
+\end{equation*}
+With the usual require-pattern for qualifiers and the does\_not\_have rule added for brevity the violations would be
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
