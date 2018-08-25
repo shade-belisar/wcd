@@ -39,16 +39,16 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 	@Override
 	public List<Rule> rules() {		
 		List<Rule> rules = new ArrayList<Rule>();
+
+		// tripleEDB(Q, I, propertyConstant, X)
+		Atom tripleEDB_QIpX = Expressions.makeAtom(tripleEDB, q, i, propertyConstant, x);
+	
+		// tripleEDB(S, I, P, V)
+		Atom tripleEDB_SIPV = Expressions.makeAtom(tripleEDB, s, i, p, v);
 		
 		for (Map.Entry<String, Set<String>> entry : configuration.entrySet()) {
 			Term requiredPropertyConstant = Utility.makeConstant(entry.getKey());
-			
-			// tripleEDB(Q, I, propertyConstant, X)
-			Atom tripleEDB_QIpX = Expressions.makeAtom(tripleEDB, q, i, propertyConstant, x);
-		
-			// tripleEDB(S, I, P, V)
-			Atom tripleEDB_SIPV = Expressions.makeAtom(tripleEDB, s, i, p, v);
-		
+
 			// unequal(requiredPropertyConstant, P)
 			Atom unequal_rP = Expressions.makeAtom(InequalityHelper.unequal, requiredPropertyConstant, p);
 		
