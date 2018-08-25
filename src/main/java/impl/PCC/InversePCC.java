@@ -41,14 +41,14 @@ public class InversePCC extends PropertyConstraintChecker {
 	public List<Rule> rules() {		
 		List<Rule> rules = new ArrayList<Rule>();
 		
+		// tripleEDB(Q, R, propertyConstant, I)
+		Atom tripleEDB_QRpI = Expressions.makeAtom(tripleEDB, q, r, propertyConstant, i);
+	
+		// tripleEDB(S, I, P, V)
+		Atom tripleEDB_SIPV = Expressions.makeAtom(tripleEDB, s, i, p, v);
+		
 		for (String inverseProperty : configuration) {
 			Term inversePropertyConstant = Utility.makeConstant(inverseProperty);
-			
-			// tripleEDB(Q, R, propertyConstant, I)
-			Atom tripleEDB_QRpI = Expressions.makeAtom(tripleEDB, q, r, propertyConstant, i);
-		
-			// tripleEDB(S, I, P, V)
-			Atom tripleEDB_SIPV = Expressions.makeAtom(tripleEDB, s, i, p, v);
 		
 			// unequal(inversePropertyConstant, P)
 			Atom unequal_iP = Expressions.makeAtom(InequalityHelper.unequal, inversePropertyConstant, p);
