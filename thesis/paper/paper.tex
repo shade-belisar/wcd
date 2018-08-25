@@ -828,7 +828,20 @@ Note that the first set of rules is still required, since the preceding statemen
 \end{equation*}
 
 \subsection{Value requires statement (Q21510864)}
-The value requires statement constraint is syntactically very similar to the previous item requires statement constraint. Instead of requiring a statement on the item of a constrained statement it requires it on the value. The pre-processing changes to extracting all value statements along the constrained statements and ordering them. Inequality need to be computed between all properties and all values on value statements. The conjunctions remain the same and the final violation rule is
+The value requires statement constraint is syntactically very similar to the previous item requires statement constraint. Instead of requiring a statement on the item of a constrained statement it requires it on the value. The pre-processing changes to extracting all value statements along the constrained statements and ordering them. Inequality need to be computed between all properties and all values on value statements. The conjunctions change in the first triple and are:
+\begin{equation*}
+\begin{split}
+c_1 = &\text{tripleEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
+&\text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
+\end{split}
+\end{equation*} \(\)
+\begin{equation*}
+\begin{split}
+c_2 = &\text{tripleEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
+&\text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+\end{split}
+\end{equation*}
+The final violation rule would then be:
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
