@@ -4,6 +4,7 @@ import static utility.SC.i;
 import static utility.SC.last;
 import static utility.SC.o;
 import static utility.SC.p;
+import static utility.SC.q;
 import static utility.SC.require;
 import static utility.SC.s;
 import static utility.SC.tripleEDB;
@@ -41,6 +42,9 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 		
 		for (Map.Entry<String, Set<String>> entry : configuration.entrySet()) {
 			Term requiredPropertyConstant = Utility.makeConstant(entry.getKey());
+			
+			// tripleEDB(Q, I, propertyConstant, X)
+			Atom tripleEDB_QIpX = Expressions.makeAtom(tripleEDB, q, i, propertyConstant, x);
 		
 			// tripleEDB(S, I, P, V)
 			Atom tripleEDB_SIPV = Expressions.makeAtom(tripleEDB, s, i, p, v);
@@ -48,7 +52,7 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 			// unequal(requiredPropertyConstant, P)
 			Atom unequal_rP = Expressions.makeAtom(InequalityHelper.unequal, requiredPropertyConstant, p);
 		
-			rules.addAll(StatementNonExistenceHelper.initRequireTriple(propertyConstant, requiredPropertyConstant, tripleEDB_SIPV, unequal_rP));
+			rules.addAll(StatementNonExistenceHelper.initRequireTriple(propertyConstant, requiredPropertyConstant, tripleEDB_QIpX, tripleEDB_SIPV, unequal_rP));
 			
 			Set<String> allowedValues = entry.getValue();				
 			if (allowedValues.size() != 0) {
@@ -56,6 +60,7 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 				Atom tripleEDB_SIrV = Expressions.makeAtom(tripleEDB, s, i, requiredPropertyConstant, v);
 				
 				List<Atom> conjunction = new ArrayList<Atom>();
+				conjunction.add(tripleEDB_QIpX);
 				conjunction.add(tripleEDB_SIrV);
 				
 				for (String allowedValue : allowedValues) {

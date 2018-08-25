@@ -39,8 +39,8 @@ public class StatementNonExistenceHelper {
 		
 		List<Atom> firstConjunctionAtoms = new ArrayList<Atom>();
 		
-		firstConjunctionAtoms.add(first_SI);
 		firstConjunctionAtoms.addAll(conjunctionAtoms);
+		firstConjunctionAtoms.add(first_SI);
 		
 		// require(S, requiringTerm, requiredTerm) :- first(S, I), conjunctionAtoms
 		Rule firstRequire = Expressions.makeRule(require_Srr, toArray(firstConjunctionAtoms));
@@ -52,9 +52,9 @@ public class StatementNonExistenceHelper {
 		Atom require_Orr = Expressions.makeAtom(require, o, requiringTerm, requiredTerm);
 		
 		List<Atom> nextConjunctionAtoms = new ArrayList<Atom>();
+		nextConjunctionAtoms.addAll(conjunctionAtoms);
 		nextConjunctionAtoms.add(next_OS);
 		nextConjunctionAtoms.add(require_Orr);
-		nextConjunctionAtoms.addAll(conjunctionAtoms);
 		
 		// require(S, requiringTerm, requiredTerm) :- next(O, S), require(O, requiringTerm, requiredTerm), conjunctionAtoms
 		Rule nextRequire = Expressions.makeRule(require_Srr, toArray(nextConjunctionAtoms));
