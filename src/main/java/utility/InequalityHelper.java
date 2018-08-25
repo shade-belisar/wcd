@@ -157,13 +157,6 @@ public class InequalityHelper {
 	static void encoded(File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2, Set<String> additionalValues, boolean demand) throws ReasonerStateException, IOException {
 		Iterator<String> iterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, additionalValues.iterator());
 		
-		int maxLength = 0;
-		while(iterator.hasNext()) {
-			int length = iterator.next().length();
-			if (length > maxLength)
-				maxLength = length;
-		}
-		
 		Set<String> characters = new HashSet<String>();
 		characters.add(NONE);
 		
