@@ -132,18 +132,21 @@ public abstract class ConstraintChecker {
 	public void violations() throws ReasonerStateException, IOException {
 		InequalityHelper.setOrReset(reasoner);
 		loadTripleSet();
+		logger.info("Loaded basic triple sets.");
 		prepareFacts();
+		logger.info("Loaded additional triple sets.");
+		InequalityHelper.load();
+		logger.info("Loaded inequalities (if any).");
+		
 		List<Rule> rulesToAdd = new ArrayList<Rule>();
 		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
 			rulesToAdd.addAll(propertyConstraintChecker.rules());
-
 		}
-		//System.out.println(rulesToAdd.size());
-		//for (Rule rule : rulesToAdd) {
-		//	System.out.println(rule);
-		//}
+		logger.info("Created " + rulesToAdd.size() + " rules.");
 		if (InequalityHelper.mode.equals(InequalityHelper.Mode.DEMANDED)) {
-			rulesToAdd.addAll(addRequireInequality(rulesToAdd));
+			List<Rule> demandRules = addRequireInequality(rulesToAdd);
+			rulesToAdd.addAll(demandRules);
+			logger.info("Created " + demandRules.size() + " additional demand-rules.");
 		}
 		 
 		try {
@@ -199,18 +202,12 @@ public abstract class ConstraintChecker {
 	
 	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
 		try {
-			InequalityHelper.load();
-		} catch (ReasonerStateException e) {
-			logger.error("Trying to load in the wrong state for constraint " + constraint + ".", e);
-			throw new PrepareQueriesException(internalError);
-		}
-		
-		try {
 			reasoner.addRules(rules);
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to add rules in the wrong state for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
+		logger.info("Added " + rules.size() + " rules total.");
 		
 		try {
 			reasoner.load();
@@ -221,6 +218,7 @@ public abstract class ConstraintChecker {
 			logger.error("Predicate does not match the datasource for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
+		logger.info("Loaded reasoner.");
 		
 		try {
 			reasoner.reason();
@@ -228,6 +226,7 @@ public abstract class ConstraintChecker {
 			logger.error("Trying to reason in the wrong state for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
+		logger.info("Reasoned reasoner.");
 		for (Atom query : queries) {
 	    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
 	    		while (iterator.hasNext()) {
