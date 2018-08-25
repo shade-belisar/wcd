@@ -38,6 +38,7 @@ public class InequalityHelper {
 	final static int chunkSize = 7;
 	
 	final static String NONE = "none";
+	final static String EMPTY = "empty";
 	
 	final static String X = "x";
 	final static String Y = "y";
@@ -164,12 +165,12 @@ public class InequalityHelper {
 		
 		while (iterator.hasNext()) {
 			String string = iterator.next();
-			for (int i = 0; i < string.length(); i++) {
-				characters.add(string.substring(i, i+1));
-			}
 			int i = 0;
 			for (List<String> chunk : chunks(string)) {
+				characters.addAll(chunk);
+				
 				TripleSetFile file = getChunkFile(i, demand);
+				
 				List<String> line = new ArrayList<>();
 				line.add(string);
 				line.addAll(chunk);
@@ -240,7 +241,10 @@ public class InequalityHelper {
 			for (int j = i; j < i + chunkSize; j++) {
 				if (list.size() <= j)
 					break;
-				part.add(list.get(j));
+				String toAdd = list.get(j);
+				if (toAdd.equals(" "))
+					toAdd = EMPTY;
+				part.add(toAdd);
 			}
 			fillUp(part);
 			result.add(part);
