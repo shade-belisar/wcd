@@ -18,6 +18,7 @@ public class SC {
 	public final static String REQUIRE_INEQUALITY = "require_inequality";
 	
 	public final static String S = "s";
+	public final static String T = "t";
 	public final static String O = "o";
 	public final static String I = "i";
 	public final static String X = "x";
@@ -60,6 +61,7 @@ public class SC {
 	public final static Predicate require_inequality = Expressions.makePredicate(REQUIRE_INEQUALITY, 2);
 	
 	public final static Variable s = Expressions.makeVariable(S);
+	public final static Variable t = Expressions.makeVariable(T);
 	public final static Variable o = Expressions.makeVariable(O);
 	public final static Variable i = Expressions.makeVariable(I);
 	public final static Variable x = Expressions.makeVariable(X);

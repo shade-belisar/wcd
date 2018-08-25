@@ -872,16 +872,26 @@ c_2 = &\text{tripleEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
 The symmetric constraint can be translated exactly as the inverse constraint if the inverse property where set to the same as the constrained property.
 
 \subsection{Multi-value (Q21510857)}
-The multi-value constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Pre-processing extracts all items statements and inequality between all item statement properties as usual and the conjunction is \(c = \text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{propertyConstant}, P)\). The predicate require\_second\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found:
+The multi-value constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Pre-processing extracts all items statements and inequality between all item statement properties as usual and the conjunction is 
 \begin{equation*}
 \begin{split}
-\text{require\_second}&(S, \text{propertyConstant}) \leftarrow \\
-&\text{next}(Q, R) \wedge \text{next}(R, S) \wedge \text{require}(Q, \text{propertyConstant}) \wedge t \wedge \\
-&\text{tripleEDB}(R, I, \text{propertyConstant}, C)
+c = &\text{tripleEDB}(Q, I, \text{propertyConstant}, X) \wedge \\
+&\text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{propertyConstant}, P)
+\end{split}
+\end{equation*}
+The predicate require\_second\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found:
+\begin{equation*}
+\begin{split}
+\text{require\_second}&(S, \text{propertyConstant}, \text{propertyConstant}) \leftarrow \\
+&\text{next}(R, S) \wedge \text{tripleEDB}(R, I, \text{propertyConstant}, C) \wedge \\
+&\text{next}(Q, R) \wedge \text{require}(Q, \text{propertyConstant}, \text{propertyConstant})  \wedge c
 \end{split}
 \end{equation*}
 \begin{equation*}
-\text{require\_second}(S, \text{propertyConstant}) \leftarrow \text{next}(R, S) \wedge \text{require\_second}(R, \text{propertyConstant}) \wedge t
+\begin{split}
+\text{require\_second}&(S, \text{propertyConstant}, \text{propertyConstant}) \leftarrow \text{next}(R, S) \wedge \\
+&\text{require\_second}(R, \text{propertyConstant}, \text{propertyConstant}) \wedge c
+\end{split}
 \end{equation*}
 A violations would be any last statement requiring a second constrained statement.\\
 

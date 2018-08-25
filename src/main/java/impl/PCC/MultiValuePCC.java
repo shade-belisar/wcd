@@ -11,6 +11,7 @@ import static utility.SC.r;
 import static utility.SC.require;
 import static utility.SC.require_second;
 import static utility.SC.s;
+import static utility.SC.t;
 import static utility.SC.tripleEDB;
 import static utility.SC.v;
 import static utility.SC.x;
@@ -39,47 +40,53 @@ public class MultiValuePCC extends PropertyConstraintChecker {
 	public List<Rule> rules() {
 		List<Rule> rules = new ArrayList<Rule>();
 		
+		// tripleEDB(Q, I, propertyConstant, X)
+		Atom tripleEDB_QIpX = Expressions.makeAtom(tripleEDB, q, i, propertyConstant, x);
+		
 		// tripleEDB(S, I, P, V)
 		Atom tripleEDB_SIPV = Expressions.makeAtom(tripleEDB, s, i, p, v);
 		
 		// unequal(propertyConstant, P)
 		Atom unequal_pP = Expressions.makeAtom(InequalityHelper.unequal, propertyConstant, p);
 		
-		rules.addAll(StatementNonExistenceHelper.initRequireTriple(propertyConstant, propertyConstant, tripleEDB_SIPV, unequal_pP));
+		rules.addAll(StatementNonExistenceHelper.initRequireTriple(propertyConstant, propertyConstant, tripleEDB_QIpX, tripleEDB_SIPV, unequal_pP));
 		
 		// require_second(S, propertyConstant, propertyConstant)
 		Atom require_second_Spp = Expressions.makeAtom(require_second, s, propertyConstant, propertyConstant);
 		
-		// next(Q, R)
-		Atom next_QR = Expressions.makeAtom(next, q, r);
+		// next(T, R)
+		Atom next_TR = Expressions.makeAtom(next, t, r);
+		
+		// require(T, propertyConstant, propertyConstant)
+		Atom require_Tpp = Expressions.makeAtom(require, t, propertyConstant, propertyConstant);
 		
 		// next(R, S)
 		Atom next_RS = Expressions.makeAtom(next, r, s);
-		
-		// require(Q, propertyConstant, propertyConstant)
-		Atom require_Qpp = Expressions.makeAtom(require, q, propertyConstant, propertyConstant);
-		
+
 		// tripleEDB(R, I, propertyConstant, C)
 		Atom tripleEDB_RIpC = Expressions.makeAtom(tripleEDB, r, i, propertyConstant, c);
 		
 		// require_second(S, propertyConstant, propertyConstant) :-
-		//	next(Q, R), next(R, S),
-		//	require(Q, propertyConstant, propertyConstant),
-		//	tripleEDB(R, I, propertyConstant, C),
+		//	tripleEDB(Q, I, propertyConstant, X),
 		//	tripleEDB(S, I, P, V),
 		//	unequal(propertyConstant, P)
-		Rule require1 = Expressions.makeRule(require_second_Spp, next_QR, next_RS, require_Qpp, tripleEDB_RIpC, tripleEDB_SIPV, unequal_pP);
+		//	next(R, S),
+		//	tripleEDB(R, I, propertyConstant, C),
+		//	next(T, R),
+		//	require(T, propertyConstant, propertyConstant)
+		Rule require1 = Expressions.makeRule(require_second_Spp, tripleEDB_QIpX, tripleEDB_SIPV, unequal_pP, next_RS, tripleEDB_RIpC, next_TR, require_Tpp);
 		rules.add(require1);
 		
 		// require_second(R, propertyConstant, propertyConstant)
 		Atom require_second_Rpp = Expressions.makeAtom(require_second, r, propertyConstant, propertyConstant);
 		
 		// require_second(S, propertyConstant, propertyConstant) :-
-		//	next(R, S),
-		//	require_second(R, propertyConstant, propertyConstant),
+		//	tripleEDB(Q, I, propertyConstant, X),
 		//	tripleEDB(S, I, P, V),
-		//	unequal(propertyConstant, P)
-		Rule require2 = Expressions.makeRule(require_second_Spp, next_RS, require_second_Rpp, tripleEDB_SIPV, unequal_pP);
+		//	unequal(propertyConstant, P),
+		//	next(R, S),
+		//	require_second(R, propertyConstant, propertyConstant)
+		Rule require2 = Expressions.makeRule(require_second_Spp, tripleEDB_QIpX, tripleEDB_SIPV, unequal_pP, next_RS, require_second_Rpp);
 		rules.add(require2);
 		
 		// tripleEDB(O, I, P, X)
