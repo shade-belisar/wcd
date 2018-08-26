@@ -86,20 +86,20 @@ public class ValueRequiresStatementCC extends ConstraintChecker {
 		Main.tripleSet.loadFirstFile(reasoner);
 		Main.tripleSet.loadNextFile(reasoner);
 		Main.tripleSet.loadLastFile(reasoner);
-
-		// Establishing inequality
-		InequalityHelper.setOrReset(reasoner);
-
-		Set<String> properties = new HashSet<String>();
-		Set<String> values = new HashSet<String>();
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
+		Set<String> inequalities = new HashSet<String>();
 		for (Map<String, Set<String>> value : configuration.values()) {
-			properties.addAll(value.keySet());
+			inequalities.addAll(value.keySet());
 			for (Set<String> set : value.values()) {
-				values.addAll(set);
+				inequalities.addAll(set);
 			}
 		}
-		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 2, properties);
-		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 3, values);
+		InequalityHelper.registerInequality(inequalities);
+		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 2);
+		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 3);
 	}
 
 	@Override

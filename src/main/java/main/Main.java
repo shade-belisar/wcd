@@ -233,6 +233,13 @@ public class Main {
 		if (!cmd.hasOption("noviolations")) {
 			try {
 				for(ConstraintChecker checker : checkers) {
+					checker.registerInequalities();
+				}
+				
+				InequalityHelper.prepareFiles();
+				logger.info("Prepared inequality files.");
+				
+				for(ConstraintChecker checker : checkers) {
 					StopWatch watch = new StopWatch();
 					watch.start();
 					checker.violations();
@@ -243,6 +250,8 @@ public class Main {
 						System.out.println(checker.getResultString());
 					
 				}
+				
+				InequalityHelper.delete();
 			} catch (ReasonerStateException e) {
 				logger.error("Reasoner was called in the wrong state.", e);
 			} catch (IOException e) {

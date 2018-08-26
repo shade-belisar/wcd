@@ -81,6 +81,10 @@ public class ConflictsWithCC extends ConstraintChecker {
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
 	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
+	}
 
 	@Override
 	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {

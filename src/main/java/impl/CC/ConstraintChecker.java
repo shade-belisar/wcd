@@ -125,12 +125,11 @@ public abstract class ConstraintChecker {
 	}
 	
 	public void violations() throws ReasonerStateException, IOException {
-		InequalityHelper.setOrReset(reasoner);
 		loadTripleSet();
 		logger.info("Loaded basic triple sets.");
 		prepareFacts();
 		logger.info("Loaded additional triple sets.");
-		InequalityHelper.load();
+		InequalityHelper.load(reasoner);
 		logger.info("Loaded inequalities (if any).");
 		
 		List<Rule> rulesToAdd = new ArrayList<Rule>();
@@ -143,7 +142,7 @@ public abstract class ConstraintChecker {
 			rulesToAdd.addAll(demandRules);
 			logger.info("Created " + demandRules.size() + " additional demand-rules.");
 		}
-		 
+
 		try {
 			prepareAndExecuteQueries(rulesToAdd, queries());
 		} catch (PrepareQueriesException e) {
@@ -241,8 +240,6 @@ public abstract class ConstraintChecker {
 				throw new PrepareQueriesException(internalError);
 			}
 		}
-
-		InequalityHelper.delete();
 	}
 	
 	public int getResultSize() {
@@ -266,6 +263,8 @@ public abstract class ConstraintChecker {
 	protected abstract void process(QuerySolution solution);
 	
 	abstract void prepareFacts() throws ReasonerStateException, IOException;
+	
+	public abstract void registerInequalities() throws IOException;
 	
 	protected abstract List<PropertyConstraintChecker> propertyCheckers() throws IOException;
 	

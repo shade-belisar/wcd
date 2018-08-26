@@ -69,7 +69,10 @@ public class MultiValueCC extends ConstraintChecker {
 		Main.tripleSet.loadFirstFile(reasoner);
 		Main.tripleSet.loadNextFile(reasoner);
 		Main.tripleSet.loadLastFile(reasoner);
-		
-		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 2, properties);
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
+		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 2);
 	}
 }

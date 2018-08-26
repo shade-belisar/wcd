@@ -78,13 +78,16 @@ public class AllowedUnitsCC extends ConstraintChecker {
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
 		Main.tripleSet.loadUnitsFile(reasoner);
-
-		InequalityHelper.setOrReset(reasoner);
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
 		Set<String> units = new HashSet<String>();
 		for (Set<String> unitsSet : allowedUnits.values()) {
 			units.addAll(unitsSet);
 		}
-		InequalityHelper.establishInequality(Main.tripleSet.getUnitsFile(), 1, units);
+		InequalityHelper.registerInequality(units);
+		InequalityHelper.registerInequality(Main.tripleSet.getUnitsFile(), 1);
 	}
 
 	@Override

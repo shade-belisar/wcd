@@ -57,8 +57,11 @@ public class DistinctValuesCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		InequalityHelper.setOrReset(reasoner);
-		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 0);
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
+		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 0);
 	}
 
 	@Override

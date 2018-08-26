@@ -81,6 +81,9 @@ public class NoneOfCC extends ConstraintChecker {
 	}
 
 	@Override
+	public void registerInequalities() throws IOException {
+	}
+	@Override
 	protected List<PropertyConstraintChecker> propertyCheckers() throws IOException {
 		List<PropertyConstraintChecker> result = new ArrayList<PropertyConstraintChecker>();
 		for (Map.Entry<String, HashSet<String>> entry : notAllowedValues.entrySet()) {

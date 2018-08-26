@@ -84,14 +84,17 @@ public class SingleValueCC extends ConstraintChecker {
 		Main.tripleSet.loadFirstQualifierFile(reasoner);
 		Main.tripleSet.loadNextQualifierFile(reasoner);
 		Main.tripleSet.loadLastQualifierFile(reasoner);
-
-		InequalityHelper.setOrReset(reasoner);
-		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 0);
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
 		Set<String> values = new HashSet<String>();
 		for (Set<String> valuesSet : propertiesAndSeparators.values()) {
 			values.addAll(valuesSet);
 		}
-		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 2, values);
+		InequalityHelper.registerInequality(values);
+		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 0);
+		InequalityHelper.registerInequality(Main.tripleSet.getQualifierFile(), 2);
 	}
 	
 	@Override

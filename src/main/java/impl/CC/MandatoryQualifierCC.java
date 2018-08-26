@@ -81,13 +81,16 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 		Main.tripleSet.loadFirstQualifierFile(reasoner);
 		Main.tripleSet.loadNextQualifierFile(reasoner);
 		Main.tripleSet.loadLastQualifierFile(reasoner);
-
-		InequalityHelper.setOrReset(reasoner);
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
 		Set<String> qualifierProperties = new HashSet<String>();
 		for (Set<String> propertySet : propertiesAndQualifiers.values()) {
 			qualifierProperties.addAll(propertySet);
 		}
-		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 1, qualifierProperties);
+		InequalityHelper.registerInequality(qualifierProperties);
+		InequalityHelper.registerInequality(Main.tripleSet.getQualifierFile(), 1);
 	}
 
 	@Override

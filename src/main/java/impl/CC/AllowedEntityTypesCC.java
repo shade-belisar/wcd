@@ -19,6 +19,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import impl.PCC.AllowedEntityTypesPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
+import utility.InequalityHelper;
 import utility.Utility;
 
 public class AllowedEntityTypesCC extends ConstraintChecker {
@@ -79,6 +80,10 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 	void prepareFacts() throws ReasonerStateException, IOException {
 		Main.tripleSet.loadItemsFile(reasoner);
 		Main.tripleSet.loadPropertiesFile(reasoner);	
+	}
+	
+	@Override
+	public void registerInequalities() {
 	}
 
 	@Override

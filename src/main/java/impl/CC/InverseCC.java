@@ -81,16 +81,17 @@ public class InverseCC extends ConstraintChecker {
 		Main.tripleSet.loadFirstFile(reasoner);
 		Main.tripleSet.loadNextFile(reasoner);
 		Main.tripleSet.loadLastFile(reasoner);
-
-		// Establishing inequality
-		InequalityHelper.setOrReset(reasoner);
-
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
 		Set<String> properties = new HashSet<String>();
 		for (Map.Entry<String, Set<String>> entry : configuration.entrySet()) {
 			properties.addAll(entry.getValue());
 		}
-		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 2, properties);
-		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 1, Main.tripleSet.getTripleFile(), 3);
+		InequalityHelper.registerInequality(properties);
+		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 1);
+		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 2);
 	}
 	
 	@Override

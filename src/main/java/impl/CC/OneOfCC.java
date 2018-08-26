@@ -80,14 +80,18 @@ public class OneOfCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		InequalityHelper.setOrReset(reasoner);
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
 		Set<String> values = new HashSet<String>();
 		for (Set<String> valuesSet : allowedValues.values()) {
 			values.addAll(valuesSet);
 		}
-		InequalityHelper.establishInequality(Main.tripleSet.getTripleFile(), 3, values);
-		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 2, values);
-		InequalityHelper.establishInequality(Main.tripleSet.getReferenceFile(), 2, values);
+		InequalityHelper.registerInequality(values);
+		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 3);
+		InequalityHelper.registerInequality(Main.tripleSet.getQualifierFile(), 2);
+		InequalityHelper.registerInequality(Main.tripleSet.getReferenceFile(), 2);
 	}
 
 	@Override

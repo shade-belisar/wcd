@@ -86,14 +86,18 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		InequalityHelper.setOrReset(reasoner);
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
 		Set<String> values = new HashSet<String>();
 		for (Map.Entry<String, Map<String, Set<String>>> entry1 : qualifiersAndValues.entrySet()) {
 			for (Map.Entry<String, Set<String>> entry2 : entry1.getValue().entrySet()) {
 				values.addAll(entry2.getValue());
 			}
 		}
-		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 2, values);
+		InequalityHelper.registerInequality(values);
+		InequalityHelper.registerInequality(Main.tripleSet.getQualifierFile(), 2);
 	}
 
 	@Override

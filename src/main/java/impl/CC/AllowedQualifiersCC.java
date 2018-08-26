@@ -79,12 +79,16 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		InequalityHelper.setOrReset(reasoner);
+	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
 		Set<String> qualifiers = new HashSet<String>();
 		for (Set<String> qualifierSet : allowedQualifiers.values()) {
 			qualifiers.addAll(qualifierSet);
 		}
-		InequalityHelper.establishInequality(Main.tripleSet.getQualifierFile(), 1, qualifiers);
+		InequalityHelper.registerInequality(qualifiers);
+		InequalityHelper.registerInequality(Main.tripleSet.getQualifierFile(), 1);
 	}
 
 	@Override

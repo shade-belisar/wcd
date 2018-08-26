@@ -79,6 +79,10 @@ public class ScopeCC extends ConstraintChecker {
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
 	}
+	
+	@Override
+	public void registerInequalities() throws IOException {
+	}
 
 	@Override
 	protected Set<Atom> queries() {

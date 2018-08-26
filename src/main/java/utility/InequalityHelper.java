@@ -55,8 +55,6 @@ public class InequalityHelper {
 	final static Predicate unequal_EDB = Expressions.makePredicate(UNEQUAL_EDB, 2);
 	public final static Predicate unequal = Expressions.makePredicate(UNEQUAL, 2);
 	
-	final static List<TripleSetFile> files = new ArrayList<>();
-	
 	// require_inequality(X, Y)
 	final static Atom require_inequality_XY = Expressions.makeAtom(require_inequality, x, y);
 	
@@ -69,71 +67,85 @@ public class InequalityHelper {
 	// unequal_IDB(X, Y) :- unequal_IDB(Y, X)
 	final static Rule inverse = Expressions.makeRule(Expressions.makeAtom(unequal, x, y), Expressions.makeAtom(unequal, y, x));
 	
-	static Reasoner reasoner;
+	final static List<Rule> rules = new ArrayList<>();
+	
+	final static Set<String> characters = new HashSet<String>();
+	
+	final static List<TripleSetFile> files = new ArrayList<>();
+	
+	final static Set<InequalityFileIndex> inequalityFileIndexes = new HashSet<>();
+	
+	final static Set<String> additionalInequalities = new HashSet<String>();
 	
 	public static Mode mode = Mode.ENCODED;
 	
-	public static void setOrReset(Reasoner reasoner_) {
-		reasoner = reasoner_;
+	public static void reset() {
+		characters.clear();
 		files.clear();
+		inequalityFileIndexes.clear();
+		additionalInequalities.clear();
+	} 
+	
+	public static void registerInequality(Set<String> inequalities) {
+		additionalInequalities.addAll(inequalities);
 	}
 	
-	public static void establishInequality(File inequalityFile, int inequalityIndex) throws ReasonerStateException, IOException {
-		establishInequality(inequalityFile, inequalityIndex, new HashSet<String>());
+	public static void registerInequality(File file, int index) {
+		inequalityFileIndexes.add(new InequalityFileIndex(file, index));
 	}
 	
-	public static void establishInequality(File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2) throws ReasonerStateException, IOException {
-		establishInequality(inequalityFile1, inequalityIndex1, inequalityFile2, inequalityIndex2, new HashSet<String>());
+	public static void prepareFiles() throws IOException {
+		switch (mode) {
+		case NAIVE:
+			naive();
+			break;
+		case ENCODED:
+			encoded(false);
+			break;
+		case DEMANDED:
+			encoded(true);
+			break;
+		}
 	}
 	
-	public static void establishInequality(File inequalityFile, int inequalityIndex, Set<String> additionalValues) throws ReasonerStateException, IOException {
-		establishInequality(inequalityFile, inequalityIndex, null, 0, additionalValues);
-	}
-	
-	public static void load() throws ReasonerStateException, IOException {
+	public static void load(Reasoner reasoner) throws ReasonerStateException, IOException {
+		reasoner.addRules(unequal_IDB_EDB, inverse);
+		
+		reasoner.addRules(rules);
+		
+		List<Atom> facts = allCharactersUnequal(characters);
+		reasoner.addFacts(facts);
+		
 		for (TripleSetFile tripleSetFile : files) {
 			tripleSetFile.loadFile(reasoner);
 		}
 	}
-	
-	public static void delete() throws IOException {
-		for (TripleSetFile tripleSetFile : files) {
-			tripleSetFile.getFile().delete();
-		}
-	}
-	
-	static void establishInequality(File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2, Set<String> additionalValues) throws ReasonerStateException, IOException {
-		reasoner.addRules(unequal_IDB_EDB, inverse);
-		
-		switch (mode) {
-		case NAIVE:
-			naive(inequalityFile1, inequalityIndex1, inequalityFile2, inequalityIndex2, additionalValues);
-			break;
-		case ENCODED:
-			encoded(inequalityFile1, inequalityIndex1, inequalityFile2, inequalityIndex2, additionalValues, false);
-			break;
-		case DEMANDED:
-			encoded(inequalityFile1, inequalityIndex1, inequalityFile2, inequalityIndex2, additionalValues, true);
-			break;
-		}
-	}
 
-	static Iterator<CSVRecord> iteratorFromFile(File file) throws IOException {
-		if (file == null)
-			return null;
-		return CSVFormat.DEFAULT.parse(new InputStreamReader(new GZIPInputStream(new FileInputStream(file)))).iterator();
-	}
+	static void naive () throws IOException {
+		TripleSetFile file = new TripleSetFile("unequal_naive", unequal_EDB); 
+		files.add(file);
 
-	static void naive (File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2, Set<String> additionalValues) throws ReasonerStateException, IOException {
-		List<String> fixedOrderValues = new ArrayList<String>(additionalValues);
+		List<String> fixedOrderValues = new ArrayList<String>(additionalInequalities);
 		
-		Iterator<String> firstIterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, fixedOrderValues.iterator());
+		List<Iterator<String>> firstIterators = new ArrayList<>();
+		for (InequalityFileIndex inequalityFile : inequalityFileIndexes) {
+			firstIterators.add(inequalityFile.getIterator());
+		}
+		firstIterators.add(fixedOrderValues.iterator());
+		
+		Iterator<String> firstIterator = new CombinedIterator<>(firstIterators);
 		
 		int first = 0;
 		while(firstIterator.hasNext()) {
 			String firstEntry = firstIterator.next();
 			
-			Iterator<String> secondIterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, fixedOrderValues.iterator());
+			List<Iterator<String>> secondIterators = new ArrayList<>();
+			for (InequalityFileIndex inequalityFile : inequalityFileIndexes) {
+				secondIterators.add(inequalityFile.getIterator());
+			}
+			secondIterators.add(fixedOrderValues.iterator());
+			
+			Iterator<String> secondIterator = new CombinedIterator<>(secondIterators);
 			
 			for (int second = 0; second <= first; second++) {
 				if (secondIterator.hasNext())
@@ -145,23 +157,21 @@ public class InequalityHelper {
 				if (secondEntry.equals(firstEntry))
 					continue;
 				
-				Constant firstConstant = Expressions.makeConstant(firstEntry);
-				Constant secondConstant = Expressions.makeConstant(secondEntry);
-				
-				reasoner.addFacts(Expressions.makeAtom(unequal_EDB, firstConstant, secondConstant));
+				file.write(firstEntry, secondEntry);
 			}
 			
 			first++;
 		}
 	}
 
-	static void encoded(File inequalityFile1, int inequalityIndex1, File inequalityFile2, int inequalityIndex2, Set<String> additionalValues, boolean demand) throws ReasonerStateException, IOException {
-		Iterator<String> iterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, additionalValues.iterator());
+	static void encoded(boolean demand) throws IOException {
+		List<Iterator<String>> iterators = new ArrayList<>();
+		for (InequalityFileIndex inequalityFile : inequalityFileIndexes) {
+			iterators.add(inequalityFile.getIterator());
+		}
+		iterators.add(additionalInequalities.iterator());
 		
-		Set<String> characters = new HashSet<String>();
-		characters.add(NONE);
-		
-		iterator = new CombinedIterator(iteratorFromFile(inequalityFile1), inequalityIndex1, iteratorFromFile(inequalityFile2), inequalityIndex2, additionalValues.iterator());
+		Iterator<String> iterator = new CombinedIterator<>(iterators);
 		
 		while (iterator.hasNext()) {
 			String string = iterator.next();
@@ -178,11 +188,9 @@ public class InequalityHelper {
 				i++;
 			}
 		}
-		List<Atom> facts = allCharactersUnequal(characters);
-		reasoner.addFacts(facts);
 	}
 	
-	static TripleSetFile getChunkFile(int chunk, boolean demand) throws IOException, ReasonerStateException {
+	static TripleSetFile getChunkFile(int chunk, boolean demand) throws IOException {
 		if (chunk < files.size())
 			return files.get(chunk);
 	
@@ -224,7 +232,7 @@ public class InequalityHelper {
 			body.add(inequality);
 
 			Rule unequal = Expressions.makeRule(unequal_XY, body.toArray(new Atom[body.size()]));
-			reasoner.addRules(unequal);
+			rules.add(unequal);
 		}
 		
 		return file;
@@ -284,6 +292,11 @@ public class InequalityHelper {
 		}
 		
 		return atoms;
+	}
+
+	public static void delete() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
