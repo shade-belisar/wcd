@@ -928,17 +928,35 @@ For qualifiers and reference there is no ID whose inequality could be checked. H
 \todo{Check if all reference-rules look exactly like the qualifier rules and cut them out if it is so.}
 
 \subsubsection{With separators}\label{subsubsec_with_separators}
-To find all violations under separators a number of things have to be considered. Only triples are eligible, since qualifiers cannot have further qualifier, and the order of qualifiers on constrained statements needs to be pre-processed as well since qualifier non-existence is relevant. The pattern needs to be applied for every separator, meaning the conjunction is: \(c = \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{separatorConstant})\) for each separator in \(S\).\\
+To find all violations under separators a number of things have to be considered. Only triples are eligible, since qualifiers cannot have further qualifier, and the order of qualifiers on constrained statements needs to be pre-processed as well since qualifier non-existence is relevant. The pattern needs to be applied for every separator, meaning the conjunction is
+\begin{equation*}
+c = \text{tripleEDB}(S, I, \text{propertyConstant}, C) \wedge \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{separatorConstant})
+\end{equation*}
+for each separator in \(S\).\\
 
-With qualifier non-existence established the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all qualifiers are either equal or non-existent. \(\forall X \subset S, Y = S \setminus X\) the following rule has to be added. Note that \(qualifierEDB(S, {X}, [X])\) denotes one atom for each element \(x \in X\) as introduced in section \ref{subsec_3_allowed_units} with \([X]\) representing a variable which is distinct for each atom unless they have the same \(x\). With the predicate does\_not\_have\([2]\) linking a statement ID to the separator it does not have via \(\text{does\_not\_have}(S, R) \leftarrow \text{last\_qualifier}(S, P, V) \wedge \text{require}(S, P, V, R)\) for brevity the rules are
+With qualifier non-existence established the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all qualifiers are either equal or non-existent. \(\forall X \subset S, Y = S \setminus X\) the following rule has to be added. Note that \(\text{predicate}(\{X\})\) denotes one atom for each element \(x \in X\) as introduced in section \ref{subsec_3_allowed_units}. With the predicate does\_not\_have\([2]\) linking a statement ID to the separator it does not have via 
+\begin{equation*}
+\begin{split}
+\text{does\_not\_have}(S, R) \leftarrow &\text{tripleEDB}(S, I, \text{propertyConstant}, C) \wedge \\
+&\text{last\_qualifier}(S, P, V) \wedge \text{require}(S, P, V, \text{propertyConstant}, R)
+\end{split}
+\end{equation*}
+and the predicate has\_same[2] linking two statement IDs to the separator for which the values are the same via
+\begin{equation*}
+\begin{split}
+\text{has\_same}(S, O, Q) \leftarrow &\text{tripleEDB}(S, I, \text{propertyConstant}, C) \wedge \\
+&\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+&\text{qualifierEDB}(S, Q, V) \wedge \text{qualifierEDB}(O, Q, V)
+\end{split}
+\end{equation*}
+ for brevity the rules are
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
-&\text{tripleEDB}(O, I, \text{propertyConstant}, W) \wedge \\
+&\text{tripleEDB}(O, I, \text{propertyConstant}, C) \wedge \\
 &\text{unequal}(S, O) \wedge \\
-&\text{qualifierEDB}(S, \{X\}, [X]) \wedge \\
-&\text{qualifierEDB}(O, \{X\}, [X]) \wedge \\
+&\text{has\_same}(S, O, \{X\}) \wedge \\
 &\text{does\_not\_have}(S, \{Y\}) \wedge \\
 &\text{does\_not\_have}(O, \{Y\})
 \end{split}
