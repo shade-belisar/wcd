@@ -26,8 +26,6 @@ import org.wikidata.wdtk.dumpfiles.EntityTimerProcessor;
 import org.wikidata.wdtk.dumpfiles.MwDumpFile;
 import org.wikidata.wdtk.dumpfiles.MwLocalDumpFile;
 
-import com.google.common.base.Stopwatch;
-
 import impl.CC.AllowedEntityTypesCC;
 import impl.CC.AllowedQualifiersCC;
 import impl.CC.AllowedUnitsCC;

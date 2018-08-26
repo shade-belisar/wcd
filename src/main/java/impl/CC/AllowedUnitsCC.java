@@ -1,6 +1,5 @@
 package impl.CC;
 
-import static utility.SC.unit;
 import static utility.SC.violation_qualifier_query;
 import static utility.SC.violation_reference_query;
 import static utility.SC.violation_triple_query;
@@ -17,13 +16,11 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.AllowedUnitsPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
-import utility.CsvGzFileDataSource;
 import utility.InequalityHelper;
 import utility.Utility;
 

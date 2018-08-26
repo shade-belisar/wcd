@@ -1,7 +1,5 @@
 package impl.CC;
 
-import static utility.SC.item;
-import static utility.SC.property;
 import static utility.SC.violation_triple_query;
 
 import java.io.IOException;
@@ -16,13 +14,11 @@ import org.apache.jena.query.QuerySolution;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.AllowedEntityTypesPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
-import utility.CsvGzFileDataSource;
 import utility.Utility;
 
 public class AllowedEntityTypesCC extends ConstraintChecker {

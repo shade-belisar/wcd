@@ -15,7 +15,6 @@ import static utility.SC.require_qualifier;
 import static utility.SC.s;
 import static utility.SC.tripleEDB;
 import static utility.SC.v;
-import static utility.SC.w;
 import static utility.SC.x;
 
 import java.io.IOException;
@@ -27,15 +26,12 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
-import org.semanticweb.vlog4j.core.model.api.Term;
-import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 import com.google.common.collect.Sets;
 
 import utility.InequalityHelper;
 import utility.StatementNonExistenceHelper;
-import utility.Utility;
 
 public class SingleValuePCC extends PropertyConstraintChecker {
 	

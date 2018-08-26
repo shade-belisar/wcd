@@ -3,6 +3,8 @@
  */
 package impl.CC;
 
+import static utility.SC.require_inequality;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,8 +39,6 @@ import main.Main;
 import utility.InequalityHelper;
 import utility.PrepareQueriesException;
 import utility.Utility;
-
-import static utility.SC.require_inequality;
 
 /**
  * @author adrian

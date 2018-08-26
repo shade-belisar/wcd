@@ -1,8 +1,5 @@
 package impl.CC;
 
-import static utility.SC.first;
-import static utility.SC.last;
-import static utility.SC.next;
 import static utility.SC.violation_triple_query;
 
 import java.io.IOException;
@@ -18,13 +15,11 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.ItemRequiresStatementPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
-import utility.CsvGzFileDataSource;
 import utility.InequalityHelper;
 import utility.Utility;
 

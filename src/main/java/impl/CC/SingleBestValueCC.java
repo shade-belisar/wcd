@@ -15,14 +15,11 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.PropertyConstraintChecker;
 import impl.PCC.SingleBestValuePCC;
-import impl.PCC.SingleValuePCC;
 import main.Main;
-import utility.CsvGzFileDataSource;
 import utility.InequalityHelper;
 import utility.Utility;
 
