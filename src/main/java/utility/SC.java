@@ -49,6 +49,7 @@ public class SC {
 	public final static String UNIT = "unit";
 	
 	public final static String DOES_NOT_HAVE = "does_not_have";
+	public final static String HAS_SAME = "has_same";
 	
 	public final static Predicate tripleEDB = Expressions.makePredicate(TRIPLE, 4);
 	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
@@ -84,7 +85,7 @@ public class SC {
 	public static final Predicate next = Expressions.makePredicate(NEXT, 2);
 	public static final Predicate last = Expressions.makePredicate(LAST, 2);
 	
-	public static final Predicate require_qualifier = Expressions.makePredicate(REQUIRE_QUALIFIER, 4);
+	public static final Predicate require_qualifier = Expressions.makePredicate(REQUIRE_QUALIFIER, 5);
 	
 	public static final Predicate first_qualifier = Expressions.makePredicate(FIRST_QUALIFIER, 3);
 	public static final Predicate next_qualifier = Expressions.makePredicate(NEXT_QUALIFIER, 6);
@@ -96,4 +97,5 @@ public class SC {
 	public final static Predicate unit = Expressions.makePredicate(UNIT, 2);
 	
 	public final static Predicate does_not_have = Expressions.makePredicate(DOES_NOT_HAVE, 2);
+	public final static Predicate has_same = Expressions.makePredicate(HAS_SAME, 3);
 }

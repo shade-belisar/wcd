@@ -52,19 +52,19 @@ public class MandatoryQualifierPCC extends PropertyConstraintChecker {
 			// unequal(P, requiredPropertyConstant)
 			Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredPropertyConstant);
 			
-			rules.addAll(StatementNonExistenceHelper.initRequireQualifier(requiredPropertyConstant, tripleEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
+			rules.addAll(StatementNonExistenceHelper.initRequireQualifier(propertyConstant, requiredPropertyConstant, tripleEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
 			
 			// last_qualifier(S, Q, C)
 			Atom last_qualifier_SPV = Expressions.makeAtom(last_qualifier, s, q, c);
 			
-			// require_qualifier(S, Q, C, requiredPropertyConstant)
-			Atom require_qualifier_SQCr = Expressions.makeAtom(require_qualifier, s, q, c, requiredPropertyConstant);
+			// require_qualifier(S, Q, C, propertyConstant, requiredPropertyConstant)
+			Atom require_qualifier_SQCpr = Expressions.makeAtom(require_qualifier, s, q, c, propertyConstant, requiredPropertyConstant);
 			
 			// violation_triple(S, I, propertyConstant, V) :-
 			//	tripleEDB(S, I, propertyConstant, V),
 			//	last_qualifier(S, Q, C),
 			//	require_qualifier(S, Q, C, requiredPropertyConstant)
-			Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, last_qualifier_SPV, require_qualifier_SQCr);
+			Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, last_qualifier_SPV, require_qualifier_SQCpr);
 			rules.add(violation);
 		}
 		
