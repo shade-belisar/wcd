@@ -1,9 +1,8 @@
 package impl.CC;
 
-import static utility.SC.first_qualifier;
-import static utility.SC.last_qualifier;
-import static utility.SC.next_qualifier;
 import static utility.SC.violation_triple_query;
+import static utility.SC.violation_qualifier_query;
+import static utility.SC.violation_reference_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,13 +17,11 @@ import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
-import org.semanticweb.vlog4j.core.reasoner.DataSource;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.PropertyConstraintChecker;
 import impl.PCC.SingleValuePCC;
 import main.Main;
-import utility.CsvGzFileDataSource;
 import utility.InequalityHelper;
 import utility.Utility;
 
@@ -57,7 +54,7 @@ public class SingleValueCC extends ConstraintChecker {
 	
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query);
+		return asSet(violation_triple_query, violation_qualifier_query, violation_reference_query);
 		//return asSet(Expressions.makeAtom(tripleEDB, s, i, p, v));
 	}
 	
