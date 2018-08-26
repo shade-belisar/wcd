@@ -47,6 +47,7 @@ public class SC {
 	public final static String PROPERTY = "property";
 	
 	public final static String UNIT = "unit";
+	public final static String RANK = "rank";
 	
 	public final static String DOES_NOT_HAVE = "does_not_have";
 	public final static String HAS_SAME = "has_same";
@@ -95,6 +96,7 @@ public class SC {
 	public final static Predicate property = Expressions.makePredicate(PROPERTY, 1);
 	
 	public final static Predicate unit = Expressions.makePredicate(UNIT, 2);
+	public final static Predicate rank = Expressions.makePredicate(RANK, 2);
 	
 	public final static Predicate does_not_have = Expressions.makePredicate(DOES_NOT_HAVE, 2);
 	public final static Predicate has_same = Expressions.makePredicate(HAS_SAME, 3);

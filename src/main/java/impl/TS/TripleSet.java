@@ -16,6 +16,7 @@ import org.wikidata.wdtk.datamodel.interfaces.SnakGroup;
 import org.wikidata.wdtk.datamodel.interfaces.Statement;
 import org.wikidata.wdtk.datamodel.interfaces.StatementDocument;
 import org.wikidata.wdtk.datamodel.interfaces.StatementGroup;
+import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import main.Main;
@@ -35,6 +36,7 @@ public class TripleSet implements EntityDocumentProcessor {
 	TripleSetFile propertiesFile;
 	
 	TripleSetFile unitsFile;
+	TripleSetFile ranksFile;
 	
 	TripleSetFile firstFile;
 	TripleSetFile nextFile;
@@ -61,6 +63,7 @@ public class TripleSet implements EntityDocumentProcessor {
 		propertiesFile = new TripleSetFile("properties", SC.property);
 		
 		unitsFile = new TripleSetFile("units", SC.unit);
+		ranksFile = new TripleSetFile("ranks", SC.rank);
 		
 		firstFile = new TripleSetFile("first", SC.first);
 		nextFile = new TripleSetFile("next", SC.next);
@@ -97,6 +100,10 @@ public class TripleSet implements EntityDocumentProcessor {
 		return unitsFile.getFile();
 	}
 	
+	public File getRanksFile() throws IOException {
+		return ranksFile.getFile();
+	}
+	
 	public void loadTripleFile(Reasoner reasoner) throws IOException, ReasonerStateException {
 		tripleFile.loadFile(reasoner);
 	}
@@ -119,6 +126,10 @@ public class TripleSet implements EntityDocumentProcessor {
 	
 	public void loadUnitsFile(Reasoner reasoner) throws IOException, ReasonerStateException {
 		unitsFile.loadFile(reasoner);
+	}
+	
+	public void loadRanksFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		ranksFile.loadFile(reasoner);
 	}
 	
 	public void loadFirstFile(Reasoner reasoner) throws IOException, ReasonerStateException {
@@ -193,6 +204,10 @@ public class TripleSet implements EntityDocumentProcessor {
 		}
 	}
 	
+	void processRank(String id, StatementRank rank) {
+		ranksFile.write(id, rank.toString());
+	}
+	
 	public void processStatementDocument(StatementDocument statementDocument) {
 		String subject = statementDocument.getEntityId().getIri();
 		for (StatementGroup	sg : statementDocument.getStatementGroups()) {
@@ -200,12 +215,14 @@ public class TripleSet implements EntityDocumentProcessor {
 			for (Statement statement : sg) {
 				String id = statement.getStatementId();
 				Value value = statement.getValue();
+				StatementRank rank = statement.getRank();
 				String object = "";
 				if (value != null) {
 					object = value.accept(new OutputValueVisitor());					
 				}
 				processTriple(id, subject, predicate, object);
 				processUnit(object, value);
+				processRank(id, rank);
 				
 				for (SnakGroup qualifier : statement.getClaim().getQualifiers()) {
 					String qualifier_predicate = qualifier.getProperty().getIri();
@@ -263,6 +280,7 @@ public class TripleSet implements EntityDocumentProcessor {
 		propertiesFile.close();
 		
 		unitsFile.close();
+		ranksFile.close();
 		
 		firstFile.close();
 		nextFile.close();
