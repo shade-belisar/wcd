@@ -116,10 +116,8 @@ public abstract class ConstraintChecker {
 		while (results.hasNext()) {
 			QuerySolution solution = results.next();
 			//String property = solution.get("item").asResource().getLocalName();
-			//if (!(property.equals("P103"))) 
-			//	continue;
-
-			process(solution);
+			//if (property.equals("P19") || property.equals("P209")) 
+				process(solution);
 		}       
 
 		qexec.close();
