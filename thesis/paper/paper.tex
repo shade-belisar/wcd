@@ -453,6 +453,8 @@ The single best value constraint requires that only one constrained statement pe
 \hline
 Requirement & item statement rank \\
 \hline
+Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
+\hline
 Violation & \makecell{items with two constrained statements with rank preferred} \\
 \hline
 Dependency & all item statements and their rank \\
@@ -983,7 +985,7 @@ The single best value constraint, like the single value constraint (section \ref
 
 \subsubsection{No separators}
 If the separator set is empty, the violation simply occurs if there are two constrained statements on the same item with the preferred rank. Thus the equation \ref{eq_no_separators_triple} is expanded to
-\begin{equation}
+\begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
@@ -992,7 +994,7 @@ If the separator set is empty, the violation simply occurs if there are two cons
 &\text{rank}(O, \text{preferredRankConstant}) \wedge \\
 &\text{unequal}(S, O)
 \end{split}
-\end{equation}
+\end{equation*}
 
 \subsubsection{With separators}
 As in the case above, the qualifier non-existence and violation rules are very similar to single value. The only change is the addition of the rank requirements as shown below.
@@ -1004,8 +1006,7 @@ As in the case above, the qualifier non-existence and violation rules are very s
 &\text{tripleEDB}(O, I, \text{propertyConstant}, W) \wedge \\
 &\text{rank}(O, \text{preferredRankConstant}) \wedge \\
 &\text{unequal}(S, O) \wedge \\
-&\text{qualifierEDB}(S, \{X\}, [X]) \wedge \\
-&\text{qualifierEDB}(O, \{X\}, [X]) \wedge \\
+&\text{has\_same}(S, O, \{X\}) \wedge \\
 &\text{does\_not\_have}(S, \{Y\}) \wedge \\
 &\text{does\_not\_have}(O, \{Y\})
 \end{split}

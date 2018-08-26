@@ -42,6 +42,7 @@ import impl.CC.NoneOfCC;
 import impl.CC.OneOfCC;
 import impl.CC.OneOfQualifierValueCC;
 import impl.CC.ScopeCC;
+import impl.CC.SingleBestValueCC;
 import impl.CC.SingleValueCC;
 import impl.CC.SymmetricCC;
 import impl.CC.ValueRequiresStatementCC;
@@ -195,6 +196,9 @@ public class Main {
 					break;
 				case "mandatoryqualifier":
 					checkers.add(new MandatoryQualifierCC());
+					break;
+				case "singlebestvalue":
+					checkers.add(new SingleBestValueCC());
 					break;
 				default:
 					System.out.println("Constraint " + constraintName + " is unknown.");
