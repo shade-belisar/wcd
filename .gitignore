@@ -25,5 +25,5 @@ resources/tripleSets/
 
 #dumpfiles
 dumpfiles/
-
-
+/tools/summary.tsv
+/tools/log
