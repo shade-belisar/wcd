@@ -88,7 +88,7 @@ Finally the transitive closure of this relation can be derived with
 \todo[inline]{Should I explain the chase? And in what detail...}
 \section{Representation}
 To model the basic representation of triples, qualifiers and references three predicates are introduced.\\
-tripleEDB\([4]\) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either an item ID or a string-representation of the data value.\\
+statementEDB\([4]\) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either an item ID or a string-representation of the data value.\\
 qualifierEDB\([3]\) represent the qualifiers on a given statement ID with their respective property id and the value as usual. ReferenceEDB\([4]\) represents the statement ID, the reference hash, property id and the value.\\
 
 Additional predicates modelling different pre-processing steps are explained in chapter \ref{cha_rules}.
@@ -191,7 +191,7 @@ Dependency & constrained statement, qualifier or reference \\
 \end{tabularx}
 \end{table}
 
-Since only three possibilities exist, this is equivalent to forbidding all other possibilities and the rules are simple mapping all of tripleEDB, qualifierEDB and referenceEDB with the constrained property that are not allowed.
+Since only three possibilities exist, this is equivalent to forbidding all other possibilities and the rules are simple mapping all of statementEDB, qualifierEDB and referenceEDB with the constrained property that are not allowed.
 
 \subsection{Conflicts-with (Q21502838)}
 The conflicts with constraint forbids either certain statements or statements with a specific property on constrained items.
@@ -210,7 +210,7 @@ Dependency & all item statements \\
 \hline
 \end{tabularx}
 \end{table}
-The rule modelling can simply be done by choosing all tripleEDB with the constrained property and then all tripleEDB on the same item with the conflicting property, specifying the values as well if necessary.
+The rule modelling can simply be done by choosing all statementEDB with the constrained property and then all statementEDB on the same item with the conflicting property, specifying the values as well if necessary.
 
 \subsection{Allowed entity types (Q52004125)}
 The allowed entity types constraint limits if a property may be used on an item, a property or a lexeme, although lexemes are not yet deployed.
@@ -230,7 +230,7 @@ Dependency & constrained statement and entity type of the subject \\
 \end{tabularx}
 \end{table}
 
-Since there are only three options (and only two in use), violations can be found without inequality by finding the tripleEDB with the constrained property whose subject is of the type that is not allowed, meaning either wikibase item or wikibase property.
+Since there are only three options (and only two in use), violations can be found without inequality by finding the statementEDB with the constrained property whose subject is of the type that is not allowed, meaning either wikibase item or wikibase property.
 
 \subsection{None of (Q52558054)}
 The none of constraint restricts the values that the property may refer to by listing a set of values as forbidden.
@@ -250,7 +250,7 @@ Dependency & constrained statement \\
 \end{tabularx}
 \end{table}
 
-Modelling this constraint is very straightforward, since each forbidden value forms a property-value pair with the constrained statement that may not exists. Thus a violations is a tripleEDB with the constrained statement and a forbidden value.
+Modelling this constraint is very straightforward, since each forbidden value forms a property-value pair with the constrained statement that may not exists. Thus a violations is a statementEDB with the constrained statement and a forbidden value.
 
 \subsection{Distinct values (Q21502410)}
 The distinct values constraint forbids the existence of two constrained statements with the same value.
@@ -268,7 +268,7 @@ Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
-To model the distinct values constraint it is necessary to find triples tripleEDB with the constrained property and the same value whose statement id is unequal. In theory the constraint can also be applied to qualifiers and references by setting the respective value on a constraint scope (P4680) qualifier. However, there is currently no such case and will therefore not be regarded.
+To model the distinct values constraint it is necessary to find statements statementEDB with the constrained property and the same value whose statement id is unequal. In theory the constraint can also be applied to qualifiers and references by setting the respective value on a constraint scope (P4680) qualifier. However, there is currently no such case and will therefore not be regarded.
 
 \subsection{Allowed units (Q21514353)}
 The allowed units constraint specifies that a constrained statement may only have a unit that is in a set of specific units.
@@ -290,7 +290,7 @@ Rule features & inequality \\
 \end{tabularx}
 \end{table}
 
-Modelling the constraint requires a predicate associating the value or the statement with its unit and inequality between every unit and all allowed units. Then a violation can be found by finding all tripleEDB, qualifierEDB and referenceEDB with the constrained property and a unit unequal to all allowed units. Theoretically some of these can be excluded by using the constraint scope (P4680) qualifier on the constraint but there is no current case where this is done.
+Modelling the constraint requires a predicate associating the value or the statement with its unit and inequality between every unit and all allowed units. Then a violation can be found by finding all statementEDB, qualifierEDB and referenceEDB with the constrained property and a unit unequal to all allowed units. Theoretically some of these can be excluded by using the constraint scope (P4680) qualifier on the constraint but there is no current case where this is done.
 
 \subsection{Allowed qualifiers (Q21510851)}
 The allowed qualifiers constraint specifies that only a limited set of properties may be used as qualifiers on a constrained statement.
@@ -312,7 +312,7 @@ Rule features & inequality \\
 \end{tabularx}
 \end{table}
 
-To represent a violation of this constraint in datalog inequality between all specified allowed qualifiers and the properties of the qualifiers on constrained statements is required. A tripleEDB with the constrained property and a qualifierEDB on that statement with a property different from all allowed qualifiers would violate the constraint.
+To represent a violation of this constraint in datalog inequality between all specified allowed qualifiers and the properties of the qualifiers on constrained statements is required. A statementEDB with the constrained property and a qualifierEDB on that statement with a property different from all allowed qualifiers would violate the constraint.
 
 \subsection{One-of (Q21510859)}
 The one-of constraint limits the values a property may use to a set of given values.
@@ -334,7 +334,7 @@ Rule features & inequality \\
 \end{tabularx}
 \end{table}
 
-Modelling the one-of constraint requires a rule finding a tripleEDB with the constrained property whose value is unequal to all allowed values, meaning the inequality between each value of constrained statements and all allowed values must be given.
+Modelling the one-of constraint requires a rule finding a statementEDB with the constrained property whose value is unequal to all allowed values, meaning the inequality between each value of constrained statements and all allowed values must be given.
 
 \subsection{One-of qualifier value (Q52712340)}
 The one-of qualifier value constraint restricts which values may be used on a qualifier with a given property on a constrained statement.
@@ -357,7 +357,7 @@ Rule features & inequality \\
 \end{tabularx}
 \end{table}
 
-The constraint can be modelled if the inequality between a value of a qualifier property with all qualifier values is given. The violations could then be found by taking a tripleEDB with the constrained property and a qualifier with the qualifier property on the former statement whose value is unequal to all qualifier values.
+The constraint can be modelled if the inequality between a value of a qualifier property with all qualifier values is given. The violations could then be found by taking a statementEDB with the constrained property and a qualifier with the qualifier property on the former statement whose value is unequal to all qualifier values.
 
 \subsection{Item requires statement (Q21503247)}\label{subsec_2_item_requires_statement}
 The item requires statement constraint requires an additional statement on an item with a statement using the constrained property, possibly also using a specific value from the list of allowed values.
@@ -379,7 +379,7 @@ Rule features & negation \\
 \end{table}
 
 An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the required property as predicate, or (if allowed values are specified) b2) has only statement using required property as predicate that do not use one of the allowed values as value.\\
-While condition a) can easily be tested by a tripleEDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is addressed in section [?].
+While condition a) can easily be tested by a statementEDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is addressed in section [?].
 
 \subsection{Value requires statement (Q21510864)}\label{subsec_2_value_requires_statement}
 The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_2_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
@@ -431,7 +431,7 @@ Rule features & inequality, partially negation \\
 
 If no separators are specified, two triple form a violation of this constraint if they a) belong to the same item, b) have the same constrained property, and c) have the same value.
 If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values or an unequal number of separator qualifiers.\\
-In the case without separators the modelling idea would be to find two triples tripleEDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers equal or non-existent.
+In the case without separators the modelling idea would be to find two triples statementEDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers equal or non-existent.
 \todo{Since I found the details via looking at the source code, should/can I cite that?}
 
 \subsection{Mandatory qualifier (Q21510856)}
@@ -454,7 +454,7 @@ Rule features & negation \\
 \end{tabularx}
 \end{table}
 
-To find violations of this constraint one would find a tripleEDB with the constrained property, but where no qualifierEDB for the statement and with the required property exists.
+To find violations of this constraint one would find a statementEDB with the constrained property, but where no qualifierEDB for the statement and with the required property exists.
 
 \subsection{Single best value (Q52060874)}
 The single best value constraint requires that only one constrained statement per item has the rank preferred.
@@ -548,7 +548,7 @@ this would increase the amount of facts loaded significantly while almost not re
 The task for each constraint is thus: Given the constraint and a constrained property, potentially with qualifiers, which rule finds all violations of the rule in a given set of triples, qualifiers and references if applicable? The necessary preprocessing and filtering will be listed and the amount of rules necessary to model the constrained depending on the number of qualifiers given.
 
 \subsection{General approach}
-The goal outlined above is to identify violations of constrained properties, meaning a triple, qualifier, or reference with the constrained property will always be part of the rule body. With the exception of Property scope all constraints work on triples. The atom that will thus always be included is \(\text{tripleEDB}(X, Y, \text{propertyConstant}, Z)\).\\
+The goal outlined above is to identify violations of constrained properties, meaning a triple, qualifier, or reference with the constrained property will always be part of the rule body. With the exception of Property scope all constraints work on triples. The atom that will thus always be included is \(\text{statementEDB}(X, Y, \text{propertyConstant}, Z)\).\\
 
 Every constraint violation depends on some constant in relation to the constrained statement. These requirements have been roughly identified in the previous chapter and will now be specified as rules. This step can include expanding the pre-processing to load more data such as units for quantities.\\
 
@@ -566,7 +566,7 @@ where \(S\) specifies the statement ID, \(I\) the item, \(P\) the property, and 
 \subsection{Property scope (Q53869507)}
 The property scope constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough.
 A violation for a property scope constraint is
-\[\text{violation\_triple}(S, I, \text{propertyConstant}, V) \leftarrow \text{tripleEDB}(S, I, \text{propertyConstant}, V)\]
+\[\text{violation\_triple}(S, I, \text{propertyConstant}, V) \leftarrow \text{statementEDB}(S, I, \text{propertyConstant}, V)\]
 \[\text{violation\_qualifier}(S, \text{propertyConstant}, V) \leftarrow \text{qualifierEDB}(S, \text{propertyConstant}, V)\]
 \[\text{violation\_reference}(S, \text{propertyConstant}, V) \leftarrow \text{referenceEDB}(S, H, \text{propertyConstant}, V)\]
 depending on if as main value, as qualifier, or as reference was not set in the qualifiers.\\
@@ -578,16 +578,16 @@ The conflicts-with constraint is violated if another statement on the same item 
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge\\
-&\text{tripleEDB}(O, I, \text{conflictingPropertyConstant}, C)
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge\\
+&\text{statementEDB}(O, I, \text{conflictingPropertyConstant}, C)
 \end{split}
 \end{equation*}
 for constraints with no conflicting values specified or one
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge\\
-&\text{tripleEDB}(O, I, \text{conflictingPropertyConstant}, \text{conflictingValueConstant})
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge\\
+&\text{statementEDB}(O, I, \text{conflictingPropertyConstant}, \text{conflictingValueConstant})
 \end{split}
 \end{equation*}
 for each conflicting value if specified.\\
@@ -597,13 +597,13 @@ The allowed entity types constraint is violated by a statement with the wrong en
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{item}(I)
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{item}(I)
 \end{split}
 \end{equation*}
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{property}(I)
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{property}(I)
 \end{split}
 \end{equation*}
 
@@ -612,7 +612,7 @@ The none of constraint simply forbids certain values for properties, thus effect
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, \text{forbiddenValueConstant})
+&\text{statementEDB}(S, I, \text{propertyConstant}, \text{forbiddenValueConstant})
 \end{split}
 \end{equation*}
 \begin{equation*}
@@ -707,8 +707,8 @@ While finding constrained statements with the same value is straightforward, vio
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
-&\text{tripleEDB}(O, X, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(O, X, \text{propertyConstant}, V) \wedge \\
 &\text{unequal}(S, O)
 \end{split}
 \end{equation*}
@@ -719,7 +719,7 @@ The allowed units constraint needs to determine inequality between all allowed u
 
 To determine if a violation occurred the unit to the constrained statement needs to be found. This is done via the unit-predicate as below
 \begin{equation*}
-\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{unit}(V, U)
+\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{unit}(V, U)
 \end{equation*}
 with qualifiers and references working on the same lines.
 
@@ -729,7 +729,7 @@ Violation are thus
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
 \end{split}
 \end{equation*}
@@ -753,7 +753,7 @@ The allowed qualifiers constraint is violated if a qualifier on a constrained st
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{qualifierEDB}(S, Q, O) \wedge \text{unequal}(\{A\}, Q)
 \end{split}
 \end{equation*}
@@ -763,7 +763,7 @@ The one-of constraint fits in the pattern established by the previous two constr
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
 \end{equation*}
 \begin{equation*}
@@ -784,7 +784,7 @@ The one-of qualifier value constraint is violated if a constrained statement has
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{qualifierEDB}(S, \text{qualifierProperty}, O) \wedge \text{unequal}(\{A\}, O)
 \end{split}
 \end{equation*}
@@ -820,23 +820,23 @@ If the last statement of an item or the last qualifier of a statement has requir
 The item requires statement constraint requires the pre-processing of all item statements. Additionally, inequality between all properties of item statements and the required property as well as between all values and the allowed values has to be established. It occurs in two varieties, depending on if allowed values have been specified or not. The required term \(t\) is the  required property. Without separators the conjunction is
 \begin{equation*}
 \begin{split}
-c_1 = &\text{tripleEDB}(Q, I, \text{propertyConstant}, X) \wedge \\
-&\text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
+c_1 = &\text{statementEDB}(Q, I, \text{propertyConstant}, X) \wedge \\
+&\text{statementEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
 \end{split}
 \end{equation*} \(\)
 If a set of allowed values \(A\) has been specified, a second set of require-rules have to be introduced with
 \begin{equation*}
 \begin{split}
-c_2 = &\text{tripleEDB}(Q, I, \text{propertyConstant}, X) \wedge \\
-&\text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+c_2 = &\text{statementEDB}(Q, I, \text{propertyConstant}, X) \wedge \\
+&\text{statementEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
 \end{equation*}
 Note that the first set of rules is still required, since the preceding statements do not need to have the required property. In both cases violations can be found with
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
-&\text{tripleEDB}(O, I, P, X) \wedge \text{last}(O, I) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(O, I, P, X) \wedge \text{last}(O, I) \wedge \\
 &\text{require}(O, \text{propertyConstant}, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
@@ -845,22 +845,22 @@ Note that the first set of rules is still required, since the preceding statemen
 The value requires statement constraint is syntactically very similar to the previous item requires statement constraint. Instead of requiring a statement on the item of a constrained statement it requires it on the value. The pre-processing changes to extracting all value statements along the constrained statements and ordering them. Inequality need to be computed between all properties and all values on value statements. The conjunctions change in the first triple and are:
 \begin{equation*}
 \begin{split}
-c_1 = &\text{tripleEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
-&\text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
+c_1 = &\text{statementEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
+&\text{statementEDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
 \end{split}
 \end{equation*} \(\)
 \begin{equation*}
 \begin{split}
-c_2 = &\text{tripleEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
-&\text{tripleEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+c_2 = &\text{statementEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
+&\text{statementEDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
 \end{equation*}
 The final violation rule would then be:
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
-&\text{tripleEDB}(O, V, P, X) \wedge \text{last}(O, V) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(O, V, P, X) \wedge \text{last}(O, V) \wedge \\
 &\text{require}(O, \text{propertyConstant}, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
@@ -869,15 +869,15 @@ The final violation rule would then be:
 The inverse constraint is similar to the value requires statement constraint in requiring a statement on a constrained value with a specific property. However, instead of putting no constraint or a list of fixed values on the required statements value it set a relative requirement: the constrained item, meaning \(t = R\). The pre-processing and inequalities thus remain the same, but the conjunctions change to 
 \begin{equation*}
 \begin{split}
-c_1 = &\text{tripleEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
-&\text{tripleEDB}(S, I, P, V) \wedge \\
+c_1 = &\text{statementEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
+&\text{statementEDB}(S, I, P, V) \wedge \\
 &\text{unequal}(\text{inversePropertyConstant}, P)
 \end{split}
 \end{equation*}
 \begin{equation*}
 \begin{split}
-c_2 = &\text{tripleEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
-&\text{tripleEDB}(S, I, \text{inversePropertyConstant}, V) \wedge \\
+c_2 = &\text{statementEDB}(Q, R, \text{propertyConstant}, I) \wedge \\
+&\text{statementEDB}(S, I, \text{inversePropertyConstant}, V) \wedge \\
 &\text{unequal}(R, V)
 \end{split}
 \end{equation*}
@@ -889,15 +889,15 @@ The symmetric constraint can be translated exactly as the inverse constraint if 
 The multi-value constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Pre-processing extracts all items statements and inequality between all item statement properties as usual and the conjunction is 
 \begin{equation*}
 \begin{split}
-c = &\text{tripleEDB}(Q, I, \text{propertyConstant}, X) \wedge \\
-&\text{tripleEDB}(S, I, P, V) \wedge \text{unequal}(\text{propertyConstant}, P)
+c = &\text{statementEDB}(Q, I, \text{propertyConstant}, X) \wedge \\
+&\text{statementEDB}(S, I, P, V) \wedge \text{unequal}(\text{propertyConstant}, P)
 \end{split}
 \end{equation*}
 The predicate require\_second\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found:
 \begin{equation*}
 \begin{split}
 \text{require\_second}&(S, \text{propertyConstant}, \text{propertyConstant}) \leftarrow \\
-&\text{next}(R, S) \wedge \text{tripleEDB}(R, I, \text{propertyConstant}, C) \wedge \\
+&\text{next}(R, S) \wedge \text{statementEDB}(R, I, \text{propertyConstant}, C) \wedge \\
 &\text{next}(Q, R) \wedge \text{require}(Q, \text{propertyConstant}, \text{propertyConstant})  \wedge c
 \end{split}
 \end{equation*}
@@ -917,8 +917,8 @@ If the separator set is empty, the violation simply occurs if there are two cons
 \begin{equation}\label{eq_no_separators_triple}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
-&\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(O, I, \text{propertyConstant}, X) \wedge \\
 &\text{unequal}(S, O)
 \end{split}
 \end{equation}
@@ -944,22 +944,22 @@ For qualifiers and reference there is no ID whose inequality could be checked. H
 \subsubsection{With separators}\label{subsubsec_with_separators}
 To find all violations under separators a number of things have to be considered. Only triples are eligible, since qualifiers cannot have further qualifier, and the order of qualifiers on constrained statements needs to be pre-processed as well since qualifier non-existence is relevant. The pattern needs to be applied for every separator, meaning the conjunction is
 \begin{equation*}
-c = \text{tripleEDB}(S, I, \text{propertyConstant}, C) \wedge \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{separatorConstant})
+c = \text{statementEDB}(S, I, \text{propertyConstant}, C) \wedge \text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{separatorConstant})
 \end{equation*}
 for each separator in \(S\).\\
 
 With qualifier non-existence established the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all qualifiers are either equal or non-existent. \(\forall X \subset S, Y = S \setminus X\) the following rule has to be added. Note that \(\text{predicate}(\{X\})\) denotes one atom for each element \(x \in X\) as introduced in section \ref{subsec_3_allowed_units}. With the predicate does\_not\_have\([2]\) linking a statement ID to the separator it does not have via 
 \begin{equation*}
 \begin{split}
-\text{does\_not\_have}(S, R) \leftarrow &\text{tripleEDB}(S, I, \text{propertyConstant}, C) \wedge \\
+\text{does\_not\_have}(S, R) \leftarrow &\text{statementEDB}(S, I, \text{propertyConstant}, C) \wedge \\
 &\text{last\_qualifier}(S, P, V) \wedge \text{require}(S, P, V, \text{propertyConstant}, R)
 \end{split}
 \end{equation*}
 and the predicate has\_same[2] linking two statement IDs to the separator for which the values are the same via
 \begin{equation*}
 \begin{split}
-\text{has\_same}(S, O, Q) \leftarrow &\text{tripleEDB}(S, I, \text{propertyConstant}, C) \wedge \\
-&\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+\text{has\_same}(S, O, Q) \leftarrow &\text{statementEDB}(S, I, \text{propertyConstant}, C) \wedge \\
+&\text{statementEDB}(O, I, \text{propertyConstant}, X) \wedge \\
 &\text{qualifierEDB}(S, Q, V) \wedge \text{qualifierEDB}(O, Q, V)
 \end{split}
 \end{equation*}
@@ -967,8 +967,8 @@ and the predicate has\_same[2] linking two statement IDs to the separator for wh
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
-&\text{tripleEDB}(O, I, \text{propertyConstant}, C) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(O, I, \text{propertyConstant}, C) \wedge \\
 &\text{unequal}(S, O) \wedge \\
 &\text{has\_same}(S, O, \{X\}) \wedge \\
 &\text{does\_not\_have}(S, \{Y\}) \wedge \\
@@ -980,7 +980,7 @@ and the predicate has\_same[2] linking two statement IDs to the separator for wh
 The mandatory qualifier constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. All constrained statements and their qualifiers have to be extracted and the order of the qualifiers pre-processed. Inequality must be established between all qualifier properties and the conjunction is 
 \begin{equation*}
 \begin{split}
-c = &\text{tripleEDB}(S, I, \text{propertyConstant}, C) \wedge \\
+c = &\text{statementEDB}(S, I, \text{propertyConstant}, C) \wedge \\
 &\text{qualifierEDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
@@ -988,7 +988,7 @@ With the usual require-pattern for qualifiers and the does\_not\_have rule added
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \text{does\_not\_have}(S, \text{requiredPropertyConstant})
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{does\_not\_have}(S, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
 
@@ -1000,9 +1000,9 @@ If the separator set is empty, the violation simply occurs if there are two cons
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{rank}(S, \text{preferredRankConstant}) \wedge \\
-&\text{tripleEDB}(O, I, \text{propertyConstant}, X) \wedge \\
+&\text{statementEDB}(O, I, \text{propertyConstant}, X) \wedge \\
 &\text{rank}(O, \text{preferredRankConstant}) \wedge \\
 &\text{unequal}(S, O)
 \end{split}
@@ -1013,9 +1013,9 @@ As in the case above, the qualifier non-existence and violation rules are very s
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{tripleEDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{rank}(S, \text{preferredRankConstant}) \wedge \\
-&\text{tripleEDB}(O, I, \text{propertyConstant}, W) \wedge \\
+&\text{statementEDB}(O, I, \text{propertyConstant}, W) \wedge \\
 &\text{rank}(O, \text{preferredRankConstant}) \wedge \\
 &\text{unequal}(S, O) \wedge \\
 &\text{has\_same}(S, O, \{X\}) \wedge \\
