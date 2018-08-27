@@ -3,6 +3,7 @@ package impl.PCC;
 import static utility.SC.c;
 import static utility.SC.does_not_have;
 import static utility.SC.has_same;
+import static utility.SC.g;
 import static utility.SC.i;
 import static utility.SC.last_qualifier;
 import static utility.SC.o;
@@ -63,8 +64,8 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 		// unequal(V, X)
 		Atom unequal_VX = Expressions.makeAtom(InequalityHelper.unequal, v, x);
 		
-		// referenceEDB(S, propertyConstant, X)
-		Atom referenceEDB_SpX = Expressions.makeAtom(referenceEDB, s, propertyConstant, x);
+		// referenceEDB(S, G, propertyConstant, X)
+		Atom referenceEDB_SGpX = Expressions.makeAtom(referenceEDB, s, g, propertyConstant, x);
 		
 		if (separators.size() == 0) {
 			// violation_triple(S, I, propertyConstant, V) :-
@@ -81,11 +82,11 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			Rule violationQualifier = Expressions.makeRule(violation_qualifier_SpV, qualifierEDB_SpV, qualifierEDB_SpX, unequal_VX);
 			rules.add(violationQualifier);
 			
-			// violation_reference(S, propertyConstant, V) :-
-			//	referenceEDB(S, propertyConstant, V),
-			//	referenceEDB(S, propertyConstant, X),
+			// violation_reference(S, H, propertyConstant, V) :-
+			//	referenceEDB(S, H, propertyConstant, V),
+			//	referenceEDB(S, G, propertyConstant, X),
 			// 	unequal(V, X)
-			Rule violationReference = Expressions.makeRule(violation_reference_SpV, referenceEDB_SpV, referenceEDB_SpX, unequal_VX);
+			Rule violationReference = Expressions.makeRule(violation_reference_SHpV, referenceEDB_SHpV, referenceEDB_SGpX, unequal_VX);
 			rules.add(violationReference);
 		} else {
 			// tripleEDB(S, I, propertyConstant, C)

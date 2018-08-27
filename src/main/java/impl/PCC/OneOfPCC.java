@@ -55,11 +55,11 @@ public class OneOfPCC extends PropertyConstraintChecker {
 		Rule violationQualifier = Expressions.makeRule(violation_qualifier_SpV, Utility.toArray(violation_qualifier_conjunction));
 		
 		List<Atom> violation_reference_conjunction = new ArrayList<Atom>();
-		violation_reference_conjunction.add(referenceEDB_SpV);
+		violation_reference_conjunction.add(referenceEDB_SHpV);
 		violation_reference_conjunction.addAll(unequal_conjunction);
 		
-		// violation_reference(S, propertyConstant, V) :- referenceEDB(S, propertyConstant, V), unequal({A}, V)
-		Rule violationReference = Expressions.makeRule(violation_qualifier_SpV, Utility.toArray(violation_reference_conjunction));
+		// violation_reference(S, H, propertyConstant, V) :- referenceEDB(S, H, propertyConstant, V), unequal({A}, V)
+		Rule violationReference = Expressions.makeRule(violation_reference_SHpV, Utility.toArray(violation_reference_conjunction));
 		
 		rules.add(violationTriple);
 		rules.add(violationQualifier);

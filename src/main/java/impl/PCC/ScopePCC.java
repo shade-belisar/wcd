@@ -41,8 +41,8 @@ public class ScopePCC extends PropertyConstraintChecker {
 		Rule notTriple = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV);
 		// violation_qualfier(S, propertyConstant, V) :- qualifierEDB(S, propertyConstant, V)
 		Rule notQualifier = Expressions.makeRule(violation_qualifier_SpV, qualifierEDB_SpV);
-		// violation_reference(S, propertyConstant, V) :- referenceEDB(S, propertyConstant, V)
-		Rule notReference = Expressions.makeRule(violation_reference_SpV, referenceEDB_SpV); 
+		// violation_reference(S, H, propertyConstant, V) :- referenceEDB(S, H, propertyConstant, V)
+		Rule notReference = Expressions.makeRule(violation_reference_SHpV, referenceEDB_SHpV); 
 		
 		rules.add(notTriple);
 		rules.add(notQualifier);

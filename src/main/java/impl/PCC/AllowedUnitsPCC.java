@@ -63,11 +63,11 @@ public class AllowedUnitsPCC extends PropertyConstraintChecker {
 		rules.add(qualifierViolation);
 		
 		List<Atom> violation_reference_conjunction = new ArrayList<Atom>();
-		violation_reference_conjunction.add(qualifierEDB_SpV);
+		violation_reference_conjunction.add(referenceEDB_SHpV);
 		violation_reference_conjunction.addAll(unequal_conjunction);
 		
-		// violation_reference(S, propertyConstant, V) :- referenceEDB(S, propertyConstant, V), unit(V, U), unequal({A}, U)
-		Rule referenceViolation = Expressions.makeRule(violation_reference_SpV, Utility.toArray(violation_reference_conjunction));
+		// violation_reference(S, H, propertyConstant, V) :- referenceEDB(S, H, propertyConstant, V), unit(V, U), unequal({A}, U)
+		Rule referenceViolation = Expressions.makeRule(violation_reference_SHpV, Utility.toArray(violation_reference_conjunction));
 		rules.add(referenceViolation);
 		
 		return rules;

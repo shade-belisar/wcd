@@ -3,6 +3,7 @@
  */
 package impl.PCC;
 
+import static utility.SC.h;
 import static utility.SC.i;
 import static utility.SC.qualifierEDB;
 import static utility.SC.referenceEDB;
@@ -36,15 +37,15 @@ public abstract class PropertyConstraintChecker {
 	protected final Atom violation_triple_SIpV;
 	// violation_qualifier(S, propertyConstant, V)
 	protected final Atom violation_qualifier_SpV;
-	// violation_reference(S, propertyConstant, V)
-	protected final Atom violation_reference_SpV;
+	// violation_reference(S, H, propertyConstant, V)
+	protected final Atom violation_reference_SHpV;
 	
 	// tripleEDB(S, I, propertyConstant, V)
 	protected final Atom tripleEDB_SIpV;
 	// qualifierEDB(S, propertyConstant, V)
 	protected final Atom qualifierEDB_SpV;
-	// referenceEDB(S, propertyConstant, V)
-	protected final Atom referenceEDB_SpV;
+	// referenceEDB(S, H, propertyConstant, V)
+	protected final Atom referenceEDB_SHpV;
 	
 	protected final Constant propertyConstant;
 	
@@ -58,11 +59,11 @@ public abstract class PropertyConstraintChecker {
 		
 		violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
 		violation_qualifier_SpV = Expressions.makeAtom(violation_qualifier, s, propertyConstant, v);
-		violation_reference_SpV = Expressions.makeAtom(violation_reference, s, propertyConstant, v);
+		violation_reference_SHpV = Expressions.makeAtom(violation_reference, s, h, propertyConstant, v);
 		
 		tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
 		qualifierEDB_SpV = Expressions.makeAtom(qualifierEDB, s, propertyConstant, v);
-		referenceEDB_SpV = Expressions.makeAtom(referenceEDB, s, propertyConstant, v);
+		referenceEDB_SHpV = Expressions.makeAtom(referenceEDB, s, h, propertyConstant, v);
 	}
 	
 	public abstract List<Rule> rules();

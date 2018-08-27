@@ -17,6 +17,8 @@ public class SC {
 	
 	public final static String REQUIRE_INEQUALITY = "require_inequality";
 	
+	public final static String H = "h";
+	public final static String G = "G";
 	public final static String S = "s";
 	public final static String T = "t";
 	public final static String O = "o";
@@ -54,14 +56,17 @@ public class SC {
 	
 	public final static Predicate tripleEDB = Expressions.makePredicate(TRIPLE, 4);
 	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
-	public final static Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 3);
+	public final static Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 4);
 	
 	public final static Predicate violation_triple = Expressions.makePredicate(VIOLATION_TRIPLE, 4);
 	public final static Predicate violation_qualifier = Expressions.makePredicate(VIOLATION_QUALIFIER, 3);
-	public final static Predicate violation_reference = Expressions.makePredicate(VIOLATION_REFERENCE, 3);
+	public final static Predicate violation_reference = Expressions.makePredicate(VIOLATION_REFERENCE, 4);
 	
 	public final static Predicate require_inequality = Expressions.makePredicate(REQUIRE_INEQUALITY, 2);
 	
+	
+	public final static Variable h = Expressions.makeVariable(H);
+	public final static Variable g = Expressions.makeVariable(G);
 	public final static Variable s = Expressions.makeVariable(S);
 	public final static Variable t = Expressions.makeVariable(T);
 	public final static Variable o = Expressions.makeVariable(O);
@@ -77,7 +82,7 @@ public class SC {
 	
 	public final static Atom violation_triple_query = Expressions.makeAtom(violation_triple, s, i, p, v);
 	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);
-	public final static Atom violation_reference_query = Expressions.makeAtom(violation_reference, s, p, v);
+	public final static Atom violation_reference_query = Expressions.makeAtom(violation_reference, s, h, p, v);
 	
 	public static final Predicate require = Expressions.makePredicate(REQUIRE, 3);
 	public static final Predicate require_second = Expressions.makePredicate(REQUIRE_SECOND, 3);

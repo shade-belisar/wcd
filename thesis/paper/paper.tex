@@ -89,7 +89,7 @@ Finally the transitive closure of this relation can be derived with
 \section{Representation}
 To model the basic representation of triples, qualifiers and references three predicates are introduced.\\
 tripleEDB\([4]\) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either an item ID or a string-representation of the data value.\\
-qualifierEDB\([3]\) and referenceEDB\([3]\) represent the qualifiers and references on a given statement ID with their respective property id and the value as usual.\\
+qualifierEDB\([3]\) represent the qualifiers on a given statement ID with their respective property id and the value as usual. ReferenceEDB\([4]\) represents the statement ID, the reference hash, property id and the value.\\
 
 Additional predicates modelling different pre-processing steps are explained in chapter \ref{cha_rules}.
 \section{Terminology}
@@ -568,7 +568,7 @@ The property scope constraint requires no context information to be violated; th
 A violation for a property scope constraint is
 \[\text{violation\_triple}(S, I, \text{propertyConstant}, V) \leftarrow \text{tripleEDB}(S, I, \text{propertyConstant}, V)\]
 \[\text{violation\_qualifier}(S, \text{propertyConstant}, V) \leftarrow \text{qualifierEDB}(S, \text{propertyConstant}, V)\]
-\[\text{violation\_reference}(S, \text{propertyConstant}, V) \leftarrow \text{referenceEDB}(S, \text{propertyConstant}, V)\]
+\[\text{violation\_reference}(S, \text{propertyConstant}, V) \leftarrow \text{referenceEDB}(S, H, \text{propertyConstant}, V)\]
 depending on if as main value, as qualifier, or as reference was not set in the qualifiers.\\
 
 There is no further information that can be materialized regarding this violations.
@@ -624,7 +624,7 @@ The none of constraint simply forbids certain values for properties, thus effect
 \begin{equation*}
 \begin{split}
 \text{violation\_reference}&(S, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
-&\text{referenceEDB}(S, \text{propertyConstant}, \text{forbiddenValueConstant})
+&\text{referenceEDB}(S, H, \text{propertyConstant}, \text{forbiddenValueConstant})
 \end{split}
 \end{equation*}
 
@@ -743,7 +743,7 @@ Violation are thus
 \begin{equation*}
 \begin{split}
 \text{violation\_reference}&(S, I \text{propertyConstant}, V) \leftarrow \\
-&\text{referenceEDB}(S, \text{propertyConstant}, V) \wedge \\
+&\text{referenceEDB}(S, H, \text{propertyConstant}, V) \wedge \\
 &\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
 \end{split}
 \end{equation*}
@@ -775,7 +775,7 @@ The one-of constraint fits in the pattern established by the previous two constr
 \begin{equation*}
 \begin{split}
 \text{violation\_reference}&(S, \text{propertyConstant}, V) \leftarrow \\
-&\text{referenceEDB}(S, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+&\text{referenceEDB}(S, H, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
 \end{equation*}
 
@@ -934,8 +934,8 @@ For qualifiers and reference there is no ID whose inequality could be checked. H
 \begin{equation*}
 \begin{split}
 \text{violation\_reference}&(S, \text{propertyConstant}, V) \leftarrow \\
-&\text{referenceEDB}(S, \text{propertyConstant}, V) \wedge \\
-&\text{referenceEDB}(S, \text{propertyConstant}, X) \wedge \\
+&\text{referenceEDB}(S, H, \text{propertyConstant}, V) \wedge \\
+&\text{referenceEDB}(S, J, \text{propertyConstant}, X) \wedge \\
 &\text{unequal}(V, X)
 \end{split}
 \end{equation*}

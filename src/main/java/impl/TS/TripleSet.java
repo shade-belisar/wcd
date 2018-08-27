@@ -236,6 +236,8 @@ public class TripleSet implements EntityDocumentProcessor {
 						processUnit(qualifier_object, qualifier_value);
 					}
 				}
+				// TODO this is not extracting the actual hash, but it does not seem to be available
+				int semiHash = 0;
 				for (Reference reference : statement.getReferences()) {
 					for (SnakGroup rGroup : reference.getSnakGroups()) {
 						String reference_predicate = rGroup.getProperty().getIri();
@@ -245,10 +247,11 @@ public class TripleSet implements EntityDocumentProcessor {
 							if (reference_value != null) {
 								reference_object = reference_value.accept(new OutputValueVisitor());
 							}
-							referenceFile.write(id, reference_predicate, reference_object);
+							referenceFile.write(id, String.valueOf(semiHash), reference_predicate, reference_object);
 							processUnit(reference_object, reference_value);
 						}
 					}
+					semiHash++;
 				}
 			}
 		}

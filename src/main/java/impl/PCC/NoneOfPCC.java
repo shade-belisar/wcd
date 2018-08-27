@@ -1,5 +1,6 @@
 package impl.PCC;
 
+import static utility.SC.h;
 import static utility.SC.i;
 import static utility.SC.qualifierEDB;
 import static utility.SC.referenceEDB;
@@ -64,14 +65,14 @@ public class NoneOfPCC extends PropertyConstraintChecker {
 			
 			rules.add(conflict_qualifier);
 			
-			// violation_reference(S, propertyConstant, confValueConstant)
-			Atom violation_reference_Spc = Expressions.makeAtom(violation_reference, s, propertyConstant, confValueConstant);
+			// violation_reference(S, H, propertyConstant, confValueConstant)
+			Atom violation_reference_SHpc = Expressions.makeAtom(violation_reference, s, h, propertyConstant, confValueConstant);
 			
-			// referenceEDB(S, propertyConstant, confValueConstant)
-			Atom referenceEDB_Spc = Expressions.makeAtom(referenceEDB, s, propertyConstant, confValueConstant);
+			// referenceEDB(S, H, propertyConstant, confValueConstant)
+			Atom referenceEDB_SHpc = Expressions.makeAtom(referenceEDB, s, h, propertyConstant, confValueConstant);
 			
-			// violation_reference(S, propertyConstant, confValueConstant) :- referenceEDB(S, propertyConstant, confValueConstant)
-			Rule conflict_reference = Expressions.makeRule(violation_reference_Spc, referenceEDB_Spc);
+			// violation_reference(S, H, propertyConstant, confValueConstant) :- referenceEDB(S, H, propertyConstant, confValueConstant)
+			Rule conflict_reference = Expressions.makeRule(violation_reference_SHpc, referenceEDB_SHpc);
 			
 			rules.add(conflict_reference);
 		}
