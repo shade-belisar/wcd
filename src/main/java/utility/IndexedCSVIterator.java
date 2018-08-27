@@ -32,7 +32,11 @@ public class IndexedCSVIterator implements Iterator<String> {
 
 	@Override
 	public boolean hasNext() {
-		return csvIterator.hasNext() || lineIterator.hasNext();
+		if (csvIterator.hasNext())
+			return true;
+		if (lineIterator == null)
+			return false;
+		return lineIterator.hasNext();
 	}
 
 	@Override
