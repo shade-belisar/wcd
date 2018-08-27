@@ -8,7 +8,7 @@ import static utility.SC.q;
 import static utility.SC.qualifierEDB;
 import static utility.SC.require_qualifier;
 import static utility.SC.s;
-import static utility.SC.tripleEDB;
+import static utility.SC.statementEDB;
 import static utility.SC.v;
 
 import java.io.IOException;
@@ -40,8 +40,8 @@ public class MandatoryQualifierPCC extends PropertyConstraintChecker {
 	public List<Rule> rules() {
 		List<Rule> rules = new ArrayList<Rule>();
 		
-		// tripleEDB(S, I, propertyConstant, C)
-		Atom tripleEDB_SIpC = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, c);
+		// statementEDB(S, I, propertyConstant, C)
+		Atom statementEDB_SIpC = Expressions.makeAtom(statementEDB, s, i, propertyConstant, c);
 		
 		// qualifierEDB(S, P, V)
 		Atom qualifierEDB_SPV = Expressions.makeAtom(qualifierEDB, s, p, v);
@@ -52,7 +52,7 @@ public class MandatoryQualifierPCC extends PropertyConstraintChecker {
 			// unequal(P, requiredPropertyConstant)
 			Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredPropertyConstant);
 			
-			rules.addAll(StatementNonExistenceHelper.initRequireQualifier(propertyConstant, requiredPropertyConstant, tripleEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
+			rules.addAll(StatementNonExistenceHelper.initRequireQualifier(propertyConstant, requiredPropertyConstant, statementEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
 			
 			// last_qualifier(S, Q, C)
 			Atom last_qualifier_SPV = Expressions.makeAtom(last_qualifier, s, q, c);
@@ -60,11 +60,11 @@ public class MandatoryQualifierPCC extends PropertyConstraintChecker {
 			// require_qualifier(S, Q, C, propertyConstant, requiredPropertyConstant)
 			Atom require_qualifier_SQCpr = Expressions.makeAtom(require_qualifier, s, q, c, propertyConstant, requiredPropertyConstant);
 			
-			// violation_triple(S, I, propertyConstant, V) :-
-			//	tripleEDB(S, I, propertyConstant, V),
+			// violation_statement(S, I, propertyConstant, V) :-
+			//	statementEDB(S, I, propertyConstant, V),
 			//	last_qualifier(S, Q, C),
 			//	require_qualifier(S, Q, C, requiredPropertyConstant)
-			Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, last_qualifier_SPV, require_qualifier_SQCpr);
+			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, last_qualifier_SPV, require_qualifier_SQCpr);
 			rules.add(violation);
 		}
 		

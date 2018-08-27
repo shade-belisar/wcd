@@ -5,7 +5,7 @@ package impl.PCC;
 
 import static utility.SC.violation_qualifier_query;
 import static utility.SC.violation_reference_query;
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,25 +37,25 @@ public class ScopePCC extends PropertyConstraintChecker {
 	public List<Rule> rules() {		
 		List<Rule> rules = new ArrayList<Rule>();
 
-		// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V)
-		Rule notTriple = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV);
+		// violation_statement(S, I, propertyConstant, V) :- statementEDB(S, I, propertyConstant, V)
+		Rule notStatement = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV);
 		// violation_qualfier(S, propertyConstant, V) :- qualifierEDB(S, propertyConstant, V)
 		Rule notQualifier = Expressions.makeRule(violation_qualifier_SpV, qualifierEDB_SpV);
 		// violation_reference(S, H, propertyConstant, V) :- referenceEDB(S, H, propertyConstant, V)
 		Rule notReference = Expressions.makeRule(violation_reference_SHpV, referenceEDB_SHpV); 
 		
-		rules.add(notTriple);
+		rules.add(notStatement);
 		rules.add(notQualifier);
 		rules.add(notReference);
 		
 		List<Atom> queries = new ArrayList<Atom>();
-		queries.add(violation_triple_query);
+		queries.add(violation_statement_query);
 		queries.add(violation_qualifier_query);
 		queries.add(violation_reference_query);
 		
 		if (allowedAs(ScopeCC.AS_MAIN_VALUE)) {
-			rules.remove(notTriple);
-			queries.remove(violation_triple_query);
+			rules.remove(notStatement);
+			queries.remove(violation_statement_query);
 		}
 		
 		if (allowedAs(ScopeCC.AS_QUALIFIER)) {

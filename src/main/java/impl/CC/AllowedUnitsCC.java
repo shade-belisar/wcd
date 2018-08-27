@@ -2,7 +2,7 @@ package impl.CC;
 
 import static utility.SC.violation_qualifier_query;
 import static utility.SC.violation_reference_query;
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -72,12 +72,12 @@ public class AllowedUnitsCC extends ConstraintChecker {
 	
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query, violation_qualifier_query, violation_reference_query);
+		return asSet(violation_statement_query, violation_qualifier_query, violation_reference_query);
 	}
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.tripleSet.loadUnitsFile(reasoner);
+		Main.statementSet.loadUnitsFile(reasoner);
 	}
 	
 	@Override
@@ -87,7 +87,7 @@ public class AllowedUnitsCC extends ConstraintChecker {
 			units.addAll(unitsSet);
 		}
 		InequalityHelper.registerInequality(units);
-		InequalityHelper.registerInequality(Main.tripleSet.getUnitsFile(), 1);
+		InequalityHelper.registerInequality(Main.statementSet.getUnitsFile(), 1);
 	}
 
 	@Override

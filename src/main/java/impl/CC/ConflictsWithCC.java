@@ -1,6 +1,6 @@
 package impl.CC;
 
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,7 +75,7 @@ public class ConflictsWithCC extends ConstraintChecker {
 	
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query);
+		return asSet(violation_statement_query);
 	}
 
 	@Override

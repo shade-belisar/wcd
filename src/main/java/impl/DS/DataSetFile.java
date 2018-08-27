@@ -1,4 +1,4 @@
-package impl.TS;
+package impl.DS;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,38 +20,38 @@ import org.slf4j.LoggerFactory;
 import main.Main;
 import utility.CsvGzFileDataSource;
 
-public class TripleSetFile {
+public class DataSetFile {
 	
-	static final Logger logger = LoggerFactory.getLogger(TripleSetFile.class);
+	static final Logger logger = LoggerFactory.getLogger(DataSetFile.class);
 	
-	static String BASE_LOCATION = "./resources/tripleSets/";
+	static String BASE_LOCATION = "./resources/dataSets/";
 	
 	String fileName;
 	
 	Predicate predicate;
 	
-	File tripleSetFileGz;
+	File dataSetFileGz;
 	
 	CSVPrinter writer;
 	
 	boolean closed = true;
 	
-	public TripleSetFile(String name, Predicate predicate_) throws IOException {
+	public DataSetFile(String name, Predicate predicate_) throws IOException {
 		fileName = BASE_LOCATION + "/" + name + ".csv.gz";
 		predicate = predicate_;
 		
-		tripleSetFileGz = new File(fileName);
-		tripleSetFileGz.getParentFile().mkdirs();
-		tripleSetFileGz.createNewFile();
+		dataSetFileGz = new File(fileName);
+		dataSetFileGz.getParentFile().mkdirs();
+		dataSetFileGz.createNewFile();
 		
 		closed = false;
 		
 		if (Main.getExtract())
-			writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tripleSetFileGz, false)))), CSVFormat.DEFAULT);
+			writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(dataSetFileGz, false)))), CSVFormat.DEFAULT);
 	}
 	
 	public void forceWrite() throws IOException {
-		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tripleSetFileGz, false)))), CSVFormat.DEFAULT);
+		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(dataSetFileGz, false)))), CSVFormat.DEFAULT);
 	}
 	
 	public void write(String...strings) {
@@ -68,19 +68,19 @@ public class TripleSetFile {
 			writer.printRecord(strings);
 			writer.flush();
 		} catch (IOException e) {
-			logger.error("Could not write line to file " + tripleSetFileGz.getAbsolutePath(), e);
+			logger.error("Could not write line to file " + dataSetFileGz.getAbsolutePath(), e);
 		}
 	}
 	
 	public void loadFile(Reasoner reasoner) throws ReasonerStateException, IOException {
 		close();
-		CsvGzFileDataSource dataSource = new CsvGzFileDataSource(tripleSetFileGz);
+		CsvGzFileDataSource dataSource = new CsvGzFileDataSource(dataSetFileGz);
 		reasoner.addFactsFromDataSource(predicate, dataSource);
 	}
 	
 	public File getFile() throws IOException {
 		close();
-		return tripleSetFileGz;
+		return dataSetFileGz;
 	}
 
 	public void close() throws IOException {

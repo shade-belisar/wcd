@@ -26,11 +26,11 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class StatementNonExistenceHelper {	
 	
-	public static List<Rule> initRequireTriple(Term requiringTerm, Term requiredTerm, Atom...conjunctionAtoms) {
-		return initRequireTriple(requiringTerm, requiredTerm, Arrays.asList(conjunctionAtoms));
+	public static List<Rule> initRequireStatement(Term requiringTerm, Term requiredTerm, Atom...conjunctionAtoms) {
+		return initRequireStatement(requiringTerm, requiredTerm, Arrays.asList(conjunctionAtoms));
 	}
 	
-	public static List<Rule> initRequireTriple(Term requiringTerm, Term requiredTerm, List<Atom> conjunctionAtoms) {
+	public static List<Rule> initRequireStatement(Term requiringTerm, Term requiredTerm, List<Atom> conjunctionAtoms) {
 		// require(S, requiringTerm, requiredTerm)
 		Atom require_Srr = Expressions.makeAtom(require, s, requiringTerm, requiredTerm);
 		

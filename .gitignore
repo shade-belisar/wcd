@@ -20,8 +20,8 @@
 .checkstyle
 .settings
 
-#tripleSets
-resources/tripleSets/
+#dataSets
+resources/dataSets/
 
 #dumpfiles
 dumpfiles/

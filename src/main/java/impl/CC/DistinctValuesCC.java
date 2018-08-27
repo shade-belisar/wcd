@@ -1,6 +1,6 @@
 package impl.CC;
 
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class DistinctValuesCC extends ConstraintChecker {
 
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query);
+		return asSet(violation_statement_query);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class DistinctValuesCC extends ConstraintChecker {
 	
 	@Override
 	public void registerInequalities() throws IOException {
-		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 0);
+		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 0);
 	}
 
 	@Override

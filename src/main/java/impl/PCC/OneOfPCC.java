@@ -40,12 +40,12 @@ public class OneOfPCC extends PropertyConstraintChecker {
 			unequal_conjunction.add(unequal_AV);
 		}
 		
-		List<Atom> violation_triple_conjunction = new ArrayList<Atom>();
-		violation_triple_conjunction.add(tripleEDB_SIpV);
-		violation_triple_conjunction.addAll(unequal_conjunction);
+		List<Atom> violation_statement_conjunction = new ArrayList<Atom>();
+		violation_statement_conjunction.add(statementEDB_SIpV);
+		violation_statement_conjunction.addAll(unequal_conjunction);
 
-		// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V), unequal({A}, V)
-		Rule violationTriple = Expressions.makeRule(violation_triple_SIpV, Utility.toArray(violation_triple_conjunction));
+		// violation_statement(S, I, propertyConstant, V) :- statementEDB(S, I, propertyConstant, V), unequal({A}, V)
+		Rule violationStatement = Expressions.makeRule(violation_statement_SIpV, Utility.toArray(violation_statement_conjunction));
 		
 		List<Atom> violation_qualifier_conjunction = new ArrayList<Atom>();
 		violation_qualifier_conjunction.add(qualifierEDB_SpV);
@@ -61,7 +61,7 @@ public class OneOfPCC extends PropertyConstraintChecker {
 		// violation_reference(S, H, propertyConstant, V) :- referenceEDB(S, H, propertyConstant, V), unequal({A}, V)
 		Rule violationReference = Expressions.makeRule(violation_reference_SHpV, Utility.toArray(violation_reference_conjunction));
 		
-		rules.add(violationTriple);
+		rules.add(violationStatement);
 		rules.add(violationQualifier);
 		rules.add(violationReference);
 		

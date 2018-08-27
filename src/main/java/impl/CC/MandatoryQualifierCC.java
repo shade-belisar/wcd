@@ -1,6 +1,6 @@
 package impl.CC;
 
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query);		
+		return asSet(violation_statement_query);		
 	}
 
 	@Override
@@ -78,9 +78,9 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.tripleSet.loadFirstQualifierFile(reasoner);
-		Main.tripleSet.loadNextQualifierFile(reasoner);
-		Main.tripleSet.loadLastQualifierFile(reasoner);
+		Main.statementSet.loadFirstQualifierFile(reasoner);
+		Main.statementSet.loadNextQualifierFile(reasoner);
+		Main.statementSet.loadLastQualifierFile(reasoner);
 	}
 	
 	@Override
@@ -90,7 +90,7 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 			qualifierProperties.addAll(propertySet);
 		}
 		InequalityHelper.registerInequality(qualifierProperties);
-		InequalityHelper.registerInequality(Main.tripleSet.getQualifierFile(), 1);
+		InequalityHelper.registerInequality(Main.statementSet.getQualifierFile(), 1);
 	}
 
 	@Override

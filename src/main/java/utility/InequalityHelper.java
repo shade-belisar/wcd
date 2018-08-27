@@ -23,7 +23,7 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
-import impl.TS.TripleSetFile;
+import impl.DS.DataSetFile;
 
 import static utility.SC.require_inequality;
 
@@ -71,7 +71,7 @@ public class InequalityHelper {
 	
 	final static Set<String> characters = new HashSet<String>();
 	
-	final static List<TripleSetFile> files = new ArrayList<>();
+	final static List<DataSetFile> files = new ArrayList<>();
 	
 	final static Set<InequalityFileIndex> inequalityFileIndexes = new HashSet<>();
 	
@@ -122,13 +122,13 @@ public class InequalityHelper {
 		List<Atom> facts = allCharactersUnequal(characters);
 		reasoner.addFacts(facts);
 		
-		for (TripleSetFile tripleSetFile : files) {
-			tripleSetFile.loadFile(reasoner);
+		for (DataSetFile dataSetFile : files) {
+			dataSetFile.loadFile(reasoner);
 		}
 	}
 
 	static void naive () throws IOException {
-		TripleSetFile file = new TripleSetFile("unequal_naive", unequal_EDB); 
+		DataSetFile file = new DataSetFile("unequal_naive", unequal_EDB); 
 		files.add(file);
 
 		List<String> fixedOrderValues = new ArrayList<String>(additionalInequalities);
@@ -185,7 +185,7 @@ public class InequalityHelper {
 			for (List<String> chunk : chunks(string)) {
 				characters.addAll(chunk);
 				
-				TripleSetFile file = getChunkFile(i, demand);
+				DataSetFile file = getChunkFile(i, demand);
 				
 				List<String> line = new ArrayList<>();
 				line.add(string);
@@ -196,14 +196,14 @@ public class InequalityHelper {
 		}
 	}
 	
-	static TripleSetFile getChunkFile(int chunk, boolean demand) throws IOException {
+	static DataSetFile getChunkFile(int chunk, boolean demand) throws IOException {
 		if (chunk < files.size())
 			return files.get(chunk);
 	
 		int chunkAdress = chunk * chunkSize;
 		String LETTER_I = "letter" + chunkAdress;
 		Predicate letter_i = Expressions.makePredicate(LETTER_I, chunkSize + 1);
-		TripleSetFile file = new TripleSetFile(LETTER_I, letter_i);
+		DataSetFile file = new DataSetFile(LETTER_I, letter_i);
 		file.forceWrite();
 		files.add(file);
 		

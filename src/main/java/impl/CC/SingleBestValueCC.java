@@ -1,6 +1,6 @@
 package impl.CC;
 
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class SingleBestValueCC extends ConstraintChecker {
 	
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query);
+		return asSet(violation_statement_query);
 	}
 	
 	@Override
@@ -78,10 +78,10 @@ public class SingleBestValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.tripleSet.loadFirstQualifierFile(reasoner);
-		Main.tripleSet.loadNextQualifierFile(reasoner);
-		Main.tripleSet.loadLastQualifierFile(reasoner);
-		Main.tripleSet.loadRanksFile(reasoner);
+		Main.statementSet.loadFirstQualifierFile(reasoner);
+		Main.statementSet.loadNextQualifierFile(reasoner);
+		Main.statementSet.loadLastQualifierFile(reasoner);
+		Main.statementSet.loadRanksFile(reasoner);
 	}
 	
 	@Override
@@ -91,8 +91,8 @@ public class SingleBestValueCC extends ConstraintChecker {
 			values.addAll(valuesSet);
 		}
 		InequalityHelper.registerInequality(values);
-		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 0);
-		InequalityHelper.registerInequality(Main.tripleSet.getQualifierFile(), 2);
+		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 0);
+		InequalityHelper.registerInequality(Main.statementSet.getQualifierFile(), 2);
 	}
 	
 	@Override

@@ -125,10 +125,10 @@ public abstract class ConstraintChecker {
 	}
 	
 	public void violations() throws ReasonerStateException, IOException {
-		loadTripleSet();
-		logger.info("Loaded basic triple sets.");
+		loadDataSet();
+		logger.info("Loaded basic data sets.");
 		prepareFacts();
-		logger.info("Loaded additional triple sets.");
+		logger.info("Loaded additional data sets.");
 		InequalityHelper.load(reasoner);
 		logger.info("Loaded inequalities (if any).");
 		
@@ -188,10 +188,10 @@ public abstract class ConstraintChecker {
 		return result;
 	}
 	
-	void loadTripleSet() throws ReasonerStateException, IOException {		
-		Main.tripleSet.loadTripleFile(reasoner);
-		Main.tripleSet.loadQualifierFile(reasoner);
-		Main.tripleSet.loadReferenceFile(reasoner);
+	void loadDataSet() throws ReasonerStateException, IOException {		
+		Main.statementSet.loadStatementFile(reasoner);
+		Main.statementSet.loadQualifierFile(reasoner);
+		Main.statementSet.loadReferenceFile(reasoner);
 	}
 	
 	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
@@ -227,12 +227,12 @@ public abstract class ConstraintChecker {
 	    			QueryResult queryResult = iterator.next();
 	    			resultSize++;
 	    			if (Main.getStringResult()) {
-	    				String triple = "";
+	    				String result = "";
 		    			for (Term term : queryResult.getTerms()) {
-		    				triple += term.getName() + "\t";
+		    				result += term.getName() + "\t";
 		    			}
 		    			
-		    			resultString += "\t" + triple.substring(0, triple.length() - 1) + "\n";
+		    			resultString += "\t" + result.substring(0, result.length() - 1) + "\n";
 	    			}
 	    		}
 	    	} catch (ReasonerStateException e) {

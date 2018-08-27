@@ -2,7 +2,7 @@ package impl.CC;
 
 import static utility.SC.violation_qualifier_query;
 import static utility.SC.violation_reference_query;
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,8 +54,7 @@ public class SingleValueCC extends ConstraintChecker {
 	
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query, violation_qualifier_query, violation_reference_query);
-		//return asSet(Expressions.makeAtom(tripleEDB, s, i, p, v));
+		return asSet(violation_statement_query, violation_qualifier_query, violation_reference_query);
 	}
 	
 	@Override
@@ -81,9 +80,9 @@ public class SingleValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.tripleSet.loadFirstQualifierFile(reasoner);
-		Main.tripleSet.loadNextQualifierFile(reasoner);
-		Main.tripleSet.loadLastQualifierFile(reasoner);
+		Main.statementSet.loadFirstQualifierFile(reasoner);
+		Main.statementSet.loadNextQualifierFile(reasoner);
+		Main.statementSet.loadLastQualifierFile(reasoner);
 	}
 	
 	@Override
@@ -93,8 +92,8 @@ public class SingleValueCC extends ConstraintChecker {
 			values.addAll(valuesSet);
 		}
 		InequalityHelper.registerInequality(values);
-		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 0);
-		InequalityHelper.registerInequality(Main.tripleSet.getQualifierFile(), 2);
+		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 0);
+		InequalityHelper.registerInequality(Main.statementSet.getQualifierFile(), 2);
 	}
 	
 	@Override

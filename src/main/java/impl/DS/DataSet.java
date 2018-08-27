@@ -1,4 +1,4 @@
-package impl.TS;
+package impl.DS;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,27 +24,27 @@ import utility.OutputUnitVisitor;
 import utility.OutputValueVisitor;
 import utility.SC;
 
-public class TripleSet implements EntityDocumentProcessor {
+public class DataSet implements EntityDocumentProcessor {
 	
-	static final Logger logger = LoggerFactory.getLogger(TripleSet.class);
+	static final Logger logger = LoggerFactory.getLogger(DataSet.class);
 	
-	TripleSetFile tripleFile;
-	TripleSetFile qualifierFile;
-	TripleSetFile referenceFile;
+	DataSetFile statementFile;
+	DataSetFile qualifierFile;
+	DataSetFile referenceFile;
 	
-	TripleSetFile itemsFile;
-	TripleSetFile propertiesFile;
+	DataSetFile itemsFile;
+	DataSetFile propertiesFile;
 	
-	TripleSetFile unitsFile;
-	TripleSetFile ranksFile;
+	DataSetFile unitsFile;
+	DataSetFile ranksFile;
 	
-	TripleSetFile firstFile;
-	TripleSetFile nextFile;
-	TripleSetFile lastFile;
+	DataSetFile firstFile;
+	DataSetFile nextFile;
+	DataSetFile lastFile;
 	
-	TripleSetFile firstQualifier;
-	TripleSetFile nextQualifier;
-	TripleSetFile lastQualifier;
+	DataSetFile firstQualifier;
+	DataSetFile nextQualifier;
+	DataSetFile lastQualifier;
 
 	String lastID;
 	String lastSubject;
@@ -53,31 +53,31 @@ public class TripleSet implements EntityDocumentProcessor {
 	String lastQualifierPredicate;
 	String lastQualifierValue;
 
-	public TripleSet() throws IOException {
+	public DataSet() throws IOException {
 		
-		tripleFile = new TripleSetFile("triple", SC.tripleEDB);
-		qualifierFile = new TripleSetFile("qualifier", SC.qualifierEDB);
-		referenceFile = new TripleSetFile("reference", SC.referenceEDB);
+		statementFile = new DataSetFile("statement", SC.statementEDB);
+		qualifierFile = new DataSetFile("qualifier", SC.qualifierEDB);
+		referenceFile = new DataSetFile("reference", SC.referenceEDB);
 		
-		itemsFile = new TripleSetFile("items", SC.item);
-		propertiesFile = new TripleSetFile("properties", SC.property);
+		itemsFile = new DataSetFile("items", SC.item);
+		propertiesFile = new DataSetFile("properties", SC.property);
 		
-		unitsFile = new TripleSetFile("units", SC.unit);
-		ranksFile = new TripleSetFile("ranks", SC.rank);
+		unitsFile = new DataSetFile("units", SC.unit);
+		ranksFile = new DataSetFile("ranks", SC.rank);
 		
-		firstFile = new TripleSetFile("first", SC.first);
-		nextFile = new TripleSetFile("next", SC.next);
-		lastFile = new TripleSetFile("last", SC.last);
+		firstFile = new DataSetFile("first", SC.first);
+		nextFile = new DataSetFile("next", SC.next);
+		lastFile = new DataSetFile("last", SC.last);
 		
-		firstQualifier = new TripleSetFile("firstQualifier", SC.first_qualifier);
-		nextQualifier = new TripleSetFile("nextQualifier", SC.next_qualifier);
-		lastQualifier = new TripleSetFile("lastQualifier", SC.last_qualifier);
+		firstQualifier = new DataSetFile("firstQualifier", SC.first_qualifier);
+		nextQualifier = new DataSetFile("nextQualifier", SC.next_qualifier);
+		lastQualifier = new DataSetFile("lastQualifier", SC.last_qualifier);
 		
 		Main.registerProcessor(this);
 	}
 	
-	public File getTripleFile() throws IOException {
-		return tripleFile.getFile();
+	public File getStatementFile() throws IOException {
+		return statementFile.getFile();
 	}
 	
 	public File getQualifierFile() throws IOException {
@@ -104,8 +104,8 @@ public class TripleSet implements EntityDocumentProcessor {
 		return ranksFile.getFile();
 	}
 	
-	public void loadTripleFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		tripleFile.loadFile(reasoner);
+	public void loadStatementFile(Reasoner reasoner) throws IOException, ReasonerStateException {
+		statementFile.loadFile(reasoner);
 	}
 	
 	public void loadQualifierFile(Reasoner reasoner) throws IOException, ReasonerStateException {
@@ -161,8 +161,8 @@ public class TripleSet implements EntityDocumentProcessor {
 		lastQualifier.loadFile(reasoner);
 	}
 	
-	void processTriple(String id, String subject, String predicate, String object) {
-		tripleFile.write(id, subject, predicate, object);
+	void processStatement(String id, String subject, String predicate, String object) {
+		statementFile.write(id, subject, predicate, object);
 		
 		if (lastID == null)
 			firstFile.write(id, subject);
@@ -220,7 +220,7 @@ public class TripleSet implements EntityDocumentProcessor {
 				if (value != null) {
 					object = value.accept(new OutputValueVisitor());					
 				}
-				processTriple(id, subject, predicate, object);
+				processStatement(id, subject, predicate, object);
 				processUnit(object, value);
 				processRank(id, rank);
 				
@@ -275,7 +275,7 @@ public class TripleSet implements EntityDocumentProcessor {
 	}
 	
 	public void close() throws IOException {
-		tripleFile.close();
+		statementFile.close();
 		qualifierFile.close();
 		referenceFile.close();
 		

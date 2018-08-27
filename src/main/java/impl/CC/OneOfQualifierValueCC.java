@@ -1,6 +1,6 @@
 package impl.CC;
 
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 	
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query);
+		return asSet(violation_statement_query);
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 			}
 		}
 		InequalityHelper.registerInequality(values);
-		InequalityHelper.registerInequality(Main.tripleSet.getQualifierFile(), 2);
+		InequalityHelper.registerInequality(Main.statementSet.getQualifierFile(), 2);
 	}
 
 	@Override

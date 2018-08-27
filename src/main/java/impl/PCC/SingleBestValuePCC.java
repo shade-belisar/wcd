@@ -13,7 +13,7 @@ import static utility.SC.r;
 import static utility.SC.rank;
 import static utility.SC.require_qualifier;
 import static utility.SC.s;
-import static utility.SC.tripleEDB;
+import static utility.SC.statementEDB;
 import static utility.SC.v;
 import static utility.SC.x;
 
@@ -54,8 +54,8 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 		// rank(S, preferredRankConstant)
 		Atom rank_Sp = Expressions.makeAtom(rank, s, preferredRankConstant);
 		
-		// tripleEDB(O, I, propertyConstant, X)
-		Atom tripleEDB_OIpX = Expressions.makeAtom(tripleEDB, o, i, propertyConstant, x);
+		// statementEDB(O, I, propertyConstant, X)
+		Atom statementEDB_OIpX = Expressions.makeAtom(statementEDB, o, i, propertyConstant, x);
 		
 		// rank(O, preferredRankConstant)
 		Atom rank_Op = Expressions.makeAtom(rank, o, preferredRankConstant);
@@ -64,17 +64,17 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal, s, o);
 		
 		if (separators.size() == 0) {
-			// violation_triple(S, I, propertyConstant, V) :-
-			//	tripleEDB(S, I, propertyConstant, V),
+			// violation_statement(S, I, propertyConstant, V) :-
+			//	statementEDB(S, I, propertyConstant, V),
 			//	rank(S, preferredRankConstant),
-			//	tripleEDB(O, I, propertyConstant, X),
+			//	statementEDB(O, I, propertyConstant, X),
 			//	rank(O, preferredRankConstant),
 			//	unequal (S, O)
-			Rule violationTriple = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, rank_Sp, tripleEDB_OIpX, rank_Op, unequal_SO);
-			rules.add(violationTriple);
+			Rule violationStatement = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, rank_Sp, statementEDB_OIpX, rank_Op, unequal_SO);
+			rules.add(violationStatement);
 		} else {
-			// tripleEDB(S, I, propertyConstant, C)
-			Atom tripleEDB_SIpC = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, c);
+			// statementEDB(S, I, propertyConstant, C)
+			Atom statementEDB_SIpC = Expressions.makeAtom(statementEDB, s, i, propertyConstant, c);
 			
 			// qualifierEDB(S, P, V)
 			Atom qualifierEDB_SPV = Expressions.makeAtom(qualifierEDB, s, p, v);
@@ -85,7 +85,7 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 				// unequal(P, requiredPropertyConstant)
 				Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredPropertyConstant);
 				
-				rules.addAll(StatementNonExistenceHelper.initRequireQualifier(propertyConstant, requiredPropertyConstant, tripleEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
+				rules.addAll(StatementNonExistenceHelper.initRequireQualifier(propertyConstant, requiredPropertyConstant, statementEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
 			}
 			
 			// does_not_have(S, R)
@@ -98,10 +98,10 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 			Atom require_qualifier_SPVpR = Expressions.makeAtom(require_qualifier, s, p, v, propertyConstant, r);
 			
 			// does_not_have(S, R) :-
-			//	tripleEDB(S, I, propertyConstant, C),
+			//	statementEDB(S, I, propertyConstant, C),
 			//	last_qualifier(S, P, V),
 			//	require_qualifier(S, P, V, propertyConstant, R)
-			Rule doesNotHave = Expressions.makeRule(does_not_have_SR, tripleEDB_SIpC, last_qualifier_SPV, require_qualifier_SPVpR);
+			Rule doesNotHave = Expressions.makeRule(does_not_have_SR, statementEDB_SIpC, last_qualifier_SPV, require_qualifier_SPVpR);
 			rules.add(doesNotHave);
 			
 			// has_same(S, O, Q)
@@ -114,23 +114,23 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 			Atom qualifierEDB_OQV = Expressions.makeAtom(qualifierEDB, o, q, v);
 			
 			// has_same(S, O, Q) :-
-			//	tripleEDB(S, I, propertyConstant, C),
-			//	tripleEDB(O, I, propertyConstant, X),
+			//	statementEDB(S, I, propertyConstant, C),
+			//	statementEDB(O, I, propertyConstant, X),
 			//	qualifierEDB(S, Q, V),
 			//	qualifierEDB(O, Q, V
-			Rule hasSame = Expressions.makeRule(has_same_SOQ, tripleEDB_SIpC, tripleEDB_OIpX, qualifierEDB_SQV, qualifierEDB_OQV);
+			Rule hasSame = Expressions.makeRule(has_same_SOQ, statementEDB_SIpC, statementEDB_OIpX, qualifierEDB_SQV, qualifierEDB_OQV);
 			rules.add(hasSame);
 			
-			// tripleEDB(O, I, propertyConstant, C)
-			Atom tripleEDB_OIpC = Expressions.makeAtom(tripleEDB, o, i, propertyConstant, c);
+			// statementEDB(O, I, propertyConstant, C)
+			Atom statementEDB_OIpC = Expressions.makeAtom(statementEDB, o, i, propertyConstant, c);
 			
 			for (Set<String> has : Sets.powerSet(separators)) {
 				Set<String> hasNot = Sets.difference(separators, has);
 				
 				List<Atom> conjunction = new ArrayList<>();
-				conjunction.add(tripleEDB_SIpV);
+				conjunction.add(statementEDB_SIpV);
 				conjunction.add(rank_Sp);
-				conjunction.add(tripleEDB_OIpC);
+				conjunction.add(statementEDB_OIpC);
 				conjunction.add(rank_Op);
 				conjunction.add(unequal_SO);
 				for (String hasQualifier: has) {
@@ -152,16 +152,16 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 					conjunction.add(does_not_have_Oh);
 				}
 				
-				// violation_triple(S, I, propertyConstant, V :-
-				//	tripleEDB(S, I, propertyConstant, V),
+				// violation_statement(S, I, propertyConstant, V :-
+				//	statementEDB(S, I, propertyConstant, V),
 				//	rank(S, preferredRankConstant),
-				//	tripleEDB(O, I, propertyConstant, C),
+				//	statementEDB(O, I, propertyConstant, C),
 				//	rank(O, preferredRankConstant)
 				//	unequal(S, O),
 				//	has_same(S, O, {X}),
 				//	does_not_have(S, {Y}),
 				//	does_not_have(O, {Y})
-				Rule violation = Expressions.makeRule(violation_triple_SIpV, conjunction.toArray(new Atom[conjunction.size()]));
+				Rule violation = Expressions.makeRule(violation_statement_SIpV, conjunction.toArray(new Atom[conjunction.size()]));
 				rules.add(violation);
 			}
 			

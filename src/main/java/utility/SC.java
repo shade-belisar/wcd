@@ -7,11 +7,11 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class SC {
 	
-	public final static String TRIPLE = "tripleEDB";
+	public final static String STATEMENT = "statementEDB";
 	public final static String QUALIFIER = "qualifierEDB";
 	public final static String REFERENCE = "referenceEDB";
 	
-	public final static String VIOLATION_TRIPLE = "violation_triple";
+	public final static String VIOLATION_STATEMENT = "violation_statement";
 	public final static String VIOLATION_QUALIFIER = "violation_qualifier";
 	public final static String VIOLATION_REFERENCE = "violation_reference";
 	
@@ -54,11 +54,11 @@ public class SC {
 	public final static String DOES_NOT_HAVE = "does_not_have";
 	public final static String HAS_SAME = "has_same";
 	
-	public final static Predicate tripleEDB = Expressions.makePredicate(TRIPLE, 4);
+	public final static Predicate statementEDB = Expressions.makePredicate(STATEMENT, 4);
 	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
 	public final static Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 4);
 	
-	public final static Predicate violation_triple = Expressions.makePredicate(VIOLATION_TRIPLE, 4);
+	public final static Predicate violation_statement = Expressions.makePredicate(VIOLATION_STATEMENT, 4);
 	public final static Predicate violation_qualifier = Expressions.makePredicate(VIOLATION_QUALIFIER, 3);
 	public final static Predicate violation_reference = Expressions.makePredicate(VIOLATION_REFERENCE, 4);
 	
@@ -80,7 +80,7 @@ public class SC {
 	public final static Variable w = Expressions.makeVariable(W);
 	public final static Variable r = Expressions.makeVariable(R);
 	
-	public final static Atom violation_triple_query = Expressions.makeAtom(violation_triple, s, i, p, v);
+	public final static Atom violation_statement_query = Expressions.makeAtom(violation_statement, s, i, p, v);
 	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);
 	public final static Atom violation_reference_query = Expressions.makeAtom(violation_reference, s, h, p, v);
 	

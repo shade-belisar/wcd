@@ -1,6 +1,6 @@
 package impl.CC;
 
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,13 +73,13 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 	
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query);
+		return asSet(violation_statement_query);
 	}
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.tripleSet.loadItemsFile(reasoner);
-		Main.tripleSet.loadPropertiesFile(reasoner);	
+		Main.statementSet.loadItemsFile(reasoner);
+		Main.statementSet.loadPropertiesFile(reasoner);	
 	}
 	
 	@Override

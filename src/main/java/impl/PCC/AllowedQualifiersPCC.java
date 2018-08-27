@@ -38,7 +38,7 @@ public class AllowedQualifiersPCC extends PropertyConstraintChecker {
 		Atom qualfierEDB_SQO = Expressions.makeAtom(qualifierEDB, s, q, o);
 		
 		List<Atom> violation_conjunction = new ArrayList<Atom>();
-		violation_conjunction.add(tripleEDB_SIpV);
+		violation_conjunction.add(statementEDB_SIpV);
 		violation_conjunction.add(qualfierEDB_SQO);
 		for (String allowedQualifier : allowedQualifiers) {
 			Constant allowedQualifierConstant = Expressions.makeConstant(allowedQualifier);
@@ -48,8 +48,8 @@ public class AllowedQualifiersPCC extends PropertyConstraintChecker {
 			violation_conjunction.add(unequal_AQ);
 		}
 		
-		// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V), qualifierEDB(S, Q, O), unequal({A}, Q)
-		Rule violation = Expressions.makeRule(violation_triple_SIpV, Utility.toArray(violation_conjunction));
+		// violation_statement(S, I, propertyConstant, V) :- statementEDB(S, I, propertyConstant, V), qualifierEDB(S, Q, O), unequal({A}, Q)
+		Rule violation = Expressions.makeRule(violation_statement_SIpV, Utility.toArray(violation_conjunction));
 		rules.add(violation);
 
 		return rules;

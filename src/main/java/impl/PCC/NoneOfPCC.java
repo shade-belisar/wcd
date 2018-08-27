@@ -5,10 +5,10 @@ import static utility.SC.i;
 import static utility.SC.qualifierEDB;
 import static utility.SC.referenceEDB;
 import static utility.SC.s;
-import static utility.SC.tripleEDB;
+import static utility.SC.statementEDB;
 import static utility.SC.violation_qualifier;
 import static utility.SC.violation_reference;
-import static utility.SC.violation_triple;
+import static utility.SC.violation_statement;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,16 +43,16 @@ public class NoneOfPCC extends PropertyConstraintChecker {
 			
 			Constant confValueConstant =  Utility.makeConstant(notAllowedValue);
 			
-			// violation_triple(S, I, propertyConstant, confValueConstant)
-			Atom violation_triple_SIpc = Expressions.makeAtom(violation_triple, s, i, propertyConstant, confValueConstant);
+			// violation_statement(S, I, propertyConstant, confValueConstant)
+			Atom violation_statement_SIpc = Expressions.makeAtom(violation_statement, s, i, propertyConstant, confValueConstant);
 			
-			// tripleEDB(S, I, propertyConstant, confValueConstant)
-			Atom tripleEDB_SIpc = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, confValueConstant);
+			// statementEDB(S, I, propertyConstant, confValueConstant)
+			Atom statementEDB_SIpc = Expressions.makeAtom(statementEDB, s, i, propertyConstant, confValueConstant);
 			
-			// violation_triple(S, I, propertyConstant, confValueConstant) :- tripleEDB(S, I, propertyConstant, confValueConstant)
-			Rule conflict_triple = Expressions.makeRule(violation_triple_SIpc, tripleEDB_SIpc);
+			// violation_statement(S, I, propertyConstant, confValueConstant) :- statementEDB(S, I, propertyConstant, confValueConstant)
+			Rule conflict_statement = Expressions.makeRule(violation_statement_SIpc, statementEDB_SIpc);
 			
-			rules.add(conflict_triple);
+			rules.add(conflict_statement);
 			
 			// violation_qualifier(S, propertyConstant, confValueConstant)
 			Atom violation_qualifier_Spc = Expressions.makeAtom(violation_qualifier, s, propertyConstant, confValueConstant);

@@ -3,7 +3,7 @@ package impl.PCC;
 import static utility.SC.c;
 import static utility.SC.i;
 import static utility.SC.o;
-import static utility.SC.tripleEDB;
+import static utility.SC.statementEDB;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,23 +40,23 @@ public class ConflictsWithPCC extends PropertyConstraintChecker {
 			HashSet<String> confValues = entry.getValue();
 			
 			if (confValues.size() == 0) {
-				// tripleEDB(O, I, confPropertyConstant, C)
-				Atom tripleEDB_OIcC = Expressions.makeAtom(tripleEDB, o, i, confPropertyConstant, c);
+				// statementEDB(O, I, confPropertyConstant, C)
+				Atom statementEDB_OIcC = Expressions.makeAtom(statementEDB, o, i, confPropertyConstant, c);
 				
-				// violation_triple(S, I, propertyConstant, V) :- tripleEDB(S, I, propertyConstant, V), tripleEDB(O, I, confPropertyConstant, C)
-				Rule conflicting = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OIcC);
+				// violation_statement(S, I, propertyConstant, V) :- statementEDB(S, I, propertyConstant, V), statementEDB(O, I, confPropertyConstant, C)
+				Rule conflicting = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, statementEDB_OIcC);
 				
 				rules.add(conflicting);
 			} else {
 				for (String value : confValues) {
 					Constant confValueConstant =  Utility.makeConstant(value);
-					// tripleEDB(O, I, confPropertyConstant, confValueConstant)
-					Atom tripleEDB_OIcc = Expressions.makeAtom(tripleEDB, o, i, confPropertyConstant, confValueConstant);
+					// statementEDB(O, I, confPropertyConstant, confValueConstant)
+					Atom statementEDB_OIcc = Expressions.makeAtom(statementEDB, o, i, confPropertyConstant, confValueConstant);
 					
-					// violation_triple(S, I, propertyConstant, V) :-
-					//	tripleEDB(S, I, propertyConstant, V),
-					//	tripleEDB(O, I, confPropertyConstant, confValueConstant)
-					Rule conflicting = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OIcc);
+					// violation_statement(S, I, propertyConstant, V) :-
+					//	statementEDB(S, I, propertyConstant, V),
+					//	statementEDB(O, I, confPropertyConstant, confValueConstant)
+					Rule conflicting = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, statementEDB_OIcc);
 					
 					rules.add(conflicting);
 				}

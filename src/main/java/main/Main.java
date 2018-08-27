@@ -44,7 +44,7 @@ import impl.CC.SingleBestValueCC;
 import impl.CC.SingleValueCC;
 import impl.CC.SymmetricCC;
 import impl.CC.ValueRequiresStatementCC;
-import impl.TS.TripleSet;
+import impl.DS.DataSet;
 import utility.InequalityHelper;
 
 /**
@@ -65,7 +65,7 @@ public class Main {
 	
 	static boolean stringResults = false;
 	
-	public static TripleSet tripleSet;
+	public static DataSet statementSet;
 
 	/**
 	 * @param args
@@ -138,7 +138,7 @@ public class Main {
 		}
 		
 		try {
-			tripleSet = new TripleSet();
+			statementSet = new DataSet();
 		} catch (IOException e) {
 			logger.error("Could not open a file, see the error message for details.", e);
 		}
@@ -223,9 +223,9 @@ public class Main {
 			dumpProcessingController.processDump(mwDumpFile);
 			
 			try {
-				Main.tripleSet.close();
+				Main.statementSet.close();
 			} catch (IOException e) {
-				logger.error("Error closing the triple set files.", e);
+				logger.error("Error closing the data set files.", e);
 				return;
 			}
 		}

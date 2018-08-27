@@ -1,6 +1,6 @@
 package impl.CC;
 
-import static utility.SC.violation_triple_query;
+import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class MultiValueCC extends ConstraintChecker {
 
 	@Override
 	protected Set<Atom> queries() {
-		return asSet(violation_triple_query);
+		return asSet(violation_statement_query);
 	}
 
 	@Override
@@ -66,13 +66,13 @@ public class MultiValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.tripleSet.loadFirstFile(reasoner);
-		Main.tripleSet.loadNextFile(reasoner);
-		Main.tripleSet.loadLastFile(reasoner);
+		Main.statementSet.loadFirstFile(reasoner);
+		Main.statementSet.loadNextFile(reasoner);
+		Main.statementSet.loadLastFile(reasoner);
 	}
 	
 	@Override
 	public void registerInequalities() throws IOException {
-		InequalityHelper.registerInequality(Main.tripleSet.getTripleFile(), 2);
+		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 2);
 	}
 }

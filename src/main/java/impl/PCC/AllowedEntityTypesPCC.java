@@ -36,14 +36,14 @@ public class AllowedEntityTypesPCC extends PropertyConstraintChecker {
 		// item(I)
 		Atom item_I = Expressions.makeAtom(item, i);
 		
-		// violation_triple(S, I, propertyConstant, V ) :- tripleEDB(S, I, propertyConstant, V ), item(I)
-		Rule notItem = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, item_I);
+		// violation_statement(S, I, propertyConstant, V ) :- statementEDB(S, I, propertyConstant, V ), item(I)
+		Rule notItem = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, item_I);
 		
 		// property(I)
 		Atom property_I = Expressions.makeAtom(SC.property, i);
 		
-		// violation_triple(S, I, propertyConstant, V ) :- tripleEDB(S, I, propertyConstant, V ), property(I)
-		Rule notProperty = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, property_I);
+		// violation_statement(S, I, propertyConstant, V ) :- statementEDB(S, I, propertyConstant, V ), property(I)
+		Rule notProperty = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, property_I);
 		
 		if (!allowedEntityTypes.contains(AllowedEntityTypesCC.AS_ITEM))
 			rules.add(notItem);

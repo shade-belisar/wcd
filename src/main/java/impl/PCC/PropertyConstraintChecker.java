@@ -8,11 +8,11 @@ import static utility.SC.i;
 import static utility.SC.qualifierEDB;
 import static utility.SC.referenceEDB;
 import static utility.SC.s;
-import static utility.SC.tripleEDB;
+import static utility.SC.statementEDB;
 import static utility.SC.v;
 import static utility.SC.violation_qualifier;
 import static utility.SC.violation_reference;
-import static utility.SC.violation_triple;
+import static utility.SC.violation_statement;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,15 +33,15 @@ public abstract class PropertyConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(PropertyConstraintChecker.class);
 
-	// violation_triple(S, I, propertyConstant, V)
-	protected final Atom violation_triple_SIpV;
+	// violation_statement(S, I, propertyConstant, V)
+	protected final Atom violation_statement_SIpV;
 	// violation_qualifier(S, propertyConstant, V)
 	protected final Atom violation_qualifier_SpV;
 	// violation_reference(S, H, propertyConstant, V)
 	protected final Atom violation_reference_SHpV;
 	
-	// tripleEDB(S, I, propertyConstant, V)
-	protected final Atom tripleEDB_SIpV;
+	// statementEDB(S, I, propertyConstant, V)
+	protected final Atom statementEDB_SIpV;
 	// qualifierEDB(S, propertyConstant, V)
 	protected final Atom qualifierEDB_SpV;
 	// referenceEDB(S, H, propertyConstant, V)
@@ -57,11 +57,11 @@ public abstract class PropertyConstraintChecker {
 		property = property_;
 		propertyConstant = Utility.makeConstant(property);
 		
-		violation_triple_SIpV = Expressions.makeAtom(violation_triple, s, i, propertyConstant, v);
+		violation_statement_SIpV = Expressions.makeAtom(violation_statement, s, i, propertyConstant, v);
 		violation_qualifier_SpV = Expressions.makeAtom(violation_qualifier, s, propertyConstant, v);
 		violation_reference_SHpV = Expressions.makeAtom(violation_reference, s, h, propertyConstant, v);
 		
-		tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, propertyConstant, v);
+		statementEDB_SIpV = Expressions.makeAtom(statementEDB, s, i, propertyConstant, v);
 		qualifierEDB_SpV = Expressions.makeAtom(qualifierEDB, s, propertyConstant, v);
 		referenceEDB_SHpV = Expressions.makeAtom(referenceEDB, s, h, propertyConstant, v);
 	}

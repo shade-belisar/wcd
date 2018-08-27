@@ -14,7 +14,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 public class MinimalExample {
 	
-	static Predicate tripleEDB = Expressions.makePredicate("tripleEDB", 4);
+	static Predicate statementEDB = Expressions.makePredicate("statementEDB", 4);
 	static Predicate violation_triple = Expressions.makePredicate("violation_triple", 4);
 	static Predicate unequal = Expressions.makePredicate("unequal", 2);
 	
@@ -36,8 +36,8 @@ public class MinimalExample {
 		
 		Reasoner reasoner = Reasoner.getInstance();
 		
-		Atom triple1 = Expressions.makeAtom(tripleEDB, id30, Q1, P209, Q1);
-		Atom triple2 = Expressions.makeAtom(tripleEDB, id31, Q1, P209, Q2);
+		Atom triple1 = Expressions.makeAtom(statementEDB, id30, Q1, P209, Q1);
+		Atom triple2 = Expressions.makeAtom(statementEDB, id31, Q1, P209, Q2);
 		Atom unequal1 = Expressions.makeAtom(unequal, id30, id31);
 		
 		reasoner.addFacts(triple1, triple2, unequal1);
@@ -45,11 +45,11 @@ public class MinimalExample {
 		// violation_triple(?s, ?i, http://www.wikidata.org/entity/P209, ?v)
 		Atom violation_tripleSIpV = Expressions.makeAtom(violation_triple, s, i, P209, v);
 		
-		// tripleEBD(?s, ?i, http://www.wikidata.org/entity/P209, ?v)
-		Atom tripleEDB_SIpV = Expressions.makeAtom(tripleEDB, s, i, P209, v);
+		// statementEDB(?s, ?i, http://www.wikidata.org/entity/P209, ?v)
+		Atom statementEDB_SIpV = Expressions.makeAtom(statementEDB, s, i, P209, v);
 		
-		// tripleEBD(?o, ?i, http://www.wikidata.org/entity/P209, ?w)
-		Atom tripleEDB_OIpW = Expressions.makeAtom(tripleEDB, o, i, P209, w);
+		// statementEBD(?o, ?i, http://www.wikidata.org/entity/P209, ?w)
+		Atom statementEDB_OIpW = Expressions.makeAtom(statementEDB, o, i, P209, w);
 		
 		// unequal(?s, ?o)
 		Atom unequal_SO = Expressions.makeAtom(unequal, s, o);
@@ -58,7 +58,7 @@ public class MinimalExample {
 		//	tripleEBD(?s, ?i, http://www.wikidata.org/entity/P209, ?v),
 		//	tripleEBD(?o, ?i, http://www.wikidata.org/entity/P209, ?w),
 		//	unequal(?s, ?o)
-		Rule violation = Expressions.makeRule(violation_tripleSIpV, tripleEDB_SIpV, tripleEDB_OIpW, unequal_SO);
+		Rule violation = Expressions.makeRule(violation_tripleSIpV, statementEDB_SIpV, statementEDB_OIpW, unequal_SO);
 		
 		reasoner.addRules(violation);
 		
@@ -66,7 +66,7 @@ public class MinimalExample {
 		
 		reasoner.reason();
 		
-		queries(reasoner, Expressions.makeAtom(tripleEDB, s, i, p, v), Expressions.makeAtom(unequal, s, i), Expressions.makeAtom(violation_triple, s, i, p, v));
+		queries(reasoner, Expressions.makeAtom(statementEDB, s, i, p, v), Expressions.makeAtom(unequal, s, i), Expressions.makeAtom(violation_triple, s, i, p, v));
 	}
 	
 	static void queries(Reasoner reasoner, Atom...queries) throws ReasonerStateException {

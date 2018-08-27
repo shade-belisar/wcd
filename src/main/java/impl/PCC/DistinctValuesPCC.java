@@ -2,7 +2,7 @@ package impl.PCC;
 
 import static utility.SC.o;
 import static utility.SC.s;
-import static utility.SC.tripleEDB;
+import static utility.SC.statementEDB;
 import static utility.SC.v;
 import static utility.SC.x;
 
@@ -29,17 +29,17 @@ public class DistinctValuesPCC extends PropertyConstraintChecker {
 	public List<Rule> rules() {
 		List<Rule> rules = new ArrayList<Rule>();
 		
-		// tripleEDB(O, X, propertyConstant, V)
-		Atom tripleEDB_OXpV = Expressions.makeAtom(tripleEDB, o, x, propertyConstant, v);
+		// statementEDB(O, X, propertyConstant, V)
+		Atom statementEDB_OXpV = Expressions.makeAtom(statementEDB, o, x, propertyConstant, v);
 		
 		// unequal(S, O)
 		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal, s, o);
 		
-		//violation_triple(S, I, propertyConstant, V) :-
-		//	tripleEDB(S, I, propertyConstant, V),
-		//	tripleEDB(O, X, propertyConstant, V),
+		//violation_statement(S, I, propertyConstant, V) :-
+		//	statementEDB(S, I, propertyConstant, V),
+		//	statementEDB(O, X, propertyConstant, V),
 		//	unequal(S, O)
-		Rule violation = Expressions.makeRule(violation_triple_SIpV, tripleEDB_SIpV, tripleEDB_OXpV, unequal_SO);
+		Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, statementEDB_OXpV, unequal_SO);
 		
 		rules.add(violation);
 		
