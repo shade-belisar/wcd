@@ -32,40 +32,52 @@
 \setcounter{tocdepth}{1}
 
 \begin{document}
-\chapter{Introduction/Preliminaries}
+\chapter{Introduction}
 Motivation
-\newpage
+
+\chapter{Preliminaries}
+
 \section{Wikidata}
-Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). These store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P respectively. A value is one of several data types noted in table \ref{tab_datatypes}, although it is also possible to use none or some as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
+Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). Triples store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P and will be referred to as Q- and P-IDs, respectively. A value is one of several data types shown in Table \ref{tab_datatypes}, although it is also possible to use \emph{none} or \emph{some} as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
 
 \begin{table}[H]
-\caption{wikidata data types}\label{tab_datatypes}
-\begin{tabularx}{\textwidth}{lllX}
+\caption{Wikidata data types}\label{tab_datatypes}
+\begin{tabularx}{\textwidth}{llp{8.5cm}}
 Data type & Fields & Description \\
 \hline
-string & string (string) & simple string literal \\
-globecoordinate & \makecell{latitude (float) \\ longitude (float) \\ precision (float) \\ globe(URI)} & \makecell{coordinates on a given celestial body \\ or geographic standard} \\
-quantity & \makecell {amount (decimal) \\ upperBound (decimal) \\ lowerBound (decimal) \\ unit (URI or 1)} & \makecell{quantity of a specified unit (or none) \\ with uncertainty} \\
-time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} & \makecell {time as a string according to calendarmodel \\ (julian or gregorian),\\ with precision mapping to orders of magnitude \\ (e.g.. 10 years, months)} \\
+commons media & file (string) & name of a file in the "File" namespace on Wikimedia Commons \\
+globecoordinate & \makecell{latitude (float) \\ longitude (float) \\ precision (float) \\ globe (URI)} & coordinates on a given celestial body or geographic standard \\
+item & item (Q-ID) & the Q-ID of an item on Wikidata \\
+property & property (P-ID) & the P-ID of an item on Wikidata \\
+string & string (string) & simple string literal that does not need to be translated into different languages \\
+monolingual text & string (string) & simple string literal that is written in one specific language and not to be translated \\
+quantity & \makecell {amount (decimal) \\ upperBound (decimal) \\ lowerBound (decimal) \\ unit (URI or 1)} & quantity of a specified unit (or none) with uncertainty \\
+time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} & time as a string according to calendarmodel (julian or gregorian), with precision mapping to orders of magnitude (e.g.. 10 years, months) \\
+URL & url(URL) & a general URL for an external resource \\
+mathematical expression & formula (string) & string that is formatted to display as a formula \\
+external identifier & id (string) & string representing an identifier of an external system \\
+geographic shape & map data (string) & name of a file in the "Data" namespace on Wikimedia Commons \\
+tabular data & tabular data (string) & name of a file in the "Data" namespace on Wikimedia Commons \\
 \end{tabularx}
 \end{table}
+\todo[inline]{For globe(URI): JSON data model states "typically refer to a data item on wikidata.org", which I would read as can be any URI}
 
-While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows, to store additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Every statement can be references by qualifiers and references which contain a predicate and an object, but have no item as subject but instead the statement ID. Qualifiers provide contextual information for statements. The most common context is the time frame in which the statement was accurate, e.g. stating the start and end times of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. References are information that supports the claim by citing the source and possibly additional information like when it was retrieved or when the source was published.
+While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows to store additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Every statement can be referenced by qualifiers, which consist of the corresponding statement id, a predicate and an object. Qualifiers provide contextual information for statements. The most common context is the time frame in which the statement was accurate, e.g. stating the start and end times of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. Additionally, references can be added to statements. References support the claim by citing the source and possibly additional information, e.g. when it was retrieved or when the source was published as property-object pairs.
 
 Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
 \section{Datalog}
-Datalog is a logic programming language. It is fully declarative and uses existential rules to derive additional knowledge from given facts. The most basic unit of information in datalog is a \emph{constant}, which will be denoted as someConstant. In the context of Wikidata any item or property, e.g. Earth (Q2) or head of government (P6), could be represented as a constant. Relations in datalog are expressed as \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate statement\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
-Additionally, datalog also knows \emph{variables}, which will be capitalized like \(X\). Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form predicate\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
-Atoms are the building blocks of \emph{existential rules}, which are used to derive information in datalog. A rule is premise that implies a conclusion, and both are conjunctions of atoms. Denote \(P_n\) as the premise atoms, \(C_n\) as the conclusion atoms. The variables used are divided into three disjunct sets \(V_p\), \(V_c\), and \(V_r\) which are the variables occurring only in premise atoms, only in conclusion atoms, and occurring in both respectively. The general from of an existential rule is (with \(k \in \mathbb{N}^+\), \(l \in \mathbb{N}\))
+Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}, which will be denoted as \emph{someConstant}. In the context of Wikidata, any item or property, e.g. Earth (Q2) or head of government (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate statement\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
+Additionally, datalog also provides \emph{variables}, which will be capitalized like \(X\). Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form predicate\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
+Atoms are the building blocks of \emph{rules}, which are used to derive information in datalog. A rule is a premise that implies a conclusion, and both are conjunctions of atoms. Let \(P_n\) denote  premise atoms and \(C_n\) the conclusion atoms. The variables used are divided into three mutually disjoint sets \(V_p\), \(V_c\), and \(V_r\) which are the variables occurring only in premise atoms, only in conclusion atoms, and occurring in both respectively. The general from of an existential rule is (with \(k \in \mathbb{N}^+\), \(l \in \mathbb{N}\))
 \begin{equation*}
 \forall p \in V_p, r \in V_r : \exists c \in V_c: C_1 \ldots C_k \leftarrow P_1 \ldots P_l
 \end{equation*}
 
-\(V_c\) are called existential variables. If \(V_c = \emptyset\) the rule is called a \emph{datalog rule} and if \(l = 0\) is called a \emph{fact}. Since \(\forall p \in V_p, r \in V_r\) can be taken as given for all rules, it will be omitted in this work.
+\(V_c\) are called existential variables. If \(V_c = \emptyset\) the rule is called a \emph{datalog rule} and if \(l = 0\) it is called a \emph{fact}. Since \(\forall p \in V_p, r \in V_r\) can be taken as given for all rules, it will be omitted in this work.
 
-Within the rule predicates we can differentiate between two different schemas: the \emph{extensional schema} and the \emph{intensional schema}, called EDB and IDB \todo{Shouldn't this be called \\EDP/IDP?} (extensional/intensional database predicate). An EDB may only occur in the premise of a rule, meaning it can never be derived. All others (predicates that appear in the conclusion at least once) are IDB.
+Within the rule predicates we can differentiate between two different schemas: the \emph{extensional schema} and the \emph{intensional schema}, called EDB and IDB (extensional/intensional database). An EDB predicate may only occur in the premise of a rule, meaning it can never be derived. All predicates that appear in the conclusion at least once are IDB predicates.
 
-For the following example taken from Wikidata descriptive names will be used instead of the IDs to increase readability. The individual entities and properties are introduced with their ID beforehand so the example can be retraced. The blue whales (Q42196) parent taxon (P171) is balaenoptera (Q133320), which in turn has the parent taxon rorqual (Q232829). The predicates used are tripleEDB\([3]\) as the input and isInTaxonIDB\([2]\), which will be derived. The basic facts are:\\
+For the following example, taken from Wikidata, descriptive names will be used instead of the IDs to increase readability. The individual entities and properties are introduced with their ID beforehand so the example can be retraced. The species \emph{blue whale} (Q42196) has the \emph{parent taxon} (P171) \emph{balaenoptera} (Q133320), which in turn has the parent taxon \emph{rorqual} (Q232829). The predicates used are tripleEDB\([3]\) as the input and isInTaxonIDB\([2]\), which will be derived. The basic facts are:
 \[\text{tripleEDB}(\text{blue whale}, \text{parent taxon}, \text{balaenoptera})\]
 \[\text{tripleEDB}(\text{balaenoptera}, \text{parent taxon}, \text{rorqual})\]
 From this we can draw conclusions. The first step is to represent the already existing facts as IDB:
@@ -76,7 +88,7 @@ Finally the transitive closure of this relation can be derived with
 \todo[inline]{Should I explain the chase? And in what detail...}
 \section{Representation}
 To model the basic representation of triples, qualifiers and references three predicates are introduced.\\
-tripleEDB\([4]\) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either and item ID or a string-representation of the data value.\\
+tripleEDB\([4]\) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either an item ID or a string-representation of the data value.\\
 qualifierEDB\([3]\) and referenceEDB\([3]\) represent the qualifiers and references on a given statement ID with their respective property id and the value as usual.\\
 
 Additional predicates modelling different pre-processing steps are explained in chapter \ref{cha_rules}.
