@@ -91,6 +91,12 @@ public class InequalityHelper {
 	}
 	
 	public static void registerInequality(File file, int index) {
+		for (InequalityFileIndex indexFile : inequalityFileIndexes) {
+			if (file.equals(indexFile.getFile())) {
+				indexFile.addIndex(index);
+				return;
+			}		
+		}
 		inequalityFileIndexes.add(new InequalityFileIndex(file, index));
 	}
 	
