@@ -74,6 +74,7 @@ public class Main {
 		Options options = new Options();
 		options.addOption("d", "download", false, "Download the current JSON dump.");
 		options.addOption("l", "local", false, "Process local example dump.");
+		options.addOption("f", "file", true, "File to be processed");
 		options.addOption("h", "help", false, "Displays this help.");
 		options.addOption("e", "extract", false, "Extract the necessary data from the dump.");
 		options.addOption("c", "constraints", true, "The constraint to check.");
@@ -216,7 +217,11 @@ public class Main {
 			MwDumpFile mwDumpFile;
 			if (cmd.hasOption("local")){
 				mwDumpFile = new MwLocalDumpFile(DUMP_FILE);
+			} else if (cmd.hasOption("file")){
+				mwDumpFile = new MwLocalDumpFile(cmd.getOptionValue("file"));
+				logger.info("Processing " + cmd.getOptionValue("file"));
 			} else {
+				
 				mwDumpFile = dumpProcessingController.getMostRecentDump(DumpContentType.JSON);
 			}
 
