@@ -63,6 +63,8 @@ public class Main {
 	
 	static boolean extract = false;
 	
+	static boolean reload = false;
+	
 	static boolean stringResults = false;
 	
 	public static DataSet statementSet;
@@ -81,6 +83,7 @@ public class Main {
 		options.addOption("n", "noviolations", false, "Do not compute violations.");
 		options.addOption("s", "stringResults", false, "Output violations as string.");
 		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is encoded.");
+		options.addOption("r", "reloadInequalities", false, "Use inequality files computed in the last run.");
 		
 		CommandLineParser parser = new DefaultParser();
 	    CommandLine cmd;
@@ -127,6 +130,7 @@ public class Main {
 	    	
 	    
 	    extract = cmd.hasOption("extract");
+	    reload = cmd.hasOption("reloadInequalities");
 	    stringResults = cmd.hasOption("stringResults");
 		
 		configureLogging();
@@ -237,12 +241,14 @@ public class Main {
 		
 		if (!cmd.hasOption("noviolations")) {
 			try {
-				for(ConstraintChecker checker : checkers) {
-					checker.registerInequalities();
+				if (!getReload()) {
+					for(ConstraintChecker checker : checkers) {
+						checker.registerInequalities();
+
+						InequalityHelper.prepareFiles();
+						logger.info("Prepared inequality files.");
+					}					
 				}
-				
-				InequalityHelper.prepareFiles();
-				logger.info("Prepared inequality files.");
 				
 				for(ConstraintChecker checker : checkers) {
 					StopWatch watch = new StopWatch();
@@ -255,8 +261,6 @@ public class Main {
 						System.out.println(checker.getResultString());
 					
 				}
-				
-				InequalityHelper.delete();
 			} catch (ReasonerStateException e) {
 				logger.error("Reasoner was called in the wrong state.", e);
 			} catch (IOException e) {
@@ -285,6 +289,10 @@ public class Main {
 	
 	public static boolean getExtract() {
 		return extract;
+	}
+	
+	public static boolean getReload() {
+		return reload;
 	}
 	
 	public static boolean getStringResult() {

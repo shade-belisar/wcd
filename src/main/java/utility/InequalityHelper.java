@@ -1,18 +1,23 @@
 package utility;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Predicate;
@@ -24,10 +29,13 @@ import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.DS.DataSetFile;
+import main.Main;
 
 import static utility.SC.require_inequality;
 
 public class InequalityHelper {
+	
+	final static Logger logger = Logger.getLogger(InequalityHelper.class);
 	
 	public enum Mode {
 		NAIVE,
@@ -48,6 +56,9 @@ public class InequalityHelper {
 	
 	final static String UNEQUAL_EDB = "unequal_EDB";
 	final static String UNEQUAL = "unequal";
+	final static String UNEQUAL_NAIVE = "unequal_naive";
+	
+	final static String UNIQUE_CHARACTERS = "unique_characters.csv.gz";
 	
 	final static Variable x = Expressions.makeVariable(X);
 	final static Variable y = Expressions.makeVariable(Y);
@@ -101,6 +112,8 @@ public class InequalityHelper {
 	}
 	
 	public static void prepareFiles() throws IOException {
+		if (Main.getReload())
+			logger.warn("Preparing files in reload mode.");
 		switch (mode) {
 		case NAIVE:
 			naive();
@@ -115,6 +128,19 @@ public class InequalityHelper {
 	}
 	
 	public static void load(Reasoner reasoner) throws ReasonerStateException, IOException {
+		File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + UNIQUE_CHARACTERS);
+		FileOutputStream output = new FileOutputStream(uniqueCharacters, false);
+		GZIPOutputStream gzip = new GZIPOutputStream(output);
+		OutputStreamWriter writer = new OutputStreamWriter(gzip);
+		for (String character : characters) {
+			writer.write(character + "\n");
+		}		
+		writer.close();
+		
+		commonLoad(reasoner);
+	}
+	
+	static void commonLoad(Reasoner reasoner) throws ReasonerStateException, IOException {
 		reasoner.addRules(unequal_IDB_EDB, inverse);
 		
 		reasoner.addRules(rules);
@@ -126,9 +152,42 @@ public class InequalityHelper {
 			dataSetFile.loadFile(reasoner);
 		}
 	}
+	
+	public static void reload(Reasoner reasoner) throws ReasonerStateException, IOException {
+		boolean demand = false;
+		
+		switch (mode) {
+		case NAIVE:
+			DataSetFile file = new DataSetFile(UNEQUAL_NAIVE, unequal_EDB, false);
+			files.add(file);
+			break;
+		case DEMANDED:
+			demand = true;
+		default:
+		}
+		int chunk = 0;
+		while (getChunkFile(chunk, demand).didExist())
+			chunk++;
+		DataSetFile lastFile = files.get(files.size() - 1);
+		files.remove(lastFile);
+		lastFile.getFile().delete();
+		
+		File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + UNIQUE_CHARACTERS);
+		FileInputStream input = new FileInputStream(uniqueCharacters);
+		GZIPInputStream gzip = new GZIPInputStream(input);
+		InputStreamReader reader = new InputStreamReader(gzip);
+		BufferedReader buffer = new BufferedReader(reader);
+		String line;
+		while((line = buffer.readLine()) != null) {
+			characters.add(line);
+		}
+		buffer.close();
+		
+		commonLoad(reasoner);
+	}
 
 	static void naive () throws IOException {
-		DataSetFile file = new DataSetFile("unequal_naive", unequal_EDB); 
+		DataSetFile file = new DataSetFile(UNEQUAL_NAIVE, unequal_EDB);
 		files.add(file);
 
 		List<String> fixedOrderValues = new ArrayList<String>(additionalInequalities);
@@ -203,16 +262,15 @@ public class InequalityHelper {
 		int chunkAdress = chunk * chunkSize;
 		String LETTER_I = "letter" + chunkAdress;
 		Predicate letter_i = Expressions.makePredicate(LETTER_I, chunkSize + 1);
-		DataSetFile file = new DataSetFile(LETTER_I, letter_i);
-		file.forceWrite();
+		DataSetFile file = new DataSetFile(LETTER_I, letter_i, !Main.getReload());
 		files.add(file);
 		
 		List<Atom> inequalities = new ArrayList<>();
 		
-		// letter_i(X, Ai, Ai+1, ..., Ai+14)
+		// letter_i(X, Ai, Ai+1, ..., Ai+6)
 		List<Term> xVariables = new ArrayList<>();
 		xVariables.add(x);
-		// letter_i(Y, Bi, Bi+1, ..., Bi+14)
+		// letter_i(Y, Bi, Bi+1, ..., Bi+6)
 		List<Term> yVariables = new ArrayList<>();
 		yVariables.add(y);
 		for (int j = chunkAdress; j <= chunkAdress + chunkSize - 1; j++) {
@@ -298,12 +356,5 @@ public class InequalityHelper {
 		}
 		
 		return atoms;
-	}
-
-	public static void delete() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
+	}	
 }

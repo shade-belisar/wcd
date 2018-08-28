@@ -24,7 +24,7 @@ public class DataSetFile {
 	
 	static final Logger logger = LoggerFactory.getLogger(DataSetFile.class);
 	
-	static String BASE_LOCATION = "./resources/dataSets/";
+	public final static String BASE_LOCATION = "./resources/dataSets/";
 	
 	String fileName;
 	
@@ -36,22 +36,32 @@ public class DataSetFile {
 	
 	boolean closed = true;
 	
-	public DataSetFile(String name, Predicate predicate_) throws IOException {
+	boolean didExist = false;
+	
+	public DataSetFile(String name, Predicate predicate) throws IOException {
+		init(name, predicate, Main.getExtract());
+	}
+	
+	public DataSetFile(String name, Predicate predicate, boolean extract) throws IOException {
+		init(name, predicate, extract);
+	}
+	
+	public void init(String name, Predicate predicate_, boolean extract) throws IOException {
 		fileName = BASE_LOCATION + "/" + name + ".csv.gz";
 		predicate = predicate_;
 		
 		dataSetFileGz = new File(fileName);
 		dataSetFileGz.getParentFile().mkdirs();
-		dataSetFileGz.createNewFile();
+		didExist = !dataSetFileGz.createNewFile();
 		
 		closed = false;
 		
-		if (Main.getExtract())
+		if (extract)
 			writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(dataSetFileGz, false)))), CSVFormat.DEFAULT);
 	}
 	
-	public void forceWrite() throws IOException {
-		writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(dataSetFileGz, false)))), CSVFormat.DEFAULT);
+	public boolean didExist() {
+		return didExist;
 	}
 	
 	public void write(String...strings) {

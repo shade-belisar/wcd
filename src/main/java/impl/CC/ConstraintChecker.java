@@ -129,8 +129,12 @@ public abstract class ConstraintChecker {
 		logger.info("Loaded basic data sets.");
 		prepareFacts();
 		logger.info("Loaded additional data sets.");
-		InequalityHelper.load(reasoner);
-		logger.info("Loaded inequalities (if any).");
+		if (Main.getReload())
+			InequalityHelper.reload(reasoner);
+		else
+			InequalityHelper.load(reasoner);
+		logger.info("Loaded inequalities.");
+		
 		
 		List<Rule> rulesToAdd = new ArrayList<Rule>();
 		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
