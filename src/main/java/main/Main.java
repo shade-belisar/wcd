@@ -244,10 +244,9 @@ public class Main {
 				if (!getReload()) {
 					for(ConstraintChecker checker : checkers) {
 						checker.registerInequalities();
-
-						InequalityHelper.prepareFiles();
-						logger.info("Prepared inequality files.");
 					}					
+					InequalityHelper.prepareFiles();
+					logger.info("Prepared inequality files.");
 				}
 				
 				for(ConstraintChecker checker : checkers) {
