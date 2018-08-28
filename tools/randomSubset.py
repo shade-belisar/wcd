@@ -4,7 +4,7 @@ import sys
 from random import randint
 
 file = sys.argv[1]
-number = int(sys.argv[2])
+amount = int(sys.argv[2])
 
 lineCount = 0
 
@@ -12,21 +12,20 @@ with gzip.open(file) as input:
     for line in input:
         lineCount += 1
 
-if lineCount - 2 < number:
+if lineCount - 2 < amount   :
     print "ERROR: File has less lines than should be extracted"
     print lineCount - 2
     sys.exit(1)
 
 lines = set()
-for i in xrange(0,number):
-
+for i in xrange(0,amount):
     while True:
         number = randint(1,lineCount - 1)
         if number not in lines:
             break
     lines.add(number)
 
-with gzip.open(file) as input, gzip.open(str(number) + "_random.json.gz", mode="wb") as output:
+with gzip.open(file) as input, gzip.open(str(amount) + "_random.json.gz", mode="wb") as output:
     output.write("[\n")
 
     for i, line in enumerate(input):
