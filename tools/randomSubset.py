@@ -29,12 +29,11 @@ with gzip.open(file) as input, gzip.open(str(amount) + "_random.json.gz", mode="
     output.write("[\n")
 
     for i, line in enumerate(input):
-
         if i in lines:
             lines.remove(i)
             if len(lines) == 0:
                 if line.endswith(",\n"):
-                    line = line[:-1] + "\n"
+                    line = line[:-2] + "\n"
             else:
                 if not line.endswith(",\n"):
                     line = line[:-1] + ",\n"
