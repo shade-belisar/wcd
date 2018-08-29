@@ -1,5 +1,10 @@
 import csv
+import os
 import re
+import sys
+
+log = sys.argv[1]
+out = os.path.dirname(log) + "/summary.tsv"
 
 constraintIDLabel = "ConstraintID"
 violationsLabel = "Violations"
@@ -11,7 +16,7 @@ rulesLabel = "Rules"
 demandRulesLabel = "Demand rules"
 totalRulesLabel = "Total rules"
 
-with open("log") as log, open("summary.tsv", "w") as summary:
+with open(log) as log, open(out, "w") as summary:
     writer = csv.DictWriter(summary, [constraintIDLabel, violationsLabel, totalTimeLabel, runtimeMaterializationLabel, iterationsLabel, derivationsLabel, rulesLabel, demandRulesLabel, totalRulesLabel], delimiter="\t")
     writer.writeheader()
 
