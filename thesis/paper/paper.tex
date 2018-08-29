@@ -38,7 +38,7 @@ Motivation
 \chapter{Preliminaries}
 
 \section{Wikidata}
-Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). Triples store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P and will be referred to as Q- and P-IDs, respectively. A value is one of several data types shown in Table \ref{tab_datatypes}, although it is also possible to use \emph{none} or \emph{some} as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
+Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). Triples store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P and will be referred to as Q- and P-IDs, respectively. In the future there will be a third entity type, lexeme. This is already incorporated into some constraints, but as of September 2018 they are not deployed. A value is one of several data types shown in Table \ref{tab_datatypes}, although it is also possible to use \emph{none} or \emph{some} as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
 
 \begin{table}[H]
 \caption{Wikidata data types}\label{tab_datatypes}
@@ -88,9 +88,11 @@ Finally the transitive closure of this relation can be derived with
 
 \todo[inline]{Should I explain the chase? And in what detail...}
 \section{Representation of Wikidata as Facts}
-To model the basic representation of triples, qualifiers and references three predicates are introduced.\\
-statementEDB\([4]\) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either an item ID or a string-representation of the data value.\\
-qualifierEDB\([3]\) represent the qualifiers on a given statement ID with their respective property id and the value as usual. ReferenceEDB\([4]\) represents the statement ID, the reference hash, property id and the value.\\
+To model the representation of Wikidata the following predicates are introduced:\\
+statementEDB\([4]\) represents a single statement consisting of the statement ID, the entity ID, the property ID and the value as either an entity ID or a string-representation of the data value.\\
+qualifierEDB\([3]\) represent the qualifiers on a given statement ID with their respective property id and the value as usual. \\
+referenceEDB\([4]\) represents the statement ID, the reference hash, property id and the value.\\
+itemEDB\([1]\) and propertyEDB\([1]\) specify if an entity ID is an item or a property.\\
 
 Additional predicates modelling different pre-processing steps are explained in chapter \ref{cha_rules}.
 \section{Terminology}
@@ -227,24 +229,39 @@ for constraints with no conflicting values specified or one
 for each conflicting value if specified.\\
 
 \subsection{Allowed entity types (Q52004125)}
-The allowed entity types constraint limits if a property may be used on an item, a property or a lexeme, although lexemes are not yet deployed.
+\subsubsection{Constraint}
+The \emph{allowed entity types} constraint limits if a property may be used in a statement whose subject is an item, a property or a lexeme, although as of September 2018 lexemes are not deployed.
 
 \begin{table}[H]
 \caption{Allowed entity types constraint (Q52004125)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statement \\
+Required data & constrained statements and entity types\\
 \hline
-Qualifiers & \makecell{allowed entity type (P2305) -- 1..3 \\ must be wikibase item (Q29934200), wikibase property (Q29934218) \\ or lexeme (Q51885771); \\ specifies the type the property may be used on} \\
+Qualifiers & \makecell{allowed entity type (P2305) -- 1..3 \\ must be \emph{Wikibase item} (Q29934200), \emph{Wikibase property} (Q29934218) \\ or lexeme (Q51885771); \\ specifies the entity type the property may be used on} \\
 \hline
 Violation & \makecell{constrained statement on an entity of a type unequal to all allowed types} \\
-\hline
-Dependency & constrained statement and entity type of the subject \\
 \hline
 \end{tabularx}
 \end{table}
 
-Since there are only three options (and only two in use), violations can be found without inequality by finding the statementEDB with the constrained property whose subject is of the type that is not allowed, meaning either wikibase item or wikibase property.
+Since there are only three options (and only two in use), violations can be found without inequality by finding the statementEDB with the constrained property whose subject is of the type that is not allowed, meaning either \emph{Wikibase item} or \emph{Wikibase property}.
+
+\subsubsection{Rules}
+The allowed entity types constraint is violated by a statement with the wrong entity type.  Constraints regarding the lexeme entity type can be ignored since they are currently not used. The Violations depend on a simple conjunction:
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{item}(I)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{property}(I)
+\end{split}
+\end{equation*}
+The first rule are created for all \emph{allowed entity type} constraints whose \emph{allowed entity type} does not contain \emph{Wikibase item}. The second rule works analogue for \emph{Wikibase property}.
 
 \subsection{None of (Q52558054)}
 The none of constraint restricts the values that the property may refer to by listing a set of values as forbidden.
@@ -576,21 +593,6 @@ Four constraints do not require any additional features and can be easily transl
 \[\text{violation\_qualifier}(S, P, V)\]
 \[\text{violation\_reference}(S, P, V)\]
 where \(S\) specifies the statement ID, \(I\) the item, \(P\) the property, and \(V\) the value. The term propertyConstant will be used for the constant of the constrained property.
-
-\subsection{Allowed entity types (Q52004125)}
-The allowed entity types constraint is violated by a statement with the wrong entity type. This means that during extraction additional data has to be readied. To encode this two new predicates are introduced, item\([1]\) and property\([1]\). All items and properties with a constrained statement will then be sorted into one of these two categories. Constraints regarding the lexeme entity type can be ignored since they are currently not deployed. The violations the depend on a simple conjunction and follow directly as
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{item}(I)
-\end{split}
-\end{equation*}
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{property}(I)
-\end{split}
-\end{equation*}
 
 \subsection{None of (Q52558054)}
 The none of constraint simply forbids certain values for properties, thus effectively prohibiting certain triples, qualifiers and references. The violations, depending on nothing but specific database entries, are
