@@ -29,7 +29,7 @@
 \usepackage{todonotes}
 \usepackage{adjustbox}
 
-\setcounter{tocdepth}{1}
+\setcounter{tocdepth}{2}
 
 \begin{document}
 \chapter{Introduction}
@@ -66,14 +66,15 @@ While this is similar to RDF and Wikidata has in fact been exported as RDF \cite
 
 Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
 \section{Datalog}
-Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}, which will be denoted as \emph{someConstant}. In the context of Wikidata, any item or property, e.g. Earth (Q2) or head of government (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate statement\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
-Additionally, datalog also provides \emph{variables}, which will be capitalized like \(X\). Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form predicate\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
-Atoms are the building blocks of \emph{rules}, which are used to derive information in datalog. A rule is a premise that implies a conclusion, and both are conjunctions of atoms. Let \(P_n\) denote  premise atoms and \(C_n\) the conclusion atoms. The variables used are divided into three mutually disjoint sets \(V_p\), \(V_c\), and \(V_r\) which are the variables occurring only in premise atoms, only in conclusion atoms, and occurring in both respectively. The general from of an existential rule is (with \(k \in \mathbb{N}^+\), \(l \in \mathbb{N}\))
-\begin{equation*}
-\forall p \in V_p, r \in V_r : \exists c \in V_c: C_1 \ldots C_k \leftarrow P_1 \ldots P_l
-\end{equation*}
+Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}, which will be denoted as \emph{someConstant}. In the context of Wikidata, any item or property, e.g. \emph{Earth} (Q2) or \emph{head of government} (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate triple\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
+Additionally, datalog also provides \emph{variables}, which will be capitalized like \(X\). The sets of predicates {\bf P}, constants {\bf C} and variables {\bf V} are mutually disjoint. Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form predicate\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
+Atoms are the building blocks of \emph{rules}, which are used to derive information in datalog. A rule is a premise that implies a conclusion, and both are conjunctions of atoms.
+Let \(P_n\) denote  premise atoms and \(C_n\) the conclusion atoms. The variables used in one rule are divided into three mutually disjoint sets \(V_p\), \(V_c\), and \(V_r\) which are the variables occurring only in its premise atoms, only in its conclusion atoms, and occurring in both, respectively. The general from of an existential rule is (with \(k \in \mathbb{N}^+\), \(l \in \mathbb{N}\))
+\begin{equation}
+\forall V_p \forall V_r.(\exists V_c.C_1 \wedge \ldots \wedge C_k \leftarrow P_1 \wedge \ldots \wedge P_l)
+\end{equation}
 
-\(V_c\) are called existential variables. If \(V_c = \emptyset\) the rule is called a \emph{datalog rule} and if \(l = 0\) it is called a \emph{fact}. Since \(\forall p \in V_p, r \in V_r\) can be taken as given for all rules, it will be omitted in this work.
+\(V_c\) are called existential variables. If \(V_c = \emptyset\) the rule is called a \emph{datalog rule} and if \(l = 0\) it is called a \emph{fact}. If a fact contains no variables but only constants it is a \emph{ground rule}. Since all \(V_p\) and \(V_r\) are  quantified, the preceding universal quantifiers \(\forall V_p \forall V_r\) will be omitted for the rules presented in this work.
 
 Within the rule predicates we can differentiate between two different schemas: the \emph{extensional schema} and the \emph{intensional schema}, called EDB and IDB (extensional/intensional database). An EDB predicate may only occur in the premise of a rule, meaning it can never be derived. All predicates that appear in the conclusion at least once are IDB predicates.
 
@@ -86,7 +87,7 @@ Finally the transitive closure of this relation can be derived with
 \[\text{isInTaxonIDB}(X, Y) \leftarrow \text{isInTaxonIDB}(X, Z) \wedge \text{isInTaxonIDB}(Z, Y)\]
 
 \todo[inline]{Should I explain the chase? And in what detail...}
-\section{Representation}
+\section{Representation of Wikidata as Facts}
 To model the basic representation of triples, qualifiers and references three predicates are introduced.\\
 statementEDB\([4]\) represents a single statement consisting of the statement ID, the item ID, the property ID and the value as either an item ID or a string-representation of the data value.\\
 qualifierEDB\([3]\) represent the qualifiers on a given statement ID with their respective property id and the value as usual. ReferenceEDB\([4]\) represents the statement ID, the reference hash, property id and the value.\\
@@ -94,123 +95,136 @@ qualifierEDB\([3]\) represent the qualifiers on a given statement ID with their 
 Additional predicates modelling different pre-processing steps are explained in chapter \ref{cha_rules}.
 \section{Terminology}
 \begin{table}[H]
-\caption{abbreviations}
+\caption{abbreviations}\label{tab_abbreviations}
 \begin{tabular}{ll}
 Shorthand & Description \\
 \hline
 constrained statement & statement with the constrained property as predicate \\
 constrained qualifier & qualifier with the constrained property as predicate \\
 constrained reference & reference with the constrained property as predicate \\
-constrained item & item with a constrained statement \\
-item statement & statement on the same item of a constrained statement \\
+constrained entity & entity with a constrained statement \\
+entity statement & statement on the same entity of a constrained statement \\
 value statement & statement on the value of a constrained statement
 \end{tabular}
 \end{table}
 \chapter{Property Constraints}
 
-To improve the data quality, help editors avoid common mistakes and clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are however not firm rules and exceptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. only certain values are allowed or more complex requirements on connected parts of the data graph, e.g. the value of a statement with this property should have certain statements. Further down you can find table \ref{tab_property_constraints}, which list the existing property constraints. Afterwards the constraints will be explained in detail and either a basic approach for their modelling or reasoning why it is not possible or sensible to model it given.\\
+To improve the data quality, to help editors avoid common mistakes and to clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are, however, not firm rules and exceptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. that only certain values are allowed, or more complex requirements on connected parts of the data graph, e.g. that the value of a statement with this property should have certain statements. In Table \ref{tab_property_constraints} you can find the existing property constraints. Afterwards the constraints will be explained in detail and a basic approach for their modelling given. For constraint that cannot be modelled, reasoning for this assessment is included.
 
-To apply a constraint to a property a statement <property> <P2302> <constraint> is added to the properties item page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. Note that a constrained statement means a statement whose predicate is a property that has a specific constraint. A simple example for this would be distinct values (Q21502410) stating that values of the property must be unique across all constrained statements. For this case no additional information regarding the constraint is necessary and violation could be found by surveying all constrained statements and comparing their values.\\
-Constraints can be further specified by using qualifiers on the constraint statement. These qualifiers are either optional or mandatory and may be applied once or multiple times. For example, the none of constraint (Q52558054) states that values for a specific property may not be in a set of disallowed values. These are specified as qualifiers using item of property constraint (P2305) on the constraint statement and require at least one such statement.\\
-More complex dependencies are also possible. A constraint can depend on all constrained statements of a specific item (single value constraint [Q19474404]), on all statements of the value of a constrained statement (value requires statement constraint [Q21510864]) or in the most complex case on all statements using the subclassOf-predicate (type constraint [Q21503250]).
+To apply a constraint to a property, a statement <property> <P2302> <constraint> is added to the properties item page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. Note that a constrained statement means a statement whose predicate is a property that has a specific constraint. A simple example for this would be \emph{distinct values} (Q21502410) stating that values of the property must be unique across all constrained statements. For this case no additional information regarding the constraint is necessary and violation could be found by surveying all constrained statements and comparing their values.\\
+Constraints can be further specified by using qualifiers on the constraint statement. These qualifiers are either optional or mandatory and may be applied once or multiple times. For example, the \emph{none of} constraint (Q52558054) states that values for the specific property may not be in a given set of disallowed values. This set is specified using qualifiers with property \emph{item of} (P2305), which list all the disallowed values. At least one such qualifier must be present for the statement.\\
+More complex dependencies are also possible. A constraint can depend on all constrained statements of a specific item (\emph{single value} constraint [Q19474404]), on all statements of the item specified as the value of a constrained statement (\emph{value requires statement} constraint [Q21510864]) or on all statements using the subclassOf-predicate (\emph{type} constraint [Q21503250]).
 
-Table \ref{tab_property_constraints} shows all currently used property constrains in Wikidata. It is sorted by difficulty, which is an estimate of the necessary pre-processing and rule complexity based on required features. These required features are conditions that cannot natively be expressed in datalog and would require some kind of pre-processing to be made available. Difficulty 0 does not need any pre-processing except for loading the data into datalog as ground rules. 1 requires inequality, which can be easily solved with brute force but will be improved in chapter \ref{cha_rules}. 2 needs negation in a form that can be solved without pre-processing everything and 3 in a form that would require all logic as part of pre-processing. Other features needed for category three are regular expressions, which could theoretically be translated but would require large amounts of pre-processing, value comparison, general negation and finally web requests to test if a link is valid.
+Table \ref{tab_property_constraints} shows all constraints that are used as of September 2018. It is roughly sorted by how difficult it is to model the given constraint using logical rules, based on the required expressive features and pre-processing. These required features are conditions that cannot natively be expressed in datalog and would require some kind of pre-processing of the dataset. Four constraints do not need any pre-processing except for loading the data into datalog as ground rules. Six can be solved if constant inequality is defined. This can be easily solved with brute force but will be improved in section \ref{sec_inequality}. A further seven require negation of a specific fact which can be achieved with reasonable effort. The last ten \todo{maybe type can be done in some way} are not deemed translatable because they require a feature that cannot be reasonably emulated in datalog. The feature mostly needed is a general form of negation that would allow to test for the non-existence of a derived fact. Other features needed for these constraints are regular expressions, which could theoretically be translated but would require large amounts of pre-processing, value comparison, and finally web requests to test if a link is valid.
 
 \begin{table}[H]
 \caption{property constraints}\label{tab_property_constraints}
-\begin{tabularx}{\textheight}{rrllllX}
-Difficulty & \makecell{\# constrained\\ properties} & Identifier & Name & Required Features \\
+\begin{tabularx}{\textheight}{rlll}
+\makecell{\# constrained\\ properties} & Identifier & Name & Required Features \\
 \hline
-0 & 1410 & Q53869507 & Scope &  \\
-0 & 781 & Q21502838 & Conflicts with &  \\
-0 & 27 & Q52004125 & Allowed entity types &  \\
-0 & 17 & Q52558054 & None of &  \\
-1 & 2843 & Q21502410 & Distinct value & Inequality \\
-1 & 343 & Q21514353 & Allowed units & Inequality \\
-1 & 303 & Q21510851 & Allowed qualifiers & Inequality \\
-1 & 116 & Q21510859 & One of & Inequality \\
-1 & 3 & Q52060874 & Single best value & Inequality \\
-1 & 1 & Q52712340 & One-of qualifier value & Inequality \\
-2 & 4265 & Q21503247 & Item requires statement & Negation (statement non-existence) \\
-2 & 244 & Q21510864 & Value requires statement & Negation (statement non-existence) \\
-2 & 119 & Q21510855 & Inverse & Negation (statement non-existence) \\
-2 & 33 & Q21510862 & Symmetric & Negation (statement non-existence) \\
-2 & 13 & Q21510857 & Multi-value & Negation, Count (up to two) \\
-2 & 2909 & Q19474404 & Single value & Inequality, partially negation (qualifier non-existence) \\
-2 & 203 & Q21510856 & Mandatory qualifier & Negation (qualifier non-existence) \\
-3 & 2613 & Q21503250 & Type & Negation (derived fact negation) \\
-3 & 707 & Q21510865 & Value type & Negation (derived fact negation) \\
-3 & 3021 & Q21502404 & Format & Regular expressions \\
-3 & 188 & Q21510860 & Range & Value comparison \\
-3 & 106 & Q52848401 & Integer & Regular expressions \\
-3 & 65 & Q51723761 & No bounds & Negation \\
-3 & 53 & Q21510852 & Commons link & Web request \\
-3 & 10 & Q54554025 & Link & Negation \\
-3 & 6 & Q21510854 & Difference within range & Value comparison \\
-3 & 1 & Q25796498 & Contemporary constraint & Negation \\
+1410 & Q53869507 & Scope &  \\
+781 & Q21502838 & Conflicts with &  \\
+27 & Q52004125 & Allowed entity types &  \\
+17 & Q52558054 & None of &  \\
+\hline
+2843 & Q21502410 & Distinct value & Inequality \\
+343 & Q21514353 & Allowed units & Inequality \\
+303 & Q21510851 & Allowed qualifiers & Inequality \\
+116 & Q21510859 & One of & Inequality \\
+3 & Q52060874 & Single best value & Inequality \\
+1 & Q52712340 & One-of qualifier value & Inequality \\
+\hline
+4265 & Q21503247 & Item requires statement & Negation (statement non-existence) \\
+244 & Q21510864 & Value requires statement & Negation (statement non-existence) \\
+119 & Q21510855 & Inverse & Negation (statement non-existence) \\
+33 & Q21510862 & Symmetric & Negation (statement non-existence) \\
+13 & Q21510857 & Multi-value & Negation, Count (up to two) \\
+2909 & Q19474404 & Single value & Inequality, Negation (qualifier non-existence) \\
+203 & Q21510856 & Mandatory qualifier & Negation (qualifier non-existence) \\
+\hline
+2613 & Q21503250 & Type & Negation (derived fact negation) \\
+707 & Q21510865 & Value type & Negation (derived fact negation) \\
+3021 & Q21502404 & Format & Regular expressions \\
+188 & Q21510860 & Range & Value comparison \\
+106 & Q52848401 & Integer & Regular expressions \\
+65 & Q51723761 & No bounds & Negation \\
+53 & Q21510852 & Commons link & Web request \\
+10 & Q54554025 & Link & Negation \\
+6 & Q21510854 & Difference within range & Value comparison \\
+1 & Q25796498 & Contemporary constraint & Negation \\
 \end{tabularx}
 \end{table}
 
 
 \section{Wikidata constraints explained}
-This section will explain all interesting, meaning translatable or partially translatable, currently used property constraints on Wikidata. They will be presented roughly in descending order of the number of properties with this constraint, although constraints with similar function will be explained directly after one another. Also, all constraints that were considered untranslatable are listed at the and, each with a short explanation as to why they were placed in that group.\\
+This section will explain all interesting, meaning translatable or partially translatable, currently used property constraints on Wikidata. They will be presented roughly in descending order of the number of properties with this constraint, although constraints with similar function will be explained directly after one another. Also, all constraints that were considered untranslatable are listed at the and, each with a short explanation as to why they were placed in that group.
 
-Every constraint will start with a table showing basic properties of the constraint. This includes the requirement, relevant qualifiers, possible violations of the constraint and the data the constraint depends on. The requirement states which part of the data graph in relation to the constrained statement are restricted or need to exist. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The dependencies list their relation to the constrained statement. Table \ref{tab_example_constraint} shows the formatting as an example.
-
-\begin{table}[H]
-\caption{example constraint (Q31415926)}\label{tab_example_constraint}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Requirement & requirement \\
-\hline
-Qualifiers & \makecell{example qualifier (P1234) -- 1..* \\ description \\ another qualifier (P4321) -- 0..1 \\ different description} \\
-\hline
-Violation & \makecell{one way to violate the constraint \\ another violation possibility} \\
-\hline
-Dependency & statements, qualifiers or references in relation to the constrained statement\\
-\hline
-Rule features & features needed (missing if no features needed) \\
-\hline
-\end{tabularx}
-\end{table}
+Every section describing a constraint will start with a table showing basic properties of the constraint. These include the required data, relevant qualifiers, and possible violations of the constraint. The required data states which part of the data in relation to the constrained statement are restricted or need to exist. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The first constraint, \emph{property scope}, will be used as an example to explain the table in detail.
 
 \subsection{Property scope (Q53869507)}
-The property scope constraint specifies if a property may be used in a statement, qualifier or reference as predicate.
+\subsubsection{Constraint}
+The \emph{property scope} constraint specifies if a property may be used as predicate in a statement, qualifier or reference.
 \begin{table}[H]
 \caption{property scope constraint (Q53869507)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & constrained statement \\
+Required data & constrained statement, qualifier and reference \\
 \hline
-Qualifiers & \makecell{property scope (P5314) -- 1..3 \\ must be as main value (Q54828448), as qualifier (Q54828449) or as reference (Q54828450) \\ specifies allowed use in statements, qualifiers or references} \\
+Qualifiers & \makecell{\emph{property scope} (P5314) -- 1..3 \\ must be \emph{as main value} (Q54828448), \emph{as qualifier} (Q54828449) \\ or \emph{as reference} (Q54828450) \\ specifies allowed use in statements, qualifiers or references} \\
 \hline
-Violation & constrained statement in a position that is not allowed \\
-\hline
-Dependency & constrained statement, qualifier or reference \\
+Violation & constrained property in a position that is not allowed \\
 \hline
 \end{tabularx}
 \end{table}
 
-Since only three possibilities exist, this is equivalent to forbidding all other possibilities and the rules are simple mapping all of statementEDB, qualifierEDB and referenceEDB with the constrained property that are not allowed.
+The required data specifies which data, in relation to the constrained statement, needs to be evaluated to conclude if the constraint was violated. The used abbreviations are listed in Table \ref{tab_abbreviations}. In this case this is simply each statement, qualifier or reference whose predicate is the constrained property.\\
+The \emph{property scope} constraint requires the scope, meaning statement, qualifier or reference, to be set via qualifier \emph{property scope} (P5314). The cardinality is 1..3 because it is mandatory and has only three possible values.\\
+It is violated if a statement, qualifier or reference has a predicate with the \emph{property scope} constraint that does not allow this scope.\\
 
-\subsection{Conflicts-with (Q21502838)}
-The conflicts with constraint forbids either certain statements or statements with a specific property on constrained items.
+\subsubsection{Rules}
+The property scope constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough. This means violations can be found using these rules:
+\begin{align*}
+\text{violation\_triple}(S, I, \text{propertyConstant}, V) &\leftarrow \text{statementEDB}(S, I, \text{propertyConstant}, V)\\
+\text{violation\_qualifier}(S, \text{propertyConstant}, V) &\leftarrow \text{qualifierEDB}(S, \text{propertyConstant}, V)\\
+\text{violation\_reference}(S, \text{propertyConstant}, V) &\leftarrow \text{referenceEDB}(S, H, \text{propertyConstant}, V)
+\end{align*}
+Which of these rules need to be used depends on the values of the \emph{property scope} qualifier. If a concrete constrained on a property does not have \emph{as main value} as a value of the qualifier, the first rule is used. The case for \emph{as qualifier} and \emph{as reference} is analogue with the second and third rule, respectively.
+
+\subsection{Conflicts with (Q21502838)}
+\subsubsection{Constraint}
+The \emph{conflicts with} constraint forbids statements on constrained entities whose predicate is a specified \emph{conflicting property}. If \emph{conflicting values} have been specified as well, the constraint is weakened and only violated by statements if in addition to the predicate being a \emph{conflicting property}, the object is one of the \emph{conflicting values}.
 \begin{table}[H]
 \caption{Conflicts-with constraint (Q21502838)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & item statement \\
+Required data & entity statements \\
 \hline
-Qualifiers & \makecell{conflicting property (P2306) -- 1 \\ property no item statement may have (with conflicting values if specified) \\
-conflicting values (P2305) -- 0..* \\ values that may not appear in item statements with the conflicting property} \\
+Qualifiers & \makecell{\emph{conflicting property} (P2306) -- 1 \\ property that may not be predicate of entity statements \\
+\emph{conflicting values} (P2305) -- 0..* \\ values that may not be objects of entity statements with the \emph{conflicting property}} \\
 \hline
-Violation & \makecell{item statement with the conflicting property \\ item statement with the conflicting property and one of the conflicting values} \\
-\hline
-Dependency & all item statements \\
+Violation & \makecell{entity statement with the conflicting property \\ entity statement with the conflicting property and one of the conflicting values} \\
 \hline
 \end{tabularx}
 \end{table}
-The rule modelling can simply be done by choosing all statementEDB with the constrained property and then all statementEDB on the same item with the conflicting property, specifying the values as well if necessary.
+
+\subsubsection{Rules}
+The conflicts-with constraint is violated if another statement on the same item either has a conflicting property or a conflicting property and a conflicting value depending on specified qualifiers. It depends on a conjunction (\(O\) denoting another statement ID, \(C\) another value) and a violation for a conflicts-with constraint is thus either
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{}\\
+&\text{statementEDB}(O, I, \text{conflictingPropertyConstant}, C)
+\end{split}
+\end{equation*}
+for constraints with no conflicting values specified or one
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{}\\
+&\text{statementEDB}(O, I, \text{conflictingPropertyConstant}, \text{conflictingValueConstant})
+\end{split}
+\end{equation*}
+for each conflicting value if specified.\\
 
 \subsection{Allowed entity types (Q52004125)}
 The allowed entity types constraint limits if a property may be used on an item, a property or a lexeme, although lexemes are not yet deployed.
@@ -219,7 +233,7 @@ The allowed entity types constraint limits if a property may be used on an item,
 \caption{Allowed entity types constraint (Q52004125)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & constrained statement \\
+Required data & constrained statement \\
 \hline
 Qualifiers & \makecell{allowed entity type (P2305) -- 1..3 \\ must be wikibase item (Q29934200), wikibase property (Q29934218) \\ or lexeme (Q51885771); \\ specifies the type the property may be used on} \\
 \hline
@@ -239,7 +253,7 @@ The none of constraint restricts the values that the property may refer to by li
 \caption{None of constraint (Q52558054)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & constrained statement \\
+Required data & constrained statement \\
 \hline
 Qualifiers & \makecell{forbidden value (P2305) -- 1..* \\ values that may not appear in a constrained property} \\
 \hline
@@ -258,7 +272,7 @@ The distinct values constraint forbids the existence of two constrained statemen
 \caption{distinct values constraint (Q21502410)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & constrained statement value \\
+Required data & constrained statement value \\
 \hline
 Violations & two constrained statements with same value \\
 \hline
@@ -277,7 +291,7 @@ The allowed units constraint specifies that a constrained statement may only hav
 \caption{Allowed units constraint (Q21514353)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & constrained statement unit \\
+Required data & constrained statement unit \\
 \hline
 Qualifiers & \makecell{allowed unit (P2305) -- 1..* \\ units that the statement may have (or none for dimensionless units)} \\
 \hline
@@ -299,7 +313,7 @@ The allowed qualifiers constraint specifies that only a limited set of propertie
 \caption{Allowed qualifiers constraint (Q21510851)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & qualifier on constrained statement \\
+Required data & qualifier on constrained statement \\
 \hline
 Qualifiers & \makecell{	allowed qualifier (P2306) -- 1..* \\ qualifiers that the statement may have} \\
 \hline
@@ -321,7 +335,7 @@ The one-of constraint limits the values a property may use to a set of given val
 \caption{One-of constraint (Q21510859)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & constrained statement \\
+Required data & constrained statement \\
 \hline
 Qualifiers & \makecell{allowed values (P2305) -- 1..* \\ values that may be used in the constrained statement} \\
 \hline
@@ -343,7 +357,7 @@ The one-of qualifier value constraint restricts which values may be used on a qu
 \caption{One-of qualifier value constraint (Q52712340)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & constrained statement qualifier value \\
+Required data & constrained statement qualifier value \\
 \hline
 Qualifiers: & \makecell{qualifier property (P2306) -- 1 \\ property of the restricted qualifier\\
 qualifier values (P2305) -- 1..* \\ values the qualifiers may take}\\
@@ -365,7 +379,7 @@ The item requires statement constraint requires an additional statement on an it
 \caption{item requires statement constraint (Q21503247)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & item statement \\
+Required data & item statement \\
 \hline
 Qualifiers & \makecell{required property (P2306) -- 1 \\ property the item statement must have \\ allowed value (P2305) -- 0..* \\ values the item statement may have} \\
 \hline
@@ -397,7 +411,7 @@ The multi-value constraint specifies that the constrained property should appear
 \caption{Multi-value constraint (Q21510857)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & item statement \\
+Required data & item statement \\
 \hline
 Violation & \makecell{constrained item with exactly one constrained statement} \\
 \hline
@@ -416,7 +430,7 @@ The single value constraint constrains the values a property may take on a singl
 \caption{single value constraint (Q19474404)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & constrained statement value \\
+Required data & constrained statement value \\
 \hline
 Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
 \hline
@@ -441,7 +455,7 @@ The mandatory qualifier constraint requires that a constrained statement has a q
 \caption{Mandatory qualifier constraint (Q21510856)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & qualifier on constrained statement \\
+Required data & qualifier on constrained statement \\
 \hline
 Qualifiers & \makecell{required property (P2306) -- 1 \\ qualifier that the statement must have} \\
 \hline
@@ -463,7 +477,7 @@ The single best value constraint requires that only one constrained statement pe
 \caption{Single best value constraint (Q52060874)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & item statement rank \\
+Required data & item statement rank \\
 \hline
 Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
 \hline
@@ -485,7 +499,7 @@ or via instanceOf (instanceOf/subclassOf* <class>) for all classes on the constr
 \caption{type constraint (Q21503250)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Requirement & chain of statements \\
+Required data & chain of statements \\
 \hline
 Qualifiers & \makecell{relation (P2309) -- 1 \\ must be instance of (Q21503252), subclass of (Q21514624), \\ or instance or subclass of (Q30208840); \\ specifies the relation the constrained item must have to the classes\\
 class (P2308) -- 1..* \\ entities that must be reached using the relation} \\
@@ -552,7 +566,7 @@ The goal outlined above is to identify violations of constrained properties, mea
 
 Every constraint violation depends on some constant in relation to the constrained statement. These requirements have been roughly identified in the previous chapter and will now be specified as rules. This step can include expanding the pre-processing to load more data such as units for quantities.\\
 
-The second step is the most complex: Depending on the constrained statement and the requirements, has a violation occurred? For the easiest category of constraints this step does not entail any additional work since the existence of the dependent structure is itself a violation. However, most constraints require at least evaluation of inequality between allowed values and existing values (\ref{sec_inequality}) or the non-existence of certain facts (\ref{sec_statement_non-existence}). Both processes will be explained in their respective sections.
+The second step is the most complex: Depending on the constrained statement and the Required data, has a violation occurred? For the easiest category of constraints this step does not entail any additional work since the existence of the dependent structure is itself a violation. However, most constraints require at least evaluation of inequality between allowed values and existing values (\ref{sec_inequality}) or the non-existence of certain facts (\ref{sec_statement_non-existence}). Both processes will be explained in their respective sections.
 
 The final step of translation is not necessary to identify violations per se, but provides additional information as to where exactly a violation has occurred. \todo[inline]{lets see how much we can actually do here}
 
@@ -562,35 +576,6 @@ Four constraints do not require any additional features and can be easily transl
 \[\text{violation\_qualifier}(S, P, V)\]
 \[\text{violation\_reference}(S, P, V)\]
 where \(S\) specifies the statement ID, \(I\) the item, \(P\) the property, and \(V\) the value. The term propertyConstant will be used for the constant of the constrained property.
-
-\subsection{Property scope (Q53869507)}
-The property scope constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough.
-A violation for a property scope constraint is
-\[\text{violation\_triple}(S, I, \text{propertyConstant}, V) \leftarrow \text{statementEDB}(S, I, \text{propertyConstant}, V)\]
-\[\text{violation\_qualifier}(S, \text{propertyConstant}, V) \leftarrow \text{qualifierEDB}(S, \text{propertyConstant}, V)\]
-\[\text{violation\_reference}(S, \text{propertyConstant}, V) \leftarrow \text{referenceEDB}(S, H, \text{propertyConstant}, V)\]
-depending on if as main value, as qualifier, or as reference was not set in the qualifiers.\\
-
-There is no further information that can be materialized regarding this violations.
-
-\subsection{Conflicts-with (Q21502838)}
-The conflicts-with constraint is violated if another statement on the same item either has a conflicting property or a conflicting property and a conflicting value depending on specified qualifiers. It depends on a conjunction (\(O\) denoting another statement ID, \(C\) another value) and a violation for a conflicts-with constraint is thus either
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
-&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge\\
-&\text{statementEDB}(O, I, \text{conflictingPropertyConstant}, C)
-\end{split}
-\end{equation*}
-for constraints with no conflicting values specified or one
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
-&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge\\
-&\text{statementEDB}(O, I, \text{conflictingPropertyConstant}, \text{conflictingValueConstant})
-\end{split}
-\end{equation*}
-for each conflicting value if specified.\\
 
 \subsection{Allowed entity types (Q52004125)}
 The allowed entity types constraint is violated by a statement with the wrong entity type. This means that during extraction additional data has to be readied. To encode this two new predicates are introduced, item\([1]\) and property\([1]\). All items and properties with a constrained statement will then be sorted into one of these two categories. Constraints regarding the lexeme entity type can be ignored since they are currently not deployed. The violations the depend on a simple conjunction and follow directly as
