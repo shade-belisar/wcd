@@ -264,24 +264,44 @@ The allowed entity types constraint is violated by a statement with the wrong en
 The first rule are created for all \emph{allowed entity type} constraints whose \emph{allowed entity type} does not contain \emph{Wikibase item}. The second rule works analogue for \emph{Wikibase property}.
 
 \subsection{None of (Q52558054)}
+\subsubsection{Constraint}
 The none of constraint restricts the values that the property may refer to by listing a set of values as forbidden.
 
 \begin{table}[H]
 \caption{None of constraint (Q52558054)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statement \\
+Required data & constrained statements, qualifiers and references \\
 \hline
-Qualifiers & \makecell{forbidden value (P2305) -- 1..* \\ values that may not appear in a constrained property} \\
+Qualifiers & \makecell{\emph{forbidden value} (P2305) -- 1..* \\ values that may not be object of a constraint statement, qualifier or reference} \\
 \hline
-Violation & \makecell{constrained statement with a forbidden value} \\
-\hline
-Dependency & constrained statement \\
+Violation & \makecell{constrained statement, qualifier or reference with a forbidden value} \\
 \hline
 \end{tabularx}
 \end{table}
 
-Modelling this constraint is very straightforward, since each forbidden value forms a property-value pair with the constrained statement that may not exists. Thus a violations is a statementEDB with the constrained statement and a forbidden value.
+\subsubsection{Rules}
+The none of constraint simply forbids certain values for properties, thus effectively prohibiting certain triples, qualifiers and references. The rules, depending on nothing but specific database entries, are
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, \text{forbiddenValueConstant})
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_qualifier}&(S, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
+&\text{qualifierEDB}(S, \text{propertyConstant}, \text{forbiddenValueConstant})
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_reference}&(S, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
+&\text{referenceEDB}(S, H, \text{propertyConstant}, \text{forbiddenValueConstant})
+\end{split}
+\end{equation*}
+Given a specified constraint, each of the three rules is created once for each \emph{forbidden value}.
+
 
 \subsection{Distinct values (Q21502410)}
 The distinct values constraint forbids the existence of two constrained statements with the same value.
@@ -593,27 +613,6 @@ Four constraints do not require any additional features and can be easily transl
 \[\text{violation\_qualifier}(S, P, V)\]
 \[\text{violation\_reference}(S, P, V)\]
 where \(S\) specifies the statement ID, \(I\) the item, \(P\) the property, and \(V\) the value. The term propertyConstant will be used for the constant of the constrained property.
-
-\subsection{None of (Q52558054)}
-The none of constraint simply forbids certain values for properties, thus effectively prohibiting certain triples, qualifiers and references. The violations, depending on nothing but specific database entries, are
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
-&\text{statementEDB}(S, I, \text{propertyConstant}, \text{forbiddenValueConstant})
-\end{split}
-\end{equation*}
-\begin{equation*}
-\begin{split}
-\text{violation\_qualifier}&(S, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
-&\text{qualifierEDB}(S, \text{propertyConstant}, \text{forbiddenValueConstant})
-\end{split}
-\end{equation*}
-\begin{equation*}
-\begin{split}
-\text{violation\_reference}&(S, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
-&\text{referenceEDB}(S, H, \text{propertyConstant}, \text{forbiddenValueConstant})
-\end{split}
-\end{equation*}
 
 \section{Inequality}\label{sec_inequality}
 All rules except the four covered in the previous section require inequality in some way or another. This means it is necessary to extract additional information during pre-processing, namely the constants for whom inequality needs to be stated. Each constraint will list the possible unequal entities in relation to the constrained statement. Multiple ways of implementing inequality while keeping the number of rules small will be discussed. Afterwards all constraints that can be translated using inequality will be explained.
