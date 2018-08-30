@@ -65,9 +65,10 @@ public class SymmetricCC extends ConstraintChecker {
 	
 	@Override
 	public void registerInequalities() throws IOException {
-		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 1);
-		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 2);
-		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 3);
+		InequalityHelper.getInequalityHelper(this)
+		.registerInequality(Main.statementSet.getStatementFile(), 1)
+		.registerInequality(Main.statementSet.getStatementFile(), 2)
+		.registerInequality(Main.statementSet.getStatementFile(), 3);
 	}
 	
 	@Override

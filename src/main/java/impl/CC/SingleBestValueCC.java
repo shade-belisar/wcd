@@ -90,9 +90,10 @@ public class SingleBestValueCC extends ConstraintChecker {
 		for (Set<String> valuesSet : propertiesAndSeparators.values()) {
 			values.addAll(valuesSet);
 		}
-		InequalityHelper.registerInequality(values);
-		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 0);
-		InequalityHelper.registerInequality(Main.statementSet.getQualifierFile(), 2);
+		InequalityHelper.getInequalityHelper(this)
+		.registerInequality(values)
+		.registerInequality(Main.statementSet.getStatementFile(), 0)
+		.registerInequality(Main.statementSet.getQualifierFile(), 2);
 	}
 	
 	@Override

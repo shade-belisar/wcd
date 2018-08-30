@@ -89,8 +89,9 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 		for (Set<String> propertySet : propertiesAndQualifiers.values()) {
 			qualifierProperties.addAll(propertySet);
 		}
-		InequalityHelper.registerInequality(qualifierProperties);
-		InequalityHelper.registerInequality(Main.statementSet.getQualifierFile(), 1);
+		InequalityHelper.getInequalityHelper(this)
+		.registerInequality(qualifierProperties)
+		.registerInequality(Main.statementSet.getQualifierFile(), 1);
 	}
 
 	@Override

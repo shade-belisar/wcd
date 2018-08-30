@@ -88,10 +88,11 @@ public class OneOfCC extends ConstraintChecker {
 		for (Set<String> valuesSet : allowedValues.values()) {
 			values.addAll(valuesSet);
 		}
-		InequalityHelper.registerInequality(values);
-		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 3);
-		InequalityHelper.registerInequality(Main.statementSet.getQualifierFile(), 2);
-		InequalityHelper.registerInequality(Main.statementSet.getReferenceFile(), 2);
+		InequalityHelper.getInequalityHelper(this)
+		.registerInequality(values)
+		.registerInequality(Main.statementSet.getStatementFile(), 3)
+		.registerInequality(Main.statementSet.getQualifierFile(), 2)
+		.registerInequality(Main.statementSet.getReferenceFile(), 2);
 	}
 
 	@Override

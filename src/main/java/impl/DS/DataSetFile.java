@@ -39,15 +39,22 @@ public class DataSetFile {
 	boolean didExist = false;
 	
 	public DataSetFile(String name, Predicate predicate) throws IOException {
-		init(name, predicate, Main.getExtract());
+		init("", name, predicate, Main.getExtract());
 	}
 	
 	public DataSetFile(String name, Predicate predicate, boolean extract) throws IOException {
-		init(name, predicate, extract);
+		init("", name, predicate, extract);
 	}
 	
-	public void init(String name, Predicate predicate_, boolean extract) throws IOException {
-		fileName = BASE_LOCATION + "/" + name + ".csv.gz";
+	public DataSetFile(String folder, String name, Predicate predicate, boolean extract) throws IOException {
+		init(folder, name, predicate, extract);
+	}
+	
+	public void init(String folder, String name, Predicate predicate_, boolean extract) throws IOException {
+		if (!folder.equals("") && !folder.endsWith("/"))
+			folder += folder + "/";			
+			
+		fileName = BASE_LOCATION + folder + name + ".csv.gz";
 		predicate = predicate_;
 		
 		dataSetFileGz = new File(fileName);

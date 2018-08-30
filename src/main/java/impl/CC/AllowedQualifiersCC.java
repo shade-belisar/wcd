@@ -87,8 +87,9 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 		for (Set<String> qualifierSet : allowedQualifiers.values()) {
 			qualifiers.addAll(qualifierSet);
 		}
-		InequalityHelper.registerInequality(qualifiers);
-		InequalityHelper.registerInequality(Main.statementSet.getQualifierFile(), 1);
+		InequalityHelper.getInequalityHelper(this)
+		.registerInequality(qualifiers)
+		.registerInequality(Main.statementSet.getQualifierFile(), 1);
 	}
 
 	@Override

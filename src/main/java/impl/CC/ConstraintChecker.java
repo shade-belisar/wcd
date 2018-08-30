@@ -129,10 +129,7 @@ public abstract class ConstraintChecker {
 		logger.info("Loaded basic data sets.");
 		prepareFacts();
 		logger.info("Loaded additional data sets.");
-		if (Main.getReload())
-			InequalityHelper.reload(reasoner);
-		else
-			InequalityHelper.load(reasoner);
+		InequalityHelper.load(this);
 		logger.info("Loaded inequalities.");
 		
 		
@@ -256,6 +253,14 @@ public abstract class ConstraintChecker {
 	
 	public String identify() {
 		return "Constraint: " + constraint;
+	}
+	
+	public String getConstraint() {
+		return constraint;
+	}
+	
+	public Reasoner getReasoner() {
+		return reasoner;
 	}
 	
 	protected abstract Set<Atom> queries();

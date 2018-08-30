@@ -89,9 +89,10 @@ public class InverseCC extends ConstraintChecker {
 		for (Map.Entry<String, Set<String>> entry : configuration.entrySet()) {
 			properties.addAll(entry.getValue());
 		}
-		InequalityHelper.registerInequality(properties);
-		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 1);
-		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 2);
+		InequalityHelper.getInequalityHelper(this)
+		.registerInequality(properties)
+		.registerInequality(Main.statementSet.getStatementFile(), 1)
+		.registerInequality(Main.statementSet.getStatementFile(), 2);
 	}
 	
 	@Override

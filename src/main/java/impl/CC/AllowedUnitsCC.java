@@ -86,8 +86,9 @@ public class AllowedUnitsCC extends ConstraintChecker {
 		for (Set<String> unitsSet : allowedUnits.values()) {
 			units.addAll(unitsSet);
 		}
-		InequalityHelper.registerInequality(units);
-		InequalityHelper.registerInequality(Main.statementSet.getUnitsFile(), 1);
+		InequalityHelper.getInequalityHelper(this)
+		.registerInequality(units)
+		.registerInequality(Main.statementSet.getUnitsFile(), 1);
 	}
 
 	@Override

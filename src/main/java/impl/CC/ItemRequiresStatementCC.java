@@ -97,9 +97,10 @@ public class ItemRequiresStatementCC extends ConstraintChecker {
 				inequalities.addAll(set);
 			}
 		}
-		InequalityHelper.registerInequality(inequalities);
-		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 2);
-		InequalityHelper.registerInequality(Main.statementSet.getStatementFile(), 3);
+		InequalityHelper.getInequalityHelper(this)
+		.registerInequality(inequalities)
+		.registerInequality(Main.statementSet.getStatementFile(), 2)
+		.registerInequality(Main.statementSet.getStatementFile(), 3);
 		
 	}
 	

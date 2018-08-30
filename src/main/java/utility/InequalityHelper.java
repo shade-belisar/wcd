@@ -8,15 +8,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
@@ -28,6 +28,8 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
+import impl.CC.ConstraintChecker;
+import impl.DS.DataSet;
 import impl.DS.DataSetFile;
 import main.Main;
 
@@ -42,6 +44,8 @@ public class InequalityHelper {
 		ENCODED,
 		DEMANDED
 	}
+
+	public static Mode mode = Mode.ENCODED;
 	
 	final static int chunkSize = 7;
 	
@@ -78,57 +82,70 @@ public class InequalityHelper {
 	// unequal_IDB(X, Y) :- unequal_IDB(Y, X)
 	final static Rule inverse = Expressions.makeRule(Expressions.makeAtom(unequal, x, y), Expressions.makeAtom(unequal, y, x));
 	
-	final static List<Rule> rules = new ArrayList<>();
+	final String FOLDER;
 	
-	final static Set<String> characters = new HashSet<String>();
+	final List<Rule> rules = new ArrayList<>();
 	
-	final static List<DataSetFile> files = new ArrayList<>();
+	final Set<String> characters = new HashSet<String>();
 	
-	final static Set<InequalityFileIndex> inequalityFileIndexes = new HashSet<>();
+	final List<DataSetFile> files = new ArrayList<>();
 	
-	final static Set<String> additionalInequalities = new HashSet<String>();
+	final Set<InequalityFileIndex> inequalityFileIndexes = new HashSet<>();
 	
-	public static Mode mode = Mode.ENCODED;
+	final Set<String> additionalInequalities = new HashSet<String>();
 	
-	public static void reset() {
-		characters.clear();
-		files.clear();
-		inequalityFileIndexes.clear();
-		additionalInequalities.clear();
-	} 
+	final static Map<ConstraintChecker, InequalityHelper> helpers = new HashMap<>();
 	
-	public static void registerInequality(Set<String> inequalities) {
-		additionalInequalities.addAll(inequalities);
+	private InequalityHelper(String folder_) {
+		if (!folder_.endsWith("/"))
+			folder_ += "/";
+		FOLDER = folder_;
 	}
 	
-	public static void registerInequality(File file, int index) {
+	public static InequalityHelper getInequalityHelper(ConstraintChecker checker) {
+		String folder = normalize(checker.getConstraint());
+		if (!helpers.containsKey(checker))
+			helpers.put(checker, new InequalityHelper(folder));
+		return helpers.get(folder);
+	}
+	
+	public InequalityHelper registerInequality(Set<String> inequalities) {
+		additionalInequalities.addAll(inequalities);
+		return this;
+	}
+	
+	public InequalityHelper registerInequality(File file, int index) {
 		for (InequalityFileIndex indexFile : inequalityFileIndexes) {
 			if (file.equals(indexFile.getFile())) {
 				indexFile.addIndex(index);
-				return;
+				return this;
 			}		
 		}
 		inequalityFileIndexes.add(new InequalityFileIndex(file, index));
+		return this;
 	}
 	
-	public static void prepareFiles() throws IOException {
+	static String normalize(String string) {
+		string = string.toLowerCase();
+		if (!string.endsWith("/"))
+			string += "/";
+		return string;
+	}
+	
+	public static void load(ConstraintChecker checker) throws ReasonerStateException, IOException {
+		if (!helpers.containsKey(checker))
+			return;
+		InequalityHelper helper = helpers.get(checker);
+		Reasoner reasoner = checker.getReasoner();
 		if (Main.getReload())
-			logger.warn("Preparing files in reload mode.");
-		switch (mode) {
-		case NAIVE:
-			naive();
-			break;
-		case ENCODED:
-			encoded(false);
-			break;
-		case DEMANDED:
-			encoded(true);
-			break;
-		}
+			helper.reload(reasoner);
+		else
+			helper.load(reasoner);
+			
 	}
 	
-	public static void load(Reasoner reasoner) throws ReasonerStateException, IOException {
-		File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + UNIQUE_CHARACTERS);
+	void load(Reasoner reasoner) throws ReasonerStateException, IOException {
+		File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
 		FileOutputStream output = new FileOutputStream(uniqueCharacters, false);
 		GZIPOutputStream gzip = new GZIPOutputStream(output);
 		OutputStreamWriter writer = new OutputStreamWriter(gzip);
@@ -140,20 +157,7 @@ public class InequalityHelper {
 		commonLoad(reasoner);
 	}
 	
-	static void commonLoad(Reasoner reasoner) throws ReasonerStateException, IOException {
-		reasoner.addRules(unequal_IDB_EDB, inverse);
-		
-		reasoner.addRules(rules);
-		
-		List<Atom> facts = allCharactersUnequal(characters);
-		reasoner.addFacts(facts);
-		
-		for (DataSetFile dataSetFile : files) {
-			dataSetFile.loadFile(reasoner);
-		}
-	}
-	
-	public static void reload(Reasoner reasoner) throws ReasonerStateException, IOException {
+	void reload(Reasoner reasoner) throws ReasonerStateException, IOException {
 		boolean demand = false;
 		
 		switch (mode) {
@@ -172,7 +176,7 @@ public class InequalityHelper {
 		files.remove(lastFile);
 		lastFile.getFile().delete();
 		
-		File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + UNIQUE_CHARACTERS);
+		File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
 		FileInputStream input = new FileInputStream(uniqueCharacters);
 		GZIPInputStream gzip = new GZIPInputStream(input);
 		InputStreamReader reader = new InputStreamReader(gzip);
@@ -186,7 +190,42 @@ public class InequalityHelper {
 		commonLoad(reasoner);
 	}
 
-	static void naive () throws IOException {
+	void commonLoad(Reasoner reasoner) throws ReasonerStateException, IOException {
+		reasoner.addRules(unequal_IDB_EDB, inverse);
+		
+		reasoner.addRules(rules);
+		
+		List<Atom> facts = allCharactersUnequal(characters);
+		reasoner.addFacts(facts);
+		
+		for (DataSetFile dataSetFile : files) {
+			dataSetFile.loadFile(reasoner);
+		}
+	}
+	
+	public static void prepareFiles() throws IOException {
+		for (InequalityHelper helper : helpers.values()) {
+			helper.prepareFilesInternal();
+		}
+	}
+	
+	void prepareFilesInternal() throws IOException {
+		if (Main.getReload())
+			logger.warn("Preparing files in reload mode.");
+		switch (mode) {
+		case NAIVE:
+			naive();
+			break;
+		case ENCODED:
+			encoded(false);
+			break;
+		case DEMANDED:
+			encoded(true);
+			break;
+		}
+	}
+
+	void naive () throws IOException {
 		DataSetFile file = new DataSetFile(UNEQUAL_NAIVE, unequal_EDB);
 		files.add(file);
 
@@ -229,7 +268,7 @@ public class InequalityHelper {
 		}
 	}
 
-	static void encoded(boolean demand) throws IOException {
+	void encoded(boolean demand) throws IOException {
 		List<Iterator<String>> iterators = new ArrayList<>();
 		for (InequalityFileIndex inequalityFile : inequalityFileIndexes) {
 			iterators.add(inequalityFile.getIterator());
@@ -255,14 +294,14 @@ public class InequalityHelper {
 		}
 	}
 	
-	static DataSetFile getChunkFile(int chunk, boolean demand) throws IOException {
+	DataSetFile getChunkFile(int chunk, boolean demand) throws IOException {
 		if (chunk < files.size())
 			return files.get(chunk);
 	
 		int chunkAdress = chunk * chunkSize;
 		String LETTER_I = "letter" + chunkAdress;
 		Predicate letter_i = Expressions.makePredicate(LETTER_I, chunkSize + 1);
-		DataSetFile file = new DataSetFile(LETTER_I, letter_i, !Main.getReload());
+		DataSetFile file = new DataSetFile(FOLDER, LETTER_I, letter_i, !Main.getReload());
 		files.add(file);
 		
 		List<Atom> inequalities = new ArrayList<>();
