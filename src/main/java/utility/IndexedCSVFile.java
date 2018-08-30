@@ -21,12 +21,16 @@ public class IndexedCSVFile {
 		}
 	}
 	
+	public File getFile() {
+		return file;
+	}
+	
 	public void addIndex(int index) {
 		indexes.add(index);
 	}
 	
-	public File getFile() {
-		return file;
+	public Set<Integer> getIndexes() {
+		return indexes;
 	}
 	
 	public Iterator<String> getIterator() throws IOException {

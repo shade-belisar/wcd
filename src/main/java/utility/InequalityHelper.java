@@ -148,6 +148,10 @@ public class InequalityHelper {
 		return string;
 	}
 	
+	public Set<IndexedCSVFile> indexedFiles() {
+		return inequalityFileIndexes;
+	}
+	
 	public static void load(ConstraintChecker checker) throws ReasonerStateException, IOException {
 		if (!helpers.containsKey(checker))
 			return;
@@ -220,25 +224,22 @@ public class InequalityHelper {
 	}
 	
 	public static void prepareFiles() throws IOException {
-		for (InequalityHelper helper : helpers.values()) {
-			helper.prepareFilesInternal();
-		}
-	}
-	
-	void prepareFilesInternal() throws IOException {
 		if (Main.getReload())
 			logger.warn("Preparing files in reload mode.");
 		switch (mode) {
 		case NAIVE:
-			naive();
+			for (InequalityHelper helper : helpers.values()) {
+				helper.naive();
+			}
 			break;
 		case ENCODED:
-			encoded(false);
+			encoded();
 			break;
 		case DEMANDED:
-			encoded(true);
+			encoded();
 			break;
 		}
+
 	}
 
 	void naive () throws IOException {
@@ -283,30 +284,33 @@ public class InequalityHelper {
 			first++;
 		}
 	}
-
-	void encoded(boolean demand) throws IOException {
-		List<Iterator<String>> iterators = new ArrayList<>();
-		for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
-			iterators.add(inequalityFile.getIterator());
+	
+	static void encoded() throws IOException {
+		for (InequalityHelper helper : helpers.values()) {
+			helper.encodedAdditional();
+			CombinedCSVFileReader.register(helper);
 		}
-		iterators.add(additionalInequalities.iterator());
-		
-		Iterator<String> iterator = new CombinedIterator<>(iterators);
-		
-		while (iterator.hasNext()) {
-			String string = iterator.next();
-			int i = 0;
-			for (List<String> chunk : chunks(string)) {
-				characters.addAll(chunk);
-				
-				DataSetFile file = getChunkFile(i, demand);
-				
-				List<String> line = new ArrayList<>();
-				line.add(string);
-				line.addAll(chunk);
-				file.write(line);
-				i++;
-			}
+		CombinedCSVFileReader.run();
+	}
+	
+	void encodedAdditional() throws IOException {
+		for (String string : additionalInequalities) {
+			encoded(string);
+		}
+	}
+
+	public void encoded(String string) throws IOException {		
+		int i = 0;
+		for (List<String> chunk : chunks(string)) {
+			characters.addAll(chunk);
+			
+			DataSetFile file = getChunkFile(i, demand);
+			
+			List<String> line = new ArrayList<>();
+			line.add(string);
+			line.addAll(chunk);
+			file.write(line);
+			i++;
 		}
 	}
 	
