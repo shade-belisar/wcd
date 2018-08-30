@@ -8,13 +8,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class InequalityFileIndex {
+public class IndexedCSVFile {
 	
 	final File file;
 	
 	final Set<Integer> indexes = new HashSet<>();
 	
-	public InequalityFileIndex(File file_, int...indexes_) {
+	public IndexedCSVFile(File file_, int...indexes_) {
 		file = file_;
 		for (int i : indexes_) {
 			indexes.add(i);

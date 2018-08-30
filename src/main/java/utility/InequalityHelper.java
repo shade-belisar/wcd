@@ -90,7 +90,7 @@ public class InequalityHelper {
 	
 	final List<DataSetFile> files = new ArrayList<>();
 	
-	final Set<InequalityFileIndex> inequalityFileIndexes = new HashSet<>();
+	final Set<IndexedCSVFile> inequalityFileIndexes = new HashSet<>();
 	
 	final Set<String> additionalInequalities = new HashSet<String>();
 	
@@ -115,13 +115,13 @@ public class InequalityHelper {
 	}
 	
 	public InequalityHelper registerInequality(File file, int index) {
-		for (InequalityFileIndex indexFile : inequalityFileIndexes) {
+		for (IndexedCSVFile indexFile : inequalityFileIndexes) {
 			if (file.equals(indexFile.getFile())) {
 				indexFile.addIndex(index);
 				return this;
 			}		
 		}
-		inequalityFileIndexes.add(new InequalityFileIndex(file, index));
+		inequalityFileIndexes.add(new IndexedCSVFile(file, index));
 		return this;
 	}
 	
@@ -232,7 +232,7 @@ public class InequalityHelper {
 		List<String> fixedOrderValues = new ArrayList<String>(additionalInequalities);
 		
 		List<Iterator<String>> firstIterators = new ArrayList<>();
-		for (InequalityFileIndex inequalityFile : inequalityFileIndexes) {
+		for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
 			firstIterators.add(inequalityFile.getIterator());
 		}
 		firstIterators.add(fixedOrderValues.iterator());
@@ -244,7 +244,7 @@ public class InequalityHelper {
 			String firstEntry = firstIterator.next();
 			
 			List<Iterator<String>> secondIterators = new ArrayList<>();
-			for (InequalityFileIndex inequalityFile : inequalityFileIndexes) {
+			for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
 				secondIterators.add(inequalityFile.getIterator());
 			}
 			secondIterators.add(fixedOrderValues.iterator());
@@ -270,7 +270,7 @@ public class InequalityHelper {
 
 	void encoded(boolean demand) throws IOException {
 		List<Iterator<String>> iterators = new ArrayList<>();
-		for (InequalityFileIndex inequalityFile : inequalityFileIndexes) {
+		for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
 			iterators.add(inequalityFile.getIterator());
 		}
 		iterators.add(additionalInequalities.iterator());
