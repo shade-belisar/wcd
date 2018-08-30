@@ -241,10 +241,10 @@ public class Main {
 		
 		if (!cmd.hasOption("noviolations")) {
 			try {
-				if (!getReload()) {
-					for(ConstraintChecker checker : checkers) {
-						checker.registerInequalities();
-					}					
+				for(ConstraintChecker checker : checkers) {
+					checker.registerInequalities();
+				}
+				if (!getReload()) {						
 					InequalityHelper.prepareFiles();
 					logger.info("Prepared inequality files.");
 				}
