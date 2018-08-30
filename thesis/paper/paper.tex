@@ -304,22 +304,34 @@ Given a specified constraint, each of the three rules is created once for each \
 
 
 \subsection{Distinct values (Q21502410)}
-The distinct values constraint forbids the existence of two constrained statements with the same value.
+\subsubsection{Constraint}
+The \emph{distinct values} constraint forbids the existence of two constrained statements with the same object.
 \begin{table}[H]
 \caption{distinct values constraint (Q21502410)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statement value \\
+Required data & constrained statements \\
 \hline
 Violations & two constrained statements with same value \\
-\hline
-Dependency & all constrained statements\\
 \hline
 Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
-To model the distinct values constraint it is necessary to find statements statementEDB with the constrained property and the same value whose statement id is unequal. In theory the constraint can also be applied to qualifiers and references by setting the respective value on a constraint scope (P4680) qualifier. However, there is currently no such case and will therefore not be regarded.
+The constraint can be expanded to cover qualifiers and references as well by setting a \emph{constraint scope} (P4680) qualifier with the respective value. However, as of September 2018 there is no constraint making use of this.
+
+\subsubsection{Rules}
+The \emph{distinct values} constraint requires two distinct constrained statements with the same value. 
+Two constrained statements with the same value can be found via a simple conjunction of two statementEDB atoms with the propertyConstant as predicate and a variable \(V\) as value. Since this would mark every constrained statement as a violations because it can fulfil both atoms at the same time, inequality of the statement IDs \(S\) and \(O\) must be tested as well.t
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
+&\text{statementEDB}(O, X, \text{propertyConstant}, V) \wedge{} \\
+&\text{unequal}(S, O)
+\end{split}
+\end{equation*}
+The rules for qualifiers and reference are analogue.
 
 \subsection{Allowed units (Q21514353)}
 The allowed units constraint specifies that a constrained statement may only have a unit that is in a set of specific units.
@@ -684,21 +696,6 @@ The rules outlined in section \ref{subsubsec_encoding} are changed to utilise th
 \begin{equation*}
 \text{unequal}(X, Y) \leftarrow \text{req\_inequality}(X, Y) \wedge \text{letter\_i}(X, A) \wedge \text{letter\_i}(Y, B) \wedge \text{unequal}(A, B)
 \end{equation*}
-
-\todo{could use this to restrict the character inequality too but do we gain much?}
-
-\subsection{Distinct values (Q21502410)}
-The distinct values constraints requires two distinct constrained statements with the same value. 
-While finding constrained statements with the same value is straightforward, violations only occur if the statements are actually different, i.e. have an unequal statement id.
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
-&\text{statementEDB}(O, X, \text{propertyConstant}, V) \wedge{} \\
-&\text{unequal}(S, O)
-\end{split}
-\end{equation*}
-While it is possible to set this constraint on qualifiers or references, this is currently not done and is thus not evaluated here.
 
 \subsection{Allowed units (Q21514353)}\label{subsec_3_allowed_units}
 The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the units of a triple, qualifier or reference needs to be extracted during pre-processing and their inequality established. Quantities are rendered as string during pre-processing, specifying their value, bounds and unit. The new predicate unit\([2]\) will associate a value with its unit.\\
