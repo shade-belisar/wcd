@@ -126,7 +126,7 @@ public class InequalityHelper {
 		String folder = normalize(checker.getConstraint());
 		if (!helpers.containsKey(checker))
 			helpers.put(checker, new InequalityHelper(folder));
-		return helpers.get(folder);
+		return helpers.get(checker);
 	}
 	
 	public InequalityHelper registerInequality(Set<String> inequalities) {
