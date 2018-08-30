@@ -109,18 +109,18 @@ public class Main {
 	    }
 	    
 	    if (!cmd.hasOption("inequalityMode"))
-	    	InequalityHelper.mode = InequalityHelper.Mode.ENCODED;
+	    	InequalityHelper.setMode(InequalityHelper.Mode.ENCODED);
 	    else {
 	    	String inequalityMode = cmd.getOptionValue("inequalityMode").toLowerCase();
 	    	switch (inequalityMode) {
 			case "naive":
-				InequalityHelper.mode = InequalityHelper.Mode.NAIVE;
+				InequalityHelper.setMode(InequalityHelper.Mode.NAIVE);
 				break;
 			case "encoded":
-				InequalityHelper.mode = InequalityHelper.Mode.ENCODED;
+				InequalityHelper.setMode(InequalityHelper.Mode.ENCODED);
 				break;
 			case "demanded":
-				InequalityHelper.mode = InequalityHelper.Mode.DEMANDED;
+				InequalityHelper.setMode(InequalityHelper.Mode.DEMANDED);
 				break;
 			default:
 				System.out.println("Inequality mode " + inequalityMode + " is unknown.");

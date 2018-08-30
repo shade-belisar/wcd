@@ -29,7 +29,6 @@ import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.CC.ConstraintChecker;
-import impl.DS.DataSet;
 import impl.DS.DataSetFile;
 import main.Main;
 
@@ -45,7 +44,9 @@ public class InequalityHelper {
 		DEMANDED
 	}
 
-	public static Mode mode = Mode.ENCODED;
+	static Mode mode = Mode.ENCODED;
+	
+	static boolean demand = false;
 	
 	final static int chunkSize = 7;
 	
@@ -100,6 +101,21 @@ public class InequalityHelper {
 		if (!folder_.endsWith("/"))
 			folder_ += "/";
 		FOLDER = folder_;
+	}
+	
+	public static void setMode(Mode mode_) {
+		mode = mode_;
+		switch (mode) {
+		case NAIVE:
+			demand = false;
+			break;
+		case ENCODED:
+			demand = false;
+			break;
+		case DEMANDED:
+			demand = true;
+			break;
+		}
 	}
 	
 	public static InequalityHelper getInequalityHelper(ConstraintChecker checker) {
