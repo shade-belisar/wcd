@@ -138,7 +138,7 @@ public abstract class ConstraintChecker {
 			rulesToAdd.addAll(propertyConstraintChecker.rules());
 		}
 		logger.info("Created " + rulesToAdd.size() + " rules.");
-		if (InequalityHelper.mode.equals(InequalityHelper.Mode.DEMANDED)) {
+		if (InequalityHelper.getMode().equals(InequalityHelper.Mode.DEMANDED)) {
 			List<Rule> demandRules = addRequireInequality(rulesToAdd);
 			rulesToAdd.addAll(demandRules);
 			logger.info("Created " + demandRules.size() + " additional demand-rules.");

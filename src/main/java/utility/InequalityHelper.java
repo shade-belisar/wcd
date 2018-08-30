@@ -118,6 +118,10 @@ public class InequalityHelper {
 		}
 	}
 	
+	public static Mode getMode() {
+		return mode;
+	}
+	
 	public static InequalityHelper getInequalityHelper(ConstraintChecker checker) {
 		String folder = normalize(checker.getConstraint());
 		if (!helpers.containsKey(checker))
