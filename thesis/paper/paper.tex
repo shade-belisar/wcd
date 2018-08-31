@@ -36,7 +36,6 @@
 Motivation
 
 \chapter{Preliminaries}
-
 \section{Wikidata}
 Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). Triples store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P and will be referred to as Q- and P-IDs, respectively. In the future there will be a third entity type, lexeme. This is already incorporated into some constraints, but as of September 2018 they are not deployed. A value is one of several data types shown in Table \ref{tab_datatypes}, although it is also possible to use \emph{none} or \emph{some} as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
 
@@ -93,6 +92,7 @@ statementEDB\([4]\) represents a single statement consisting of the statement ID
 qualifierEDB\([3]\) represent the qualifiers on a given statement ID with their respective property id and the value as usual. \\
 referenceEDB\([4]\) represents the statement ID, the reference hash, property id and the value.\\
 itemEDB\([1]\) and propertyEDB\([1]\) specify if an entity ID is an item or a property.\\
+unitEDB\([2]\) connects a value to its unit.\\
 
 Additional predicates modelling different pre-processing steps are explained in chapter \ref{cha_rules}.
 \section{Terminology}
@@ -333,27 +333,61 @@ Two constrained statements with the same value can be found via a simple conjunc
 \end{equation*}
 The rules for qualifiers and reference are analogue.
 
-\subsection{Allowed units (Q21514353)}
-The allowed units constraint specifies that a constrained statement may only have a unit that is in a set of specific units.
+\subsection{Allowed units (Q21514353)}\label{subsec_3_allowed_units}
+\subsubsection{Constraint}
+The \emph{allowed units} constraint specifies that the value of a constrained statement may only have a unit that is in a set of specific units.
 
 \begin{table}[H]
 \caption{Allowed units constraint (Q21514353)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statement unit \\
+Required data & constrained statements \\
 \hline
-Qualifiers & \makecell{allowed unit (P2305) -- 1..* \\ units that the statement may have (or none for dimensionless units)} \\
+Qualifiers & \makecell{\emph{allowed unit} (P2305) -- 1..* \\ units that are allowed on values of constrained statements (\emph{none} for dimensionless units)} \\
 \hline
 Violation & \makecell{constrained statement with a unit unequal to all allowed units} \\
-\hline
-Dependency & constrained statement and its unit \\
 \hline
 Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
 
-Modelling the constraint requires a predicate associating the value or the statement with its unit and inequality between every unit and all allowed units. Then a violation can be found by finding all statementEDB, qualifierEDB and referenceEDB with the constrained property and a unit unequal to all allowed units. Theoretically some of these can be excluded by using the constraint scope (P4680) qualifier on the constraint but there is no current case where this is done.
+By setting the \emph{constraint scope} (P4680) qualifier on the constraint it can be limited to only affect a subset of statement, qualifier, and reference. As of September 2018 this is not done on any constraint.
+
+\subsubsection{Rules}
+To handle this constraint inequality between all units need to be established. Then a violation can be identified by finding all statementEDB, qualifierEDB and referenceEDB with the constrained property and a unit unequal to all allowed units.
+The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the units of a triple, qualifier or reference needs to be extracted during pre-processing and their inequality established. Quantities are rendered as string during pre-processing, specifying their value, bounds and unit.
+
+To determine if a violation occurred, the unit of the constrained statement needs to be found. This is done via the unit-predicate as below
+\begin{equation*}
+\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{unitEDB}(V, U)
+\end{equation*}
+with qualifiers and references treated analogue.
+
+The complete rules require multiple unequal-atoms for all allowed units. Given a set \(A\) of constants, in this case allowed units, \(\text{unequal}(\{A\}, t)\) with an arbitrary term \(t\) is short for \(\bigwedge_{a \in A} \text{unequal}(a, t)\)
+
+Violation are thus
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
+&\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_qualifier}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{qualifierEDB}(S, \text{propertyConstant}, V) \wedge{} \\
+&\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{violation\_reference}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{referenceEDB}(S, H, \text{propertyConstant}, V) \wedge{} \\
+&\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
+\end{split}
+\end{equation*}
 
 \subsection{Allowed qualifiers (Q21510851)}
 The allowed qualifiers constraint specifies that only a limited set of properties may be used as qualifiers on a constrained statement.
@@ -695,40 +729,6 @@ To save space and avoid redundancy the following rules will not explicitly state
 The rules outlined in section \ref{subsubsec_encoding} are changed to utilise this new requirement.
 \begin{equation*}
 \text{unequal}(X, Y) \leftarrow \text{req\_inequality}(X, Y) \wedge \text{letter\_i}(X, A) \wedge \text{letter\_i}(Y, B) \wedge \text{unequal}(A, B)
-\end{equation*}
-
-\subsection{Allowed units (Q21514353)}\label{subsec_3_allowed_units}
-The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the units of a triple, qualifier or reference needs to be extracted during pre-processing and their inequality established. Quantities are rendered as string during pre-processing, specifying their value, bounds and unit. The new predicate unit\([2]\) will associate a value with its unit.\\
-
-To determine if a violation occurred the unit to the constrained statement needs to be found. This is done via the unit-predicate as below
-\begin{equation*}
-\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{unit}(V, U)
-\end{equation*}
-with qualifiers and references working on the same lines.
-
-The full rules require multiple unequal-atoms for all allowed units. Given a set \(A\) of constants, in this case allowed units, \(\text{unequal}(\{A\}, t)\) is short for the conjunction of the set \(\{\text{unequal}(a, t) | \forall a \in A\}\), with \(t\) being an arbitrary term.
-
-Violation are thus
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I \text{propertyConstant}, V) \leftarrow \\
-&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
-&\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
-\end{split}
-\end{equation*}
-\begin{equation*}
-\begin{split}
-\text{violation\_qualifier}&(S, I \text{propertyConstant}, V) \leftarrow \\
-&\text{qualifierEDB}(S, \text{propertyConstant}, V) \wedge{} \\
-&\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
-\end{split}
-\end{equation*}
-\begin{equation*}
-\begin{split}
-\text{violation\_reference}&(S, I \text{propertyConstant}, V) \leftarrow \\
-&\text{referenceEDB}(S, H, \text{propertyConstant}, V) \wedge{} \\
-&\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
-\end{split}
 \end{equation*}
 
 \subsection{Allowed qualifiers (Q21510851)}
