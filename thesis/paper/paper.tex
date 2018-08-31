@@ -354,12 +354,12 @@ In every approach it will be necessary to load some basic inequalities into the 
 \text{unequal}(X, Y) \leftarrow \text{unequal\_EDB}(X, Y)
 \end{equation*}
 
-Given a set of entities \(E\), the task is to generate rules so that for all \( x, y \in E: x \ne y \Rightarrow \text{unequal}(x, y)\).
+Given a set of unequal constants \(U\), the task is to generate rules so that for all \( x, y \in U: x \ne y \Rightarrow \text{unequal}(x, y)\).
 
 \subsubsection{Naive}\label{subsubsec_naive}
 The naive approach would be to simply add all possible combinations:
 \begin{equation*}
-\text{for all } x, y \in E, x \ne y \text{ add } \text{unequal\_EDB}(x, y)
+\text{for all } x, y \in U, x \ne y \text{ add } \text{unequal\_EDB}(x, y)
 \end{equation*}
 This can be easily improved using the inverse and adding the following rule:
 \begin{equation}\label{equ_inverse}
@@ -367,47 +367,45 @@ This can be easily improved using the inverse and adding the following rule:
 \end{equation}
 Then it is sufficient to add each combination once. To achieve this assume an arbitrary total order \(<\) has been established on the set \(E\):
 \begin{equation*}
-\text{for all } x, y \in E, x < y \text{ add } \text{unequal\_EDB}(x, y)
-\end{equation*}.
+\text{for all } x, y \in U, x < y \text{ add } \text{unequal\_EDB}(x, y)
+\end{equation*}
 
-\subsubsection{Encoding}\label{subsubsec_encoding}
-One option to determine inequality would be to utilise that all entities are strings of single characters. The idea is to determine the set of characters used in all entities \(C\), set them as unequal as outlined above in section \ref{subsubsec_naive} and associate each entity with their characters.\\
+\subsubsection{Encoding constant strings to establish inequality}\label{subsubsec_encoding}
+One way of determining inequality would be to take advantage of the fact that inequality is established in a set of unequal constants \(U\), which can be represented as a string. The idea is to determine the set of characters used in \(U\), set these characters as unequal as outlined in section \ref{subsubsec_encoding} and associate each unequal constant with their characters.\\
 
-An entity \(e \in E\) is always a string and can be written as \(c_0 \ldots c_{l - 1}\) with \(l = len(e)\) being the length of the string. Denote the set \(C = \{c | \exists e \in E: c \in e\}\)\todo{\(c \in e\) does not seem correct} as the set of characters occurring in entities. Then \(l_{\max} = \max\limits_{\forall e \in E}(len(e))\) is the length of the longest entity string.
-Based on this a group of predicates letter\_i\_EDB[8] is introduced where \(0 \equiv i \mod 7\), \(0 \leq i < l_{max} \).
+An unequal constant \(u \in U\) can be represented a string and be written as \(c_0 \ldots c_{l - 1}\) with \(l = len(u)\) being the length of the string. Denote the set \(C\) as the set of characters occurring in unequal strings. Then \(l_{\max} = \max\limits_{\forall u \in U}(len(u))\) is the length of the longest entity string that occurs in the given data.
+Based on this a group of predicates letter\(_i\)\_EDB[8] is introduced where \(0 \equiv i \mod 7\), \(0 \leq i < l_{max} \). 
 
-For each entity string \(e = c_0 \ldots c_{l - 1}\) each predicate letter\_i\_EDB is created as \(\text{letter\_i\_EDB}(e, f(e, i), f(e, i+1), \ldots, f(e, i+6)\), where
+For each unequal constant string \(u = c_0 \ldots c_{l - 1}\) and \(0 \equiv i \mod 7, 0 \leq i < len(u)\) an atom using predicate letter\(_i\)\_EDB is created as 
+\begin{equation*}
+\text{letter}_i\text{\_EDB}(e, f(e, i), f(e, i+1), \ldots, f(e, i+6)
+\end{equation*}where
 \begin{equation*}
 f(e, i) = 
 \begin{cases}
       c_i & i < len(e) \\
-      \text{NONE} & i \geq len(e)
+      \text{none} & i \geq len(e)
 \end{cases}
 \end{equation*}
 
-Now that inequality between all constitution characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates letter\_i (with \text{letters} short for \(\text{letter\_i}(X, A_i, \ldots, A_{i+14}) \wedge\text{letter\_i}(Y, B_i, \ldots, B_{i+6})\)):
+Now that inequality between all characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates letter\(_i\)\_EDB (with \text{letters} short for \(\text{letter}_i\text{\_EDB}(X, A_i, \ldots, A_{i+6}) \wedge\text{letter}_i\text{\_EDB}(Y, B_i, \ldots, B_{i+6})\), \(i \leq j < i + 7\)):
 \begin{equation*}
-\text{unequal}(X, Y) \leftarrow \text{letters} \wedge \text{unequal}(A_i, B_i)
+\text{unequal}(X, Y) \leftarrow \text{letters} \wedge \text{unequal}(A_j, B_j)
 \end{equation*}
-\begin{equation*}
-\text{unequal}(X, Y) \leftarrow \text{letters} \wedge \text{unequal}(A_{i+6}, B_{i+6})
-\end{equation*}
-
-
-With this approach the statistics depend on the number of distinct characters \(n_c = |C|\). The number of introduced EDB facts is \(f(n, n_c) = \binom{n_c}{2} + n*l_{\max}\) and the number of introduced rules \(r(n, n_c) = 1 + l_{\max}\). The effectiveness of this approach thus depends on the ratio between \(n\) and \(n_c\).
+Note that the facts fulfilling \(\text{unequal}(A_j, B_j)\) are created by using the approach outlined in Section \ref{subsubsec_naive} for the set of characters \(C\) in all unequal constants \(U\).	
 
 \subsubsection{Demand-driven materialisation}
-The approaches outlined above will always result in all inequalities between the members of \(E\) being materialised. However, the purpose of determining inequality is to assist in finding violations of specific constraints. This means that only some inequalities -- the ones that actually appear in the dataset -- have to be evaluated. The rules can then be limited by introducing a new predicate req\_inequality\([2]\) which will only be derived if a condition occurs in which the inequality must be evaluated.\\
+The approaches outlined above will always result in all inequalities between the members of \(U\) being materialised. However, the purpose of determining inequality is to assist in finding violations of specific constraints. This means that only some inequalities -- the ones that actually appear in the dataset -- have to be evaluated. The rules can then be limited by introducing a new predicate req\_inequality\([2]\) which will only be derived if a condition occurs in which the inequality must be evaluated.\\
 
-To save space and avoid redundancy the following rules will not explicitly state the inequality requirement predicate. Instead, assume that for every premise with the form \(B_1 \wedge \ldots\wedge B_m \wedge I_1 \wedge I_n\) where \(B_1 .. B_m\) are arbitrary atoms, \(I_1 .. I_n\) are atoms of the form \(\text{unequal}(t_{n_1}, t_{n_2})\) with \(t_{n_1}, t_{n_2}\) terms and all of \(t_{n_1}, t_{n_2}\) that are variables appear in at least one of \(B_1 \ldots B_m\), the rules 
+To save space and avoid redundancy the following rules will not explicitly state the inequality requirement predicate. Instead, assume that for every premise of the form \(B_1 \wedge \ldots\wedge B_m \wedge I_1 \wedge I_n\) where \(B_1 .. B_m\) are arbitrary atoms, \(I_1 .. I_n\) are atoms of the form \(\text{unequal}(t_{n_1}, t_{n_2})\) with \(t_{n_1}, t_{n_2}\) terms and all variables amount \(t_{n_1}\) and \(t_{n_2}\) appear in at least one of \(B_1 \ldots B_m\), the rules 
 \begin{equation*}
 \text{req\_inequality}(t_{n_1}, t_{n_2})
  \leftarrow B_1 \wedge \ldots \wedge B_m
 \end{equation*} for all \(n\) are introduced.\\
 
-The rules outlined in section \ref{subsubsec_encoding} are changed to utilise this new requirement.
+The rules outlined in Section \ref{subsubsec_encoding} are changed to utilise this new requirement.
 \begin{equation*}
-\text{unequal}(X, Y) \leftarrow \text{req\_inequality}(X, Y) \wedge \text{letter\_i}(X, A) \wedge \text{letter\_i}(Y, B) \wedge \text{unequal}(A, B)
+\text{unequal}(X, Y) \leftarrow \text{req\_inequality}	(X, Y) \wedge \text{letters} \wedge \text{unequal}(A_j, B_j)
 \end{equation*}
 
 \subsection{Distinct values (Q21502410)}
