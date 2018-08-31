@@ -583,14 +583,14 @@ The one-of qualifier value constraint is violated if a constrained statement has
 \end{split}
 \end{equation*}
 
-\section{Constraints using Statement non-Existence}
+ \section{Constraints using Statement non-Existence}
 Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: first\([2]\), last\([2]\), and next\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
 
-If qualifier non-existence should be tested the predicates have to be adapted, since they do not have a unique identifier. Their order has to be established using the entire set of statement ID, property and value. For this the predicates first\_qualifier\([3]\) and last\_qualifier\([3]\) taking the statement ID, the property and the value and next\_qualifier\([6]\) with ID, property and value for the current and next qualifier are introduced.\\
+If qualifier non-existence should be tested the predicates have to be adapted, since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property and value have to be used. For this the predicates first\_qualifier\([3]\) and last\_qualifier\([3]\) taking the statement ID, the property and the value and next\_qualifier\([6]\) with ID, property and value for the current and next qualifier are introduced.\\
 
-Using this pre-processed data the approach is to apply a require-predicate to each statement or qualifier. This is require\([3]\) for statements, connecting the statement ID with the constrained property \(p\) and the required term \(t\) and require\([5]\) taking the statement ID, property, and value of a qualifier and linking this with \(p\) and \(t\).\\
+Using this pre-processed data, the approach is to apply a require-predicate to each statement or qualifier. This is require\([3]\) for statements, connecting the statement ID with the constrained property \(p\) and the required term \(t\) and require\([5]\) taking the statement ID, property, and value of a qualifier and linking this with \(p\) and \(t\).\\
 
-For statements the pattern consists of two rules, both utilising the same conjunction \(c = C_1 \wedge .. \wedge C_m\) with arbitrary atoms \(C_n\) which is used to test if the statement does not fulfil the requirement. Then rule one
+For statements the pattern consists of two rules, both utilising the same conjunction \(c = C_1 \wedge \ldots \wedge C_m\) with atoms \(C_i\) depending on the constraint which is used to test if the statement does not fulfil the requirement. Then rule one
 \begin{equation*}
 \text{require}(S, p, t) \leftarrow \text{first}(S, I) \wedge c
 \end{equation*}
