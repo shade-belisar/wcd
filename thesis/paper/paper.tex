@@ -449,27 +449,34 @@ The one-of constraint fits in the pattern established by the previous two constr
 \end{align*}
 
 \subsection{One-of qualifier value (Q52712340)}
-The one-of qualifier value constraint restricts which values may be used on a qualifier with a given property on a constrained statement.
+\subsubsection{Constraint}
+The \emph{one-of qualifier value} constraint restricts which \emph{qualifier values} may be used on a qualifier with a given \emph{qualifier property} on a constrained statement.
 
 \begin{table}[H]
 \caption{One-of qualifier value constraint (Q52712340)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statement qualifier value \\
+Required data & constrained statements and their qualifiers \\
 \hline
-Qualifiers: & \makecell{qualifier property (P2306) -- 1 \\ property of the restricted qualifier\\
-qualifier values (P2305) -- 1..* \\ values the qualifiers may take}\\
+Qualifiers: & \makecell{\emph{qualifier property} (P2306) -- 1 \\ property that, if used as predicate, constrains a qualifier \\
+\emph{qualifier values} (P2305) -- 1..* \\ values that are allowed for qualifiers on constrained statements \\ with the \emph{qualifier property} as predicate}\\
 \hline
-Violation & \makecell{constrained statement with a qualifier with the qualifier property and a value unequal to all qualifier values} \\
-\hline
-Dependency & constrained item and qualifiers with the qualifier property \\
+Violation & \makecell{constrained statement with a qualifier with the qualifier property \\ and a value unequal to all qualifier values} \\
 \hline
 Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
 
-The constraint can be modelled if the inequality between a value of a qualifier property with all qualifier values is given. The violations could then be found by taking a statementEDB with the constrained property and a qualifier with the qualifier property on the former statement whose value is unequal to all qualifier values.
+\subsubsection{Rules}
+The one-of qualifier value constraint is violated if a constrained statement has a qualifier with a value unequal to all allowed values. Inequality needs to be established between all values of qualifiers and all allowed values. With the set of allowed Values \(A\) the rules are
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
+&\text{qualifierEDB}(S, \text{qualifierProperty}, O) \wedge \text{unequal}(\{A\}, O)
+\end{split}
+\end{equation*}
 
 \subsection{Item requires statement (Q21503247)}\label{subsec_2_item_requires_statement}
 The item requires statement constraint requires an additional statement on an item with a statement using the constrained property, possibly also using a specific value from the list of allowed values.
@@ -744,16 +751,6 @@ To save space and avoid redundancy the following rules will not explicitly state
 The rules outlined in section \ref{subsubsec_encoding} are changed to utilise this new requirement.
 \begin{equation*}
 \text{unequal}(X, Y) \leftarrow \text{req\_inequality}(X, Y) \wedge \text{letter\_i}(X, A) \wedge \text{letter\_i}(Y, B) \wedge \text{unequal}(A, B)
-\end{equation*}
-
-\subsection{One-of qualifier value (Q52712340)}
-The one-of qualifier value constraint is violated if a constrained statement has a qualifier with a value unequal to all allowed values. Inequality needs to be pre-processed between all values of qualifiers on constrained statements. With the set of allowed Values \(A\) the rules are
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
-&\text{qualifierEDB}(S, \text{qualifierProperty}, O) \wedge \text{unequal}(\{A\}, O)
-\end{split}
 \end{equation*}
 
 \section{Statement non-existence}\label{sec_statement_non-existence}
