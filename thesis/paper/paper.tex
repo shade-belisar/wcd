@@ -419,26 +419,34 @@ To represent a violation of the \emph{allowed qualifiers} constraint in datalog 
 \end{equation*}
 
 \subsection{One-of (Q21510859)}
-The one-of constraint limits the values a property may use to a set of given values.
+\subsubsection{Constraint}
+The \emph{one-of} constraint limits the values of a constraint statement, qualifier or reference to a set of given values.
 
 \begin{table}[H]
 \caption{One-of constraint (Q21510859)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statement \\
+Required data & constrained statements, qualifiers and references \\
 \hline
-Qualifiers & \makecell{allowed values (P2305) -- 1..* \\ values that may be used in the constrained statement} \\
+Qualifiers & \makecell{\emph{allowed values} (P2305) -- 1..* \\ values that may be used as objects of a constrained statement} \\
 \hline
 Violation & \makecell{constrained statement with a value unequal to all allowed values} \\
-\hline
-Dependency & constrained statement \\
 \hline
 Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
 
-Modelling the one-of constraint requires a rule finding a statementEDB with the constrained property whose value is unequal to all allowed values, meaning the inequality between each value of constrained statements and all allowed values must be given.
+\subsubsection{Rules}
+The one-of constraint fits in the pattern established by the previous two constraints and disallows certain property-value combinations in statements, qualifiers and references. Inequality is established between all \emph{allowed values} and the values of statements, qualifiers and references, respectively. With \(A\) the set of allowed values the rules for triple, qualifier and reference are:
+\begin{align*}
+\text{violation\_triple}(S, I, \text{propertyConstant}, V) &\leftarrow \\
+\text{statementEDB}(S, I, &\text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V) \\
+\text{violation\_qualifier}(S, \text{propertyConstant}, V) &\leftarrow \\
+\text{qualifierEDB}(S, &\text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V) \\
+\text{violation\_reference}(S, \text{propertyConstant}, V) &\leftarrow \\
+\text{referenceEDB}(S, H, &\text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+\end{align*}
 
 \subsection{One-of qualifier value (Q52712340)}
 The one-of qualifier value constraint restricts which values may be used on a qualifier with a given property on a constrained statement.
@@ -736,27 +744,6 @@ To save space and avoid redundancy the following rules will not explicitly state
 The rules outlined in section \ref{subsubsec_encoding} are changed to utilise this new requirement.
 \begin{equation*}
 \text{unequal}(X, Y) \leftarrow \text{req\_inequality}(X, Y) \wedge \text{letter\_i}(X, A) \wedge \text{letter\_i}(Y, B) \wedge \text{unequal}(A, B)
-\end{equation*}
-
-\subsection{One-of (Q21510859)}
-The one-of constraint fits in the pattern established by the previous two constraints and disallows certain property-value combinations. Inequality is pre-processed between all values of constrained statements. With \(A\) the set of allowed values the rules for triple, qualifier and reference are respectively:
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
-\end{split}
-\end{equation*}
-\begin{equation*}
-\begin{split}
-\text{violation\_qualifier}&(S, \text{propertyConstant}, V) \leftarrow \\
-&\text{qualifierEDB}(S, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
-\end{split}
-\end{equation*}
-\begin{equation*}
-\begin{split}
-\text{violation\_reference}&(S, \text{propertyConstant}, V) \leftarrow \\
-&\text{referenceEDB}(S, H, \text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
-\end{split}
 \end{equation*}
 
 \subsection{One-of qualifier value (Q52712340)}
