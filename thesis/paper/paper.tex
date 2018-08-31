@@ -390,26 +390,33 @@ Violation are thus
 \end{equation*}
 
 \subsection{Allowed qualifiers (Q21510851)}
-The allowed qualifiers constraint specifies that only a limited set of properties may be used as qualifiers on a constrained statement.
+\subsubsection{Constraint}
+The \emph{allowed qualifiers} constraint specifies that only a limited set of properties may be used as predicates of qualifiers on a constrained statement.
 
 \begin{table}[H]
 \caption{Allowed qualifiers constraint (Q21510851)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & qualifier on constrained statement \\
+Required data & qualifiers on constrained statements \\
 \hline
-Qualifiers & \makecell{	allowed qualifier (P2306) -- 1..* \\ qualifiers that the statement may have} \\
+Qualifiers & \makecell{\emph{allowed qualifier} (P2306) -- 1..* \\ properties that may appear in predicates of qualifiers on constrained statements} \\
 \hline
 Violation & \makecell{constrained statement with a qualifier unequal to all allowed qualifiers} \\
-\hline
-Dependency & constrained statement and its qualifiers \\
 \hline
 Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
 
-To represent a violation of this constraint in datalog inequality between all specified allowed qualifiers and the properties of the qualifiers on constrained statements is required. A statementEDB with the constrained property and a qualifierEDB on that statement with a property different from all allowed qualifiers would violate the constraint.
+\subsubsection{Rules}
+To represent a violation of the \emph{allowed qualifiers} constraint in datalog inequality between all specified allowed qualifiers and the properties of qualifiers is required. The constraint is violated if a qualifier on a constrained statement exists that is unequal to all allowed qualifiers. The notation for set inequality as introduced in section \ref{subsec_3_allowed_units} will be used. With \(A\) the set of allowed qualifiers the rule is:
+\begin{equation*}
+\begin{split}
+\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
+&\text{qualifierEDB}(S, Q, O) \wedge \text{unequal}(\{A\}, Q)
+\end{split}
+\end{equation*}
 
 \subsection{One-of (Q21510859)}
 The one-of constraint limits the values a property may use to a set of given values.
@@ -729,16 +736,6 @@ To save space and avoid redundancy the following rules will not explicitly state
 The rules outlined in section \ref{subsubsec_encoding} are changed to utilise this new requirement.
 \begin{equation*}
 \text{unequal}(X, Y) \leftarrow \text{req\_inequality}(X, Y) \wedge \text{letter\_i}(X, A) \wedge \text{letter\_i}(Y, B) \wedge \text{unequal}(A, B)
-\end{equation*}
-
-\subsection{Allowed qualifiers (Q21510851)}
-The allowed qualifiers constraint is violated if a qualifier on a constrained statement exists that is different from all allowed qualifiers. During pre-processing all qualifiers on constrained statements will be extracted and the inequality of their properties and the allowed qualifiers established. We will use the notation for set inequality as introduced in section \ref{subsec_3_allowed_units}. With \(A\) the set of allowed qualifiers the rule is:
-\begin{equation*}
-\begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{statementEDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
-&\text{qualifierEDB}(S, Q, O) \wedge \text{unequal}(\{A\}, Q)
-\end{split}
 \end{equation*}
 
 \subsection{One-of (Q21510859)}
