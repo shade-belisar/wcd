@@ -711,13 +711,13 @@ The \emph{symmetric} constraint requires an additional statement on the value of
 
 \subsection{Multi-value (Q21510857)}
 \paragraph{Constraint}
-The multi-value constraint specifies that the constrained property should appear in multiple statements of an item or none.
+The \emph{multi-value} constraint specifies that the constrained property should appear in multiple statements of an item or none.
 
 \begin{table}[H]
 \caption{Multi-value constraint (Q21510857)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & item statement \\
+Required data & item statements \\
 \hline
 Violation & \makecell{constrained item with exactly one constrained statement} \\
 \hline
@@ -728,10 +728,8 @@ Rule features & count \\
 \end{tabularx}
 \end{table}
 
-To model this constraint a count of statements using the constrained property per item would be needed. Then a violation would be any constrained item with a count of one for the constrained property. Since there is no need for arbitrarily large counts, but only for the difference between one and two, this could be solved explicitly.
-
 \paragraph{Rules}
-The multi-value constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Pre-processing extracts all items statements and inequality between all item statement properties as usual and the conjunction is 
+The \emph{multi-value} constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Inequality is established between all properties of statements and the conjunction is:
 \begin{equation*}
 \begin{split}
 c = &\text{statement\_EDB}(Q, I, \text{propertyConstant}, X) \wedge{} \\
