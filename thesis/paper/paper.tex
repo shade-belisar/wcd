@@ -63,9 +63,14 @@ tabular data & tabular data (string) & name of a file in the "Data" namespace on
 \end{table}
 \todo[inline]{For globe(URI): JSON data model states "typically refer to a data item on wikidata.org", which I would read as can be any URI}
 
-While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows to store additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Every statement can be referenced by qualifiers, which consist of the corresponding statement id, a predicate and an object. Qualifiers provide contextual information for statements. The most common context is the time frame in which the statement was accurate, e.g. stating the start and end times of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. Additionally, references can be added to statements. References support the claim by citing the source and possibly additional information, e.g. when it was retrieved or when the source was published as property-object pairs.
+While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows to store additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Statements have one of three ranks, \emph{normal}, \emph{preferred} and \emph{deprecated} which are used to differentiate similar statements on the same item. For example, the \emph{preferred} rank would be given to the current \emph{head of state} (P35) of a country, while all statements denoting former \emph{heads of state} have the rank \emph{normal}. \emph{Deprecated} is used on statements that where once considered correct but are not anymore, e.g., \emph{Chelsea Manning} (Q298423) having the \emph{sex or gender} (P21) \emph{male} (Q6581097).
+
+Every statement can have added qualifiers, which consist of the corresponding statement id, a predicate and an object. Qualifiers provide contextual information for statements. The most common context is the time frame in which the statement was accurate, e.g. stating the \emph{start time} (P580) and \emph{end time} (P582) of the term of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. Additionally, references can be added to statements.
+
+References support the claim by citing the source and additional information, e.g. when it was retrieved or when the source was published as property-value pairs. Each references consists from multiple such pairs, and statements can have multiple references.
 
 Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
+
 \section{Datalog}
 Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}, which will be denoted as \emph{someConstant}. In the context of Wikidata, any item or property, e.g. \emph{Earth} (Q2) or \emph{head of government} (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate triple\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
 Additionally, datalog also provides \emph{variables}, which will be capitalized like \(X\). The sets of predicates {\bf P}, constants {\bf C} and variables {\bf V} are mutually disjoint. Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form predicate\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
@@ -842,40 +847,37 @@ are introduced for brevity.
 
 \subsection{Mandatory qualifier (Q21510856)}
 \paragraph{Constraint}
-The mandatory qualifier constraint requires that a constrained statement has a qualifier with a specific property.
+The \emph{mandatory qualifier} constraint requires that a constrained statement has a qualifier with a \emph{required property}.
 
 \begin{table}[H]
 \caption{Mandatory qualifier constraint (Q21510856)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & qualifier on constrained statement \\
+Required data & constrained statements and their qualifiers \\
 \hline
-Qualifiers & \makecell{required property (P2306) -- 1 \\ qualifier that the statement must have} \\
+Qualifiers & \makecell{\emph{required property} (P2306) -- 1 \\ property that must appear as predicate of a qualifier on the constrained statement} \\
 \hline
 Violation & \makecell{constrained statement without a qualifier with the required property} \\
-\hline
-Dependency & constrained statement and its qualifiers \\
 \hline
 Rule features & negation \\
 \hline
 \end{tabularx}
 \end{table}
 
-To find violations of this constraint one would find a statement\_EDB with the constrained property, but where no qualifier\_EDB for the statement and with the required property exists.
-
 \paragraph{Rules}
-The mandatory qualifier constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. All constrained statements and their qualifiers have to be extracted and the order of the qualifiers pre-processed. Inequality must be established between all qualifier properties and the conjunction is 
+The \emph{mandatory qualifier} constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. The qualifier order needs to be provided and inequality must be established between all qualifier properties. The conjunction for the require-pattern is:
 \begin{equation*}
 \begin{split}
 c = &\text{statement\_EDB}(S, I, \text{propertyConstant}, C) \wedge{} \\
 &\text{qualifier\_EDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
-With the usual require-pattern for qualifiers and the does\_not\_have rule added for brevity the violations would be
+With the usual require-pattern for qualifiers and the does\_not\_have rule as introduced in section \ref{subsubsec_with_separators} added for brevity the violations would be found with:
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge \text{does\_not\_have}(S, \text{requiredPropertyConstant})
+&\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge \\
+&\text{does\_not\_have}(S, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
 
