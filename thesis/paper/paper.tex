@@ -134,7 +134,7 @@ Table \ref{tab_property_constraints} shows all constraints that are used as of S
 106 & Q52848401 & Integer & Regular expressions \\
 65 & Q51723761 & No bounds & Negation \\
 53 & Q21510852 & Commons link & Web request \\
-10 & Q54554025 & Link & Negation \\
+10 & Q54554025 & Citation needed & Negation \\
 6 & Q21510854 & Difference within range & Value comparison \\
 1 & Q25796498 & Contemporary constraint & Negation \\
 \end{tabularx}
@@ -945,7 +945,7 @@ The \emph{integer} constraint (Q52848401), which requires values of a constraine
 
 Another problem that could not be sensibly solved is the comparison of values, needed for \emph{range} (Q21510860), \emph{difference within range} (Q21510854) and \emph{contemporary} constraint (Q25796498). \emph{Range} restricts the values of a constrained property within a certain range, \emph{difference within range} specifies that the values of two item statements should be within a certain range and \emph{contemporary} constraint specifies that subject and object of a constrained statement have to have coexisted at some point in time. While it would be possible to extract all values that might need to be compared and precompute the comparison, it would make most of the work precomputing and leave little to be done in datalog.
 
-\emph{Link} constraint (Q54554025), stating that constraint statements must have one or more references, requires a negation that cannot be concluded except by explicitly precomputing it, which makes the evaluation unnecessary. \\
+\emph{Citation needed} constraint (Q54554025), stating that constraint statements must have one or more references, requires a negation that cannot be concluded except by explicitly precomputing it, which makes the evaluation unnecessary. \\
 A similar situation is the \emph{no bounds} constraint (Q51723761), which requires that quantity values have neither upper nor lower bound. While it would be possible to precompute if a statement has no upper or lower bound, this would shift basically all evaluation logic into precomputing.
 
 And finally \emph{commons link} constraint (Q21510852) requires that values for a property should be valid links to to Wikimedia Commons. This validity cannot be tested from within datalog since there is no way to query the web for information.
