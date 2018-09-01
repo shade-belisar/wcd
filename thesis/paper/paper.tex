@@ -616,7 +616,7 @@ If the last statement of an item or the last qualifier of a statement has requir
 \paragraph{Constraint}
 The \emph{item requires statement} constraint requires an additional statement on an item with a statement using the constrained property. It can be even more restrictive by also requiring the value of said additional statement to be in a set of \emph{allowed values}.
 \begin{table}[H]
-\caption{item requires statement constraint (Q21503247)}
+\caption{item requires statement constraint (Q21503247)}\label{tab_item_requires_statements}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
 Required data & item statements \\
@@ -632,7 +632,7 @@ Rule features & negation \\
 \end{table}
 
 \paragraph{Rules}
-The \emph{item requires statement} constraint requires inequality between all properties of statements and the required property as well as between all statement values and the allowed values. An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the \emph{required property} as predicate, or (if \emph{allowed values} are specified) b2) has only statement using the \emph{required property} as predicate that do not use one of the \emph{allowed values} as value. The required term \(t\) is the \emph{required property}. Without separators the conjunction is
+The \emph{item requires statement} constraint requires inequality between all properties of statements and the \emph{required property} as well as between all statement values and the \emph{allowed values}. The order of the item statements needs to be established. An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the \emph{required property} as predicate, or (if \emph{allowed values} are specified) b2) has only statement using the \emph{required property} as predicate that do not use one of the \emph{allowed values} as value. The required term \(t\) is the \emph{required property}. Without separators the conjunction is
 \begin{equation*}
 \begin{split}
 c_1 = &\text{statement\_EDB}(Q, I, \text{propertyConstant}, X) \wedge{} \\
@@ -658,10 +658,10 @@ Note that the first set of rules is still required, since the preceding statemen
 
 \subsection{Value requires statement (Q21510864)}\label{subsec_2_value_requires_statement}
 \paragraph{Constraint}
-The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_2_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
+The \emph{value requires statement} constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_2_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- Table \ref{tab_item_requires_statements} is not repeated.
 
 \paragraph{Rules}
-The value requires statement constraint is syntactically very similar to the previous item requires statement constraint. Instead of requiring a statement on the item of a constrained statement it requires it on the value. The pre-processing changes to extracting all value statements along the constrained statements and ordering them. Inequality need to be computed between all properties and all values on value statements. The conjunctions change in the first triple and are:
+The \emph{value requires statement} constraint is syntactically very similar to the previous \emph{item requires statement} constraint. Instead of requiring a statement on the item of a constrained statement it requires it on the value. Inequality need to be computed between all properties and all values and the item statement order established. The conjunctions change in the first statement and are:
 \begin{equation*}
 \begin{split}
 c_1 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
