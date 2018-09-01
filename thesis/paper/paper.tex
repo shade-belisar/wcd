@@ -28,8 +28,10 @@
 \usepackage{tabularx}
 \usepackage{todonotes}
 \usepackage{adjustbox}
+\usepackage[shortlabels]{enumitem}
 
 \setcounter{tocdepth}{2}
+
 
 \begin{document}
 \chapter{Introduction}
@@ -611,184 +613,40 @@ For qualifiers the rules are
 If the last statement of an item or the last qualifier of a statement has require the violation occurred. In the following constraints only the conjunction \(c\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
 
 \subsection{Item requires statement (Q21503247)}\label{subsec_2_item_requires_statement}
-The item requires statement constraint requires an additional statement on an item with a statement using the constrained property, possibly also using a specific value from the list of allowed values.
+\paragraph{Constraint}
+The \emph{item requires statement} constraint requires an additional statement on an item with a statement using the constrained property. It can be even more restrictive by also requiring the value of said additional statement to be in a set of \emph{allowed values}.
 \begin{table}[H]
 \caption{item requires statement constraint (Q21503247)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & item statement \\
+Required data & item statements \\
 \hline
-Qualifiers & \makecell{required property (P2306) -- 1 \\ property the item statement must have \\ allowed value (P2305) -- 0..* \\ values the item statement may have} \\
+Qualifiers & \makecell{\emph{required property} (P2306) -- 1 \\ property that must be predicate of an item statement \\
+\emph{allowed value} (P2305) -- 0..* \\ value that must be object of the item statement} \\
 \hline
 Violation & \makecell{no item statement with required property \\ all item statements with required property have no allowed value} \\
 \hline
-Dependency &  all item statements\\
-\hline
 Rule features & negation \\
 \hline
 \end{tabularx}
 \end{table}
 
-An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the required property as predicate, or (if allowed values are specified) b2) has only statement using required property as predicate that do not use one of the allowed values as value.\\
-While condition a) can easily be tested by a statement\_EDB-atom with the constrained property, condition b1) and b2) pose the question if an item does not have a statement. This is addressed in section [?].
-
-\subsection{Value requires statement (Q21510864)}\label{subsec_2_value_requires_statement}
-The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_2_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
-
-\subsection{Inverse (Q21510855)}\label{subsec_2_inverse}
-The inverse constraint requires an additional statement on the value of a constrained statement with a specific property and the constrained item as value. It is very similar to value requires statement (see \ref{subsec_2_value_requires_statement}), although it does not specify allowed values, since the required statement has one specific value: the constrained item. While this means it could not be modelled exactly as a value requires statement constraint, it would only require very small rule changes and will thus not be elaborated on.
-
-\subsection{Symmetric (Q21510862)}
-The symmetric constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an inverse constraint (see \ref{subsec_2_inverse}) with the same property as constrained property and required property and will not be elaborated on.
-
-\subsection{Multi-value (Q21510857)}
-The multi-value constraint specifies that the constrained property should appear in multiple statements of an item or none.
-
-\begin{table}[H]
-\caption{Multi-value constraint (Q21510857)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Required data & item statement \\
-\hline
-Violation & \makecell{constrained item with exactly one constrained statement} \\
-\hline
-Dependency & all item statements \\
-\hline
-Rule features & count \\
-\hline
-\end{tabularx}
-\end{table}
-
-To model this constraint a count of statements using the constrained property per item would be needed. Then a violation would be any constrained item with a count of one for the constrained property. Since there is no need for arbitrarily large counts, but only for the difference between one and two, this could be solved explicitly.
-
-\subsection{Single value (Q19474404)}
-The single value constraint constrains the values a property may take on a single item. A property marked with the single value constraint can have properties marked as separators, which define exceptions under specific circumstances.
-\begin{table}[H]
-\caption{single value constraint (Q19474404)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Required data & constrained statement value \\
-\hline
-Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
-\hline
-Violation & \makecell{two constrained statements with same item and value \\ (exception: statements with separators as qualifiers with different values)} \\
-\hline
-Dependency & \makecell{without separators: all constrained statements on one item \\ with separators: additionally all qualifiers with separators on those statements }\\
-\hline
-Rule features & inequality, partially negation \\
-\hline
-\end{tabularx}
-\end{table}
-
-If no separators are specified, two triple form a violation of this constraint if they a) belong to the same item, b) have the same constrained property, and c) have the same value.
-If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values or an unequal number of separator qualifiers.\\
-In the case without separators the modelling idea would be to find two triples statement\_EDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers equal or non-existent.
-\todo{Since I found the details via looking at the source code, should/can I cite that?}
-
-\subsection{Mandatory qualifier (Q21510856)}
-The mandatory qualifier constraint requires that a constrained statement has a qualifier with a specific property.
-
-\begin{table}[H]
-\caption{Mandatory qualifier constraint (Q21510856)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Required data & qualifier on constrained statement \\
-\hline
-Qualifiers & \makecell{required property (P2306) -- 1 \\ qualifier that the statement must have} \\
-\hline
-Violation & \makecell{constrained statement without a qualifier with the required property} \\
-\hline
-Dependency & constrained statement and its qualifiers \\
-\hline
-Rule features & negation \\
-\hline
-\end{tabularx}
-\end{table}
-
-To find violations of this constraint one would find a statement\_EDB with the constrained property, but where no qualifier\_EDB for the statement and with the required property exists.
-
-\subsection{Single best value (Q52060874)}
-The single best value constraint requires that only one constrained statement per item has the rank preferred.
-
-\begin{table}[H]
-\caption{Single best value constraint (Q52060874)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Required data & item statement rank \\
-\hline
-Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
-\hline
-Violation & \makecell{items with two constrained statements with rank preferred} \\
-\hline
-Dependency & all item statements and their rank \\
-\hline
-Rule features & inequality \\
-\hline
-\end{tabularx}
-\end{table}
-
-Modelling the constraint means a count of all constrained statements with rank preferred is necessary, with a violation constituted if an item has a count of two or higher. Since it is only needed to differentiate between one and many, the rules could be written explicitly.
-
-\subsection{Type (Q21503250)}\label{subsec_2_type}
-The type constraint requires the existence of either one of a specific statement (instanceOf <class>) or a chain of statements using subclassOf to connect directly (subclassOf* <class>)
-or via instanceOf (instanceOf/subclassOf* <class>) for all classes on the constrained item.
-\begin{table}[H]
-\caption{type constraint (Q21503250)}
-\begin{tabularx}{\textwidth}{ ll X}
-\hline
-Required data & chain of statements \\
-\hline
-Qualifiers & \makecell{relation (P2309) -- 1 \\ must be instance of (Q21503252), subclass of (Q21514624), \\ or instance or subclass of (Q30208840); \\ specifies the relation the constrained item must have to the classes\\
-class (P2308) -- 1..* \\ entities that must be reached using the relation} \\
-\hline
-Violation & constrained item without relation to a class \\
-\hline
-Dependency & \makecell{statements of constrained items using instanceOf (P31) or subclassOf(P279) \\ all statements using subclassOf (P279) }\\
-\hline
-Rule features & inequality, negation \\
-\hline
-\end{tabularx}
-\end{table}
-
-If the relation is instanceOf, the constraint can be evaluated like multiple item requires statement constraints (see \ref{subsec_2_item_requires_statement}) by setting the required property to instanceOf (P31) and, for each created item requires statement constraint, the allowed value to one of the classes. \\
-For the relations involving subclasses all transitive subclass relationships would be concluded by setting a subclass relationship if a third item can be found that is subclass of one and subclassed by the other item. This would be extended with one step of instanceOf. A violation would then be any constrained item that is not subclass of any of the classes.
-
-\subsection{Value type (Q21510865)}
-The value type constraint works like the type constraint (see \ref{subsec_2_type}) except the statement chains are required on the value of the constrained statement instead of the constrained item. It will thus not be expanded upon.
-
-\section{Reasoning for unconsidered constraints}
-Multiple constraints have not been described above for different reasons. The most prominent of these is the format constraint (Q21502404) which specifies a regular expressions the values of the constrained property must adhere to. Evaluating these expressions would be theoretically possible but \\
-a) primarily results in a large amount of preprocessing and\\
-b) does not solve the question of negation, since violations would be values that do not conform to their required regular expression. \\
-
-The integer constraint (Q52848401), which requires values of a constrained property be integers (notably a quantity without decimal places), could easily be seen as a specific format constraint. While precomputing if a value is an integer or not could be done, it would mean that no actually relevant rules would be needed for the evaluation in datalog. \\
-
-Another problem that could not be sensibly solved is the comparison of values, needed for range (Q21510860), difference within range (Q21510854) and contemporary constraint (Q25796498). Range restricts the values of a constrained property within a certain range, difference within range specifies that two item statements should have values within a certain range and contemporary constraint specifies that subject and object of a constrained statement have to have coexisted at some point in time. While it would be possible to extract all values that might need to be compared and precompute the comparison, it would make most of the work precomputing and leave little to be done in datalog.\\
-
-Link constraint (Q54554025), requiring that constraint statements must have one or more references, requires a negation that cannot be concluded except by explicitly precomputing it, which makes the evaluation unnecessary. \\
-A similar situation is the no bounds constraint (Q51723761), which requires that quantity values have neither upper nor lower bound. While it would be possible to precompute if a statement has no upper or lower bound, this would shift basically all evaluation logic into precomputing.
-
-And finally commons link constraint (Q21510852) requires that values for a property should be valid links to to Wikimedia Commons. This validity cannot be testes from within datalog since there is no way to query the web for information.
-
-\section{Statement non-existence}\label{sec_statement_non-existence}
-
-
-\subsection{Item requires statement (Q21503247)}
-The item requires statement constraint requires the pre-processing of all item statements. Additionally, inequality between all properties of item statements and the required property as well as between all values and the allowed values has to be established. It occurs in two varieties, depending on if allowed values have been specified or not. The required term \(t\) is the  required property. Without separators the conjunction is
+\paragraph{Rules}
+The \emph{item requires statement} constraint requires inequality between all properties of statements and the required property as well as between all statement values and the allowed values. An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the \emph{required property} as predicate, or (if \emph{allowed values} are specified) b2) has only statement using the \emph{required property} as predicate that do not use one of the \emph{allowed values} as value. The required term \(t\) is the \emph{required property}. Without separators the conjunction is
 \begin{equation*}
 \begin{split}
 c_1 = &\text{statement\_EDB}(Q, I, \text{propertyConstant}, X) \wedge{} \\
 &\text{statement\_EDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
 \end{split}
 \end{equation*} \(\)
-If a set of allowed values \(A\) has been specified, a second set of require-rules have to be introduced with
+If a set of \emph{allowed values} \(A\) has been specified, a second set of require-rules have to be introduced with
 \begin{equation*}
 \begin{split}
 c_2 = &\text{statement\_EDB}(Q, I, \text{propertyConstant}, X) \wedge{} \\
 &\text{statement\_EDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
 \end{equation*}
-Note that the first set of rules is still required, since the preceding statements do not need to have the required property. In both cases violations can be found with
+Note that the first set of rules is still required, since the preceding statements do not need to have the \emph{required property}. In both cases violations can be found with
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
@@ -798,7 +656,11 @@ Note that the first set of rules is still required, since the preceding statemen
 \end{split}
 \end{equation*}
 
-\subsection{Value requires statement (Q21510864)}
+\subsection{Value requires statement (Q21510864)}\label{subsec_2_value_requires_statement}
+\paragraph{Constraint}
+The value requires statement constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_2_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- it is not elaborated on.
+
+\paragraph{Rules}
 The value requires statement constraint is syntactically very similar to the previous item requires statement constraint. Instead of requiring a statement on the item of a constrained statement it requires it on the value. The pre-processing changes to extracting all value statements along the constrained statements and ordering them. Inequality need to be computed between all properties and all values on value statements. The conjunctions change in the first triple and are:
 \begin{equation*}
 \begin{split}
@@ -822,7 +684,11 @@ The final violation rule would then be:
 \end{split}
 \end{equation*}
 
-\subsection{Inverse (Q21510855)}
+\subsection{Inverse (Q21510855)}\label{subsec_2_inverse}
+\paragraph{Constraint}
+The inverse constraint requires an additional statement on the value of a constrained statement with a specific property and the constrained item as value. It is very similar to value requires statement (see \ref{subsec_2_value_requires_statement}), although it does not specify allowed values, since the required statement has one specific value: the constrained item. While this means it could not be modelled exactly as a value requires statement constraint, it would only require very small rule changes and will thus not be elaborated on.
+
+\paragraph{Rules}
 The inverse constraint is similar to the value requires statement constraint in requiring a statement on a constrained value with a specific property. However, instead of putting no constraint or a list of fixed values on the required statements value it set a relative requirement: the constrained item, meaning \(t = R\). The pre-processing and inequalities thus remain the same, but the conjunctions change to 
 \begin{equation*}
 \begin{split}
@@ -840,9 +706,32 @@ c_2 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 \end{equation*}
 
 \subsection{Symmetric (Q21510862)}
+The symmetric constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an inverse constraint (see \ref{subsec_2_inverse}) with the same property as constrained property and required property and will not be elaborated on.
+
 The symmetric constraint can be translated exactly as the inverse constraint if the inverse property where set to the same as the constrained property.
 
 \subsection{Multi-value (Q21510857)}
+\paragraph{Constraint}
+The multi-value constraint specifies that the constrained property should appear in multiple statements of an item or none.
+
+\begin{table}[H]
+\caption{Multi-value constraint (Q21510857)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Required data & item statement \\
+\hline
+Violation & \makecell{constrained item with exactly one constrained statement} \\
+\hline
+Dependency & all item statements \\
+\hline
+Rule features & count \\
+\hline
+\end{tabularx}
+\end{table}
+
+To model this constraint a count of statements using the constrained property per item would be needed. Then a violation would be any constrained item with a count of one for the constrained property. Since there is no need for arbitrarily large counts, but only for the difference between one and two, this could be solved explicitly.
+
+\paragraph{Rules}
 The multi-value constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Pre-processing extracts all items statements and inequality between all item statement properties as usual and the conjunction is 
 \begin{equation*}
 \begin{split}
@@ -866,7 +755,32 @@ The predicate require\_second\([2]\) is introduced with the same meaning as requ
 \end{equation*}
 A violations would be any last statement requiring a second constrained statement.\\
 
-\subsection{Single value (Q19474404)}\label{subsec_3_single_value}
+\subsection{Single value (Q19474404)}
+\paragraph{Constraint}
+The single value constraint constrains the values a property may take on a single item. A property marked with the single value constraint can have properties marked as separators, which define exceptions under specific circumstances.
+\begin{table}[H]
+\caption{single value constraint (Q19474404)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Required data & constrained statement value \\
+\hline
+Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
+\hline
+Violation & \makecell{two constrained statements with same item and value \\ (exception: statements with separators as qualifiers with different values)} \\
+\hline
+Dependency & \makecell{without separators: all constrained statements on one item \\ with separators: additionally all qualifiers with separators on those statements }\\
+\hline
+Rule features & inequality, partially negation \\
+\hline
+\end{tabularx}
+\end{table}
+
+If no separators are specified, two triple form a violation of this constraint if they a) belong to the same item, b) have the same constrained property, and c) have the same value.
+If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values or an unequal number of separator qualifiers.\\
+In the case without separators the modelling idea would be to find two triples statement\_EDB with the same item and constrained property and test if their id is unequal. If separators were specified a violation would be the two triples and all their separator qualifiers equal or non-existent.
+\todo{Since I found the details via looking at the source code, should/can I cite that?}
+
+\paragraph{Rules}
 The single value constraint can be divided into two different cases, depending on if the set of separators \(S\) is empty or not. Pre-processing needs to extract all item statements and their qualifiers and establish inequality between all statement IDs and all qualifier values.
 
 \subsubsection{No separators}
@@ -933,7 +847,31 @@ and the predicate has\_same[2] linking two statement IDs to the separator for wh
 \end{split}
 \end{equation*}
 
+
 \subsection{Mandatory qualifier (Q21510856)}
+\paragraph{Constraint}
+The mandatory qualifier constraint requires that a constrained statement has a qualifier with a specific property.
+
+\begin{table}[H]
+\caption{Mandatory qualifier constraint (Q21510856)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Required data & qualifier on constrained statement \\
+\hline
+Qualifiers & \makecell{required property (P2306) -- 1 \\ qualifier that the statement must have} \\
+\hline
+Violation & \makecell{constrained statement without a qualifier with the required property} \\
+\hline
+Dependency & constrained statement and its qualifiers \\
+\hline
+Rule features & negation \\
+\hline
+\end{tabularx}
+\end{table}
+
+To find violations of this constraint one would find a statement\_EDB with the constrained property, but where no qualifier\_EDB for the statement and with the required property exists.
+
+\paragraph{Rules}
 The mandatory qualifier constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. All constrained statements and their qualifiers have to be extracted and the order of the qualifiers pre-processed. Inequality must be established between all qualifier properties and the conjunction is 
 \begin{equation*}
 \begin{split}
@@ -950,6 +888,29 @@ With the usual require-pattern for qualifiers and the does\_not\_have rule added
 \end{equation*}
 
 \subsection{Single best value (Q52060874)}
+\paragraph{Constraint}
+The single best value constraint requires that only one constrained statement per item has the rank preferred.
+
+\begin{table}[H]
+\caption{Single best value constraint (Q52060874)}
+\begin{tabularx}{\textwidth}{ ll X}
+\hline
+Required data & item statement rank \\
+\hline
+Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
+\hline
+Violation & \makecell{items with two constrained statements with rank preferred} \\
+\hline
+Dependency & all item statements and their rank \\
+\hline
+Rule features & inequality \\
+\hline
+\end{tabularx}
+\end{table}
+
+Modelling the constraint means a count of all constrained statements with rank preferred is necessary, with a violation constituted if an item has a count of two or higher. Since it is only needed to differentiate between one and many, the rules could be written explicitly.
+
+\paragraph{Rules}
 The single best value constraint, like the single value constraint (section \ref{subsec_3_single_value}), differentiates between the set of separators \(S\) being empty or not. Since the constraint depends on the rank of statements this needs to be extracted during pre-processing and attached to the statement ID with the new predicate rank\([2]\). Qualifiers and references are not affected since they do not have ranks. For this constraint all item statements, their rank and their qualifiers need to be extracted and inequality established between the statement IDs and the qualifier values.\\
 
 \subsubsection{No separators}
@@ -981,12 +942,23 @@ As in the case above, the qualifier non-existence and violation rules are very s
 \end{split}
 \end{equation*}
 
-\subsection{Type (Q21503250)}
-\todo[inline]{Well. I wouldn't know. I'd have to expand the require pattern to search up the subclass tree and if require arrives at the root the class is not there. But a) its not a tree, so that does not work and b) there is no single root.\\
-Alternatively I could compute each items class via transitivity aaaand.... well. Violation if items classes unequal required class, but how to write that? Well, maybe I'll get a brilliant idea. Or I'll stop being stupid in case this does not require a brilliant idea.}
+\section{Reasoning for unconsidered constraints}
+Multiple constraints have not been described above for different reasons. The most prominent of these is the \emph{format} constraint (Q21502404) which specifies a regular expressions the values of the constrained property must adhere to. Evaluating these expressions would be theoretically possible but \\
+\begin{enumerate}[a)]
+\item primarily results in a large amount of preprocessing and
+\item does not solve the question of negation, since violations would be values that do not conform to their required regular expression
+\end{enumerate}
 
-\subsection{Value type (Q21510865)}
-\todo[]{as above, so below. no wait...}
+The two type constraints \emph{type} (Q21503250) and \emph{value type} (Q21510865) require an entity to have a certain type. This is defined transitively via the properties \emph{instance of} (P31) and \emph{subclass of} (P279), which have to form a statement chain to the entity given as the type. Evaluating these constraints would require pre-processing to compute all types of an entity transitively, add these as statements to the data and establish their order to allow testing for the non-existence of a type. Since the constraint could easily be checked when computing the types of an entity (is the required type in the types it has), this does not make sense in datalog.
+
+The \emph{integer} constraint (Q52848401), which requires values of a constrained property be integers (notably a quantity without decimal places), could easily be seen as a specific format constraint. While precomputing if a value is an integer or not could be done, it would mean that no actually relevant rules would be needed for the evaluation in datalog.
+
+Another problem that could not be sensibly solved is the comparison of values, needed for \emph{range} (Q21510860), \emph{difference within range} (Q21510854) and \emph{contemporary} constraint (Q25796498). \emph{Range} restricts the values of a constrained property within a certain range, \emph{difference within range} specifies that the values of two item statements should be within a certain range and \emph{contemporary} constraint specifies that subject and object of a constrained statement have to have coexisted at some point in time. While it would be possible to extract all values that might need to be compared and precompute the comparison, it would make most of the work precomputing and leave little to be done in datalog.
+
+\emph{Link} constraint (Q54554025), stating that constraint statements must have one or more references, requires a negation that cannot be concluded except by explicitly precomputing it, which makes the evaluation unnecessary. \\
+A similar situation is the \emph{no bounds} constraint (Q51723761), which requires that quantity values have neither upper nor lower bound. While it would be possible to precompute if a statement has no upper or lower bound, this would shift basically all evaluation logic into precomputing.
+
+And finally \emph{commons link} constraint (Q21510852) requires that values for a property should be valid links to to Wikimedia Commons. This validity cannot be tested from within datalog since there is no way to query the web for information.
 
 \chapter{Evaluation/Comparison}
 
