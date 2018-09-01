@@ -883,52 +883,48 @@ With the usual require-pattern for qualifiers and the does\_not\_have rule as in
 
 \subsection{Single best value (Q52060874)}
 \paragraph{Constraint}
-The single best value constraint requires that only one constrained statement per item has the rank preferred.
+The \emph{single best value} constraint requires that only one constrained statement per item has the rank preferred.
 
 \begin{table}[H]
 \caption{Single best value constraint (Q52060874)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & item statement rank \\
+Required data & item statements and ranks \\
 \hline
-Qualifiers & \makecell{separator (P4155) -- 0..* \\ qualifiers that must be different for exception} \\
+Qualifiers & \makecell{\emph{separator} (P4155) -- 0..* \\ qualifiers that, when used on constrained statements, can warrant an exception } \\
 \hline
-Violation & \makecell{items with two constrained statements with rank preferred} \\
+Violation & \makecell{items with two constrained statements with rank preferred \\ (exception: statements with separators as qualifiers with different values)} \\
 \hline
-Dependency & all item statements and their rank \\
-\hline
-Rule features & inequality \\
+Rule features & inequality, partially negation \\
 \hline
 \end{tabularx}
 \end{table}
 
-Modelling the constraint means a count of all constrained statements with rank preferred is necessary, with a violation constituted if an item has a count of two or higher. Since it is only needed to differentiate between one and many, the rules could be written explicitly.
-
 \paragraph{Rules}
-The single best value constraint, like the single value constraint (section \ref{subsec_3_single_value}), differentiates between the set of separators \(S\) being empty or not. Since the constraint depends on the rank of statements this needs to be extracted during pre-processing and attached to the statement ID with the new predicate rank\([2]\). Qualifiers and references are not affected since they do not have ranks. For this constraint all item statements, their rank and their qualifiers need to be extracted and inequality established between the statement IDs and the qualifier values.\\
+The \emph{single best value} constraint, like the \emph{single value} constraint (section \ref{subsec_3_single_value}), differentiates between the set of \emph{separators} \(S\) being empty or not. Since the constraint depends on the rank of statements this needs to be provided. Qualifiers and references are not affected since they do not have ranks. For this constraint all inequality needs to be established between the statement IDs and the qualifier values as well as the order of the qualifiers given.\\
 
 \subsubsection{No separators}
-If the separator set is empty, the violation simply occurs if there are two constrained statements on the same item with the preferred rank. Thus the equation \ref{eq_no_separators_triple} is expanded to
+If the \emph{separator} set is empty, the violation simply occurs if there are two constrained statements on the same item with the preferred rank. Thus the rule \eqref{eq_no_separators_triple} is expanded to
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
-&&\text{rank\_EDB}(S, \text{preferredRankConstant}) \wedge{} \\
+&\text{rank\_EDB}(S, \text{preferredRankConstant}) \wedge{} \\
 &\text{statement\_EDB}(O, I, \text{propertyConstant}, X) \wedge{} \\
-&&\text{rank\_EDB}(O, \text{preferredRankConstant}) \wedge{} \\
+&\text{rank\_EDB}(O, \text{preferredRankConstant}) \wedge{} \\
 &\text{unequal}(S, O)
 \end{split}
 \end{equation*}
 
 \subsubsection{With separators}
-As in the case above, the qualifier non-existence and violation rules are very similar to single value. The only change is the addition of the rank requirements as shown below.
+As in the case above, the qualifier non-existence and violation rules are very similar to the \emph{single value} constraint. The only change is the addition of the rank requirements as shown below.
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
-&&\text{rank\_EDB}(S, \text{preferredRankConstant}) \wedge{} \\
+&\text{rank\_EDB}(S, \text{preferredRankConstant}) \wedge{} \\
 &\text{statement\_EDB}(O, I, \text{propertyConstant}, W) \wedge{} \\
-&&\text{rank\_EDB}(O, \text{preferredRankConstant}) \wedge{} \\
+&\text{rank\_EDB}(O, \text{preferredRankConstant}) \wedge{} \\
 &\text{unequal}(S, O) \wedge{} \\
 &\text{has\_same}(S, O, \{X\}) \wedge{} \\
 &\text{does\_not\_have}(S, \{Y\}) \wedge{} \\
