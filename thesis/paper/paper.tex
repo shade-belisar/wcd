@@ -686,10 +686,10 @@ The final violation rule would then be:
 
 \subsection{Inverse (Q21510855)}\label{subsec_2_inverse}
 \paragraph{Constraint}
-The inverse constraint requires an additional statement on the value of a constrained statement with a specific property and the constrained item as value. It is very similar to value requires statement (see \ref{subsec_2_value_requires_statement}), although it does not specify allowed values, since the required statement has one specific value: the constrained item. While this means it could not be modelled exactly as a value requires statement constraint, it would only require very small rule changes and will thus not be elaborated on.
+The \emph{inverse} constraint requires an additional statement on the value of a constrained statement with a \emph{required property} and the constrained item as value. It is very similar to \emph{value requires statement} (see \ref{subsec_2_value_requires_statement}), although it does not specify allowed values, since the required statement needs to have one specific value: the item of the constrained statement.
 
 \paragraph{Rules}
-The inverse constraint is similar to the value requires statement constraint in requiring a statement on a constrained value with a specific property. However, instead of putting no constraint or a list of fixed values on the required statements value it set a relative requirement: the constrained item, meaning \(t = R\). The pre-processing and inequalities thus remain the same, but the conjunctions change to 
+The \emph{inverse} constraint can be modelled in almost the same way as the \emph{value requires statement} constraint. The only change is that instead of requiring inequality to all \emph{allowed values} in conjunction \(c_2\) the statement requires this constraint if its value is not the subject \(R\) of the original constrained statement, meaning \(t = R\). Inequalities have to be established between all properties and the \emph{inverse} property as well as all subjects and values of statements.
 \begin{equation*}
 \begin{split}
 c_1 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
@@ -704,6 +704,7 @@ c_2 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 &\text{unequal}(R, V)
 \end{split}
 \end{equation*}
+The final violation rule remains the same.
 
 \subsection{Symmetric (Q21510862)}
 The symmetric constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an inverse constraint (see \ref{subsec_2_inverse}) with the same property as constrained property and required property and will not be elaborated on.
