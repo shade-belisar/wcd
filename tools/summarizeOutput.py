@@ -4,7 +4,10 @@ import re
 import sys
 
 log = sys.argv[1]
-out = os.path.dirname(log) + "/summary.tsv"
+outFolder = os.path.dirname(log)
+if outFolder != "" and not outFolder.endswith("/"):
+    outFolder += "/"
+out = outFolder + os.path.splitext(os.path.basename(log))[0] + "_summary.tsv"
 
 constraintIDLabel = "ConstraintID"
 violationsLabel = "Violations"
