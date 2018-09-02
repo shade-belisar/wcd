@@ -30,7 +30,7 @@ with open(log) as log, open(out, "w") as summary:
     demandRules = re.compile("Created ([0-9]+) additional demand-rules.")
     totalRules = re.compile("Added ([0-9]+) rules total.")
     iterations = re.compile("Iterations=([0-9]+)")
-    runtime = re.compile("Runtime materialization = ([0-9]+),([0-9]+) milliseconds")
+    runtime = re.compile("Runtime materialization = ([0-9]+).([0-9]+) milliseconds")
     derivations = re.compile("Total # derivations: ([0-9]+)")
     time = re.compile("Total time elapsed: ([0-9]+)ms")
     constraint = re.compile("Constraint: (Q[0-9]+), violations: ([0-9]+)")
