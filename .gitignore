@@ -9,6 +9,8 @@
 *.log
 *.out
 *.pdf
+!/thesis/paper/images/*.pdf
+
 *.synctex.gz
 *.toc
 
