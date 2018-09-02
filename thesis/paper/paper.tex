@@ -965,7 +965,7 @@ The evaluation aims to document how suitable Datalog and VLog in particular are 
 \section{Software structure}
 The evaluation software\cite{wcd} was written in Java and utilises WDTK and VLog4J to evaluate the violation rules on the content of Wikidata. Figure \ref{fig_pipeline} illustrates the steps undertaken to evaluate the constraints.
 
-The first step is to transform the content of the Wikidata JSON-Dump, read via WDKT, into facts readable by VLog4J. These take the form of comma-separated value files which created for each predicate in section \ref{subsec_representation}, denoted as "Facts" in the diagram.
+At the beginning the content of the Wikidata JSON-Dump, read via WDKT, is transformed into facts readable by VLog4J. These take the form of comma-separated value files which created for each predicate in section \ref{subsec_representation}, denoted as "Facts" in the diagram.
 
 Based on this set the Inequaliy Helper creates all files necessary to established inequality as described in section \ref{sec_constraints_using_inequality}, based on which approach was chosen.
 
