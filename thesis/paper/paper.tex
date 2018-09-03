@@ -29,6 +29,7 @@
 \usepackage{todonotes}
 \usepackage{adjustbox}
 \usepackage[shortlabels]{enumitem}
+\usepackage{graphicx}
 
 \setcounter{tocdepth}{2}
 
@@ -70,6 +71,8 @@ Every statement can have added qualifiers, which consist of the corresponding st
 References support the claim by citing the source and additional information, e.g. when it was retrieved or when the source was published as property-value pairs. Each references consists from multiple such pairs, and statements can have multiple references.
 
 Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
+
+
 
 \section{Datalog}
 Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}, which will be denoted as \emph{someConstant}. In the context of Wikidata, any item or property, e.g. \emph{Earth} (Q2) or \emph{head of government} (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate triple\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
@@ -148,7 +151,7 @@ A problem that occurs multiple times is the need to determine inequality between
 Negation as a general problem cannot be solved in datalog. One could pre-process every necessary fact to be negated and add this to the ground facts, but this is not the purpose of this work. However, not all constraints require a general negation. \emph{item requires statement}, \emph{value requires statement}, \emph{inverse }and \emph{symmetric} are all violated if a statement does not exist on a specific item. This problem can be solved with limited amounts of preprocessing by leveraging a preprocessed statement order per item and 'iterating' through the statements until the required conditions are met.\\
 A similar approach can be taken to find items with exactly one statement matching certain criteria, required for 	\emph{multi-value}. The idea is to ask the question if a second statement exists, then evaluating it as above. Both methods will be explained in section \ref{sec_statement_non-existence}.
 
-\subsection{Representation of Wikidata as Facts}
+\subsection{Representation of Wikidata as Facts}\label{subsec_representation}
 To represent the content of Wikidata as facts the following predicates are introduced:
 \begin{table}[H]
 \caption{EDB predicates}\label{tab_predicates}
@@ -185,7 +188,7 @@ value statement & statement on the value of a constrained statement
 \end{tabular}
 \end{table}
 
-\subsection{Task}
+\subsection{Task}\label{subsec_task}
 Each property constraint will be modelled and evaluated as one set of rules per property per constraint, meaning each violating statement will be of a form similar to
 \begin{align*}
 &\text{violation\_statement}(S, E, \text{propertyConstant}, V) &\leftarrow \text{atoms determining the violation} \\
@@ -201,7 +204,7 @@ The task for each constraint is thus: Given the constraint and a constrained pro
 &\text{violation\_reference}(S, H, P, V)
 \end{align*}
 
-\chapter{Wikidata constraints explained}
+\chapter{Wikidata constraints explained}\label{cha_wikidata_constraints_explained}
 This section will explain all interesting, meaning translatable or partially translatable, currently used property constraints on Wikidata. They will be presented roughly in descending order of the number of properties with this constraint, although constraints with similar function will be explained directly after one another. Additionally, all constraints that were considered untranslatable are listed at the and, each with a short explanation as to why they were placed in that group.
 
 Every section describing a constraint will consist of two subsections: the constraint explanation and the rules.
@@ -590,7 +593,7 @@ The one-of qualifier value constraint is violated if a constrained statement has
 \end{split}
 \end{equation*}
 
- \section{Constraints using Statement non-Existence}
+ \section{Constraints using Statement non-Existence}\label{sec_constraints_using_statement_non}
 Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: first\([2]\), last\([2]\), and next\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
 
 If qualifier non-existence should be tested the predicates have to be adapted, since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property and value have to be used. For this the predicates first\_qualifier\([3]\) and last\_qualifier\([3]\) taking the statement ID, the property and the value and next\_qualifier\([6]\) with ID, property and value for the current and next qualifier are introduced.\\
@@ -950,7 +953,30 @@ A similar situation is the \emph{no bounds} constraint (Q51723761), which requir
 
 And finally \emph{commons link} constraint (Q21510852) requires that values for a property should be valid links to to Wikimedia Commons. This validity cannot be tested from within datalog since there is no way to query the web for information.
 
-\chapter{Evaluation/Comparison}
+\chapter{Evaluation}
+
+To evaluate the rules described in chapter \ref{cha_wikidata_constraints_explained} they have been implemented for VLog4J \cite{vlog4j}. VLog4J is a java library base on VLog \cite{vlog}, a Datalog engine utilising a column-based memory layout to allow processing of large datasets on commodity hardware. It was first published in 2016\cite{UJK2016} but has been actively developed since then.
+
+The entire content of Wikidata is available in several formats: the aforementioned RDF, JSON and XML. To evaluate the violations, Wikidata needs to be provided in form of atoms as described in 
+section \ref{subsec_representation}. For this purpose the Wikidata Toolkit (WDTK)\cite{wdtk} was used. It provides an iterator over the JSON dumps, allowing the processing of all entities in Wikidata.
+
+The evaluation aims to document how suitable Datalog and VLog in particular are to extract violations from Wikidata. The performance impact of the additionally introduced features, inequality (section \ref{sec_constraints_using_inequality}) and statement non-existence (section \ref{sec_constraints_using_statement_non}) is evaluated.
+
+\section{Software structure}
+The evaluation software\cite{wcd} was written in Java and utilises WDTK and VLog4J to evaluate the violation rules on the content of Wikidata. Figure \ref{fig_pipeline} illustrates the steps undertaken to evaluate the constraints.
+
+At the beginning the content of the Wikidata JSON-Dump, read via WDKT, is transformed into facts readable by VLog4J. These take the form of comma-separated value files which created for each predicate in section \ref{subsec_representation}, denoted as "Facts" in the diagram.
+
+Based on this set the Inequaliy Helper creates all files necessary to established inequality as described in section \ref{sec_constraints_using_inequality}, based on which approach was chosen.
+
+The rules determining violations are created by the Constraint Checker, which uses the Wikidata Query Service\footnote{\url{query.wikidata.org}} to fetch the current constraint configurations. Based on these configurations the rules are created as described in chapter \ref{cha_wikidata_constraints_explained}.
+
+Computing all violations based on the provided (inequality)-facts and violations rules is done per constraint. All facts pertaining to the constraint as well as the rules are loaded into VLog, which creates and in-memory database from the provided .csv-files. Once this is done, the reasoning engine materializes all possible facts. Afterwards, all violations are extracted by querying the database for the queries described in section \ref{subsec_task}.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/Pipeline.pdf}
+\caption{Evaluation pipeline}\label{fig_pipeline}
+\end{figure}
 
 \section{Inequality evaluation}\label{sec_inequality_evaluation}
 \end{document}
