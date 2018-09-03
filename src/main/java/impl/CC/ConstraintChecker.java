@@ -48,6 +48,8 @@ public abstract class ConstraintChecker {
 	
 	final static Logger logger = Logger.getLogger(ConstraintChecker.class);
 	
+	final static int TIMEOUT_HOURS = 2;
+	
 	String constraint;
 	
 	protected final Reasoner reasoner;
@@ -65,6 +67,7 @@ public abstract class ConstraintChecker {
 		internalError = "INTERNAL_ERROR for constraint " + constraint + ".";
 		reasoner = Reasoner.getInstance();
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
+		reasoner.setReasoningTimeout(TIMEOUT_HOURS * 60 * 60);
 		initDataField();
 		init();
 	}
