@@ -168,6 +168,12 @@ public class InequalityHelper {
 			
 	}
 	
+	void close() throws IOException {
+		for (DataSetFile file : files) {
+			file.close();
+		}
+	}
+	
 	void load(Reasoner reasoner) throws ReasonerStateException, IOException {
 		File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
 		FileOutputStream output = new FileOutputStream(uniqueCharacters, false);
@@ -243,7 +249,9 @@ public class InequalityHelper {
 			encoded();
 			break;
 		}
-
+		for (InequalityHelper helper : helpers.values()) {
+			helper.close();
+		}
 	}
 
 	void naive () throws IOException {
