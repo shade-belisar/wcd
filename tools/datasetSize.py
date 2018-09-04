@@ -5,17 +5,16 @@ path = sys.argv[1]
 if not path.endswith("/") and not path == "":
     path += "/"
 
+chunkSize = int(sys.argv[2])
+
 fileExtension = ".csv.gz"
 
 def file_len(fname):
     i = 0
-    try:
-        with gzip.open(path + fname + fileExtension) as f:
-            for i, l in enumerate(f):
-                pass
-        return i + 1
-    except IOError:
-        return 0
+    with gzip.open(path + fname + fileExtension) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
 
 files = ["statement", "qualifier", "reference", "items", "properties", "units", "ranks", "first", "next", "last", "firstQualifier", "nextQualifier", "lastQualifier"]
 constraints = [
@@ -39,4 +38,15 @@ for f in files:
     print f + "," + str(file_len(f))
 
 for f, n in constraints:
-    print n + "," + str(file_len(f + "/letter0"))
+    sum = 0
+    i = 0
+    existed = True
+    while existed:
+        try:
+            sum += file_len(f + "/letter" + str(i))
+            i += chunkSize
+
+        except IOError:
+            existed = False
+
+    print n + "," + str(sum)
