@@ -404,7 +404,7 @@ Now that inequality between all characters and the link between entities and the
 \end{equation*}
 Note that the facts fulfilling \(\text{unequal}(A_j, B_j)\) are created by using the approach outlined in Section \ref{subsubsec_naive} for the set of characters \(C\) in all unequal constants \(U\).	
 
-\subsubsection{Demand-driven materialisation}
+\subsubsection{Demand-driven materialisation}\label{subsubsec_demand-driven_materialisation}
 The approaches outlined above will always result in all inequalities between the members of \(U\) being materialised. However, the purpose of determining inequality is to assist in finding violations of specific constraints. This means that only some inequalities -- the ones that actually appear in the dataset -- have to be evaluated. The rules can then be limited by introducing a new predicate req\_inequality\([2]\) which will only be derived if a condition occurs in which the inequality must be evaluated.\\
 
 To save space and avoid redundancy the following rules will not explicitly state the inequality requirement predicate. Instead, assume that for every premise of the form \(B_1 \wedge \ldots\wedge B_m \wedge I_1 \wedge I_n\) where \(B_1 .. B_m\) are arbitrary atoms, \(I_1 .. I_n\) are atoms of the form \(\text{unequal}(t_{n_1}, t_{n_2})\) with \(t_{n_1}, t_{n_2}\) terms and all variables amount \(t_{n_1}\) and \(t_{n_2}\) appear in at least one of \(B_1 \ldots B_m\), the rules 
@@ -437,7 +437,7 @@ The constraint can be expanded to cover qualifiers and references as well by set
 
 \paragraph{Rules}
 The \emph{distinct values} constraint requires two distinct constrained statements with the same value. 
-Two constrained statements with the same value can be found via a simple conjunction of two statement\_EDB atoms with the propertyConstant as predicate and a variable \(V\) as value. Since this would mark every constrained statement as a violations because it can fulfil both atoms at the same time, inequality of the statement IDs \(S\) and \(O\) must be tested as well.t
+Two constrained statements with the same value can be found via a simple conjunction of two statement\_EDB atoms with the propertyConstant as predicate and a variable \(V\) as value. Since this would mark every constrained statement as a violations because it can fulfil both atoms at the same time, inequality of the statement IDs \(S\) and \(O\) must be tested as well.
 \begin{equation*}
 \begin{split}
 \text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
@@ -978,5 +978,41 @@ Computing all violations based on the provided (inequality)-facts and violations
 \caption{Evaluation pipeline}\label{fig_pipeline}
 \end{figure}
 
-\section{Inequality evaluation}\label{sec_inequality_evaluation}
+\section{Results}
+
+The experiments where carried out on a server with a 3.50GHz Intel Xeon CPU, 1 TB SSD and 32 GB assigned RAM running Debian 4.9. Multiple sets of sizes ranging from one thousand to one million entities where extracted from the Wikidata JSON-Dump and all constraints evaluated against them.
+
+\subsection{Statistics}
+Several statistics about the executed runs are reported.
+
+{\bf Total Time} is the execution time taken for evaluating one constraint. This does not include the data extraction from JSON, nor the generation of the files necessary to establish inequality. It does include the time taken to generate the rules as well as to load, reason and query with VLog.
+
+{\bf Runtime materialization} is the time taken by the VLog engine to compute all facts that can be derived from the given input.
+
+{\bf Derivations} counts how many new facts were created during materialization. This will include all found violations but can be more in cases where additional facts were created as helpers.
+
+{\bf Total Rules} states how many rules where created to establish the violations. They are split into two subfields: {\bf Demand rules}, which are additional rules created to satisfy the requirements outlined in section \ref{subsubsec_demand-driven_materialisation}, and {\bf Base Rules}, which are the rules created without accounting for the demand-driven scheme.
+
+\subsection{Overview}
+
+Most constraints could be evaluated in under two hours on even the largest dataset. The exceptions are \emph{distinct values}, \emph{item requires statement} and \emph{single value}. In parts this is expected behaviour, since these three constraints are applied to an order of magnitude more properties than all other properties with the exception of \emph{scope}, which is described in very simple rules. However, as seen in Figure \ref{fig_runtime}, the runtimes of these three constraints are multiple orders of magnitude higher than those of other constraints. The following sections will thus focus on the comparison of these three constraints to identify bottlenecks and reasons for this huge difference in performance.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/runtime100,000.pdf}
+\caption{Runtime materialization for 100,000 entities}\label{fig_runtime}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/rules.pdf}
+\caption{Number of rules and demanded rules}\label{fig_rules}
+\end{figure}
+
+\subsection{Inequality evaluation}\label{sec_inequality_evaluation}
+Inequality computation was implemented in three variants outlined in section \ref{sec_constraints_using_inequality}: naive, encoded and demanded. Naive and encoded could not terminate for any dataset other than the smallest with 1,000 entities. Naive failed because the disk space needed for the precomputed inequality facts was not available. Encoded, while improving on the disk space needed, still. The runtimes for this dataset, presented in Figure \ref{fig_inequality}, shows a clear improvement when using the demanded approach. This shows that the overhead in rules introduced to enable the demanded approach, seen in Figure \ref{fig_rules}, is worth the improvements gained through it.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/inequality1000.pdf}
+\caption{Runtime materialization for 1,000 entities (encoded and demanded)}\label{fig_inequality}
+\end{figure}
+
 \end{document}
