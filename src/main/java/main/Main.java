@@ -239,16 +239,21 @@ public class Main {
 			}
 		}
 		
+		try {
+			for(ConstraintChecker checker : checkers) {
+				checker.registerInequalities();
+			}
+			if (!getReload()) {						
+				InequalityHelper.prepareFiles();
+				logger.info("Prepared inequality files.");
+			}
+		} catch (IOException e) {
+			logger.error("Could not open a file", e);
+		}
+		
+		
 		if (!cmd.hasOption("noviolations")) {
 			try {
-				for(ConstraintChecker checker : checkers) {
-					checker.registerInequalities();
-				}
-				if (!getReload()) {						
-					InequalityHelper.prepareFiles();
-					logger.info("Prepared inequality files.");
-				}
-				
 				for(ConstraintChecker checker : checkers) {
 					StopWatch watch = new StopWatch();
 					watch.start();
