@@ -78,6 +78,8 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
+		Main.statementSet.loadStatementFile(reasoner);
+		Main.statementSet.loadQualifierFile(reasoner);
 		Main.statementSet.loadFirstQualifierFile(reasoner);
 		Main.statementSet.loadNextQualifierFile(reasoner);
 		Main.statementSet.loadLastQualifierFile(reasoner);
