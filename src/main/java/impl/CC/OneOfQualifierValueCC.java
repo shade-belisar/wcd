@@ -86,6 +86,8 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
+		Main.statementSet.loadStatementFile(reasoner);
+		Main.statementSet.loadQualifierFile(reasoner);
 	}
 	
 	@Override

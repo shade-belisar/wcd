@@ -54,6 +54,10 @@ public class SC {
 	public final static String DOES_NOT_HAVE = "does_not_have";
 	public final static String HAS_SAME = "has_same";
 	
+	public final static String CONSTRAINED_STATEMENT = "constrained_statement";
+	public final static String CONSTRAINED_QUALIFIER = "constrained_qualifier";
+	public final static String CONSTRAINED_REFERENCE = "constrained_reference";
+	
 	public final static Predicate statementEDB = Expressions.makePredicate(STATEMENT, 4);
 	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
 	public final static Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 4);
@@ -105,4 +109,8 @@ public class SC {
 	
 	public final static Predicate does_not_have = Expressions.makePredicate(DOES_NOT_HAVE, 2);
 	public final static Predicate has_same = Expressions.makePredicate(HAS_SAME, 3);
+	
+	public final static Predicate constrained_statement = Expressions.makePredicate(CONSTRAINED_STATEMENT, 4);
+	public final static Predicate constrained_qualifier = Expressions.makePredicate(CONSTRAINED_QUALIFIER, 3);
+	public final static Predicate constrained_reference = Expressions.makePredicate(CONSTRAINED_REFERENCE, 4);
 }

@@ -259,8 +259,13 @@ public class Main {
 					watch.start();
 					checker.violations();
 					watch.stop();
-					System.out.println("Total time elapsed: " + watch.getTime() + "ms");
-					System.out.println(checker.identify() + ", violations: " + checker.getResultSize());
+					logger.info("Total time elapsed: " + watch.getTime() + "ms");
+					String constrainedString
+						= "Constrained statements: " + checker.getConstrainedStatements() + " "
+						+ "Constrained qualifiers: " + checker.getConstrainedQualifiers() + " "
+						+ "Constrained references " + checker.getConstrainedReferences();
+					logger.info(constrainedString);
+					logger.info(checker.identify() + ", violations: " + checker.getResultSize());
 					if (getStringResult())
 						System.out.println(checker.getResultString());
 					

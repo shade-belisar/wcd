@@ -21,6 +21,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.NoneOfPCC;
 import impl.PCC.PropertyConstraintChecker;
+import main.Main;
 import utility.Utility;
 
 public class NoneOfCC extends ConstraintChecker {
@@ -78,6 +79,9 @@ public class NoneOfCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
+		Main.statementSet.loadStatementFile(reasoner);
+		Main.statementSet.loadQualifierFile(reasoner);
+		Main.statementSet.loadReferenceFile(reasoner);
 	}
 
 	@Override

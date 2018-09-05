@@ -19,6 +19,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.PCC.ConflictsWithPCC;
 import impl.PCC.PropertyConstraintChecker;
+import main.Main;
 import utility.Utility;
 
 public class ConflictsWithCC extends ConstraintChecker {
@@ -80,6 +81,7 @@ public class ConflictsWithCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
+		Main.statementSet.loadStatementFile(reasoner);
 	}
 	
 	@Override

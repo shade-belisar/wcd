@@ -78,6 +78,7 @@ public class AllowedEntityTypesCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
+		Main.statementSet.loadStatementFile(reasoner);
 		Main.statementSet.loadItemsFile(reasoner);
 		Main.statementSet.loadPropertiesFile(reasoner);	
 	}

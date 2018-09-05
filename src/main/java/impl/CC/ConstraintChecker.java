@@ -3,6 +3,14 @@
  */
 package impl.CC;
 
+import static utility.SC.constrained_statement;
+import static utility.SC.constrained_qualifier;
+import static utility.SC.constrained_reference;
+import static utility.SC.s;
+import static utility.SC.i;
+import static utility.SC.h;
+import static utility.SC.p;
+import static utility.SC.v;
 import static utility.SC.require_inequality;
 
 import java.io.IOException;
@@ -59,6 +67,12 @@ public abstract class ConstraintChecker {
 	protected List<PropertyConstraintChecker> propertyCheckers;
 	
 	int resultSize = 0;
+	
+	int constrainedStatements = 0;
+	
+	int constrainedQualifiers = 0;
+	
+	int constrainedReferences = 0;
 	
 	String resultString = "";
 	
@@ -128,10 +142,8 @@ public abstract class ConstraintChecker {
 	}
 	
 	public void violations() throws ReasonerStateException, IOException {
-		loadDataSet();
-		logger.info("Loaded basic data sets.");
 		prepareFacts();
-		logger.info("Loaded additional data sets.");
+		logger.info("Loaded basic data sets.");
 		InequalityHelper.load(this);
 		logger.info("Loaded inequalities.");
 		
@@ -192,15 +204,20 @@ public abstract class ConstraintChecker {
 		return result;
 	}
 	
+	/*
 	void loadDataSet() throws ReasonerStateException, IOException {		
 		Main.statementSet.loadStatementFile(reasoner);
 		Main.statementSet.loadQualifierFile(reasoner);
 		Main.statementSet.loadReferenceFile(reasoner);
 	}
+	*/
 	
 	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
 		try {
 			reasoner.addRules(rules);
+			for (PropertyConstraintChecker pcc : propertyCheckers) {
+				reasoner.addRules(pcc.constrainedRules());
+			}
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to add rules in the wrong state for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);
@@ -244,10 +261,40 @@ public abstract class ConstraintChecker {
 				throw new PrepareQueriesException(internalError);
 			}
 		}
+
+		constrainedStatements = queryResultSize(Expressions.makeAtom(constrained_statement, s, i, p, v));
+		constrainedQualifiers = queryResultSize(Expressions.makeAtom(constrained_qualifier, s, p, v));
+		constrainedReferences = queryResultSize(Expressions.makeAtom(constrained_reference, s, h, p, v));
+	}
+	
+	int queryResultSize (Atom query) throws PrepareQueriesException {
+		int i = 0;
+		try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
+			while (iterator.hasNext()) {
+				iterator.next();
+				i++;				
+			}
+		} catch (ReasonerStateException e) {
+			logger.error("Trying to answer quer in the wrong state for constraint " + constraint + ".", e);
+			throw new PrepareQueriesException(internalError);
+		}
+		return i;
 	}
 	
 	public int getResultSize() {
 		return resultSize;
+	}
+	
+	public int getConstrainedStatements() {
+		return constrainedStatements;
+	}
+	
+	public int getConstrainedQualifiers() {
+		return constrainedQualifiers;
+	}
+	
+	public int getConstrainedReferences() {
+		return constrainedReferences;
 	}
 	
 	public String getResultString() {

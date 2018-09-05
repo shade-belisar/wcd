@@ -18,9 +18,24 @@ derivationsLabel = "Derivations"
 rulesLabel = "Rules"
 demandRulesLabel = "Demand rules"
 totalRulesLabel = "Total rules"
+constrainedStatementsLabel = "Constrained statements"
+constrainedQualifiersLabel = "Constrained qualifiers"
+constrainedReferencesLabel = "Constrained references"
 
 with open(log) as log, open(out, "w") as summary:
-    writer = csv.DictWriter(summary, [constraintIDLabel, violationsLabel, totalTimeLabel, runtimeMaterializationLabel, iterationsLabel, derivationsLabel, rulesLabel, demandRulesLabel, totalRulesLabel], delimiter="\t")
+    writer = csv.DictWriter(summary, [
+        constraintIDLabel,
+        violationsLabel,
+        totalTimeLabel,
+        runtimeMaterializationLabel,
+        iterationsLabel,
+        derivationsLabel,
+        rulesLabel,
+        demandRulesLabel,
+        totalRulesLabel,
+        constrainedStatementsLabel,
+        constrainedQualifiersLabel,
+        constrainedReferencesLabel], delimiter="\t")
     writer.writeheader()
 
     blocks = list()
@@ -33,6 +48,7 @@ with open(log) as log, open(out, "w") as summary:
     runtime = re.compile("Runtime materialization = ([0-9]+).([0-9]+) milliseconds")
     derivations = re.compile("Total # derivations: ([0-9]+)")
     time = re.compile("Total time elapsed: ([0-9]+)ms")
+    constrainedSQR = re.compile("Constrained statements: ([0-9]+) Constrained qualifiers: ([0-9]+) Constrained references ([0-9]+)")
     constraint = re.compile("Constraint: (Q[0-9]+), violations: ([0-9]+)")
 
     stats = dict()
@@ -65,6 +81,12 @@ with open(log) as log, open(out, "w") as summary:
         timeResult = time.search(line)
         if timeResult:
             stats[totalTimeLabel] = timeResult.group(1)
+
+        constrainedSQRResult = constrainedSQR.search(line)
+        if constrainedSQRResult:
+            stats[constrainedStatementsLabel] = constrainedSQRResult.group(1)
+            stats[constrainedQualifiersLabel] = constrainedSQRResult.group(2)
+            stats[constrainedReferencesLabel] = constrainedSQRResult.group(3)
 
         constraintResult = constraint.search(line)
         if constraintResult:

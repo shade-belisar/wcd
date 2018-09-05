@@ -57,6 +57,7 @@ public class DistinctValuesCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
+		Main.statementSet.loadStatementFile(reasoner);
 	}
 	
 	@Override

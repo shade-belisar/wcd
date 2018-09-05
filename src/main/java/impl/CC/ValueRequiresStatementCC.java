@@ -83,6 +83,7 @@ public class ValueRequiresStatementCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
+		Main.statementSet.loadStatementFile(reasoner);
 		Main.statementSet.loadFirstFile(reasoner);
 		Main.statementSet.loadNextFile(reasoner);
 		Main.statementSet.loadLastFile(reasoner);
