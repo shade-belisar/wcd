@@ -241,7 +241,7 @@ It is violated if a statement, qualifier or reference has a predicate with the \
 \paragraph{Rules}
 The property scope constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough. This means violations can be found using these rules:
 \begin{align*}
-\text{violation\_triple}(S, I, \text{propertyConstant}, V) &\leftarrow \text{statement\_EDB}(S, I, \text{propertyConstant}, V)\\
+\text{violation\_statement}(S, I, \text{propertyConstant}, V) &\leftarrow \text{statement\_EDB}(S, I, \text{propertyConstant}, V)\\
 \text{violation\_qualifier}(S, \text{propertyConstant}, V) &\leftarrow \text{qualifier\_EDB}(S, \text{propertyConstant}, V)\\
 \text{violation\_reference}(S, \text{propertyConstant}, V) &\leftarrow \text{reference\_EDB}(S, H, \text{propertyConstant}, V)
 \end{align*}
@@ -268,7 +268,7 @@ Violation & \makecell{entity statement with the conflicting property \\ entity s
 The conflicts-with constraint is violated if another statement on the same item either has a conflicting property or a conflicting property and a conflicting value depending on specified qualifiers. It depends on a conjunction (\(O\) denoting another statement ID, \(C\) another value) and a violation for a conflicts-with constraint is thus either
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow\\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{}\\
 &\text{statement\_EDB}(O, I, \text{conflictingPropertyConstant}, C)
 \end{split}
@@ -276,7 +276,7 @@ The conflicts-with constraint is violated if another statement on the same item 
 for constraints with no conflicting values specified or one
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow\\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow\\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{}\\
 &\text{statement\_EDB}(O, I, \text{conflictingPropertyConstant}, \text{conflictingValueConstant})
 \end{split}
@@ -306,13 +306,13 @@ Since there are only three options (and only two in use), violations can be foun
 The allowed entity types constraint is violated by a statement with the wrong entity type.  Constraints regarding the lexeme entity type can be ignored since they are currently not used. The Violations depend on a simple conjunction:
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge \text{item}(I)
 \end{split}
 \end{equation*}
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge \text{property}(I)
 \end{split}
 \end{equation*}
@@ -339,7 +339,7 @@ Violation & \makecell{constrained statement, qualifier or reference with a forbi
 The none of constraint simply forbids certain values for properties, thus effectively prohibiting certain triples, qualifiers and references. The rules, depending on nothing but specific database entries, are
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, \text{forbiddenValueConstant})
 \end{split}
 \end{equation*}
@@ -442,7 +442,7 @@ The \emph{distinct values} constraint requires two distinct constrained statemen
 Two constrained statements with the same value can be found via a simple conjunction of two statement\_EDB atoms with the propertyConstant as predicate and a variable \(V\) as value. Since this would mark every constrained statement as a violations because it can fulfil both atoms at the same time, inequality of the statement IDs \(S\) and \(O\) must be tested as well.
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{statement\_EDB}(O, X, \text{propertyConstant}, V) \wedge{} \\
 &\text{unequal}(S, O)
@@ -486,7 +486,7 @@ The complete rules require multiple unequal-atoms for all allowed units. Given a
 Violation are thus
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
 \end{split}
@@ -529,7 +529,7 @@ Rule features & inequality \\
 To represent a violation of the \emph{allowed qualifiers} constraint in datalog inequality between all specified allowed qualifiers and the properties of qualifiers is required. The constraint is violated if a qualifier on a constrained statement exists that is unequal to all allowed qualifiers. The notation for set inequality as introduced in section \ref{subsec_3_allowed_units} will be used. With \(A\) the set of allowed qualifiers the rule is:
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{qualifier\_EDB}(S, Q, O) \wedge \text{unequal}(\{A\}, Q)
 \end{split}
@@ -557,7 +557,7 @@ Rule features & inequality \\
 \paragraph{Rules}
 The one-of constraint fits in the pattern established by the previous two constraints and disallows certain property-value combinations in statements, qualifiers and references. Inequality is established between all \emph{allowed values} and the values of statements, qualifiers and references, respectively. With \(A\) the set of allowed values the rules for triple, qualifier and reference are:
 \begin{align*}
-\text{violation\_triple}(S, I, \text{propertyConstant}, V) &\leftarrow \\
+\text{violation\_statement}(S, I, \text{propertyConstant}, V) &\leftarrow \\
 \text{statement\_EDB}(S, I, &\text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V) \\
 \text{violation\_qualifier}(S, \text{propertyConstant}, V) &\leftarrow \\
 \text{qualifier\_EDB}(S, &\text{propertyConstant}, V) \wedge \text{unequal}(\{A\}, V) \\
@@ -659,7 +659,7 @@ c_2 = &\text{statement\_EDB}(Q, I, \text{propertyConstant}, X) \wedge{} \\
 Note that the first set of rules is still required, since the preceding statements do not need to have the \emph{required property}. In both cases violations can be found with
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{statement\_EDB}(O, I, P, X) \wedge \text{last}(O, I) \wedge{} \\
 &\text{require}(O, \text{propertyConstant}, \text{requiredPropertyConstant})
@@ -687,7 +687,7 @@ c_2 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 The final violation rule would then be:
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{statement\_EDB}(O, V, P, X) \wedge \text{last}(O, V) \wedge{} \\
 &\text{require}(O, \text{propertyConstant}, \text{requiredPropertyConstant})
@@ -790,7 +790,7 @@ The single value constraint can be divided into two different cases, depending o
 If the separator set is empty, the violation simply occurs if there are two constrained statements on the same item. 
 \begin{equation}\label{eq_no_separators_triple}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{statement\_EDB}(O, I, \text{propertyConstant}, X) \wedge{} \\
 &\text{unequal}(S, O)
@@ -824,7 +824,7 @@ for each separator in \(S\).\\
 With qualifier non-existence established the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all values of \emph{separator} qualifiers are equal or no such \emph{separator} qualifier exist. To determine this a number of rules have to be introduced which are based on two sets the \emph{separators} are split into: \(X\) contains the \emph{separators} that exist as qualifiers and \(Y\) the \emph{separators} that do not. The following rule is then created for every possible split of the \emph{separators} into two such sets. Note that \(\text{predicate}(\{X\})\) denotes \(\bigwedge_{x \in X} \text{predicate}(x)\) as introduced in section \ref{subsec_3_allowed_units}.
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{statement\_EDB}(O, I, \text{propertyConstant}, C) \wedge{} \\
 &\text{unequal}(S, O) \wedge{} \\
@@ -880,7 +880,7 @@ c = &\text{statement\_EDB}(S, I, \text{propertyConstant}, C) \wedge{} \\
 With the usual require-pattern for qualifiers and the does\_not\_have rule as introduced in section \ref{subsubsec_with_separators} added for brevity the violations would be found with:
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{does\_not\_have}(S, \text{requiredPropertyConstant})
 \end{split}
@@ -912,7 +912,7 @@ The \emph{single best value} constraint, like the \emph{single value} constraint
 If the \emph{separator} set is empty, the violation simply occurs if there are two constrained statements on the same item with the preferred rank. Thus the rule \eqref{eq_no_separators_triple} is expanded to
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{rank\_EDB}(S, \text{preferredRankConstant}) \wedge{} \\
 &\text{statement\_EDB}(O, I, \text{propertyConstant}, X) \wedge{} \\
@@ -925,7 +925,7 @@ If the \emph{separator} set is empty, the violation simply occurs if there are t
 As in the case above, the qualifier non-existence and violation rules are very similar to the \emph{single value} constraint. The only change is the addition of the rank requirements as shown below.
 \begin{equation*}
 \begin{split}
-\text{violation\_triple}&(S, I, \text{propertyConstant}, V) \leftarrow \\
+\text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{rank\_EDB}(S, \text{preferredRankConstant}) \wedge{} \\
 &\text{statement\_EDB}(O, I, \text{propertyConstant}, W) \wedge{} \\
@@ -987,17 +987,17 @@ The experiments where carried out on a server with a 3.50GHz Intel Xeon CPU, 1 T
 \subsection{Statistics}
 Several statistics about the executed runs are reported.
 
-{\bf Total Time} is the execution time taken for evaluating one constraint. This does not include the data extraction from JSON, nor the generation of the files necessary to establish inequality. It does include the time taken to generate the rules as well as to load, reason and query with VLog.
-
 {\bf Runtime materialization} is the time taken by the VLog engine to compute all facts that can be derived from the given input.
 
-{\bf Derivations} counts how many new facts were created during materialization. This will include all found violations but can be more in cases where additional facts were created as helpers.
+{\bf Additional Derivations} counts how many new facts were created during materialization, excluding the violations themselves. 
 
 {\bf Total Rules} states how many rules where created to establish the violations. They are split into two subfields: {\bf Demand rules}, which are additional rules created to satisfy the requirements outlined in section \ref{subsubsec_demand-driven_materialisation}, and {\bf Base Rules}, which are the rules created without accounting for the demand-driven scheme.
 
 \subsection{Overview}
 
-Most constraints could be evaluated in under two hours on even the largest dataset. The exceptions are \emph{distinct values}, \emph{item requires statement} and \emph{single value}. In parts this is expected behaviour, since these three constraints are applied to an order of magnitude more properties than all other properties with the exception of \emph{scope}, which is described in very simple rules. However, as seen in Figure \ref{fig_runtime}, the runtimes of these three constraints are multiple orders of magnitude higher than those of other constraints. The following sections will thus focus on the comparison of these three constraints to identify bottlenecks and reasons for this huge difference in performance.
+Because of a bug in VLog\footnote{\url{https://github.com/knowsys/vlog4j/issues/43}}, the largest dataset that could be completely evaluated contained 100,000 entities. With datasets of larger size, more than half of the constraints were affected by this bug, meaning the analysis could not be conducted. All further statistics describe the results on the 100,000 entity set unless specifically noted otherwise. Since inequality could only be computed in demanded mode (see section  \ref{sec_inequality_evaluation}), all statistics will show the results attained in this mode.
+
+Most constraints could be evaluated in under two hours. The exceptions are \emph{distinct values}, \emph{item requires statement} and \emph{single value}. In parts this is expected behaviour, since these three constraints are applied to an order of magnitude more properties than all other properties with the exception of \emph{scope}, which is described in very simple rules. However, as seen in Figure \ref{fig_runtime}, the runtimes of these three constraints are multiple orders of magnitude higher than those of other constraints. The following sections will thus focus on the comparison of these three constraints to identify bottlenecks and reasons for this huge difference in performance. They will be marked with a border in every figure.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{images/runtime100,000.pdf}
@@ -1009,12 +1009,33 @@ Most constraints could be evaluated in under two hours on even the largest datas
 \caption{Number of rules and demanded rules}\label{fig_rules}
 \end{figure}
 
+\subsection{Facts}
+Figure \ref{fig_facts} shows the number of facts loaded into VLog per constraint. Base facts denote those directly extracted from the JSON-Dump and corresponding to one of the predicates listed in section \ref{subsec_representation}. Inequality are the letter\(_i\) facts created to establish inequality as described in section \ref{sec_constraints_using_inequality}. Note that in the demanded (and encoded) mode, every entry for which inequality should be established is usually split into multiple letter\(_i\) facts based on its length, which is why the number of inequality facts can be up to ten times the number of base facts. Require facts list the order of statements or qualifiers as described in section \ref{sec_constraints_using_statement_non}.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/facts100,000.pdf}
+\caption{Number of input facts per constraint}\label{fig_facts}
+\end{figure}
+
+The long runtimes of \emph{distinct values}, \emph{item requires statement} and \emph{single value} cannot be explained through the size of the input data. While all of them have more than 10 million input facts, this is also the case for other constraints that do not take nearly as much runtime. \emph{One-of}, \emph{symmetric} and \emph{inverse} have even more input facts than the three long-runtime constraints. The reason for the performance difference must be found elsewhere.
+
 \subsection{Inequality evaluation}\label{sec_inequality_evaluation}
-Inequality computation was implemented in three variants outlined in section \ref{sec_constraints_using_inequality}: naive, encoded and demanded. Naive and encoded could not terminate for any dataset other than the smallest with 1,000 entities. Naive failed because the disk space needed for the precomputed inequality facts was not available. Encoded, while improving on the disk space needed, still. The runtimes for this dataset, presented in Figure \ref{fig_inequality}, shows a clear improvement when using the demanded approach. This shows that the overhead in rules introduced to enable the demanded approach, seen in Figure \ref{fig_rules}, is worth the improvements gained through it.
+Inequality computation was implemented in three variants outlined in section \ref{sec_constraints_using_inequality}: naive, encoded and demanded. Naive and encoded could not terminate for any dataset other than the smallest with 1,000 entities. Naive failed because the disk space needed for the precomputed inequality facts was not available. Encoded, while improving on the disk space needed, still failed due to out of memory errors. This behaviour is expected, since for an input of size \(n\) \(n^2\) inequalities have to be materialized. The runtimes for this dataset, presented in Figure \ref{fig_inequality}, shows a clear improvement when using the demanded approach. This shows that the overhead in rules introduced to enable the demanded approach, seen in Figure \ref{fig_rules}, is worth the improvements in performance gained through it.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{images/inequality1000.pdf}
 \caption{Runtime materialization for 1,000 entities (encoded and demanded)}\label{fig_inequality}
 \end{figure}
+
+\subsection{Additional Derivations}
+One possible bottleneck are the additional derivations necessary to identify violations. This includes the inequalities, demands for inequalities, requirements to determine statement non-existence as well as other helper rules introduced in chapter \ref{cha_wikidata_constraints_explained}. Note that the four simple constraints described in section \ref{sec_simple_constraints} do not generate any additional facts and are excluded from the chart. Figure \ref{fig_add_derivations} shows that the three performance-heavy constraints do generate by far the most additional derivations. The constraint with the smallest number of additional derivations, \emph{distinct values}, is almost an order of magnitude higher than the next highest, \emph{one-of}.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/additionalDerivations100,000.pdf}
+\caption{Additional derivations for 100,000 entities}\label{fig_add_derivations}
+\end{figure}
+
+\chapter{Conclusion}
+
 
 \end{document}
