@@ -65,6 +65,8 @@ public class Main {
 	
 	static boolean reload = false;
 	
+	static boolean counting = false;
+	
 	static boolean stringResults = false;
 	
 	public static DataSet statementSet;
@@ -84,6 +86,7 @@ public class Main {
 		options.addOption("s", "stringResults", false, "Output violations as string.");
 		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is encoded.");
 		options.addOption("r", "reloadInequalities", false, "Use inequality files computed in the last run.");
+		options.addOption("g", "getConstrainedCount", false, "Only count the constrained triples, do not compute violations.");
 		
 		CommandLineParser parser = new DefaultParser();
 	    CommandLine cmd;
@@ -131,6 +134,7 @@ public class Main {
 	    
 	    extract = cmd.hasOption("extract");
 	    reload = cmd.hasOption("reloadInequalities");
+	    counting = cmd.hasOption("getConstrainedCount");
 	    stringResults = cmd.hasOption("stringResults");
 		
 		configureLogging();
@@ -243,7 +247,7 @@ public class Main {
 			for(ConstraintChecker checker : checkers) {
 				checker.registerInequalities();
 			}
-			if (!getReload()) {						
+			if (!getReload() && !getCounting()) {						
 				InequalityHelper.prepareFiles();
 				logger.info("Prepared inequality files.");
 			}
@@ -264,7 +268,8 @@ public class Main {
 						= "Constrained statements: " + checker.getConstrainedStatements() + " "
 						+ "Constrained qualifiers: " + checker.getConstrainedQualifiers() + " "
 						+ "Constrained references " + checker.getConstrainedReferences();
-					logger.info(constrainedString);
+					if (getCounting())
+						logger.info(constrainedString);
 					logger.info(checker.identify() + ", violations: " + checker.getResultSize());
 					if (getStringResult())
 						System.out.println(checker.getResultString());
@@ -302,6 +307,10 @@ public class Main {
 	
 	public static boolean getReload() {
 		return reload;
+	}
+	
+	public static boolean getCounting() {
+		return counting;
 	}
 	
 	public static boolean getStringResult() {
