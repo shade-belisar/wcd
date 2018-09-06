@@ -13,7 +13,7 @@
 \birthday{15. October 1994}
 \placeofbirth{Dresden}
 \matno{3694323}
-\betreuer{Prof. Dr. Markus Krötzsch}
+\betreuer{Prof. Dr. Markus Kr{\"{o}}tzsch}
 \bibfiles{literatur}
 \problem{problem}
 \copyrighterklaerung{copyright stuff}
@@ -30,8 +30,11 @@
 \usepackage{adjustbox}
 \usepackage[shortlabels]{enumitem}
 \usepackage{graphicx}
+\usepackage{amsthm}
 
 \setcounter{tocdepth}{2}
+
+\newtheorem{example}{Example}
 
 
 \begin{document}
@@ -62,7 +65,6 @@ geographic shape & map data (string) & name of a file in the "Data" namespace on
 tabular data & tabular data (string) & name of a file in the "Data" namespace on Wikimedia Commons \\
 \end{tabularx}
 \end{table}
-\todo[inline]{For globe(URI): JSON data model states "typically refer to a data item on wikidata.org", which I would read as can be any URI}
 
 While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows to store additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Statements have one of three ranks, \emph{normal}, \emph{preferred} and \emph{deprecated} which are used to differentiate similar statements on the same item. For example, the \emph{preferred} rank would be given to the current \emph{head of state} (P35) of a country, while all statements denoting former \emph{heads of state} have the rank \emph{normal}. \emph{Deprecated} is used on statements that where once considered correct but are not anymore, e.g., \emph{Chelsea Manning} (Q298423) having the \emph{sex or gender} (P21) \emph{male} (Q6581097).
 
@@ -72,7 +74,14 @@ References support the claim by citing the source and additional information, e.
 
 Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
 
+\begin{example}
+Figure \ref{fig_example} is an excerpt from the entity page of the clipper \emph{Cutty Sark} (Q171255) \footnote{\url{https://www.wikidata.org/wiki/Q171255}}. An entity page lists all statements with the entity as the subject. It then groups all statements by their property, in this case \emph{length} (P2043). For the length of the Cutty Sark there is only one value, 85.4 metres, but this could include multiple values, e.g., if there were different ways to determine the length. This statement is further qualified with \emph{criterion used} (P1013) as the qualifier property, which specifies how the value was determined. In this case the qualifier value \emph{length overall} (Q2358152) was taken. The statement is backed up by one reference citing the property \emph{reference URL} (P854) pointing to the reference value, which is an URL confirming the length of 85.4 metres.
 
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/cutty_sark_length.png}
+\caption{Statement with qualifier and reference about the length of the Cutty Sark}\label{fig_example}
+\end{figure}
+\end{example}
 
 \section{Datalog}
 Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}, which will be denoted as \emph{someConstant}. In the context of Wikidata, any item or property, e.g. \emph{Earth} (Q2) or \emph{head of government} (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples let us take the predicate triple\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
@@ -87,6 +96,7 @@ Let \(P_n\) denote  premise atoms and \(C_n\) the conclusion atoms. The variable
 
 Within the rule predicates we can differentiate between two different schemas: the \emph{extensional schema} and the \emph{intensional schema}, called EDB and IDB (extensional/intensional database). An EDB predicate may only occur in the premise of a rule, meaning it can never be derived. All predicates that appear in the conclusion at least once are IDB predicates.
 
+\begin{example}
 For the following example, taken from Wikidata, descriptive names will be used instead of the IDs to increase readability. The individual entities and properties are introduced with their ID beforehand so the example can be retraced. The species \emph{blue whale} (Q42196) has the \emph{parent taxon} (P171) \emph{balaenoptera} (Q133320), which in turn has the parent taxon \emph{rorqual} (Q232829). The predicates used are triple\_EDB\([3]\) as the input and isInTaxon\_IDB\([2]\), which will be derived. The basic facts are:
 \[\text{triple\_EDB}(\text{blue whale}, \text{parent taxon}, \text{balaenoptera})\]
 \[\text{triple\_EDB}(\text{balaenoptera}, \text{parent taxon}, \text{rorqual})\]
@@ -94,6 +104,7 @@ From this we can draw conclusions. The first step is to represent the already ex
 \[\text{isInTaxon\_IDB}(X, Y) \leftarrow \text{triple\_EDB}(X, \text{parent taxon}, Y)\]
 Finally the transitive closure of this relation can be derived with
 \[\text{isInTaxon\_IDB}(X, Y) \leftarrow \text{isInTaxon\_IDB}(X, Z) \wedge \text{isInTaxon\_IDB}(Z, Y)\]
+\end{example}
 
 \chapter{Property Constraints}
 
@@ -420,7 +431,7 @@ The rules outlined in Section \ref{subsubsec_encoding} are changed to utilise th
 \text{unequal}(X, Y) \leftarrow \text{req\_inequality}	(X, Y) \wedge \text{letters} \wedge \text{unequal}(A_j, B_j)
 \end{equation*}
 
-\subsection{Distinct values (Q21502410)}
+\subsection{Distinct values (Q21502410)}\label{subsec_distinct_values}
 \paragraph{Constraint}
 The \emph{distinct values} constraint forbids the existence of two constrained statements with the same object.
 \begin{table}[H]
@@ -622,7 +633,7 @@ For qualifiers the rules are
 
 If the last statement of an item or the last qualifier of a statement has require the violation occurred. In the following constraints only the conjunction \(c\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
 
-\subsection{Item requires statement (Q21503247)}\label{subsec_2_item_requires_statement}
+\subsection{Item requires statement (Q21503247)}\label{subsec_item_requires_statement}
 \paragraph{Constraint}
 The \emph{item requires statement} constraint requires an additional statement on an item with a statement using the constrained property. It can be even more restrictive by also requiring the value of said additional statement to be in a set of \emph{allowed values}.
 \begin{table}[H]
@@ -666,9 +677,9 @@ Note that the first set of rules is still required, since the preceding statemen
 \end{split}
 \end{equation*}
 
-\subsection{Value requires statement (Q21510864)}\label{subsec_2_value_requires_statement}
+\subsection{Value requires statement (Q21510864)}\label{subsec_value_requires_statement}
 \paragraph{Constraint}
-The \emph{value requires statement} constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_2_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- Table \ref{tab_item_requires_statements} is not repeated.
+The \emph{value requires statement} constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- Table \ref{tab_item_requires_statements} is not repeated.
 
 \paragraph{Rules}
 The \emph{value requires statement} constraint is syntactically very similar to the previous \emph{item requires statement} constraint. Instead of requiring a statement on the item of a constrained statement it requires it on the value. Inequality need to be computed between all properties and all values and the item statement order established. The conjunctions change in the first statement and are:
@@ -696,7 +707,7 @@ The final violation rule would then be:
 
 \subsection{Inverse (Q21510855)}\label{subsec_2_inverse}
 \paragraph{Constraint}
-The \emph{inverse} constraint requires an additional statement on the value of a constrained statement with a \emph{required property} and the constrained item as value. It is very similar to \emph{value requires statement} (see \ref{subsec_2_value_requires_statement}), although it does not specify allowed values, since the required statement needs to have one specific value: the item of the constrained statement.
+The \emph{inverse} constraint requires an additional statement on the value of a constrained statement with a \emph{required property} and the constrained item as value. It is very similar to \emph{value requires statement} (see \ref{subsec_value_requires_statement}), although it does not specify allowed values, since the required statement needs to have one specific value: the item of the constrained statement.
 
 \paragraph{Rules}
 The \emph{inverse} constraint can be modelled in almost the same way as the \emph{value requires statement} constraint. The only change is that instead of requiring inequality to all \emph{allowed values} in conjunction \(c_2\) the statement requires this constraint if its value is not the subject \(R\) of the original constrained statement, meaning \(t = R\). Inequalities have to be established between all properties and the \emph{inverse} property as well as all subjects and values of statements.
@@ -762,7 +773,7 @@ The predicate require\_second\([2]\) is introduced with the same meaning as requ
 \end{equation*}
 A violations would be any last statement requiring a second constrained statement.\\
 
-\subsection{Single value (Q19474404)}
+\subsection{Single value (Q19474404)}\label{subsec_single_value}
 \paragraph{Constraint}
 The \emph{single value} constraint states that the constrained property may only be used once per item. A constrained statement marked with the single value constraint can have \emph{separators}, which define exceptions under specific circumstances.
 \begin{table}[H]
@@ -786,7 +797,7 @@ If separators are specified, a violation as above can be ignored if the statemen
 \paragraph{Rules}
 The single value constraint can be divided into two different cases, depending on if the set of separators \(S\) is empty or not. Pre-processing needs to extract all item statements and their qualifiers and establish inequality between all statement IDs and all qualifier values.
 
-\subsubsection{No separators}
+\subsubsection{No separators}\label{subsubsec_single_value_no_separators}
 If the separator set is empty, the violation simply occurs if there are two constrained statements on the same item. 
 \begin{equation}\label{eq_no_separators_triple}
 \begin{split}
@@ -814,7 +825,7 @@ For qualifiers and references there is no ID whose inequality could be checked. 
 \end{split}
 \end{equation*}
 
-\subsubsection{With separators}\label{subsubsec_with_separators}
+\subsubsection{With separators}\label{subsubsec_single_value_with_separators}
 To find all violations under \emph{separators} a number of things have to be considered. Only statements are eligible, since qualifiers cannot have further qualifier. The order of qualifiers on constrained statements needs to be provided as well since qualifier non-existence is relevant. The pattern needs to be applied for every \emph{separator}, meaning the conjunction is
 \begin{equation*}
 c = \text{statement\_EDB}(S, I, \text{propertyConstant}, C) \wedge \text{qualifier\_EDB}(S, P, V) \wedge \text{unequal}(P, \text{separatorConstant})
@@ -870,14 +881,14 @@ Rule features & negation \\
 \end{table}
 
 \paragraph{Rules}
-The \emph{mandatory qualifier} constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_with_separators}. The qualifier order needs to be provided and inequality must be established between all qualifier properties. The conjunction for the require-pattern is:
+The \emph{mandatory qualifier} constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_single_value_with_separators}. The qualifier order needs to be provided and inequality must be established between all qualifier properties. The conjunction for the require-pattern is:
 \begin{equation*}
 \begin{split}
 c = &\text{statement\_EDB}(S, I, \text{propertyConstant}, C) \wedge{} \\
 &\text{qualifier\_EDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
-With the usual require-pattern for qualifiers and the does\_not\_have rule as introduced in section \ref{subsubsec_with_separators} added for brevity the violations would be found with:
+With the usual require-pattern for qualifiers and the does\_not\_have rule as introduced in section \ref{subsubsec_single_value_with_separators} added for brevity the violations would be found with:
 \begin{equation*}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
@@ -886,7 +897,7 @@ With the usual require-pattern for qualifiers and the does\_not\_have rule as in
 \end{split}
 \end{equation*}
 
-\subsection{Single best value (Q52060874)}
+\subsection{Single best value (Q52060874)}\label{subsec_single_best_value}
 \paragraph{Constraint}
 The \emph{single best value} constraint requires that only one constrained statement per item has the rank preferred.
 
@@ -980,7 +991,7 @@ Computing all violations based on the provided (inequality)-facts and violations
 \caption{Evaluation pipeline}\label{fig_pipeline}
 \end{figure}
 
-\section{Results}
+\section{Results}\label{sec_results}
 
 The experiments where carried out on a server with a 3.50GHz Intel Xeon CPU, 1 TB SSD and 32 GB assigned RAM running Debian 4.9. Multiple sets of sizes ranging from one thousand to one million entities where extracted from the Wikidata JSON-Dump and all constraints evaluated against them.
 
@@ -997,7 +1008,7 @@ Several statistics about the executed runs are reported.
 
 Because of a bug in VLog\footnote{\url{https://github.com/knowsys/vlog4j/issues/43}}, the largest dataset that could be completely evaluated contained 100,000 entities. With datasets of larger size, more than half of the constraints were affected by this bug, meaning the analysis could not be conducted. All further statistics describe the results on the 100,000 entity set unless specifically noted otherwise. Since inequality could only be computed in demanded mode (see section  \ref{sec_inequality_evaluation}), all statistics will show the results attained in this mode.
 
-Most constraints could be evaluated in under two hours. The exceptions are \emph{distinct values}, \emph{item requires statement} and \emph{single value}. In parts this is expected behaviour, since these three constraints are applied to an order of magnitude more properties than all other properties with the exception of \emph{scope}, which is described in very simple rules. However, as seen in Figure \ref{fig_runtime}, the runtimes of these three constraints are multiple orders of magnitude higher than those of other constraints. The following sections will thus focus on the comparison of these three constraints to identify bottlenecks and reasons for this huge difference in performance. They will be marked with a border in every figure.
+Most constraints could be evaluated in under a minute. The exceptions are \emph{distinct values} (1.22 hours), \emph{item requires statement} (2.38 hours) and \emph{single value} (4.22 hours). In parts this is expected behaviour, since these three constraints are applied to an order of magnitude more properties than all other properties with the exception of \emph{scope}, which is described in very simple rules. However, also seen in Figure \ref{fig_runtime}, the runtimes of these three constraints are multiple orders of magnitude higher than those of other constraints. The following sections will thus focus on the comparison of these three constraints to identify bottlenecks and reasons for this huge difference in performance. They will be marked with a border in every figure.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{images/runtime100,000.pdf}
@@ -1034,6 +1045,32 @@ One possible bottleneck are the additional derivations necessary to identify vio
 \includegraphics[width=\linewidth]{images/additionalDerivations100,000.pdf}
 \caption{Additional derivations for 100,000 entities}\label{fig_add_derivations}
 \end{figure}
+
+\section{Findings}
+Most constraints could be evaluated within a very short timeframe (< 1 minute). While the dataset does not include the entire database of Wikidata, which with 50m entities is about 500 times bigger, the runtimes for the entire dataset should still be within a reasonable frame. The exception are the three constraints focused on in section \ref{sec_results}. As shown in that section, the main difference between \emph{distinct values}, \emph{item requires statement}, and \emph{single value} and other constraints is
+\begin{enumerate}[a)]
+\item a larger amount of constrained properties (with a corresponding larger amount of rules) and
+\item a larger amount of additional derivations
+\end{enumerate}
+The rules for these three constraints will now be analysed and possible reasons for this huge difference in performance outlined.
+
+\subsection{Distinct values}
+While the rules for the \emph{distinct values} constraint (see section \ref{subsec_distinct_values}) are relatively simple in writing, they do require a large amount of processing. Distinct values requires the comparison of every constrained statement with every other constrained statement, meaning its evaluation would scale badly due to the quadratic growth of statements to be compared. Additionally, the number of inequalities that have to be evaluated according to the demanded approach (see section \ref{sec_constraints_using_statement_non}) grows accordingly. Due to the nature of the constraint -- requiring distinct values for a property across all of Wikidata -- this is in all likelihood unavoidable.
+
+\subsection{Item requires statement}\label{subsec_findings_item_requires_statement}
+The \emph{item requires statement} constraint (see section \ref{subsec_item_requires_statement}) creates additional facts about every statement on an entity with a constrained statement (if the constraint was violated on that entity). Of interest to note is that the \emph{value requires statement} constraint (see section \ref{subsec_value_requires_statement}), which works almost identically, does not show a performance nearly as bad as \emph{item requires statement}. \emph{Value requires statement} has, however, only 244 constrained properties, while \emph{item requires statement} has 4265. This shows that the require approach scales badly with increasing number of require rules.
+
+\subsection{Single value}
+The \emph{single value} constraint (see section \ref{subsec_single_value}) has to be analysed with regards to the two cases: without separators (section \ref{subsubsec_single_value_no_separators}) and with separators (section \ref{subsubsec_single_value_with_separators}.
+
+\paragraph{No separators}
+If no separators were given, the rules simply compare every statement on an entity with a constrained statement to said constrained statement. Since entity size does not increase with dataset size, this should not be the reason for \emph{single values} bad performance.
+
+\paragraph{With separators}
+The \emph{single value} constraint, like the \emph{item requires statement} constraint, uses a require approach to determine non-existence. For \emph{single value} this is qualifier non-existence on constrained statements. As seen in section \ref{subsec_findings_item_requires_statement}, this could be a reason for the bad performance of the analysis for this constraint. Another source of processing time for \emph{single value} are the has\_same facts, which need to compare all constrained statements on the same item and all their qualifiers. Of interest to note is that the \emph{single best value} constraint (see section \ref{subsec_single_best_value}) works in almost the same way but does not suffer from the same performance. Again, the number of constrained properties is significantly lower for \emph{single best value} (203) compared to \emph{single value} (2909).
+
+\subsection{Possible adaptations}
+Since the problematic performance of \emph{item requires statement} and \emph{single value} are not visible in \emph{value requires statement} and \emph{single best value}, which are very similar in their rule modelling, a possible adaptation would be to not evaluate all constrained properties for these constraints in bulk but split them into smaller sets, evaluating each set individually to combat the problematic scaling of the require pattern. The precomputed datasets could be kept, meaning only the reasoning step would have to be repeated.
 
 \chapter{Conclusion}
 
