@@ -144,19 +144,21 @@ public abstract class ConstraintChecker {
 	public void violations() throws ReasonerStateException, IOException {
 		prepareFacts();
 		logger.info("Loaded basic data sets.");
-		InequalityHelper.load(this);
-		logger.info("Loaded inequalities.");
 		
-		
-		List<Rule> rulesToAdd = new ArrayList<Rule>();
-		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
-			rulesToAdd.addAll(propertyConstraintChecker.rules());
-		}
-		logger.info("Created " + rulesToAdd.size() + " rules.");
-		if (InequalityHelper.getMode().equals(InequalityHelper.Mode.DEMANDED)) {
-			List<Rule> demandRules = addRequireInequality(rulesToAdd);
-			rulesToAdd.addAll(demandRules);
-			logger.info("Created " + demandRules.size() + " additional demand-rules.");
+		List<Rule> rulesToAdd = new ArrayList<>();
+		if (!Main.getCounting()) {
+			InequalityHelper.load(this);
+			logger.info("Loaded inequalities.");
+			
+			for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
+				rulesToAdd.addAll(propertyConstraintChecker.rules());
+			}
+			logger.info("Created " + rulesToAdd.size() + " rules.");
+			if (InequalityHelper.getMode().equals(InequalityHelper.Mode.DEMANDED)) {
+				List<Rule> demandRules = addRequireInequality(rulesToAdd);
+				rulesToAdd.addAll(demandRules);
+				logger.info("Created " + demandRules.size() + " additional demand-rules.");
+			}
 		}
 
 		try {
@@ -204,25 +206,20 @@ public abstract class ConstraintChecker {
 		return result;
 	}
 	
-	/*
-	void loadDataSet() throws ReasonerStateException, IOException {		
-		Main.statementSet.loadStatementFile(reasoner);
-		Main.statementSet.loadQualifierFile(reasoner);
-		Main.statementSet.loadReferenceFile(reasoner);
-	}
-	*/
-	
 	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
 		try {
 			reasoner.addRules(rules);
-			for (PropertyConstraintChecker pcc : propertyCheckers) {
-				reasoner.addRules(pcc.constrainedRules());
+			if (Main.getCounting()) {
+				for (PropertyConstraintChecker pcc : propertyCheckers) {
+					reasoner.addRules(pcc.constrainedRules());
+				}
 			}
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to add rules in the wrong state for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
-		logger.info("Added " + rules.size() + " rules total.");
+		if (!Main.getCounting())
+			logger.info("Added " + rules.size() + " rules total.");
 		
 		try {
 			reasoner.load();
@@ -242,29 +239,31 @@ public abstract class ConstraintChecker {
 			throw new PrepareQueriesException(internalError);
 		}
 		logger.info("Reasoned reasoner.");
-		for (Atom query : queries) {
-	    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
-	    		while (iterator.hasNext()) {
-	    			QueryResult queryResult = iterator.next();
-	    			resultSize++;
-	    			if (Main.getStringResult()) {
-	    				String result = "";
-		    			for (Term term : queryResult.getTerms()) {
-		    				result += term.getName() + "\t";
+		if (!Main.getCounting()) {
+			for (Atom query : queries) {
+		    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
+		    		while (iterator.hasNext()) {
+		    			QueryResult queryResult = iterator.next();
+		    			resultSize++;
+		    			if (Main.getStringResult()) {
+		    				String result = "";
+			    			for (Term term : queryResult.getTerms()) {
+			    				result += term.getName() + "\t";
+			    			}
+			    			
+			    			resultString += "\t" + result.substring(0, result.length() - 1) + "\n";
 		    			}
-		    			
-		    			resultString += "\t" + result.substring(0, result.length() - 1) + "\n";
-	    			}
-	    		}
-	    	} catch (ReasonerStateException e) {
-				logger.error("Trying to answer query in the wrong state for constraint " + constraint + ".", e);
-				throw new PrepareQueriesException(internalError);
+		    		}
+		    	} catch (ReasonerStateException e) {
+					logger.error("Trying to answer query in the wrong state for constraint " + constraint + ".", e);
+					throw new PrepareQueriesException(internalError);
+				}
 			}
+		} else {
+			constrainedStatements = queryResultSize(Expressions.makeAtom(constrained_statement, s, i, p, v));
+			constrainedQualifiers = queryResultSize(Expressions.makeAtom(constrained_qualifier, s, p, v));
+			constrainedReferences = queryResultSize(Expressions.makeAtom(constrained_reference, s, h, p, v));
 		}
-
-		constrainedStatements = queryResultSize(Expressions.makeAtom(constrained_statement, s, i, p, v));
-		constrainedQualifiers = queryResultSize(Expressions.makeAtom(constrained_qualifier, s, p, v));
-		constrainedReferences = queryResultSize(Expressions.makeAtom(constrained_reference, s, h, p, v));
 	}
 	
 	int queryResultSize (Atom query) throws PrepareQueriesException {
