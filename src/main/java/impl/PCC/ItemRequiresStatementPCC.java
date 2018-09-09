@@ -75,9 +75,6 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 		for (String requiredProperty : configuration.keySet()) {
 			Term requiredPropertyConstant = Utility.makeConstant(requiredProperty);
 			
-			// statementEDB(O, I, P, X)
-			Atom statementEDB_OIPX = Expressions.makeAtom(statementEDB, o, i, p, x);
-			
 			// last(O, I)
 			Atom last_OI = Expressions.makeAtom(last, o, i);
 			
@@ -86,9 +83,9 @@ public class ItemRequiresStatementPCC extends PropertyConstraintChecker {
 			
 			// violation_statement(S, I, propertyConstant, V) :-
 			//	statementEDB(S, I, propertyConstant, V),
-			//	statementEDB(O, I, P, X), last(O, I),
+			//	last(O, I),
 			//	require(O, requiredPropertyConstant)
-			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, statementEDB_OIPX, last_OI, require_Opr);
+			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, last_OI, require_Opr);
 			rules.add(violation);
 		}
 		

@@ -39,7 +39,7 @@
 
 \begin{document}
 \chapter{Introduction}
-Motivation
+
 
 \chapter{Preliminaries}
 \section{Wikidata}
@@ -249,6 +249,10 @@ The required data specifies which data, in relation to the constrained statement
 The \emph{property scope} constraint requires the scope, meaning statement, qualifier or reference, to be set via qualifier \emph{property scope} (P5314). The cardinality is 1..3 because it is mandatory and has only three possible values.\\
 It is violated if a statement, qualifier or reference has a predicate with the \emph{property scope} constraint that does not allow this scope.\\
 
+\begin{example}
+The \emph{reference URL} (P854) property is restricted to the \emph{property scope} (P5314) \emph{as reference} (Q54828450), because it is to be used to mark a URL that substantiates a statement.
+\end{example}
+
 \paragraph{Rules}
 The property scope constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough. This means violations can be found using these rules:
 \begin{align*}
@@ -274,6 +278,10 @@ Violation & \makecell{entity statement with the conflicting property \\ entity s
 \hline
 \end{tabularx}
 \end{table}
+
+\begin{example}
+The \emph{author} (P50) constraint has (among others) the \emph{conflicting property} (P2306) \emph{instance of} (P31) with the \emph{conflicting value} (P2305) \emph{Wikimedia disambiguation page} (Q4167410). It is set because editors might easily confuse a work of art with a specific title, e.g., \emph{Tempest} (Q86440) by \emph{author} \emph{William Shakespear} (Q692) with the Wikimedia disambiguation page \emph{Tempest} (Q1589529).
+\end{example}
 
 \paragraph{Rules}
 The conflicts-with constraint is violated if another statement on the same item either has a conflicting property or a conflicting property and a conflicting value depending on specified qualifiers. It depends on a conjunction (\(O\) denoting another statement ID, \(C\) another value) and a violation for a conflicts-with constraint is thus either
@@ -313,6 +321,10 @@ Violation & \makecell{constrained statement on an entity of a type unequal to al
 
 Since there are only three options (and only two in use), violations can be found without inequality by finding the statement\_EDB with the constrained property whose subject is of the type that is not allowed, meaning either \emph{Wikibase item} or \emph{Wikibase property}.
 
+\begin{example}
+The \emph{property constraint} (P2302) property has the \emph{allowed entity type} (P2305) \emph{Wikibase property} (Q29934218) because non-properties cannot be subject to a property constraint.
+\end{example}
+
 \paragraph{Rules}
 The allowed entity types constraint is violated by a statement with the wrong entity type.  Constraints regarding the lexeme entity type can be ignored since they are currently not used. The Violations depend on a simple conjunction:
 \begin{equation*}
@@ -345,6 +357,10 @@ Violation & \makecell{constrained statement, qualifier or reference with a forbi
 \hline
 \end{tabularx}
 \end{table}
+
+\begin{example}
+The \emph{license} (P31) property, denoting the license under which a work is released, has the \emph{forbidden value} (P2305) \emph{proprietary software} (Q218616), since it is often confused with \emph{proprietary license} (Q3238057).
+\end{example}
 
 \paragraph{Rules}
 The none of constraint simply forbids certain values for properties, thus effectively prohibiting certain triples, qualifiers and references. The rules, depending on nothing but specific database entries, are
@@ -448,6 +464,10 @@ Rule features & inequality \\
 \end{table}
 The constraint can be expanded to cover qualifiers and references as well by setting a \emph{constraint scope} (P4680) qualifier with the respective value. However, as of September 2018 there is no constraint making use of this.
 
+\begin{example}
+The \emph{ISBN-13} (P212) property has a \emph{distinct values} constraint since an ISBN is supposed to be a unique identifier for a book and should not be shared between two items.
+\end{example}
+
 \paragraph{Rules}
 The \emph{distinct values} constraint requires two distinct constrained statements with the same value. 
 Two constrained statements with the same value can be found via a simple conjunction of two statement\_EDB atoms with the propertyConstant as predicate and a variable \(V\) as value. Since this would mark every constrained statement as a violations because it can fulfil both atoms at the same time, inequality of the statement IDs \(S\) and \(O\) must be tested as well.
@@ -481,6 +501,10 @@ Rule features & inequality \\
 \end{table}
 
 By setting the \emph{constraint scope} (P4680) qualifier on the constraint it can be limited to only affect a subset of statement, qualifier, and reference. As of September 2018 this is not done on any constraint.
+
+\begin{example}
+The \emph{length} (P2043) property has (among others) the \emph{allowed unit} (P2305) \emph{metre} (Q11573). This helps avoid confusing it for \emph{duration} (P2047), which denotes the length of time of an event.
+\end{example}
 
 \paragraph{Rules}
 To handle this constraint inequality between all units need to be established. Then a violation can be identified by finding all statement\_EDB, qualifier\_EDB and reference\_EDB with the constrained property and a unit unequal to all allowed units.
@@ -536,6 +560,10 @@ Rule features & inequality \\
 \end{tabularx}
 \end{table}
 
+\begin{example}
+The \emph{head of state} (P35) property has (among others) the \emph{allowed qualifiers} (P2306) \emph{start time} (P580) and \emph{end time} (P582) properties, used to describe the time frame the person held that office.
+\end{example}
+
 \paragraph{Rules}
 To represent a violation of the \emph{allowed qualifiers} constraint in datalog inequality between all specified allowed qualifiers and the properties of qualifiers is required. The constraint is violated if a qualifier on a constrained statement exists that is unequal to all allowed qualifiers. The notation for set inequality as introduced in section \ref{subsec_3_allowed_units} will be used. With \(A\) the set of allowed qualifiers the rule is:
 \begin{equation*}
@@ -564,6 +592,10 @@ Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
+
+\begin{example}
+The \emph{wheelchair accessibility} (P2846) property, which describes the accessibility of an location or event, has the three \emph{allowed values} (P2305) \emph{wheelchair accessible} (Q24192067), \emph{wheelchair accessible with help} (Q24192068), and \emph{wheelchair inaccessible} (Q24192069).
+\end{example}
 
 \paragraph{Rules}
 The one-of constraint fits in the pattern established by the previous two constraints and disallows certain property-value combinations in statements, qualifiers and references. Inequality is established between all \emph{allowed values} and the values of statements, qualifiers and references, respectively. With \(A\) the set of allowed values the rules for triple, qualifier and reference are:
@@ -595,6 +627,10 @@ Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
+
+\begin{example}
+The \emph{flag bearer} (P3022) property, naming the person carrying a flag at a ceremony, has the \emph{qualifier property} (P2306) \emph{of} (P642) with the \emph{qualifier values} (P2305) \emph{opening ceremony} (Q3010369) and \emph{closing ceremony} (Q13454063).
+\end{example}
 
 \paragraph{Rules}
 The one-of qualifier value constraint is violated if a constrained statement has a qualifier with a value unequal to all allowed values. Inequality needs to be established between all values of qualifiers and all allowed values. With the set of allowed Values \(A\) the rules are
@@ -652,6 +688,10 @@ Rule features & negation \\
 \end{tabularx}
 \end{table}
 
+\begin{example}
+The \emph{professorship} (P803) property requires an additional statement with the \emph{required property} (P2306) \emph{occupation} (P106) and the \emph{allowed value} (P2305) \emph{university teacher} (Q1622272).
+\end{example}
+
 \paragraph{Rules}
 The \emph{item requires statement} constraint requires inequality between all properties of statements and the \emph{required property} as well as between all statement values and the \emph{allowed values}. The order of the item statements needs to be established. An item violates the constraint if it a) has a statement using constrained property as predicate, b1) has no statement using the \emph{required property} as predicate, or (if \emph{allowed values} are specified) b2) has only statement using the \emph{required property} as predicate that do not use one of the \emph{allowed values} as value. The required term \(t\) is the \emph{required property}. Without separators the conjunction is
 \begin{equation*}
@@ -671,8 +711,7 @@ Note that the first set of rules is still required, since the preceding statemen
 \begin{equation*}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
-&\text{statement\_EDB}(O, I, P, X) \wedge \text{last}(O, I) \wedge{} \\
+&\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \text{last}(O, I) \wedge{} \\
 &\text{require}(O, \text{propertyConstant}, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
@@ -680,6 +719,10 @@ Note that the first set of rules is still required, since the preceding statemen
 \subsection{Value requires statement (Q21510864)}\label{subsec_value_requires_statement}
 \paragraph{Constraint}
 The \emph{value requires statement} constraint requires an additional statement on the value of constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- Table \ref{tab_item_requires_statements} is not repeated.
+
+\begin{example}
+The \emph{list of monuments} (P1456) property requires its value to have the \emph{required property} (P2306) \emph{is a list of} (P360).
+\end{example}
 
 \paragraph{Rules}
 The \emph{value requires statement} constraint is syntactically very similar to the previous \emph{item requires statement} constraint. Instead of requiring a statement on the item of a constrained statement it requires it on the value. Inequality need to be computed between all properties and all values and the item statement order established. The conjunctions change in the first statement and are:
@@ -707,7 +750,11 @@ The final violation rule would then be:
 
 \subsection{Inverse (Q21510855)}\label{subsec_2_inverse}
 \paragraph{Constraint}
-The \emph{inverse} constraint requires an additional statement on the value of a constrained statement with a \emph{required property} and the constrained item as value. It is very similar to \emph{value requires statement} (see \ref{subsec_value_requires_statement}), although it does not specify allowed values, since the required statement needs to have one specific value: the item of the constrained statement.
+The \emph{inverse} constraint requires an additional statement on the value of a constrained statement with an \emph{inverse property} and the constrained item as value. It is very similar to \emph{value requires statement} (see \ref{subsec_value_requires_statement}), although it does not specify allowed values, since the required statement needs to have one specific value: the item of the constrained statement.
+
+\begin{example}
+The \emph{mother} (P25) property requires values to have a statement with the \emph{inverse property} (P2306) \emph{child} (P40) and the original item as value.
+\end{example}
 
 \paragraph{Rules}
 The \emph{inverse} constraint can be modelled in almost the same way as the \emph{value requires statement} constraint. The only change is that instead of requiring inequality to all \emph{allowed values} in conjunction \(c_2\) the statement requires this constraint if its value is not the subject \(R\) of the original constrained statement, meaning \(t = R\). Inequalities have to be established between all properties and the \emph{inverse} property as well as all subjects and values of statements.
@@ -730,6 +777,10 @@ The final violation rule remains the same.
 \subsection{Symmetric (Q21510862)}
 The \emph{symmetric} constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an \emph{inverse} constraint (see \ref{subsec_2_inverse}) with the same property as constrained property and inverse property. It can be translated exactly as the inverse constraint if the inverse property where set to the same as the constrained property.
 
+\begin{example}
+The \emph{sibling} (P3373) property requires a statement on the value with the same property and the original item as the value.
+\end{example}
+
 \subsection{Multi-value (Q21510857)}
 \paragraph{Constraint}
 The \emph{multi-value} constraint specifies that the constrained property should appear in multiple statements of an item or none.
@@ -748,6 +799,10 @@ Rule features & count \\
 \hline
 \end{tabularx}
 \end{table}
+
+\begin{example}
+The \emph{cast member} (P161) property requires an item to have multiple statements using this property, since most plays or films have multiple cast members. This is an example for a constraint from which exception can and should be made and is only meant to point to possibly missing data.
+\end{example}
 
 \paragraph{Rules}
 The \emph{multi-value} constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Inequality is established between all properties of statements and the conjunction is:
@@ -793,6 +848,10 @@ Rule features & inequality, partially negation \\
 
 If no separators are specified, two statements form a violation of this constraint if they a) belong to the same item, b) have the same constrained property, and c) have the same value.
 If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values or an unequal number of separator qualifiers.
+
+\begin{example}
+The \emph{capital} (P36) property should only have one single value per item. If conflicts exist, it is not a violation of this constraint if one of the values for the \emph{separators} (P4155) \emph{start time} (P580), \emph{point in time} (P585), \emph{end time} (P582), and \emph{determination method} (P459) are unequal.
+\end{example}
 
 \paragraph{Rules}
 The single value constraint can be divided into two different cases, depending on if the set of separators \(S\) is empty or not. Pre-processing needs to extract all item statements and their qualifiers and establish inequality between all statement IDs and all qualifier values.
@@ -880,6 +939,10 @@ Rule features & negation \\
 \end{tabularx}
 \end{table}
 
+\begin{example}
+The \emph{head of state} (P35) property has the \emph{required property} (P2306) \emph{start time} (P580), meaning every \emph{head of state} must have assumed that position at some time.
+\end{example}
+
 \paragraph{Rules}
 The \emph{mandatory qualifier} constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to section \ref{subsubsec_single_value_with_separators}. The qualifier order needs to be provided and inequality must be established between all qualifier properties. The conjunction for the require-pattern is:
 \begin{equation*}
@@ -915,6 +978,10 @@ Rule features & inequality, partially negation \\
 \hline
 \end{tabularx}
 \end{table}
+
+\begin{example}
+The \emph{property proposal discussion} (P3254) property, denoting the URL of a web page where the creation of a Wikidata property was discussed should only have one best value. Since a discussion might have been moved to a different page at some point, the best value should be the page the discussion was last moved to.
+\end{example}
 
 \paragraph{Rules}
 The \emph{single best value} constraint, like the \emph{single value} constraint (section \ref{subsec_3_single_value}), differentiates between the set of \emph{separators} \(S\) being empty or not. Since the constraint depends on the rank of statements this needs to be provided. Qualifiers and references are not affected since they do not have ranks. For this constraint all inequality needs to be established between the statement IDs and the qualifier values as well as the order of the qualifiers given.\\
