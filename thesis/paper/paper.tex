@@ -742,8 +742,7 @@ The final violation rule would then be:
 \begin{equation*}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
-&\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
-&\text{statement\_EDB}(O, V, P, X) \wedge \text{last}(O, V) \wedge{} \\
+&\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \text{last}(O, V) \wedge{} \\
 &\text{require}(O, \text{propertyConstant}, \text{requiredPropertyConstant})
 \end{split}
 \end{equation*}
