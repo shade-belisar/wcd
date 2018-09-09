@@ -65,9 +65,6 @@ public class InversePCC extends PropertyConstraintChecker {
 		for (String inverseProperty : configuration) {
 			Term inversePropertyConstant = Utility.makeConstant(inverseProperty);
 			
-			// statementEDB(O, V, P, X)
-			Atom statementEDB_OVPX = Expressions.makeAtom(statementEDB, o, v, p, x);
-			
 			// last(O, V)
 			Atom last_OV = Expressions.makeAtom(last, o, v);
 			
@@ -76,9 +73,9 @@ public class InversePCC extends PropertyConstraintChecker {
 			
 			// violation_statement(S, I, propertyConstant, V) :-
 			//	statementEDB(S, I, propertyConstant, V),
-			//	statementEDB(O, V, P, X), last(O, V),
+			//	last(O, V),
 			//	require(O, inversePropertyConstant, R)
-			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, statementEDB_OVPX, last_OV, require_OiR);
+			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, last_OV, require_OiR);
 			rules.add(violation);
 		}
 		
