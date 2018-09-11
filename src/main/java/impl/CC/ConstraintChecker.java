@@ -146,19 +146,17 @@ public abstract class ConstraintChecker {
 		logger.info("Loaded basic data sets.");
 		
 		List<Rule> rulesToAdd = new ArrayList<>();
-		if (!Main.getCounting()) {
-			InequalityHelper.load(this);
-			logger.info("Loaded inequalities.");
-			
-			for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
-				rulesToAdd.addAll(propertyConstraintChecker.rules());
-			}
-			logger.info("Created " + rulesToAdd.size() + " rules.");
-			if (InequalityHelper.getMode().equals(InequalityHelper.Mode.DEMANDED)) {
-				List<Rule> demandRules = addRequireInequality(rulesToAdd);
-				rulesToAdd.addAll(demandRules);
-				logger.info("Created " + demandRules.size() + " additional demand-rules.");
-			}
+		InequalityHelper.load(this);
+		logger.info("Loaded inequalities.");
+		
+		for (PropertyConstraintChecker propertyConstraintChecker : propertyCheckers) {
+			rulesToAdd.addAll(propertyConstraintChecker.rules());
+		}
+		logger.info("Created " + rulesToAdd.size() + " rules.");
+		if (InequalityHelper.getMode().equals(InequalityHelper.Mode.DEMANDED)) {
+			List<Rule> demandRules = addRequireInequality(rulesToAdd);
+			rulesToAdd.addAll(demandRules);
+			logger.info("Created " + demandRules.size() + " additional demand-rules.");
 		}
 
 		try {
@@ -209,17 +207,11 @@ public abstract class ConstraintChecker {
 	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
 		try {
 			reasoner.addRules(rules);
-			if (Main.getCounting()) {
-				for (PropertyConstraintChecker pcc : propertyCheckers) {
-					reasoner.addRules(pcc.constrainedRules());
-				}
-			}
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to add rules in the wrong state for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
-		if (!Main.getCounting())
-			logger.info("Added " + rules.size() + " rules total.");
+		logger.info("Added " + rules.size() + " rules total.");
 		
 		try {
 			reasoner.load();
@@ -239,30 +231,24 @@ public abstract class ConstraintChecker {
 			throw new PrepareQueriesException(internalError);
 		}
 		logger.info("Reasoned reasoner.");
-		if (!Main.getCounting()) {
-			for (Atom query : queries) {
-		    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
-		    		while (iterator.hasNext()) {
-		    			QueryResult queryResult = iterator.next();
-		    			resultSize++;
-		    			if (Main.getStringResult()) {
-		    				String result = "";
-			    			for (Term term : queryResult.getTerms()) {
-			    				result += term.getName() + "\t";
-			    			}
-			    			
-			    			resultString += "\t" + result.substring(0, result.length() - 1) + "\n";
+		for (Atom query : queries) {
+	    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
+	    		while (iterator.hasNext()) {
+	    			QueryResult queryResult = iterator.next();
+	    			resultSize++;
+	    			if (Main.getStringResult()) {
+	    				String result = "";
+		    			for (Term term : queryResult.getTerms()) {
+		    				result += term.getName() + "\t";
 		    			}
-		    		}
-		    	} catch (ReasonerStateException e) {
-					logger.error("Trying to answer query in the wrong state for constraint " + constraint + ".", e);
-					throw new PrepareQueriesException(internalError);
-				}
+		    			
+		    			resultString += "\t" + result.substring(0, result.length() - 1) + "\n";
+	    			}
+	    		}
+	    	} catch (ReasonerStateException e) {
+				logger.error("Trying to answer query in the wrong state for constraint " + constraint + ".", e);
+				throw new PrepareQueriesException(internalError);
 			}
-		} else {
-			constrainedStatements = queryResultSize(Expressions.makeAtom(constrained_statement, s, i, p, v));
-			constrainedQualifiers = queryResultSize(Expressions.makeAtom(constrained_qualifier, s, p, v));
-			constrainedReferences = queryResultSize(Expressions.makeAtom(constrained_reference, s, h, p, v));
 		}
 	}
 	
