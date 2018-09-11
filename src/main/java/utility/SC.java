@@ -7,16 +7,6 @@ import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
 public class SC {
 	
-	public final static String STATEMENT = "statementEDB";
-	public final static String QUALIFIER = "qualifierEDB";
-	public final static String REFERENCE = "referenceEDB";
-	
-	public final static String VIOLATION_STATEMENT = "violation_statement";
-	public final static String VIOLATION_QUALIFIER = "violation_qualifier";
-	public final static String VIOLATION_REFERENCE = "violation_reference";
-	
-	public final static String REQUIRE_INEQUALITY = "require_inequality";
-	
 	public final static String H = "h";
 	public final static String G = "G";
 	public final static String S = "s";
@@ -31,6 +21,16 @@ public class SC {
 	public final static String U = "u";
 	public final static String W = "w";
 	public final static String R = "r";
+	
+	public final static String STATEMENT = "statementEDB";
+	public final static String QUALIFIER = "qualifierEDB";
+	public final static String REFERENCE = "referenceEDB";
+	
+	public final static String VIOLATION_STATEMENT = "violation_statement";
+	public final static String VIOLATION_QUALIFIER = "violation_qualifier";
+	public final static String VIOLATION_REFERENCE = "violation_reference";
+	
+	public final static String REQUIRE_INEQUALITY = "require_inequality";
 	
 	public static final String REQUIRE = "require";
 	public static final String REQUIRE_SECOND = "require_second";
@@ -58,16 +58,6 @@ public class SC {
 	public final static String CONSTRAINED_QUALIFIER = "constrained_qualifier";
 	public final static String CONSTRAINED_REFERENCE = "constrained_reference";
 	
-	public final static Predicate statementEDB = Expressions.makePredicate(STATEMENT, 4);
-	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
-	public final static Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 4);
-	
-	public final static Predicate violation_statement = Expressions.makePredicate(VIOLATION_STATEMENT, 4);
-	public final static Predicate violation_qualifier = Expressions.makePredicate(VIOLATION_QUALIFIER, 3);
-	public final static Predicate violation_reference = Expressions.makePredicate(VIOLATION_REFERENCE, 4);
-	
-	public final static Predicate require_inequality = Expressions.makePredicate(REQUIRE_INEQUALITY, 2);
-	
 	
 	public final static Variable h = Expressions.makeVariable(H);
 	public final static Variable g = Expressions.makeVariable(G);
@@ -83,10 +73,16 @@ public class SC {
 	public final static Variable u = Expressions.makeVariable(U);
 	public final static Variable w = Expressions.makeVariable(W);
 	public final static Variable r = Expressions.makeVariable(R);
+
+	public final static Predicate statementEDB = Expressions.makePredicate(STATEMENT, 4);
+	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
+	public final static Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 4);
 	
-	public final static Atom violation_statement_query = Expressions.makeAtom(violation_statement, s, i, p, v);
-	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);
-	public final static Atom violation_reference_query = Expressions.makeAtom(violation_reference, s, h, p, v);
+	public final static Predicate violation_statement = Expressions.makePredicate(VIOLATION_STATEMENT, 4);
+	public final static Predicate violation_qualifier = Expressions.makePredicate(VIOLATION_QUALIFIER, 3);
+	public final static Predicate violation_reference = Expressions.makePredicate(VIOLATION_REFERENCE, 4);
+	
+	public final static Predicate require_inequality = Expressions.makePredicate(REQUIRE_INEQUALITY, 2);
 	
 	public static final Predicate require = Expressions.makePredicate(REQUIRE, 3);
 	public static final Predicate require_second = Expressions.makePredicate(REQUIRE_SECOND, 3);
@@ -113,4 +109,8 @@ public class SC {
 	public final static Predicate constrained_statement = Expressions.makePredicate(CONSTRAINED_STATEMENT, 4);
 	public final static Predicate constrained_qualifier = Expressions.makePredicate(CONSTRAINED_QUALIFIER, 3);
 	public final static Predicate constrained_reference = Expressions.makePredicate(CONSTRAINED_REFERENCE, 4);
+	
+	public final static Atom violation_statement_query = Expressions.makeAtom(violation_statement, s, i, p, v);
+	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);
+	public final static Atom violation_reference_query = Expressions.makeAtom(violation_reference, s, h, p, v);
 }
