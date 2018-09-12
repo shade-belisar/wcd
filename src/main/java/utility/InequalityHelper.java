@@ -31,6 +31,7 @@ import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import impl.CC.ConstraintChecker;
 import impl.DS.DataSetFile;
 import main.Main;
+import positionVLog4J.PositionPredicate;
 
 import static utility.SC.require_inequality;
 
@@ -134,14 +135,18 @@ public class InequalityHelper {
 		return this;
 	}
 	
-	public InequalityHelper registerInequality(File file, int index) {
+	public InequalityHelper registerInequality(DataSetFile dataSetFile, int index) throws IOException {
+		Predicate predicate = dataSetFile.getPredicate();
+		if (predicate instanceof PositionPredicate)
+			index = ((PositionPredicate) predicate).transformPosition(index);
+		
 		for (IndexedCSVFile indexFile : inequalityFileIndexes) {
-			if (file.equals(indexFile.getFile())) {
+			if (dataSetFile.equals(indexFile.getFile())) {
 				indexFile.addIndex(index);
 				return this;
 			}		
 		}
-		inequalityFileIndexes.add(new IndexedCSVFile(file, index));
+		inequalityFileIndexes.add(new IndexedCSVFile(dataSetFile.getFile(), index));
 		return this;
 	}
 	

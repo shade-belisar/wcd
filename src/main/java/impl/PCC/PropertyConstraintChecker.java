@@ -3,9 +3,6 @@
  */
 package impl.PCC;
 
-import static utility.SC.constrained_statement;
-import static utility.SC.constrained_qualifier;
-import static utility.SC.constrained_reference;
 import static utility.SC.h;
 import static utility.SC.i;
 import static utility.SC.qualifierEDB;
@@ -72,17 +69,4 @@ public abstract class PropertyConstraintChecker {
 	}
 	
 	public abstract List<Rule> rules();
-	
-	public List<Rule> constrainedRules() {
-		List<Rule> result = new ArrayList<>();
-		// constrained_statement(S, I, propertyConstant, V) :- statementEDB(S, I, propertyConstant, V)
-		result.add(Expressions.makeRule(Expressions.makeAtom(constrained_statement, s, i, propertyConstant, v), statementEDB_SIpV));
-
-		// constrained_qualifier(S, propertyConstant, V) :- qualifierEDB(S, propertyConstant, V)
-		result.add(Expressions.makeRule(Expressions.makeAtom(constrained_qualifier, s, propertyConstant, v), qualifierEDB_SpV));
-
-		// constrained_reference(S, H, propertyConstant, V) referenceEDB(S, H, propertyConstant, V)
-		result.add(Expressions.makeRule(Expressions.makeAtom(constrained_reference, s, h, propertyConstant, v), referenceEDB_SHpV));
-		return result;
-	}
 }

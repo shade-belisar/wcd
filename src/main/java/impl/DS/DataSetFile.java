@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import main.Main;
+import positionVLog4J.PositionVLog4JHelper;
 import utility.CsvGzFileDataSource;
 
 public class DataSetFile {
@@ -76,6 +77,7 @@ public class DataSetFile {
 	}
 	
 	public void write(List<String> strings) {
+		strings = PositionVLog4JHelper.sort(predicate, strings);
 		if (writer == null) {
 			logger.warn("Trying to write to file " + fileName + " but extraction has not been activated.");
 			return;
@@ -93,6 +95,10 @@ public class DataSetFile {
 		close();
 		CsvGzFileDataSource dataSource = new CsvGzFileDataSource(dataSetFileGz);
 		reasoner.addFactsFromDataSource(predicate, dataSource);
+	}
+	
+	public Predicate getPredicate() {
+		return predicate;
 	}
 	
 	public File getFile() throws IOException {

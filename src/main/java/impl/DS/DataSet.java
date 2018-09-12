@@ -1,6 +1,5 @@
 package impl.DS;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
@@ -76,32 +75,32 @@ public class DataSet implements EntityDocumentProcessor {
 		Main.registerProcessor(this);
 	}
 	
-	public File getStatementFile() throws IOException {
-		return statementFile.getFile();
+	public DataSetFile getStatementFile() throws IOException {
+		return statementFile;
 	}
 	
-	public File getQualifierFile() throws IOException {
-		return qualifierFile.getFile();
+	public DataSetFile getQualifierFile() throws IOException {
+		return qualifierFile;
 	}
 	
-	public File getReferenceFile() throws IOException {
-		return referenceFile.getFile();
+	public DataSetFile getReferenceFile() throws IOException {
+		return referenceFile;
 	}
 	
-	public File getItemsFile() throws IOException {
-		return itemsFile.getFile();
+	public DataSetFile getItemsFile() throws IOException {
+		return itemsFile;
 	}
 	
-	public File getPropertiesFile() throws IOException {
-		return propertiesFile.getFile();
+	public DataSetFile getPropertiesFile() throws IOException {
+		return propertiesFile;
 	}
 	
-	public File getUnitsFile() throws IOException {
-		return unitsFile.getFile();
+	public DataSetFile getUnitsFile() throws IOException {
+		return unitsFile;
 	}
 	
-	public File getRanksFile() throws IOException {
-		return ranksFile.getFile();
+	public DataSetFile getRanksFile() throws IOException {
+		return ranksFile;
 	}
 	
 	public void loadStatementFile(Reasoner reasoner) throws IOException, ReasonerStateException {

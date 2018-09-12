@@ -3,14 +3,6 @@
  */
 package impl.CC;
 
-import static utility.SC.constrained_statement;
-import static utility.SC.constrained_qualifier;
-import static utility.SC.constrained_reference;
-import static utility.SC.s;
-import static utility.SC.i;
-import static utility.SC.h;
-import static utility.SC.p;
-import static utility.SC.v;
 import static utility.SC.require_inequality;
 
 import java.io.IOException;
@@ -44,6 +36,7 @@ import org.semanticweb.vlog4j.core.reasoner.implementation.QueryResultIterator;
 
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
+import positionVLog4J.PositionReasoner;
 import utility.InequalityHelper;
 import utility.PrepareQueriesException;
 import utility.Utility;
@@ -79,7 +72,7 @@ public abstract class ConstraintChecker {
 	public ConstraintChecker(String constraint_) throws IOException {
 		constraint = constraint_;
 		internalError = "INTERNAL_ERROR for constraint " + constraint + ".";
-		reasoner = Reasoner.getInstance();
+		reasoner = new PositionReasoner();
 		reasoner.setAlgorithm(Algorithm.RESTRICTED_CHASE);
 		reasoner.setReasoningTimeout(TIMEOUT_HOURS * 60 * 60);
 		initDataField();

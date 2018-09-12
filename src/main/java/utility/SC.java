@@ -5,6 +5,8 @@ import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.model.api.Variable;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
 
+import positionVLog4J.PositionPredicate;
+
 public class SC {
 	
 	public final static String H = "h";
@@ -52,12 +54,7 @@ public class SC {
 	public final static String RANK = "rank";
 	
 	public final static String DOES_NOT_HAVE = "does_not_have";
-	public final static String HAS_SAME = "has_same";
-	
-	public final static String CONSTRAINED_STATEMENT = "constrained_statement";
-	public final static String CONSTRAINED_QUALIFIER = "constrained_qualifier";
-	public final static String CONSTRAINED_REFERENCE = "constrained_reference";
-	
+	public final static String HAS_SAME = "has_same";	
 	
 	public final static Variable h = Expressions.makeVariable(H);
 	public final static Variable g = Expressions.makeVariable(G);
@@ -74,41 +71,59 @@ public class SC {
 	public final static Variable w = Expressions.makeVariable(W);
 	public final static Variable r = Expressions.makeVariable(R);
 
-	public final static Predicate statementEDB = Expressions.makePredicate(STATEMENT, 4);
-	public final static Predicate qualifierEDB = Expressions.makePredicate(QUALIFIER, 3);
-	public final static Predicate referenceEDB = Expressions.makePredicate(REFERENCE, 4);
-	
+	// id, entity, property, value -> property, entity, value, id
+	public final static Predicate statementEDB = new PositionPredicate(STATEMENT, 4, 3, 1, 0, 2);
+	// id, property, value -> property, value, id
+	public final static Predicate qualifierEDB = new PositionPredicate(QUALIFIER, 3, 2, 0, 1);
+	// id, hash, property, value -> property, value, id, hash
+	public final static Predicate referenceEDB = new PositionPredicate(REFERENCE, 4, 2, 3, 0, 1);
+
+	// id, entity, property, value
 	public final static Predicate violation_statement = Expressions.makePredicate(VIOLATION_STATEMENT, 4);
+	// id, property, value
 	public final static Predicate violation_qualifier = Expressions.makePredicate(VIOLATION_QUALIFIER, 3);
+	// id, hash, property, value
 	public final static Predicate violation_reference = Expressions.makePredicate(VIOLATION_REFERENCE, 4);
 	
+	// inequality1, inequality2
 	public final static Predicate require_inequality = Expressions.makePredicate(REQUIRE_INEQUALITY, 2);
 	
-	public static final Predicate require = Expressions.makePredicate(REQUIRE, 3);
-	public static final Predicate require_second = Expressions.makePredicate(REQUIRE_SECOND, 3);
+	// id, requiringProperty, required -> requiringProperty, required, id
+	public static final Predicate require = new PositionPredicate(REQUIRE, 3, 2, 0, 1);
+	// id, requiringProperty, required -> requiringProperty, required, id
+	public static final Predicate require_second = new PositionPredicate(REQUIRE_SECOND, 3, 2, 0, 1);
 	
+	// id, entity
 	public static final Predicate first = Expressions.makePredicate(FIRST, 2);
+	// id1, id2
 	public static final Predicate next = Expressions.makePredicate(NEXT, 2);
+	// id, entity
 	public static final Predicate last = Expressions.makePredicate(LAST, 2);
 	
-	public static final Predicate require_qualifier = Expressions.makePredicate(REQUIRE_QUALIFIER, 5);
+	// id, property, value, requiringProperty, required -> requiringProperty, property, value, required, id
+	public static final Predicate require_qualifier = new PositionPredicate(REQUIRE_QUALIFIER, 5, 4, 1, 2, 0, 3);
 	
-	public static final Predicate first_qualifier = Expressions.makePredicate(FIRST_QUALIFIER, 3);
-	public static final Predicate next_qualifier = Expressions.makePredicate(NEXT_QUALIFIER, 6);
-	public static final Predicate last_qualifier = Expressions.makePredicate(LAST_QUALIFIER, 3);
+	// id, property, value -> property, value, id
+	public static final Predicate first_qualifier = new PositionPredicate(FIRST_QUALIFIER, 3, 2, 0, 1);
+	// id1, property1, value1, id2, property2, value2 -> property1, property2, value1, value2, id1, id2
+	public static final Predicate next_qualifier = new PositionPredicate(NEXT_QUALIFIER, 6, 4, 0, 2, 5, 1, 3);
+	// id, property, value -> property, value, id
+	public static final Predicate last_qualifier = new PositionPredicate(LAST_QUALIFIER, 3, 2, 0, 1);
 	
+	// entity
 	public final static Predicate item = Expressions.makePredicate(ITEM, 1);
+	// entity
 	public final static Predicate property = Expressions.makePredicate(PROPERTY, 1);
 	
-	public final static Predicate unit = Expressions.makePredicate(UNIT, 2);
-	public final static Predicate rank = Expressions.makePredicate(RANK, 2);
+	// value, unit -> unit, value
+	public final static Predicate unit = new PositionPredicate(UNIT, 2, 1, 0);
+	// id, rank -> rank, id
+	public final static Predicate rank = new PositionPredicate(RANK, 2, 1, 0);
 	
-	public final static Predicate does_not_have = Expressions.makePredicate(DOES_NOT_HAVE, 2);
-	public final static Predicate has_same = Expressions.makePredicate(HAS_SAME, 3);
-	
-	public final static Predicate constrained_statement = Expressions.makePredicate(CONSTRAINED_STATEMENT, 4);
-	public final static Predicate constrained_qualifier = Expressions.makePredicate(CONSTRAINED_QUALIFIER, 3);
-	public final static Predicate constrained_reference = Expressions.makePredicate(CONSTRAINED_REFERENCE, 4);
+	// id, property -> property, id
+	public final static Predicate does_not_have = new PositionPredicate(DOES_NOT_HAVE, 2, 1, 0);
+	// id1, id2, property -> property, id1, id2
+	public final static Predicate has_same = new PositionPredicate(HAS_SAME, 3, 1, 2, 0);
 	
 	public final static Atom violation_statement_query = Expressions.makeAtom(violation_statement, s, i, p, v);
 	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);
