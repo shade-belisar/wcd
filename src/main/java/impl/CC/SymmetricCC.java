@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
+import impl.DS.DataSet.DataSetPredicate;
 import impl.PCC.InversePCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
@@ -58,18 +59,18 @@ public class SymmetricCC extends ConstraintChecker {
 
 	@Override
 	public void prepareFacts() throws ReasonerStateException, IOException {
-		Main.statementSet.loadStatementFile(reasoner);
-		Main.statementSet.loadFirstFile(reasoner);
-		Main.statementSet.loadNextFile(reasoner);
-		Main.statementSet.loadLastFile(reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.STATEMENT, reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.FIRST, reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.NEXT, reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.LAST, reasoner);
 	}
 	
 	@Override
 	public void registerInequalities() throws IOException {
 		InequalityHelper.getInequalityHelper(this)
-		.registerInequality(Main.statementSet.getStatementFile(), 1)
-		.registerInequality(Main.statementSet.getStatementFile(), 2)
-		.registerInequality(Main.statementSet.getStatementFile(), 3);
+		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 1)
+		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 2)
+		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 3);
 	}
 	
 	@Override

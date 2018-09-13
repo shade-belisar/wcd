@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
+import impl.DS.DataSet.DataSetPredicate;
 import impl.PCC.DistinctValuesPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
@@ -57,13 +58,13 @@ public class DistinctValuesCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.statementSet.loadStatementFile(reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.STATEMENT, reasoner);
 	}
 	
 	@Override
 	public void registerInequalities() throws IOException {
 		InequalityHelper.getInequalityHelper(this)
-		.registerInequality(Main.statementSet.getStatementFile(), 0);
+		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 0);
 	}
 
 	@Override

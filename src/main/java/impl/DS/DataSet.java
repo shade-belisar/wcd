@@ -1,7 +1,29 @@
 package impl.DS;
 
-import java.io.IOException;
+import static utility.SC.statementEDB;
+import static utility.SC.qualifierEDB;
+import static utility.SC.referenceEDB;
 
+import static utility.SC.item;
+import static utility.SC.property;
+
+import static utility.SC.unit;
+import static utility.SC.rank;
+
+import static utility.SC.first;
+import static utility.SC.next;
+import static utility.SC.last;
+
+import static utility.SC.first_qualifier;
+import static utility.SC.next_qualifier;
+import static utility.SC.last_qualifier;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 import org.slf4j.Logger;
@@ -21,29 +43,42 @@ import org.wikidata.wdtk.datamodel.interfaces.Value;
 import main.Main;
 import utility.OutputUnitVisitor;
 import utility.OutputValueVisitor;
-import utility.SC;
 
 public class DataSet implements EntityDocumentProcessor {
 	
+	public enum DataSetPredicate {
+		STATEMENT(statementEDB),
+		QUALIFIER(qualifierEDB),
+		REFERENCE(referenceEDB),
+
+		ITEM(item),
+		PROPERTY(property),
+
+		UNIT(unit),
+		RANK(rank),
+
+		FIRST(first),
+		NEXT(next),
+		LAST(last),
+
+		FIRST_QUALIFIER(first_qualifier),
+		NEXT_QUALIFIER(next_qualifier),
+		LAST_QUALIFIER(last_qualifier);
+		
+	    private final Predicate predicate;
+	    
+	    DataSetPredicate(Predicate predicate) {
+	    	this.predicate = predicate;
+	    }
+	    
+	    public Predicate getPredicate() {
+	    	return predicate;
+	    }
+	}
+	
 	static final Logger logger = LoggerFactory.getLogger(DataSet.class);
 	
-	DataSetFile statementFile;
-	DataSetFile qualifierFile;
-	DataSetFile referenceFile;
-	
-	DataSetFile itemsFile;
-	DataSetFile propertiesFile;
-	
-	DataSetFile unitsFile;
-	DataSetFile ranksFile;
-	
-	DataSetFile firstFile;
-	DataSetFile nextFile;
-	DataSetFile lastFile;
-	
-	DataSetFile firstQualifier;
-	DataSetFile nextQualifier;
-	DataSetFile lastQualifier;
+	Map<DataSetPredicate, DataSetFile> files = new HashMap<>();
 
 	String lastID;
 	String lastSubject;
@@ -54,113 +89,41 @@ public class DataSet implements EntityDocumentProcessor {
 
 	public DataSet() throws IOException {
 		
-		statementFile = new DataSetFile("statement", SC.statementEDB);
-		qualifierFile = new DataSetFile("qualifier", SC.qualifierEDB);
-		referenceFile = new DataSetFile("reference", SC.referenceEDB);
-		
-		itemsFile = new DataSetFile("items", SC.item);
-		propertiesFile = new DataSetFile("properties", SC.property);
-		
-		unitsFile = new DataSetFile("units", SC.unit);
-		ranksFile = new DataSetFile("ranks", SC.rank);
-		
-		firstFile = new DataSetFile("first", SC.first);
-		nextFile = new DataSetFile("next", SC.next);
-		lastFile = new DataSetFile("last", SC.last);
-		
-		firstQualifier = new DataSetFile("firstQualifier", SC.first_qualifier);
-		nextQualifier = new DataSetFile("nextQualifier", SC.next_qualifier);
-		lastQualifier = new DataSetFile("lastQualifier", SC.last_qualifier);
+		for(DataSetPredicate predicate : DataSetPredicate.values()) {
+			files.put(predicate, new DataSetFile(predicate.toString(), predicate.getPredicate()));
+		}
 		
 		Main.registerProcessor(this);
 	}
 	
-	public DataSetFile getStatementFile() throws IOException {
-		return statementFile;
+	public DataSetFile getFile(DataSetPredicate predicate) throws IOException {
+		return files.get(predicate);
 	}
 	
-	public DataSetFile getQualifierFile() throws IOException {
-		return qualifierFile;
-	}
-	
-	public DataSetFile getReferenceFile() throws IOException {
-		return referenceFile;
-	}
-	
-	public DataSetFile getItemsFile() throws IOException {
-		return itemsFile;
-	}
-	
-	public DataSetFile getPropertiesFile() throws IOException {
-		return propertiesFile;
-	}
-	
-	public DataSetFile getUnitsFile() throws IOException {
-		return unitsFile;
-	}
-	
-	public DataSetFile getRanksFile() throws IOException {
-		return ranksFile;
-	}
-	
-	public void loadStatementFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		statementFile.loadFile(reasoner);
-	}
-	
-	public void loadQualifierFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		qualifierFile.loadFile(reasoner);
-	}
-	
-	public void loadReferenceFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		referenceFile.loadFile(reasoner);
-	}
-
-	public void loadItemsFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		itemsFile.loadFile(reasoner);
-	}
-	
-	public void loadPropertiesFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		propertiesFile.loadFile(reasoner);
-	}
-	
-	public void loadUnitsFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		unitsFile.loadFile(reasoner);
-	}
-	
-	public void loadRanksFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		ranksFile.loadFile(reasoner);
-	}
-	
-	public void loadFirstFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		firstFile.loadFile(reasoner);
-	}
-	
-	public void loadNextFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		nextFile.loadFile(reasoner);
-	}
-	
-	public void loadLastFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		if (!lastFile.isClosed() && lastID != null) {
-			lastFile.write(lastID, lastSubject);
+	public void loadFile(DataSetPredicate predicate, Reasoner reasoner) throws IOException, ReasonerStateException {
+		DataSetFile file = files.get(predicate);
+		
+		if (predicate.equals(DataSetPredicate.LAST)) {
+			if (!file.isClosed() && lastID != null) {
+				file.write(lastID, lastSubject);
+			}
 		}
-		lastFile.loadFile(reasoner);
-	}
-	
-	public void loadFirstQualifierFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		firstQualifier.loadFile(reasoner);
-	}
-	
-	public void loadNextQualifierFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		nextQualifier.loadFile(reasoner);
-	}
-	
-	public void loadLastQualifierFile(Reasoner reasoner) throws IOException, ReasonerStateException {
-		if (!lastQualifier.isClosed() && lastQualifierID != null)
-			lastQualifier.write(lastQualifierID, lastQualifierPredicate, lastQualifierValue);
-		lastQualifier.loadFile(reasoner);
+		
+		if (predicate.equals(DataSetPredicate.LAST_QUALIFIER)) {
+			if (!file.isClosed() && lastQualifierID != null)
+				file.write(lastQualifierID, lastQualifierPredicate, lastQualifierValue);
+		}
+		
+		file.loadFile(reasoner);
 	}
 	
 	void processStatement(String id, String subject, String predicate, String object) {
+		DataSetFile statementFile = files.get(DataSetPredicate.STATEMENT);
+		
+		DataSetFile firstFile = files.get(DataSetPredicate.FIRST);
+		DataSetFile nextFile = files.get(DataSetPredicate.NEXT);
+		DataSetFile lastFile = files.get(DataSetPredicate.LAST);
+		
 		statementFile.write(id, subject, predicate, object);
 		
 		if (lastID == null)
@@ -177,6 +140,12 @@ public class DataSet implements EntityDocumentProcessor {
 	}
 	
 	void processQualifier(String id, String predicate, String object) {
+		DataSetFile qualifierFile = files.get(DataSetPredicate.QUALIFIER);
+
+		DataSetFile firstQualifier = files.get(DataSetPredicate.FIRST_QUALIFIER);
+		DataSetFile nextQualifier = files.get(DataSetPredicate.NEXT_QUALIFIER);
+		DataSetFile lastQualifier = files.get(DataSetPredicate.LAST_QUALIFIER);
+
 		qualifierFile.write(id, predicate, object);
 		
 		if (lastQualifierID == null)
@@ -193,7 +162,14 @@ public class DataSet implements EntityDocumentProcessor {
 		lastQualifierValue = object;
 	}
 	
+	void processReference(String id, String hash, String predicate, String object) {
+		DataSetFile referenceFile = files.get(DataSetPredicate.REFERENCE);
+		referenceFile.write(id, hash, predicate, object);
+	}
+	
 	void processUnit(String object, Value value) {
+		DataSetFile unitsFile = files.get(DataSetPredicate.UNIT);
+		
 		String unit = "";
 		if (value != null) {
 			unit = value.accept(new OutputUnitVisitor());
@@ -204,6 +180,8 @@ public class DataSet implements EntityDocumentProcessor {
 	}
 	
 	void processRank(String id, StatementRank rank) {
+		DataSetFile ranksFile = files.get(DataSetPredicate.RANK);
+		
 		ranksFile.write(id, rank.toString());
 	}
 	
@@ -246,7 +224,7 @@ public class DataSet implements EntityDocumentProcessor {
 							if (reference_value != null) {
 								reference_object = reference_value.accept(new OutputValueVisitor());
 							}
-							referenceFile.write(id, String.valueOf(semiHash), reference_predicate, reference_object);
+							processReference(id, String.valueOf(semiHash), reference_predicate, reference_object);
 							processUnit(reference_object, reference_value);
 						}
 					}
@@ -259,6 +237,8 @@ public class DataSet implements EntityDocumentProcessor {
 	@Override
 	public void processItemDocument(ItemDocument itemDocument) {
 		String subject = itemDocument.getEntityId().getIri();
+		DataSetFile itemsFile = files.get(DataSetPredicate.ITEM);
+		
 		itemsFile.write(subject);
 
 		processStatementDocument(itemDocument);		
@@ -267,6 +247,7 @@ public class DataSet implements EntityDocumentProcessor {
 	@Override
 	public void processPropertyDocument(PropertyDocument propertyDocument) {
 		String subject = propertyDocument.getEntityId().getIri();
+		DataSetFile propertiesFile = files.get(DataSetPredicate.PROPERTY);
 		
 		propertiesFile.write(subject);
 		
@@ -274,28 +255,23 @@ public class DataSet implements EntityDocumentProcessor {
 	}
 	
 	public void close() throws IOException {
-		statementFile.close();
-		qualifierFile.close();
-		referenceFile.close();
-		
-		itemsFile.close();
-		propertiesFile.close();
-		
-		unitsFile.close();
-		ranksFile.close();
-		
-		firstFile.close();
-		nextFile.close();
-		if (!lastFile.isClosed() && lastID != null) {
-			lastFile.write(lastID, lastSubject);
+		for (Map.Entry<DataSetPredicate, DataSetFile> entry : files.entrySet()) {
+			DataSetPredicate predicate = entry.getKey();
+			DataSetFile file = entry.getValue();
+			
+			if (predicate.equals(DataSetPredicate.LAST)) {
+				if (!file.isClosed() && lastID != null) {
+					file.write(lastID, lastSubject);
+				}
+			}
+			
+			if (predicate.equals(DataSetPredicate.LAST_QUALIFIER)) {
+				if (!file.isClosed() && lastQualifierID != null) {
+					file.write(lastQualifierID, lastQualifierPredicate, lastQualifierValue);
+				}
+			}
+			
+			file.close();
 		}
-		lastFile.close();
-		
-		firstQualifier.close();
-		nextQualifier.close();
-		if (!lastQualifier.isClosed() && lastQualifierID != null) {
-			lastQualifier.write(lastQualifierID, lastQualifierPredicate, lastQualifierValue);
-		}
-		lastQualifier.close();
 	}
 }

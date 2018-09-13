@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
+import impl.DS.DataSet.DataSetPredicate;
 import impl.PCC.PropertyConstraintChecker;
 import impl.PCC.SingleValuePCC;
 import main.Main;
@@ -80,12 +81,12 @@ public class SingleValueCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.statementSet.loadStatementFile(reasoner);
-		Main.statementSet.loadQualifierFile(reasoner);
-		Main.statementSet.loadReferenceFile(reasoner);
-		Main.statementSet.loadFirstQualifierFile(reasoner);
-		Main.statementSet.loadNextQualifierFile(reasoner);
-		Main.statementSet.loadLastQualifierFile(reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.STATEMENT, reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.QUALIFIER, reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.REFERENCE, reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.FIRST_QUALIFIER, reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.NEXT_QUALIFIER, reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.LAST_QUALIFIER, reasoner);
 	}
 	
 	@Override
@@ -96,8 +97,8 @@ public class SingleValueCC extends ConstraintChecker {
 		}
 		InequalityHelper.getInequalityHelper(this)
 		.registerInequality(values)
-		.registerInequality(Main.statementSet.getStatementFile(), 0)
-		.registerInequality(Main.statementSet.getQualifierFile(), 2);
+		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 0)
+		.registerInequality(Main.statementSet.getFile(DataSetPredicate.QUALIFIER), 2);
 	}
 	
 	@Override

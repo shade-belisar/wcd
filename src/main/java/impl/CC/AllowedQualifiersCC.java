@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
+import impl.DS.DataSet.DataSetPredicate;
 import impl.PCC.AllowedQualifiersPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
@@ -79,8 +80,8 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.statementSet.loadStatementFile(reasoner);
-		Main.statementSet.loadQualifierFile(reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.STATEMENT, reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.QUALIFIER, reasoner);
 	}
 	
 	@Override
@@ -91,7 +92,7 @@ public class AllowedQualifiersCC extends ConstraintChecker {
 		}
 		InequalityHelper.getInequalityHelper(this)
 		.registerInequality(qualifiers)
-		.registerInequality(Main.statementSet.getQualifierFile(), 1);
+		.registerInequality(Main.statementSet.getFile(DataSetPredicate.QUALIFIER), 1);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
+import impl.DS.DataSet.DataSetPredicate;
 import impl.PCC.ConflictsWithPCC;
 import impl.PCC.PropertyConstraintChecker;
 import main.Main;
@@ -81,7 +82,7 @@ public class ConflictsWithCC extends ConstraintChecker {
 
 	@Override
 	void prepareFacts() throws ReasonerStateException, IOException {
-		Main.statementSet.loadStatementFile(reasoner);
+		Main.statementSet.loadFile(DataSetPredicate.STATEMENT, reasoner);
 	}
 	
 	@Override

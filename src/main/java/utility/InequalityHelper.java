@@ -84,25 +84,7 @@ public class InequalityHelper {
 	// unequal_IDB(X, Y) :- unequal_IDB(Y, X)
 	final static Rule inverse = Expressions.makeRule(Expressions.makeAtom(unequal, x, y), Expressions.makeAtom(unequal, y, x));
 	
-	final String FOLDER;
-	
-	final List<Rule> rules = new ArrayList<>();
-	
-	final Set<String> characters = new HashSet<String>();
-	
-	final List<DataSetFile> files = new ArrayList<>();
-	
-	final Set<IndexedCSVFile> inequalityFileIndexes = new HashSet<>();
-	
-	final Set<String> additionalInequalities = new HashSet<String>();
-	
-	final static Map<ConstraintChecker, InequalityHelper> helpers = new HashMap<>();
-	
-	private InequalityHelper(String folder_) {
-		if (!folder_.endsWith("/"))
-			folder_ += "/";
-		FOLDER = folder_;
-	}
+	final static Map<ConstraintChecker, InequalityHandler> helpers = new HashMap<>();
 	
 	public static void setMode(Mode mode_) {
 		mode = mode_;
@@ -123,31 +105,11 @@ public class InequalityHelper {
 		return mode;
 	}
 	
-	public static InequalityHelper getInequalityHelper(ConstraintChecker checker) {
+	public static InequalityHandler getInequalityHelper(ConstraintChecker checker) {
 		String folder = normalize(checker.getConstraint());
 		if (!helpers.containsKey(checker))
-			helpers.put(checker, new InequalityHelper(folder));
+			helpers.put(checker, new InequalityHandler(folder));
 		return helpers.get(checker);
-	}
-	
-	public InequalityHelper registerInequality(Set<String> inequalities) {
-		additionalInequalities.addAll(inequalities);
-		return this;
-	}
-	
-	public InequalityHelper registerInequality(DataSetFile dataSetFile, int index) throws IOException {
-		Predicate predicate = dataSetFile.getPredicate();
-		if (predicate instanceof PositionPredicate)
-			index = ((PositionPredicate) predicate).transformPosition(index);
-		
-		for (IndexedCSVFile indexFile : inequalityFileIndexes) {
-			if (dataSetFile.equals(indexFile.getFile())) {
-				indexFile.addIndex(index);
-				return this;
-			}		
-		}
-		inequalityFileIndexes.add(new IndexedCSVFile(dataSetFile.getFile(), index));
-		return this;
 	}
 	
 	static String normalize(String string) {
@@ -157,14 +119,10 @@ public class InequalityHelper {
 		return string;
 	}
 	
-	public Set<IndexedCSVFile> indexedFiles() {
-		return inequalityFileIndexes;
-	}
-	
 	public static void load(ConstraintChecker checker) throws ReasonerStateException, IOException {
 		if (!helpers.containsKey(checker))
 			return;
-		InequalityHelper helper = helpers.get(checker);
+		InequalityHandler helper = helpers.get(checker);
 		Reasoner reasoner = checker.getReasoner();
 		if (Main.getReload())
 			helper.reload(reasoner);
@@ -173,77 +131,12 @@ public class InequalityHelper {
 			
 	}
 	
-	void close() throws IOException {
-		for (DataSetFile file : files) {
-			file.close();
-		}
-	}
-	
-	void load(Reasoner reasoner) throws ReasonerStateException, IOException {
-		File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
-		FileOutputStream output = new FileOutputStream(uniqueCharacters, false);
-		GZIPOutputStream gzip = new GZIPOutputStream(output);
-		OutputStreamWriter writer = new OutputStreamWriter(gzip);
-		for (String character : characters) {
-			writer.write(character + "\n");
-		}		
-		writer.close();
-		
-		commonLoad(reasoner);
-	}
-	
-	void reload(Reasoner reasoner) throws ReasonerStateException, IOException {
-		boolean demand = false;
-		
-		switch (mode) {
-		case NAIVE:
-			DataSetFile file = new DataSetFile(UNEQUAL_NAIVE, unequal_EDB, false);
-			files.add(file);
-			break;
-		case DEMANDED:
-			demand = true;
-		default:
-		}
-		int chunk = 0;
-		while (getChunkFile(chunk, demand).didExist())
-			chunk++;
-		DataSetFile lastFile = files.get(files.size() - 1);
-		files.remove(lastFile);
-		lastFile.getFile().delete();
-		
-		File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
-		FileInputStream input = new FileInputStream(uniqueCharacters);
-		GZIPInputStream gzip = new GZIPInputStream(input);
-		InputStreamReader reader = new InputStreamReader(gzip);
-		BufferedReader buffer = new BufferedReader(reader);
-		String line;
-		while((line = buffer.readLine()) != null) {
-			characters.add(line);
-		}
-		buffer.close();
-		
-		commonLoad(reasoner);
-	}
-
-	void commonLoad(Reasoner reasoner) throws ReasonerStateException, IOException {
-		reasoner.addRules(unequal_IDB_EDB, inverse);
-		
-		reasoner.addRules(rules);
-		
-		List<Atom> facts = allCharactersUnequal(characters);
-		reasoner.addFacts(facts);
-		
-		for (DataSetFile dataSetFile : files) {
-			dataSetFile.loadFile(reasoner);
-		}
-	}
-	
 	public static void prepareFiles() throws IOException {
 		if (Main.getReload())
 			logger.warn("Preparing files in reload mode.");
 		switch (mode) {
 		case NAIVE:
-			for (InequalityHelper helper : helpers.values()) {
+			for (InequalityHandler helper : helpers.values()) {
 				helper.naive();
 			}
 			break;
@@ -254,128 +147,17 @@ public class InequalityHelper {
 			encoded();
 			break;
 		}
-		for (InequalityHelper helper : helpers.values()) {
+		for (InequalityHandler helper : helpers.values()) {
 			helper.close();
-		}
-	}
-
-	void naive () throws IOException {
-		DataSetFile file = new DataSetFile(UNEQUAL_NAIVE, unequal_EDB);
-		files.add(file);
-
-		List<String> fixedOrderValues = new ArrayList<String>(additionalInequalities);
-		
-		List<Iterator<String>> firstIterators = new ArrayList<>();
-		for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
-			firstIterators.add(inequalityFile.getIterator());
-		}
-		firstIterators.add(fixedOrderValues.iterator());
-		
-		Iterator<String> firstIterator = new CombinedIterator<>(firstIterators);
-		
-		int first = 0;
-		while(firstIterator.hasNext()) {
-			String firstEntry = firstIterator.next();
-			
-			List<Iterator<String>> secondIterators = new ArrayList<>();
-			for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
-				secondIterators.add(inequalityFile.getIterator());
-			}
-			secondIterators.add(fixedOrderValues.iterator());
-			
-			Iterator<String> secondIterator = new CombinedIterator<>(secondIterators);
-			
-			for (int second = 0; second <= first; second++) {
-				if (secondIterator.hasNext())
-					secondIterator.next();
-			}
-			
-			while (secondIterator.hasNext()) {
-				String secondEntry = secondIterator.next();
-				if (secondEntry.equals(firstEntry))
-					continue;
-				
-				file.write(firstEntry, secondEntry);
-			}
-			
-			first++;
 		}
 	}
 	
 	static void encoded() throws IOException {
-		for (InequalityHelper helper : helpers.values()) {
+		for (InequalityHandler helper : helpers.values()) {
 			helper.encodedAdditional();
 			CombinedCSVFileReader.register(helper);
 		}
 		CombinedCSVFileReader.run();
-	}
-	
-	void encodedAdditional() throws IOException {
-		for (String string : additionalInequalities) {
-			encoded(string);
-		}
-	}
-
-	public void encoded(String string) throws IOException {		
-		int i = 0;
-		for (List<String> chunk : chunks(string)) {
-			characters.addAll(chunk);
-			
-			DataSetFile file = getChunkFile(i, demand);
-			
-			List<String> line = new ArrayList<>();
-			line.add(string);
-			line.addAll(chunk);
-			file.write(line);
-			i++;
-		}
-	}
-	
-	DataSetFile getChunkFile(int chunk, boolean demand) throws IOException {
-		if (chunk < files.size())
-			return files.get(chunk);
-	
-		int chunkAdress = chunk * chunkSize;
-		String LETTER_I = "letter" + chunkAdress;
-		Predicate letter_i = Expressions.makePredicate(LETTER_I, chunkSize + 1);
-		DataSetFile file = new DataSetFile(FOLDER, LETTER_I, letter_i, !Main.getReload());
-		files.add(file);
-		
-		List<Atom> inequalities = new ArrayList<>();
-		
-		// letter_i(X, Ai, Ai+1, ..., Ai+6)
-		List<Term> xVariables = new ArrayList<>();
-		xVariables.add(x);
-		// letter_i(Y, Bi, Bi+1, ..., Bi+6)
-		List<Term> yVariables = new ArrayList<>();
-		yVariables.add(y);
-		for (int j = chunkAdress; j <= chunkAdress + chunkSize - 1; j++) {
-			Variable ai = Expressions.makeVariable("a" + j);
-			Variable bi = Expressions.makeVariable("b" + j);
-			xVariables.add(ai);
-			yVariables.add(bi);
-			
-			// unequal(Ai, Bi)
-			Atom unequal_AB = Expressions.makeAtom(unequal, ai, bi);
-			inequalities.add(unequal_AB);
-		}
-		
-		Atom letter_i_XA = Expressions.makeAtom(letter_i, xVariables);
-		Atom letter_i_YB = Expressions.makeAtom(letter_i, yVariables);
-		
-		for (Atom inequality : inequalities) {
-			List<Atom> body = new ArrayList<>();
-			if (demand)
-				body.add(require_inequality_XY);
-			body.add(letter_i_XA);
-			body.add(letter_i_YB);
-			body.add(inequality);
-
-			Rule unequal = Expressions.makeRule(unequal_XY, body.toArray(new Atom[body.size()]));
-			rules.add(unequal);
-		}
-		
-		return file;
 	}
 	
 	static List<List<String>> chunks (String string) {
@@ -433,4 +215,225 @@ public class InequalityHelper {
 		
 		return atoms;
 	}	
+	
+	public static class InequalityHandler {
+		final String FOLDER;
+		
+		final List<Rule> rules = new ArrayList<>();
+		
+		final Set<String> characters = new HashSet<String>();
+		
+		final List<DataSetFile> files = new ArrayList<>();
+		
+		final Set<IndexedCSVFile> inequalityFileIndexes = new HashSet<>();
+		
+		final Set<String> additionalInequalities = new HashSet<String>();
+		
+		private InequalityHandler(String folder_) {
+			if (!folder_.endsWith("/"))
+				folder_ += "/";
+			FOLDER = folder_;
+		}
+		
+		
+		public InequalityHandler registerInequality(Set<String> inequalities) {
+			additionalInequalities.addAll(inequalities);
+			return this;
+		}
+		
+		public InequalityHandler registerInequality(DataSetFile dataSetFile, int index) throws IOException {
+			Predicate predicate = dataSetFile.getPredicate();
+			if (predicate instanceof PositionPredicate)
+				index = ((PositionPredicate) predicate).transformPosition(index);
+			
+			for (IndexedCSVFile indexFile : inequalityFileIndexes) {
+				if (dataSetFile.equals(indexFile.getFile())) {
+					indexFile.addIndex(index);
+					return this;
+				}		
+			}
+			inequalityFileIndexes.add(new IndexedCSVFile(dataSetFile.getFile(), index));
+			return this;
+		}
+
+		public Set<IndexedCSVFile> indexedFiles() {
+			return inequalityFileIndexes;
+		}
+
+		void close() throws IOException {
+			for (DataSetFile file : files) {
+				file.close();
+			}
+		}
+
+		void load(Reasoner reasoner) throws ReasonerStateException, IOException {
+			File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
+			FileOutputStream output = new FileOutputStream(uniqueCharacters, false);
+			GZIPOutputStream gzip = new GZIPOutputStream(output);
+			OutputStreamWriter writer = new OutputStreamWriter(gzip);
+			for (String character : characters) {
+				writer.write(character + "\n");
+			}		
+			writer.close();
+			
+			commonLoad(reasoner);
+		}
+		
+		void reload(Reasoner reasoner) throws ReasonerStateException, IOException {
+			boolean demand = false;
+			
+			switch (mode) {
+			case NAIVE:
+				DataSetFile file = new DataSetFile(UNEQUAL_NAIVE, unequal_EDB, false);
+				files.add(file);
+				break;
+			case DEMANDED:
+				demand = true;
+			default:
+			}
+			int chunk = 0;
+			while (getChunkFile(chunk, demand).didExist())
+				chunk++;
+			DataSetFile lastFile = files.get(files.size() - 1);
+			files.remove(lastFile);
+			lastFile.getFile().delete();
+			
+			File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
+			FileInputStream input = new FileInputStream(uniqueCharacters);
+			GZIPInputStream gzip = new GZIPInputStream(input);
+			InputStreamReader reader = new InputStreamReader(gzip);
+			BufferedReader buffer = new BufferedReader(reader);
+			String line;
+			while((line = buffer.readLine()) != null) {
+				characters.add(line);
+			}
+			buffer.close();
+			
+			commonLoad(reasoner);
+		}
+
+		void commonLoad(Reasoner reasoner) throws ReasonerStateException, IOException {
+			reasoner.addRules(unequal_IDB_EDB, inverse);
+			
+			reasoner.addRules(rules);
+			
+			List<Atom> facts = allCharactersUnequal(characters);
+			reasoner.addFacts(facts);
+			
+			for (DataSetFile dataSetFile : files) {
+				dataSetFile.loadFile(reasoner);
+			}
+		}
+		
+		void naive () throws IOException {
+			DataSetFile file = new DataSetFile(UNEQUAL_NAIVE, unequal_EDB);
+			files.add(file);
+
+			List<String> fixedOrderValues = new ArrayList<String>(additionalInequalities);
+			
+			List<Iterator<String>> firstIterators = new ArrayList<>();
+			for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
+				firstIterators.add(inequalityFile.getIterator());
+			}
+			firstIterators.add(fixedOrderValues.iterator());
+			
+			Iterator<String> firstIterator = new CombinedIterator<>(firstIterators);
+			
+			int first = 0;
+			while(firstIterator.hasNext()) {
+				String firstEntry = firstIterator.next();
+				
+				List<Iterator<String>> secondIterators = new ArrayList<>();
+				for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
+					secondIterators.add(inequalityFile.getIterator());
+				}
+				secondIterators.add(fixedOrderValues.iterator());
+				
+				Iterator<String> secondIterator = new CombinedIterator<>(secondIterators);
+				
+				for (int second = 0; second <= first; second++) {
+					if (secondIterator.hasNext())
+						secondIterator.next();
+				}
+				
+				while (secondIterator.hasNext()) {
+					String secondEntry = secondIterator.next();
+					if (secondEntry.equals(firstEntry))
+						continue;
+					
+					file.write(firstEntry, secondEntry);
+				}
+				
+				first++;
+			}
+		}
+
+		void encodedAdditional() throws IOException {
+			for (String string : additionalInequalities) {
+				encoded(string);
+			}
+		}
+
+		public void encoded(String string) throws IOException {		
+			int i = 0;
+			for (List<String> chunk : chunks(string)) {
+				characters.addAll(chunk);
+				
+				DataSetFile file = getChunkFile(i, demand);
+				
+				List<String> line = new ArrayList<>();
+				line.add(string);
+				line.addAll(chunk);
+				file.write(line);
+				i++;
+			}
+		}
+		
+		DataSetFile getChunkFile(int chunk, boolean demand) throws IOException {
+			if (chunk < files.size())
+				return files.get(chunk);
+		
+			int chunkAdress = chunk * chunkSize;
+			String LETTER_I = "letter" + chunkAdress;
+			Predicate letter_i = Expressions.makePredicate(LETTER_I, chunkSize + 1);
+			DataSetFile file = new DataSetFile(FOLDER, LETTER_I, letter_i, !Main.getReload());
+			files.add(file);
+			
+			List<Atom> inequalities = new ArrayList<>();
+			
+			// letter_i(X, Ai, Ai+1, ..., Ai+6)
+			List<Term> xVariables = new ArrayList<>();
+			xVariables.add(x);
+			// letter_i(Y, Bi, Bi+1, ..., Bi+6)
+			List<Term> yVariables = new ArrayList<>();
+			yVariables.add(y);
+			for (int j = chunkAdress; j <= chunkAdress + chunkSize - 1; j++) {
+				Variable ai = Expressions.makeVariable("a" + j);
+				Variable bi = Expressions.makeVariable("b" + j);
+				xVariables.add(ai);
+				yVariables.add(bi);
+				
+				// unequal(Ai, Bi)
+				Atom unequal_AB = Expressions.makeAtom(unequal, ai, bi);
+				inequalities.add(unequal_AB);
+			}
+			
+			Atom letter_i_XA = Expressions.makeAtom(letter_i, xVariables);
+			Atom letter_i_YB = Expressions.makeAtom(letter_i, yVariables);
+			
+			for (Atom inequality : inequalities) {
+				List<Atom> body = new ArrayList<>();
+				if (demand)
+					body.add(require_inequality_XY);
+				body.add(letter_i_XA);
+				body.add(letter_i_YB);
+				body.add(inequality);
+
+				Rule unequal = Expressions.makeRule(unequal_XY, body.toArray(new Atom[body.size()]));
+				rules.add(unequal);
+			}
+			
+			return file;
+		}
+	}
 }
