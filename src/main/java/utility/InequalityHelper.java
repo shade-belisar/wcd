@@ -40,12 +40,11 @@ public class InequalityHelper {
 	final static Logger logger = Logger.getLogger(InequalityHelper.class);
 	
 	public enum Mode {
-		NAIVE,
 		ENCODED,
 		DEMANDED
 	}
 
-	static Mode mode = Mode.ENCODED;
+	static Mode mode = Mode.DEMANDED;
 	
 	static boolean demand = false;
 	
@@ -89,9 +88,6 @@ public class InequalityHelper {
 	public static void setMode(Mode mode_) {
 		mode = mode_;
 		switch (mode) {
-		case NAIVE:
-			demand = false;
-			break;
 		case ENCODED:
 			demand = false;
 			break;
@@ -135,11 +131,6 @@ public class InequalityHelper {
 		if (Main.getReload())
 			logger.warn("Preparing files in reload mode.");
 		switch (mode) {
-		case NAIVE:
-			for (InequalityHandler helper : helpers.values()) {
-				helper.naive();
-			}
-			break;
 		case ENCODED:
 			encoded();
 			break;
@@ -283,10 +274,6 @@ public class InequalityHelper {
 			boolean demand = false;
 			
 			switch (mode) {
-			case NAIVE:
-				DataSetFile file = new DataSetFile(UNEQUAL_NAIVE, unequal_EDB, false);
-				files.add(file);
-				break;
 			case DEMANDED:
 				demand = true;
 			default:
@@ -322,49 +309,6 @@ public class InequalityHelper {
 			
 			for (DataSetFile dataSetFile : files) {
 				dataSetFile.loadFile(reasoner);
-			}
-		}
-		
-		void naive () throws IOException {
-			DataSetFile file = new DataSetFile(UNEQUAL_NAIVE, unequal_EDB);
-			files.add(file);
-
-			List<String> fixedOrderValues = new ArrayList<String>(additionalInequalities);
-			
-			List<Iterator<String>> firstIterators = new ArrayList<>();
-			for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
-				firstIterators.add(inequalityFile.getIterator());
-			}
-			firstIterators.add(fixedOrderValues.iterator());
-			
-			Iterator<String> firstIterator = new CombinedIterator<>(firstIterators);
-			
-			int first = 0;
-			while(firstIterator.hasNext()) {
-				String firstEntry = firstIterator.next();
-				
-				List<Iterator<String>> secondIterators = new ArrayList<>();
-				for (IndexedCSVFile inequalityFile : inequalityFileIndexes) {
-					secondIterators.add(inequalityFile.getIterator());
-				}
-				secondIterators.add(fixedOrderValues.iterator());
-				
-				Iterator<String> secondIterator = new CombinedIterator<>(secondIterators);
-				
-				for (int second = 0; second <= first; second++) {
-					if (secondIterator.hasNext())
-						secondIterator.next();
-				}
-				
-				while (secondIterator.hasNext()) {
-					String secondEntry = secondIterator.next();
-					if (secondEntry.equals(firstEntry))
-						continue;
-					
-					file.write(firstEntry, secondEntry);
-				}
-				
-				first++;
 			}
 		}
 

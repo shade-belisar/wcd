@@ -114,9 +114,6 @@ public class Main {
 	    else {
 	    	String inequalityMode = cmd.getOptionValue("inequalityMode").toLowerCase();
 	    	switch (inequalityMode) {
-			case "naive":
-				InequalityHelper.setMode(InequalityHelper.Mode.NAIVE);
-				break;
 			case "encoded":
 				InequalityHelper.setMode(InequalityHelper.Mode.ENCODED);
 				break;
