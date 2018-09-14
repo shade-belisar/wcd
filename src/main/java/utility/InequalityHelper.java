@@ -232,6 +232,8 @@ public class InequalityHelper {
 		}
 
 		void load(Reasoner reasoner) throws ReasonerStateException, IOException {
+			encodedAdditional();
+			
 			File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
 			FileOutputStream output = new FileOutputStream(uniqueCharacters, false);
 			GZIPOutputStream gzip = new GZIPOutputStream(output);
