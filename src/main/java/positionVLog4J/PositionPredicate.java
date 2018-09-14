@@ -11,6 +11,10 @@ import org.semanticweb.vlog4j.core.model.implementation.PredicateImpl;
 public class PositionPredicate extends PredicateImpl {
 	
 	final List<Integer> positions;
+	
+	public PositionPredicate(@NonNull String name, int arity) {
+		this(name, arity, 0);
+	}
 
 	public PositionPredicate(@NonNull String name, int arity, int...positions_) {
 		super(name, arity);
