@@ -94,9 +94,9 @@ public class OneOfCC extends ConstraintChecker {
 		}
 		InequalityHelper.getInequalityHelper(this)
 		.registerInequality(values)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 3)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.QUALIFIER), 2)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.REFERENCE), 2);
+		.registerInequality(DataSetPredicate.STATEMENT, 3)
+		.registerInequality(DataSetPredicate.QUALIFIER, 2)
+		.registerInequality(DataSetPredicate.REFERENCE, 2);
 	}
 
 	@Override

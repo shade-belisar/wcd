@@ -94,8 +94,8 @@ public class InverseCC extends ConstraintChecker {
 		}
 		InequalityHelper.getInequalityHelper(this)
 		.registerInequality(properties)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 1)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 2);
+		.registerInequality(DataSetPredicate.STATEMENT, 1)
+		.registerInequality(DataSetPredicate.STATEMENT, 2);
 	}
 	
 	@Override

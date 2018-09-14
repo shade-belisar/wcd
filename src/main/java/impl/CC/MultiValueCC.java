@@ -76,6 +76,6 @@ public class MultiValueCC extends ConstraintChecker {
 	@Override
 	public void registerInequalities() throws IOException {
 		InequalityHelper.getInequalityHelper(this)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 2);
+		.registerInequality(DataSetPredicate.STATEMENT, 2);
 	}
 }

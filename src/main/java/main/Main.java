@@ -211,6 +211,14 @@ public class Main {
 			return;
 		}
 		
+		try {
+			for(ConstraintChecker checker : checkers) {
+				checker.registerInequalities();
+			}
+		} catch (IOException e) {
+			logger.error("Could not open a file", e);
+		}
+		
 		if (extract) {			
 			// Add timer for progress
 			EntityTimerProcessor time = new EntityTimerProcessor(0);
@@ -235,21 +243,8 @@ public class Main {
 				logger.error("Error closing the data set files.", e);
 				return;
 			}
-		}
-		
-		try {
-			for(ConstraintChecker checker : checkers) {
-				checker.registerInequalities();
-			}
-			if (!getReload()) {						
-				InequalityHelper.prepareFiles();
-				logger.info("Prepared inequality files.");
-			}
-		} catch (IOException e) {
-			logger.error("Could not open a file", e);
-		}
-		
-		
+		}	
+
 		if (!cmd.hasOption("noviolations")) {
 			try {
 				for(ConstraintChecker checker : checkers) {

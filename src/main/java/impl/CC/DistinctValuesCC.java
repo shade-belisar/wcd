@@ -64,7 +64,7 @@ public class DistinctValuesCC extends ConstraintChecker {
 	@Override
 	public void registerInequalities() throws IOException {
 		InequalityHelper.getInequalityHelper(this)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 0);
+		.registerInequality(DataSetPredicate.STATEMENT, 0);
 	}
 
 	@Override

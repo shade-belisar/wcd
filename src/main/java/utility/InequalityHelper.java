@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +29,7 @@ import org.semanticweb.vlog4j.core.reasoner.Reasoner;
 import org.semanticweb.vlog4j.core.reasoner.exceptions.ReasonerStateException;
 
 import impl.CC.ConstraintChecker;
+import impl.DS.DataSet.DataSetPredicate;
 import impl.DS.DataSetFile;
 import main.Main;
 import positionVLog4J.PositionPredicate;
@@ -127,28 +128,12 @@ public class InequalityHelper {
 			
 	}
 	
-	public static void prepareFiles() throws IOException {
-		if (Main.getReload())
-			logger.warn("Preparing files in reload mode.");
-		switch (mode) {
-		case ENCODED:
-			encoded();
-			break;
-		case DEMANDED:
-			encoded();
-			break;
+	public static void encoded(DataSetPredicate predicate, String...entries) throws IOException {
+		List<String> entriesList = Arrays.asList(entries);
+		
+		for (InequalityHandler handler : helpers.values()) {
+			handler.encoded(predicate, entriesList);
 		}
-		for (InequalityHandler helper : helpers.values()) {
-			helper.close();
-		}
-	}
-	
-	static void encoded() throws IOException {
-		for (InequalityHandler helper : helpers.values()) {
-			helper.encodedAdditional();
-			CombinedCSVFileReader.register(helper);
-		}
-		CombinedCSVFileReader.run();
 	}
 	
 	static List<List<String>> chunks (String string) {
@@ -216,7 +201,7 @@ public class InequalityHelper {
 		
 		final List<DataSetFile> files = new ArrayList<>();
 		
-		final Set<IndexedCSVFile> inequalityFileIndexes = new HashSet<>();
+		final Map<DataSetPredicate, Set<Integer>> columns = new HashMap<>();
 		
 		final Set<String> additionalInequalities = new HashSet<String>();
 		
@@ -232,23 +217,12 @@ public class InequalityHelper {
 			return this;
 		}
 		
-		public InequalityHandler registerInequality(DataSetFile dataSetFile, int index) throws IOException {
-			Predicate predicate = dataSetFile.getPredicate();
-			if (predicate instanceof PositionPredicate)
-				index = ((PositionPredicate) predicate).transformPosition(index);
+		public InequalityHandler registerInequality(DataSetPredicate dataSetPredicate, int index) throws IOException {			
+			if (!columns.containsKey(dataSetPredicate))
+				columns.put(dataSetPredicate, new HashSet<>());
 			
-			for (IndexedCSVFile indexFile : inequalityFileIndexes) {
-				if (dataSetFile.equals(indexFile.getFile())) {
-					indexFile.addIndex(index);
-					return this;
-				}		
-			}
-			inequalityFileIndexes.add(new IndexedCSVFile(dataSetFile.getFile(), index));
+			columns.get(dataSetPredicate).add(index);
 			return this;
-		}
-
-		public Set<IndexedCSVFile> indexedFiles() {
-			return inequalityFileIndexes;
 		}
 
 		void close() throws IOException {
@@ -317,8 +291,16 @@ public class InequalityHelper {
 				encoded(string);
 			}
 		}
+		
+		public void encoded(DataSetPredicate predicate, List<String> entries) throws IOException {
+			if (!columns.containsKey(predicate))
+				return;
+			for (Integer i : columns.get(predicate)) {
+				encoded(entries.get(i));
+			}
+		}
 
-		public void encoded(String string) throws IOException {		
+		void encoded(String string) throws IOException {		
 			int i = 0;
 			for (List<String> chunk : chunks(string)) {
 				characters.addAll(chunk);

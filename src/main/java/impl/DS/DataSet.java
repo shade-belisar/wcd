@@ -18,10 +18,11 @@ import static utility.SC.first_qualifier;
 import static utility.SC.next_qualifier;
 import static utility.SC.last_qualifier;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.crypto.Data;
 
 import org.semanticweb.vlog4j.core.model.api.Predicate;
 import org.semanticweb.vlog4j.core.reasoner.Reasoner;
@@ -41,6 +42,7 @@ import org.wikidata.wdtk.datamodel.interfaces.StatementRank;
 import org.wikidata.wdtk.datamodel.interfaces.Value;
 
 import main.Main;
+import utility.InequalityHelper;
 import utility.OutputUnitVisitor;
 import utility.OutputValueVisitor;
 
@@ -118,21 +120,15 @@ public class DataSet implements EntityDocumentProcessor {
 	}
 	
 	void processStatement(String id, String subject, String predicate, String object) {
-		DataSetFile statementFile = files.get(DataSetPredicate.STATEMENT);
-		
-		DataSetFile firstFile = files.get(DataSetPredicate.FIRST);
-		DataSetFile nextFile = files.get(DataSetPredicate.NEXT);
-		DataSetFile lastFile = files.get(DataSetPredicate.LAST);
-		
-		statementFile.write(id, subject, predicate, object);
+		write(DataSetPredicate.STATEMENT, id, subject, predicate, object);
 		
 		if (lastID == null)
-			firstFile.write(id, subject);
+			write(DataSetPredicate.FIRST, id, subject);
 		else if (!lastSubject.equals(subject)) {
-			lastFile.write(lastID, lastSubject);
-			firstFile.write(id, subject);
+			write(DataSetPredicate.LAST, lastID, lastSubject);
+			write(DataSetPredicate.FIRST, id, subject);
 		} else {
-			nextFile.write(lastID, id);
+			write(DataSetPredicate.NEXT, lastID, id);
 		}
 			
 		lastID = id;
@@ -140,21 +136,15 @@ public class DataSet implements EntityDocumentProcessor {
 	}
 	
 	void processQualifier(String id, String predicate, String object) {
-		DataSetFile qualifierFile = files.get(DataSetPredicate.QUALIFIER);
-
-		DataSetFile firstQualifier = files.get(DataSetPredicate.FIRST_QUALIFIER);
-		DataSetFile nextQualifier = files.get(DataSetPredicate.NEXT_QUALIFIER);
-		DataSetFile lastQualifier = files.get(DataSetPredicate.LAST_QUALIFIER);
-
-		qualifierFile.write(id, predicate, object);
+		write(DataSetPredicate.QUALIFIER, id, predicate, object);
 		
 		if (lastQualifierID == null)
-			firstQualifier.write(id, predicate, object);
+			write(DataSetPredicate.FIRST_QUALIFIER, id, predicate, object);
 		else if (!lastQualifierID.equals(id)) {
-			lastQualifier.write(lastQualifierID, lastQualifierPredicate, lastQualifierValue);
-			firstQualifier.write(id, predicate, object);
+			write(DataSetPredicate.LAST_QUALIFIER, lastQualifierID, lastQualifierPredicate, lastQualifierValue);
+			write(DataSetPredicate.FIRST_QUALIFIER, id, predicate, object);
 		} else {
-			nextQualifier.write(lastQualifierID, lastQualifierPredicate, lastQualifierValue, id, predicate, object);
+			write(DataSetPredicate.NEXT_QUALIFIER, lastQualifierID, lastQualifierPredicate, lastQualifierValue, id, predicate, object);
 		}
 			
 		lastQualifierID = id;
@@ -163,26 +153,31 @@ public class DataSet implements EntityDocumentProcessor {
 	}
 	
 	void processReference(String id, String hash, String predicate, String object) {
-		DataSetFile referenceFile = files.get(DataSetPredicate.REFERENCE);
-		referenceFile.write(id, hash, predicate, object);
+		write(DataSetPredicate.REFERENCE, id, hash, predicate, object);
 	}
 	
-	void processUnit(String object, Value value) {
-		DataSetFile unitsFile = files.get(DataSetPredicate.UNIT);
-		
+	void processUnit(String object, Value value) {		
 		String unit = "";
 		if (value != null) {
 			unit = value.accept(new OutputUnitVisitor());
 		}
 		if (unit != null) {
-			unitsFile.write(object, unit);
+			write(DataSetPredicate.UNIT, object, unit);
 		}
 	}
 	
 	void processRank(String id, StatementRank rank) {
-		DataSetFile ranksFile = files.get(DataSetPredicate.RANK);
-		
-		ranksFile.write(id, rank.toString());
+		write(DataSetPredicate.RANK, id, rank.toString());
+	}
+	
+	void write(DataSetPredicate predicate, String...entries) {
+		DataSetFile file = files.get(predicate);
+		file.write(entries);
+		try {
+			InequalityHelper.encoded(predicate, entries);
+		} catch (IOException e) {
+			logger.error("Could not write inequalities.", e);
+		}
 	}
 	
 	public void processStatementDocument(StatementDocument statementDocument) {

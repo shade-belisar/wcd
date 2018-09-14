@@ -92,7 +92,7 @@ public class AllowedUnitsCC extends ConstraintChecker {
 		}
 		InequalityHelper.getInequalityHelper(this)
 		.registerInequality(units)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.UNIT), 1);
+		.registerInequality(DataSetPredicate.UNIT, 1);
 	}
 
 	@Override

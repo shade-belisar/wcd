@@ -97,8 +97,8 @@ public class SingleValueCC extends ConstraintChecker {
 		}
 		InequalityHelper.getInequalityHelper(this)
 		.registerInequality(values)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 0)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.QUALIFIER), 2);
+		.registerInequality(DataSetPredicate.STATEMENT, 0)
+		.registerInequality(DataSetPredicate.QUALIFIER, 2);
 	}
 	
 	@Override

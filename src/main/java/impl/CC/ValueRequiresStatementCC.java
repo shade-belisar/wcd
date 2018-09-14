@@ -101,8 +101,8 @@ public class ValueRequiresStatementCC extends ConstraintChecker {
 		}
 		InequalityHelper.getInequalityHelper(this)
 		.registerInequality(inequalities)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 2)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.STATEMENT), 3);
+		.registerInequality(DataSetPredicate.STATEMENT, 2)
+		.registerInequality(DataSetPredicate.STATEMENT, 3);
 	}
 
 	@Override

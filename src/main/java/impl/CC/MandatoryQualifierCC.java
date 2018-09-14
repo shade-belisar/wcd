@@ -94,7 +94,7 @@ public class MandatoryQualifierCC extends ConstraintChecker {
 		}
 		InequalityHelper.getInequalityHelper(this)
 		.registerInequality(qualifierProperties)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.QUALIFIER), 1);
+		.registerInequality(DataSetPredicate.QUALIFIER, 1);
 	}
 
 	@Override

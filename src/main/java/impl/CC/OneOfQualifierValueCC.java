@@ -101,7 +101,7 @@ public class OneOfQualifierValueCC extends ConstraintChecker {
 		}
 		InequalityHelper.getInequalityHelper(this)
 		.registerInequality(values)
-		.registerInequality(Main.statementSet.getFile(DataSetPredicate.QUALIFIER), 2);
+		.registerInequality(DataSetPredicate.QUALIFIER, 2);
 	}
 
 	@Override
