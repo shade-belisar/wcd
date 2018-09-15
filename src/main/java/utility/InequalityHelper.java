@@ -177,7 +177,13 @@ public class InequalityHelper {
 		
 		List<Constant> indentifierParts = new ArrayList<Constant>();
 		for (String allowedCharacter : characters) {
-			indentifierParts.add(Expressions.makeConstant(allowedCharacter));
+			try {
+				indentifierParts.add(Expressions.makeConstant(allowedCharacter));
+			} catch (IllegalArgumentException e) {
+				logger.error("Character '" + allowedCharacter + "' is not allowed since it is an empty string.", e);
+				throw e;
+			}
+			
 		}
 		
 		for (int first = 0; first < indentifierParts.size(); first++) {

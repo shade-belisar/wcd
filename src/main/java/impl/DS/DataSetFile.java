@@ -85,7 +85,6 @@ public class DataSetFile {
 			
 		try {
 			writer.printRecord(strings);
-			writer.flush();
 		} catch (IOException e) {
 			logger.error("Could not write line to file " + dataSetFileGz.getAbsolutePath(), e);
 		}
