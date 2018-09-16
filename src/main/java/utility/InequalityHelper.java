@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -244,7 +245,7 @@ public class InequalityHelper {
 			File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
 			FileOutputStream output = new FileOutputStream(uniqueCharacters, false);
 			GZIPOutputStream gzip = new GZIPOutputStream(output);
-			OutputStreamWriter writer = new OutputStreamWriter(gzip);
+			OutputStreamWriter writer = new OutputStreamWriter(gzip, StandardCharsets.UTF_8);
 			for (String character : characters) {
 				writer.write(character + "\n");
 			}		
@@ -271,7 +272,7 @@ public class InequalityHelper {
 			File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
 			FileInputStream input = new FileInputStream(uniqueCharacters);
 			GZIPInputStream gzip = new GZIPInputStream(input);
-			InputStreamReader reader = new InputStreamReader(gzip);
+			InputStreamReader reader = new InputStreamReader(gzip, StandardCharsets.UTF_8);
 			BufferedReader buffer = new BufferedReader(reader);
 			String line;
 			while((line = buffer.readLine()) != null) {
