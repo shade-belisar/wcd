@@ -279,6 +279,7 @@ public class Main {
 		consoleAppender.setLayout(new PatternLayout(pattern));
 		// Change to Level.ERROR for fewer messages:
 		consoleAppender.setThreshold(Level.INFO);
+		consoleAppender.setEncoding("UTF-8");
 
 		consoleAppender.activateOptions();
 		Logger.getRootLogger().addAppender(consoleAppender);
