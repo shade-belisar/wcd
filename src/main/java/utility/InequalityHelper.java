@@ -53,7 +53,18 @@ public class InequalityHelper {
 	final static int chunkSize = 7;
 	
 	final static String NONE = "none";
-	final static String EMPTY = "empty";
+	final static Map<String, String> replacementNames = replacementNameMap();
+	static Map<String, String> replacementNameMap() {
+		Map<String, String> result = new HashMap<>();
+		result.put(" ", "SPACE");
+		result.put(Character.toString((char)12288), "IDEOGRAPHIC_SPACE");
+		result.put(Character.toString((char)8194), "EN_SPACE");
+		result.put(Character.toString((char)8195), "EM_SPACE");
+		result.put(Character.toString((char)8197), "FOUR-PER-EM_SPACE");
+		result.put(Character.toString((char)8201), "THIN SPACE");
+		return result;
+	}
+	
 	
 	final static String X = "x";
 	final static String Y = "y";
@@ -149,8 +160,8 @@ public class InequalityHelper {
 				if (list.size() <= j)
 					break;
 				String toAdd = list.get(j);
-				if (toAdd.equals(" "))
-					toAdd = EMPTY;
+				if (replacementNames.containsKey(toAdd))
+					toAdd = replacementNames.get(toAdd);
 				part.add(toAdd);
 			}
 			fillUp(part);
