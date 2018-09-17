@@ -86,7 +86,7 @@ public class Main {
 		options.addOption("c", "constraints", true, "The constraint to check.");
 		options.addOption("n", "noviolations", false, "Do not compute violations.");
 		options.addOption("s", "stringResults", false, "Output violations as string.");
-		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is encoded.");
+		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is demanded.");
 		options.addOption("r", "reloadInequalities", false, "Use inequality files computed in the last run.");
 		options.addOption("p", "withoutPredicateSorting", false, "Do not sort atoms with sortable predicates. WARNING: This requires re-exctraction (using -e).");
 		options.addOption("r", "withoutConjunctionSorting", false, "Do not sort conjunctions based on constant position.");
@@ -115,7 +115,7 @@ public class Main {
 	    }
 	    
 	    if (!cmd.hasOption("inequalityMode"))
-	    	InequalityHelper.setMode(InequalityHelper.Mode.ENCODED);
+	    	InequalityHelper.setMode(InequalityHelper.Mode.DEMANDED);
 	    else {
 	    	String inequalityMode = cmd.getOptionValue("inequalityMode").toLowerCase();
 	    	switch (inequalityMode) {
