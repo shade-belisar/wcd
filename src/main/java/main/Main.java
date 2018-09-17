@@ -67,6 +67,10 @@ public class Main {
 	
 	static boolean stringResults = false;
 	
+	static boolean predicateSorting = true;
+	
+	static boolean conjunctionSorting = true;
+	
 	public static DataSet statementSet;
 
 	/**
@@ -84,7 +88,8 @@ public class Main {
 		options.addOption("s", "stringResults", false, "Output violations as string.");
 		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is encoded.");
 		options.addOption("r", "reloadInequalities", false, "Use inequality files computed in the last run.");
-		//options.addOption("g", "getConstrainedCount", false, "Only count the constrained triples, do not compute violations.");
+		options.addOption("p", "withoutPredicateSorting", false, "Do not sort atoms with sortable predicates. WARNING: This requires re-exctraction (using -e).");
+		options.addOption("r", "withoutConjunctionSorting", false, "Do not sort conjunctions based on constant position.");
 		
 		CommandLineParser parser = new DefaultParser();
 	    CommandLine cmd;
@@ -130,6 +135,8 @@ public class Main {
 	    extract = cmd.hasOption("extract");
 	    reload = cmd.hasOption("reloadInequalities");
 	    stringResults = cmd.hasOption("stringResults");
+	    predicateSorting = !cmd.hasOption("withoutPredicateSorting");
+	    conjunctionSorting = !cmd.hasOption("withoutConjunctionSorting");
 		
 		configureLogging();
 		
@@ -295,6 +302,14 @@ public class Main {
 	
 	public static boolean getStringResult() {
 		return stringResults;
+	}
+	
+	public static boolean getPredicateSorting() {
+		return predicateSorting;
+	}
+	
+	public static boolean getConjuntionSorting() {
+		return conjunctionSorting;
 	}
 
 }
