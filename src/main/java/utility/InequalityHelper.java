@@ -211,7 +211,13 @@ public class InequalityHelper {
 		}
 		
 		return atoms;
-	}	
+	}
+	
+	public static void close() throws IOException {
+		for (InequalityHandler handler : helpers.values()) {
+			handler.close();
+		}
+	}
 	
 	public static class InequalityHandler {
 		final String FOLDER;
@@ -247,12 +253,6 @@ public class InequalityHelper {
 		}
 
 		void close() throws IOException {
-			for (DataSetFile file : files) {
-				file.close();
-			}
-		}
-
-		void load(Reasoner reasoner) throws ReasonerStateException, IOException {
 			encodedAdditional();
 			
 			File uniqueCharacters = new File(DataSetFile.BASE_LOCATION + FOLDER + UNIQUE_CHARACTERS);
@@ -263,7 +263,13 @@ public class InequalityHelper {
 				writer.write(character + "\n");
 			}		
 			writer.close();
-			
+
+			for (DataSetFile file : files) {
+				file.close();
+			}
+		}
+
+		void load(Reasoner reasoner) throws ReasonerStateException, IOException {			
 			commonLoad(reasoner);
 		}
 		

@@ -246,7 +246,14 @@ public class Main {
 				logger.error("Error closing the data set files.", e);
 				return;
 			}
-		}	
+
+			try {
+				InequalityHelper.close();
+			} catch (IOException e) {
+				logger.error("Error closing the inequality set files.", e);
+				return;
+			}
+		}
 
 		if (!cmd.hasOption("noviolations")) {
 			try {
