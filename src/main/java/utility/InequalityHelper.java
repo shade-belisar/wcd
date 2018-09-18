@@ -43,10 +43,10 @@ public class InequalityHelper {
 	
 	public enum Mode {
 		ENCODED,
-		DEMANDED
+		ON_DEMAND
 	}
 
-	static Mode mode = Mode.DEMANDED;
+	static Mode mode = Mode.ON_DEMAND;
 	
 	static boolean demand = false;
 	
@@ -104,7 +104,7 @@ public class InequalityHelper {
 		case ENCODED:
 			demand = false;
 			break;
-		case DEMANDED:
+		case ON_DEMAND:
 			demand = true;
 			break;
 		}
@@ -269,7 +269,7 @@ public class InequalityHelper {
 			boolean demand = false;
 			
 			switch (mode) {
-			case DEMANDED:
+			case ON_DEMAND:
 				demand = true;
 			default:
 			}

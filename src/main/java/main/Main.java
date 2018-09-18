@@ -86,7 +86,7 @@ public class Main {
 		options.addOption("c", "constraints", true, "The constraint to check.");
 		options.addOption("n", "noviolations", false, "Do not compute violations.");
 		options.addOption("s", "stringResults", false, "Output violations as string.");
-		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is demanded.");
+		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is on-demand.");
 		options.addOption("r", "reloadInequalities", false, "Use inequality files computed in the last run.");
 		options.addOption("p", "withoutPredicateSorting", false, "Do not sort atoms with sortable predicates. WARNING: This requires re-exctraction (using -e).");
 		options.addOption("r", "withoutConjunctionSorting", false, "Do not sort conjunctions based on constant position.");
@@ -115,15 +115,15 @@ public class Main {
 	    }
 	    
 	    if (!cmd.hasOption("inequalityMode"))
-	    	InequalityHelper.setMode(InequalityHelper.Mode.DEMANDED);
+	    	InequalityHelper.setMode(InequalityHelper.Mode.ON_DEMAND);
 	    else {
 	    	String inequalityMode = cmd.getOptionValue("inequalityMode").toLowerCase();
 	    	switch (inequalityMode) {
 			case "encoded":
 				InequalityHelper.setMode(InequalityHelper.Mode.ENCODED);
 				break;
-			case "demanded":
-				InequalityHelper.setMode(InequalityHelper.Mode.DEMANDED);
+			case "on-demand":
+				InequalityHelper.setMode(InequalityHelper.Mode.ON_DEMAND);
 				break;
 			default:
 				System.out.println("Inequality mode " + inequalityMode + " is unknown.");
