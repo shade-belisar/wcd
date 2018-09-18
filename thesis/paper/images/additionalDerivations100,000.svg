@@ -60,19 +60,16 @@
  <path fill="rgb(0,132,209)" stroke="none" d="M 14963,5403 L 15440,5403 15440,2486 14963,2486 14963,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 14009,5403 L 14486,5403 14486,2983 14009,2983 14009,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 13054,5403 L 13531,5403 13531,1410 13054,1410 13054,5403 Z"/>
- <path fill="none" stroke="rgb(0,69,134)" stroke-width="100" stroke-linejoin="round" d="M 13054,5403 L 13531,5403 13531,1410 13054,1410 13054,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 12100,5403 L 12577,5403 12577,2746 12100,2746 12100,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 11146,5403 L 11623,5403 11623,2453 11146,2453 11146,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 10192,5403 L 10669,5403 10669,3135 10192,3135 10192,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 9237,5403 L 9715,5403 9715,2385 9237,2385 9237,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 8283,5403 L 8760,5403 8760,866 8283,866 8283,5403 Z"/>
- <path fill="none" stroke="rgb(0,69,134)" stroke-width="100" stroke-linejoin="round" d="M 8283,5403 L 8760,5403 8760,866 8283,866 8283,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 7330,5403 L 7807,5403 7807,2493 7330,2493 7330,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 6376,5403 L 6853,5403 6853,2093 6376,2093 6376,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 5422,5403 L 5899,5403 5899,2343 5422,2343 5422,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 4467,5403 L 4944,5403 4944,2512 4467,2512 4467,5403 Z"/>
  <path fill="rgb(0,132,209)" stroke="none" d="M 3513,5403 L 3990,5403 3990,1521 3513,1521 3513,5403 Z"/>
- <path fill="none" stroke="rgb(0,69,134)" stroke-width="100" stroke-linejoin="round" d="M 3513,5403 L 3990,5403 3990,1521 3513,1521 3513,5403 Z"/>
  <text class="TextShape" transform="translate(2226,7483) rotate(-44.9) translate(-2226,-7483)"><tspan class="TextParagraph" font-family="Liberation Sans" font-size="353px" font-weight="400"><tspan class="TextPosition" x="2226" y="7483"><tspan fill="rgb(0,0,0)" stroke="none">Distinct values</tspan></tspan></tspan></text>
  <text class="TextShape" transform="translate(3348,7314) rotate(-44.9) translate(-3348,-7314)"><tspan class="TextParagraph" font-family="Liberation Sans" font-size="353px" font-weight="400"><tspan class="TextPosition" x="3348" y="7314"><tspan fill="rgb(0,0,0)" stroke="none">Allowed units</tspan></tspan></tspan></text>
  <text class="TextShape" transform="translate(3853,7762) rotate(-44.9) translate(-3853,-7762)"><tspan class="TextParagraph" font-family="Liberation Sans" font-size="353px" font-weight="400"><tspan class="TextPosition" x="3853" y="7762"><tspan fill="rgb(0,0,0)" stroke="none">Allowed qualifiers</tspan></tspan></tspan></text>
