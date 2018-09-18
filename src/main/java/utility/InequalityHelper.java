@@ -61,7 +61,9 @@ public class InequalityHelper {
 		result.put(Character.toString((char)8194), "EN_SPACE");
 		result.put(Character.toString((char)8195), "EM_SPACE");
 		result.put(Character.toString((char)8197), "FOUR-PER-EM_SPACE");
-		result.put(Character.toString((char)8201), "THIN SPACE");
+		result.put(Character.toString((char)8201), "THIN_SPACE");
+		result.put(Character.toString((char)8200), "PUNCTUATION_SPACE");
+		result.put(Character.toString((char)8202), "HAIR_SPACE");
 		return result;
 	}
 	
@@ -133,10 +135,10 @@ public class InequalityHelper {
 			return;
 		InequalityHandler helper = helpers.get(checker);
 		Reasoner reasoner = checker.getReasoner();
-		if (Main.getReload())
-			helper.reload(reasoner);
-		else
+		if (Main.getExtract())
 			helper.load(reasoner);
+		else
+			helper.reload(reasoner);
 			
 	}
 	
@@ -343,7 +345,7 @@ public class InequalityHelper {
 			int chunkAdress = chunk * chunkSize;
 			String LETTER_I = "letter" + chunkAdress;
 			Predicate letter_i = Expressions.makePredicate(LETTER_I, chunkSize + 1);
-			DataSetFile file = new DataSetFile(FOLDER, LETTER_I, letter_i, !Main.getReload());
+			DataSetFile file = new DataSetFile(FOLDER, LETTER_I, letter_i);
 			files.add(file);
 			
 			List<Atom> inequalities = new ArrayList<>();

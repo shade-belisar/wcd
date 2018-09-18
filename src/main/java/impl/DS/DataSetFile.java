@@ -41,18 +41,14 @@ public class DataSetFile {
 	boolean didExist = false;
 	
 	public DataSetFile(String name, Predicate predicate) throws IOException {
-		init("", name, predicate, Main.getExtract());
+		init("", name, predicate);
 	}
 	
-	public DataSetFile(String name, Predicate predicate, boolean extract) throws IOException {
-		init("", name, predicate, extract);
+	public DataSetFile(String folder, String name, Predicate predicate) throws IOException {
+		init(folder, name, predicate);
 	}
 	
-	public DataSetFile(String folder, String name, Predicate predicate, boolean extract) throws IOException {
-		init(folder, name, predicate, extract);
-	}
-	
-	public void init(String folder, String name, Predicate predicate_, boolean extract) throws IOException {
+	public void init(String folder, String name, Predicate predicate_) throws IOException {
 		if (!folder.equals("") && !folder.endsWith("/"))
 			folder += folder + "/";			
 			
@@ -65,7 +61,7 @@ public class DataSetFile {
 		
 		closed = false;
 		
-		if (extract)
+		if (Main.getExtract())
 			writer = new CSVPrinter(new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(dataSetFileGz, false)), StandardCharsets.UTF_8)), CSVFormat.DEFAULT);
 	}
 	

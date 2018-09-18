@@ -63,8 +63,6 @@ public class Main {
 	
 	static boolean extract = false;
 	
-	static boolean reload = false;
-	
 	static boolean stringResults = false;
 	
 	static boolean predicateSorting = true;
@@ -87,7 +85,6 @@ public class Main {
 		options.addOption("n", "noviolations", false, "Do not compute violations.");
 		options.addOption("s", "stringResults", false, "Output violations as string.");
 		options.addOption("i", "inequalityMode", true, "Choose the inequality mode. Default is on-demand.");
-		options.addOption("r", "reloadInequalities", false, "Use inequality files computed in the last run.");
 		options.addOption("p", "withoutPredicateSorting", false, "Do not sort atoms with sortable predicates. WARNING: This requires re-exctraction (using -e).");
 		options.addOption("r", "withoutConjunctionSorting", false, "Do not sort conjunctions based on constant position.");
 		
@@ -133,7 +130,6 @@ public class Main {
 	    	
 	    
 	    extract = cmd.hasOption("extract");
-	    reload = cmd.hasOption("reloadInequalities");
 	    stringResults = cmd.hasOption("stringResults");
 	    predicateSorting = !cmd.hasOption("withoutPredicateSorting");
 	    conjunctionSorting = !cmd.hasOption("withoutConjunctionSorting");
@@ -294,10 +290,6 @@ public class Main {
 	
 	public static boolean getExtract() {
 		return extract;
-	}
-	
-	public static boolean getReload() {
-		return reload;
 	}
 	
 	public static boolean getStringResult() {
