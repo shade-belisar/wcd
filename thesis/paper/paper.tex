@@ -39,10 +39,19 @@
 
 \begin{document}
 \chapter{Introduction}
+Wikidata, the knowledge base sister project of Wikipedia, has grown to be one of the most used open data resources available on the web. Wikidata is closely integrated with Wikipedia, where it links pages across languages and provides language-independent content (such as birth dates or population figures). Additionally, several services outside of the Wikimedia make use of Wikidata.  Probably the best-known example is the knowledge graph by Google, shown in information boxes to the right or top of search results on their main page. These facts are sourced from a variety of databases, Wikidata among them. Openstreetmap links objects with a physical presence to its Wikidata pages (and vice versa). \todo{more examples, if they can be found}
 
+As of September 2018, Wikidata contains more than 50 million pages with over 500 million statements. More than 34.000 contributors worked on Wikidata in August 2018 alone, and more than 18.4 million facts where edited or created. Multiple open data collections are linked through Wikidata, such as VIAF, DOI, or BBC Programmes. More on the structure of Wikidata is explained in section \ref{sec_wikidata}.
 
-\chapter{Preliminaries}
-\section{Wikidata}
+Because of Wikidatas widespread usage and frequent editing, it is necessary to ensure the correctness and quality of the data. Mechanisms to support data quality are, among others, referencing the sources of statements, cross-checking by the community, and constraints.
+
+Constraints limit how the content of Wikidata may related to itself. Some facts can be in conflict with others, meaning one of the two is in all likelihood wrong. Other facts can require certain facts to be stated in the database as well, thus pointing to data that may be missing. Constraints are used to ensure data correctness as well as clarify the data structure in cases where it might be unclear how facts should be described. A detailed explanation of these constrains can be found
+in chapter \ref{cha_property_constraints}.
+
+Since Wikidata is a very large and constantly changing resource, it is necessary to find ways to quickly and efficiently determine violations of these constraints. One solution offering itself are rule engines that allow conclusions about a given set of facts (the data in Wikidata) using specific rules (the constraints). To lay the foundation for this work, chapter \ref{cha_preliminaries} will explain the basics of Wikidata and Datalog. The property constrains are explained in general in chapter \ref{cha_property_constraints} and each individually in chapter \ref{cha_wikidata_constraints_explained}. In this work a Datalog-engine, VLog, was chosen because its column-based storage mechanism should be particularly suited to Wikidata. The evaluation of this implementation is found in chaper \ref{cha_evaluation}.
+
+\chapter{Preliminaries}\label{cha_preliminaries}
+\section{Wikidata}\label{sec_wikidata}
 Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). Triples store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P and will be referred to as Q- and P-IDs, respectively. In the future there will be a third entity type, lexeme. This is already incorporated into some constraints, but as of September 2018 they are not deployed. A value is one of several data types shown in Table \ref{tab_datatypes}, although it is also possible to use \emph{none} or \emph{some} as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
 
 \begin{table}[H]
@@ -106,7 +115,7 @@ Finally the transitive closure of this relation can be derived with
 \[\text{isInTaxon\_IDB}(X, Y) \leftarrow \text{isInTaxon\_IDB}(X, Z) \wedge \text{isInTaxon\_IDB}(Z, Y)\]
 \end{example}
 
-\chapter{Property Constraints}
+\chapter{Property Constraints}\label{cha_property_constraints}
 
 To improve the data quality, to help editors avoid common mistakes and to clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are, however, not firm rules and exceptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. that only certain values are allowed, or more complex requirements on connected parts of the data, e.g. that the value of a statement with this property should have certain statements. In Table \ref{tab_property_constraints} you can find the existing property constraints as of September 2018. Afterwards the constraints will be explained in detail and their modelling given. For constraint that cannot be modelled, reasoning for this assessment is included.
 
@@ -1032,7 +1041,7 @@ A similar situation is the \emph{no bounds} constraint (Q51723761), which requir
 
 And finally \emph{commons link} constraint (Q21510852) requires that values for a property should be valid links to to Wikimedia Commons. This validity cannot be tested from within datalog since there is no way to query the web for information.
 
-\chapter{Evaluation}
+\chapter{Evaluation}\label{cha_evaluation}
 
 To evaluate the rules described in chapter \ref{cha_wikidata_constraints_explained} they have been implemented for VLog4J \cite{vlog4j}. VLog4J is a java library base on VLog \cite{vlog}, a Datalog engine utilising a column-based memory layout to allow processing of large datasets on commodity hardware. It was first published in 2016\cite{UJK2016} but has been actively developed since then.
 
@@ -1137,6 +1146,25 @@ The \emph{single value} constraint, like the \emph{item requires statement} cons
 
 \subsection{Possible adaptations}
 Since the problematic performance of \emph{item requires statement} and \emph{single value} are not visible in \emph{value requires statement} and \emph{single best value}, which are very similar in their rule modelling, a possible adaptation would be to not evaluate all constrained properties for these constraints in bulk but split them into smaller sets, evaluating each set individually to combat the problematic scaling of the require pattern. The precomputed datasets could be kept, meaning only the reasoning step would have to be repeated.
+
+\subsection{Adaptations to VLog}
+
+\subsubsection{Sorting facts for column-based storage}
+VLog uses a column-based storage format where the first column is fully sorted and all following columns are sorted w.r.t. the preceding column. These columns are then run-length encoded. To minimize memory requirements and maximize access speed, predicates should be sorted in such a way that each entry has a smaller number of unique constants than the next entry.
+
+\begin{example}
+The predicate \emph{statement\_EDB} lists the \emph{statement ID}, \emph{entity ID}, \emph{property ID} and \emph{value}. To optimize this for VLog, a new order must be created. \emph{property ID} should be the first entry, because there are only \todo{number of properties and link} different properties on Wikidata as of September 2018. The \emph{statement ID} needs to be moved to the last position since it is unique for all statements, meaning for any data source with \(n\) statements there would be \(n\) unique \emph{statement IDs}. Finally \emph{entity ID} should be before \emph{value}, because every \emph{entity ID} could also be a \emph{value}, but value can take additional string values.
+
+The final, optimized order is then: \emph{property ID}, \emph{entity ID}, \emph{value}, \emph{statement ID}.
+\end{example}
+
+This order is, however, not easily readable and, if taken as presented, would likely cause implementation errors because the different positions are confused for each other. To prevent this the datasets imported from Wikidata and created during preprocessing as well as the rules outlined in chapter \ref{cha_wikidata_constraints_explained} are sorted afterwards. Thus the rules can be kept in a readable form while still optimizing for VLog.
+
+\subsubsection{Sorting conjunctions for left-to-right evaluation}
+Conjunctions in VLog are evaluated from left to right, meaning the engine computes the matches of the first atom and, based on those findings, proceeds with the next atom. The rules as presented are not optimal regarding this process. Ideally, atoms should be sorted by the size of the intermediate results they incur. 
+
+\subsubsection{Results}
+
 
 \chapter{Conclusion}
 
