@@ -7,6 +7,7 @@ import static utility.SC.s;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,8 +32,8 @@ public class AllowedQualifiersPCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	public List<Rule> rules() { 	
-		List<Rule> rules = new ArrayList<Rule>();
+	public Set<Rule> rules() {
+		Set<Rule> rules = new HashSet<Rule>();
 		
 		// qualifierEDB(S, Q, O)
 		Atom qualfierEDB_SQO = Expressions.makeAtom(qualifierEDB, s, q, o);

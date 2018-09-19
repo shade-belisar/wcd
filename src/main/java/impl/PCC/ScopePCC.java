@@ -9,6 +9,7 @@ import static utility.SC.violation_statement_query;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,8 +35,8 @@ public class ScopePCC extends PropertyConstraintChecker {
 		allowedScopes = qualifiers_;
 	}
 	
-	public List<Rule> rules() {		
-		List<Rule> rules = new ArrayList<Rule>();
+	public Set<Rule> rules() {
+		Set<Rule> rules = new HashSet<Rule>();
 
 		// violation_statement(S, I, propertyConstant, V) :- statementEDB(S, I, propertyConstant, V)
 		Rule notStatement = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV);

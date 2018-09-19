@@ -13,6 +13,7 @@ import static utility.SC.v;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -37,8 +38,8 @@ public class MandatoryQualifierPCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	public List<Rule> rules() {
-		List<Rule> rules = new ArrayList<Rule>();
+	public Set<Rule> rules() {
+		Set<Rule> rules = new HashSet<Rule>();
 		
 		// statementEDB(S, I, propertyConstant, C)
 		Atom statementEDB_SIpC = Expressions.makeAtom(statementEDB, s, i, propertyConstant, c);

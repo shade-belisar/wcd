@@ -16,6 +16,7 @@ public class SC {
 	public final static String O = "o";
 	public final static String I = "i";
 	public final static String X = "x";
+	public final static String Y = "y";
 	public final static String P = "p";
 	public final static String Q = "q";
 	public final static String V = "v";
@@ -53,8 +54,7 @@ public class SC {
 	public final static String UNIT = "unit";
 	public final static String RANK = "rank";
 	
-	public final static String DOES_NOT_HAVE = "does_not_have";
-	public final static String HAS_SAME = "has_same";	
+	public final static String SAME_OR_NON_EXISTENT = "same_or_non_existent";
 	
 	public final static Variable h = Expressions.makeVariable(H);
 	public final static Variable g = Expressions.makeVariable(G);
@@ -63,6 +63,7 @@ public class SC {
 	public final static Variable o = Expressions.makeVariable(O);
 	public final static Variable i = Expressions.makeVariable(I);
 	public final static Variable x = Expressions.makeVariable(X);
+	public final static Variable y = Expressions.makeVariable(Y);
 	public final static Variable p = Expressions.makeVariable(P);
 	public final static Variable q = Expressions.makeVariable(Q);
 	public final static Variable v = Expressions.makeVariable(V);
@@ -120,10 +121,8 @@ public class SC {
 	// id, rank -> rank, id
 	public final static Predicate rank = new PositionPredicate(RANK, 2, 1, 0);
 	
-	// id, property -> property, id
-	public final static Predicate does_not_have = new PositionPredicate(DOES_NOT_HAVE, 2, 1, 0);
-	// id1, id2, property -> property, id1, id2
-	public final static Predicate has_same = new PositionPredicate(HAS_SAME, 3, 1, 2, 0);
+	// id1, id2, qualifier -> qualifier, id1, id2
+	public final static Predicate same_or_non_existent = new PositionPredicate(SAME_OR_NON_EXISTENT, 3, 1, 2, 0);
 	
 	public final static Atom violation_statement_query = Expressions.makeAtom(violation_statement, s, i, p, v);
 	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);

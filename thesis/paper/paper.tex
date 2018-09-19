@@ -892,44 +892,45 @@ For qualifiers and references, there is no ID whose inequality could be checked.
 \end{equation*}
 
 \subsubsection{With separators}\label{subsubsec_single_value_with_separators}
-To find all violations under \emph{separators}, a number of things have to be considered. Only statements are eligible, since qualifiers cannot have further qualifiers. The order of qualifiers on constrained statements needs to be provided as well since qualifier non-existence is relevant. The pattern needs to be applied for every \emph{separator}, meaning the conjunction is
+To find all violations under \emph{separators}, a number of things have to be considered. Only statements are eligible, since qualifiers cannot have further qualifiers. The order of qualifiers on constrained statements needs to be provided as well since qualifier non-existence is relevant. The require qualifier pattern needs to be applied to the qualifiers of constrained statements. The conjunction c is created for every \emph{separator} and the pattern applied.
 \begin{equation*}
 \begin{split}
-c = \text{statement\_EDB}&(S, I, \text{propertyConstant}, C) \wedge{} \\
-\text{qualifier\_EDB}&(S, P, V) \wedge{} \\
-\text{unequal}&(P, \text{separatorConstant})
+c = &\text{statement\_EDB}(S, I, \text{propertyConstant}, C) \wedge{} \\
+&\text{qualifier\_EDB}(S, P, V) \wedge{} \\
+&\text{unequal}(P, \text{separatorConstant})
 \end{split}
 \end{equation*}
-for each separator in \(S\).\\
 
 With qualifier non-existence established, the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all values of \emph{separator} qualifiers are equal or no such \emph{separator} qualifier exist. To determine this, a number of rules have to be introduced which are based on two sets the \emph{separators} are split into: \(X\) contains the \emph{separators} that exist as qualifiers and \(Y\) the \emph{separators} that do not. The following rule is then created for every possible split of the \emph{separators} into two such sets. Note that \(\text{predicate}(\{X\})\) denotes \(\bigwedge_{x \in X} \text{predicate}(x)\) as introduced in Section \ref{subsec_3_allowed_units}.
 \begin{equation*}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
-&\text{statement\_EDB}(O, I, \text{propertyConstant}, C) \wedge{} \\
-&\text{unequal}(S, O) \wedge{} \\
-&\text{has\_same}(S, O, \{X\}) \wedge{} \\
-&\text{does\_not\_have}(S, \{Y\}) \wedge{} \\
-&\text{does\_not\_have}(O, \{Y\})
-\end{split}
-\end{equation*}
-The predicate does\_not\_have\([2]\) linking a statement ID to the separator it does not have via 
-\begin{equation*}
-\begin{split}
-\text{does\_not\_have}(S, R) \leftarrow &\text{statement\_EDB}(S, I, \text{propertyConstant}, C) \wedge{} \\
-&\text{last\_qualifier}(S, P, V) \wedge \text{require}(S, P, V, \text{propertyConstant}, R)
-\end{split}
-\end{equation*}
-and the predicate has\_same[2] linking two statement IDs to the separator for which the values are the same via
-\begin{equation*}
-\begin{split}
-\text{has\_same}(S, O, Q) \leftarrow &\text{statement\_EDB}(S, I, \text{propertyConstant}, C) \wedge{} \\
 &\text{statement\_EDB}(O, I, \text{propertyConstant}, X) \wedge{} \\
-&\text{qualifier\_EDB}(S, Q, V) \wedge \text{qualifier\_EDB}(O, Q, V)
+&\text{unequal}(S, O) \wedge{} \\
+&\text{same\_or\_non\_existent}(S, O, \{Q\})
 \end{split}
 \end{equation*}
-are introduced for brevity.
+\begin{equation*}
+\begin{split}
+\text{same\_or\_non\_existent}&(S, O, Q) \leftarrow \\
+&\text{statement\_EDB}(S, I, \text{propertyConstant}, X) \wedge{} \\
+&\text{statement\_EDB}(O, I, \text{propertyConstant}, Y) \wedge{} \\
+&\text{qualifier\_EDB}(S, Q, V) \wedge{} \\
+&\text{qualifier\_EDB}(O, Q, V)
+\end{split}
+\end{equation*}
+\begin{equation*}
+\begin{split}
+\text{same\_or\_non\_existent}&(S, O, Q) \leftarrow{} \\
+&\text{statement\_EDB}(S, I, \text{propertyConstant}, X) \wedge{} \\
+&\text{statement\_EDB}(O, I, \text{propertyConstant}, Y) \wedge{} \\
+&\text{last\_qualifier}(S, P, V) \wedge{} \\
+&\text{require}(S, P, V, \text{propertyConstant}, Q) \wedge{} \\
+&\text{last\_qualifier}(O, R, C) \wedge{} \\
+&\text{require}(O, R, C, \text{propertyConstant}, Q)
+\end{split}
+\end{equation*}
 
 \subsection{Mandatory qualifier (Q21510856)}
 \paragraph{Constraint}

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
@@ -30,8 +31,8 @@ public class AllowedUnitsPCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	public List<Rule> rules() {
-		List<Rule> rules = new ArrayList<Rule>();
+	public Set<Rule> rules() {
+		Set<Rule> rules = new HashSet<Rule>();
 
 		List<Atom> unequal_conjunction = new ArrayList<Atom>();
 		// unit(V, U)

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.semanticweb.vlog4j.core.model.api.Atom;
@@ -68,5 +69,5 @@ public abstract class PropertyConstraintChecker {
 		referenceEDB_SHpV = Expressions.makeAtom(referenceEDB, s, h, propertyConstant, v);
 	}
 	
-	public abstract List<Rule> rules();
+	public abstract Set<Rule> rules();
 }

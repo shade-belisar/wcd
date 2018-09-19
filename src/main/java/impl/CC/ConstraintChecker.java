@@ -138,7 +138,7 @@ public abstract class ConstraintChecker {
 		prepareFacts();
 		logger.info("Loaded basic data sets.");
 		
-		List<Rule> rulesToAdd = new ArrayList<>();
+		Set<Rule> rulesToAdd = new HashSet<>();
 		InequalityHelper.load(this);
 		logger.info("Loaded inequalities.");
 		
@@ -147,7 +147,7 @@ public abstract class ConstraintChecker {
 		}
 		logger.info("Created " + rulesToAdd.size() + " rules.");
 		if (InequalityHelper.getMode().equals(InequalityHelper.Mode.ON_DEMAND)) {
-			List<Rule> demandRules = addRequireInequality(rulesToAdd);
+			Set<Rule> demandRules = addRequireInequality(rulesToAdd);
 			rulesToAdd.addAll(demandRules);
 			logger.info("Created " + demandRules.size() + " additional on-demand-rules.");
 		}
@@ -160,8 +160,8 @@ public abstract class ConstraintChecker {
 		reasoner.close();
 	}
 	
-	List<Rule> addRequireInequality(List<Rule> rules) {
-		List<Rule> result = new ArrayList<Rule>();
+	Set<Rule> addRequireInequality(Set<Rule> rules) {
+		Set<Rule> result = new HashSet<Rule>();
 		for (Rule rule : rules) {
 			List<Atom> unequalAtoms = new ArrayList<Atom>();
 			List<Atom> otherAtoms = new ArrayList<Atom>();
@@ -197,9 +197,9 @@ public abstract class ConstraintChecker {
 		return result;
 	}
 	
-	protected void prepareAndExecuteQueries(List<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
+	protected void prepareAndExecuteQueries(Set<Rule> rules, Set<Atom> queries) throws IOException, PrepareQueriesException {
 		try {
-			reasoner.addRules(rules);
+			reasoner.addRules(rules.toArray(new Rule[rules.size()]));
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to add rules in the wrong state for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);

@@ -14,6 +14,7 @@ import static utility.SC.x;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -36,8 +37,8 @@ public class InversePCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	public List<Rule> rules() {		
-		List<Rule> rules = new ArrayList<Rule>();
+	public Set<Rule> rules() {
+		Set<Rule> rules = new HashSet<Rule>();
 		
 		// statementEDB(Q, R, propertyConstant, I)
 		Atom statementEDB_QRpI = Expressions.makeAtom(statementEDB, q, r, propertyConstant, i);

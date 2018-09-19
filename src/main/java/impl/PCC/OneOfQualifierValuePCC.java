@@ -6,6 +6,7 @@ import static utility.SC.s;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,8 +32,8 @@ public class OneOfQualifierValuePCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	public List<Rule> rules() {  	
-		List<Rule> rules = new ArrayList<Rule>();
+	public Set<Rule> rules() {
+		Set<Rule> rules = new HashSet<Rule>();
 		
 		for (Map.Entry<String, Set<String>> entry : qualifiersAndValues.entrySet()) {
 			Constant qualifierPropertyConstant = Utility.makeConstant(entry.getKey());

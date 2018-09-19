@@ -1,8 +1,6 @@
 package impl.PCC;
 
 import static utility.SC.c;
-import static utility.SC.does_not_have;
-import static utility.SC.has_same;
 import static utility.SC.g;
 import static utility.SC.i;
 import static utility.SC.last_qualifier;
@@ -14,12 +12,15 @@ import static utility.SC.r;
 import static utility.SC.referenceEDB;
 import static utility.SC.require_qualifier;
 import static utility.SC.s;
+import static utility.SC.same_or_non_existent;
 import static utility.SC.statementEDB;
 import static utility.SC.v;
 import static utility.SC.x;
+import static utility.SC.y;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,8 +29,6 @@ import org.semanticweb.vlog4j.core.model.api.Atom;
 import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
-
-import com.google.common.collect.Sets;
 
 import utility.InequalityHelper;
 import utility.StatementNonExistenceHelper;
@@ -46,8 +45,8 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 	}
 
 	@Override
-	public List<Rule> rules() { 	
-		List<Rule> rules = new ArrayList<Rule>();
+	public Set<Rule> rules() {
+		Set<Rule> rules = new HashSet<Rule>();
 		
 		// statementEDB(O, I, propertyConstant, X)
 		Atom statementEDB_OIpX = Expressions.makeAtom(statementEDB, o, i, propertyConstant, x);
@@ -88,7 +87,7 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			// 	unequal(V, X)
 			Rule violationReference = Expressions.makeRule(violation_reference_SHpV, referenceEDB_SHpV, referenceEDB_SGpX, unequal_VX);
 			rules.add(violationReference);
-		} else {
+		} else {			
 			// statementEDB(S, I, propertyConstant, C)
 			Atom statementEDB_SIpC = Expressions.makeAtom(statementEDB, s, i, propertyConstant, c);
 			
@@ -104,79 +103,66 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 				rules.addAll(StatementNonExistenceHelper.initRequireQualifier(propertyConstant, requiredPropertyConstant, statementEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
 			}
 			
-			// does_not_have(S, R)
-			Atom does_not_have_SR = Expressions.makeAtom(does_not_have, s, r);
+			// same_or_non_existent(S, O, Q)
+			Atom same_or_non_existent_SOQ = Expressions.makeAtom(same_or_non_existent, s, o, q);
 			
-			// last_qualifier(S, P, V)
-			Atom last_qualifier_SPV = Expressions.makeAtom(last_qualifier, s, p, v);
+			// statementEDB(S, I, propertyConstant, X)
+			Atom statementEDB_SIpX = Expressions.makeAtom(statementEDB, s, i, propertyConstant, x);
 			
-			// require_qualifier(S, P, V, propertyConstant, R)
-			Atom require_qualifier_SPVpR = Expressions.makeAtom(require_qualifier, s, p, v, propertyConstant, r);
-			
-			// does_not_have(S, R) :-
-			//	statementEDB(S, I, propertyConstant, C),
-			//	last_qualifier(S, P, V),
-			//	require_qualifier(S, P, V, propertyConstant, R)
-			Rule doesNotHave = Expressions.makeRule(does_not_have_SR, statementEDB_SIpC, last_qualifier_SPV, require_qualifier_SPVpR);
-			rules.add(doesNotHave);
-			
-			// has_same(S, O, Q)
-			Atom has_same_SOQ = Expressions.makeAtom(has_same, s, o, q);
-			
+			// statementEDB(O, I, propertyConstant, Y)
+			Atom statementEDB_OIpY = Expressions.makeAtom(statementEDB, o, i, propertyConstant, y);
+						
 			// qualifierEDB(S, Q, V)
 			Atom qualifierEDB_SQV = Expressions.makeAtom(qualifierEDB, s, q, v);
 			
 			// qualifierEDB(O, Q, V)
 			Atom qualifierEDB_OQV = Expressions.makeAtom(qualifierEDB, o, q, v);
 			
-			// has_same(S, O, Q) :-
-			//	statementEDB(S, I, propertyConstant, C),
-			//	statementEDB(O, I, propertyConstant, X),
-			//	qualifierEDB(S, Q, V),
-			//	qualifierEDB(O, Q, V
-			Rule hasSame = Expressions.makeRule(has_same_SOQ, statementEDB_SIpC, statementEDB_OIpX, qualifierEDB_SQV, qualifierEDB_OQV);
-			rules.add(hasSame);
+			// same_or_non_existent(S, O, Q) :-
+			//	statementEDB(S, I, propertyConstant, X),
+			//	statementEDB(O, I, propertyConstant, Y),
+			//	qualifierEDB(S, Q, V), qualifierEDB(O, Q, V)
+			Rule same = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, qualifierEDB_SQV, qualifierEDB_OQV);
+			rules.add(same);
 			
-			// statementEDB(O, I, propertyConstant, C)
-			Atom statementEDB_OIpC = Expressions.makeAtom(statementEDB, o, i, propertyConstant, c);
+			// last_qualifier(S, P, V)
+			Atom last_qualifier_SPV = Expressions.makeAtom(last_qualifier, s, p, v);
 			
-			for (Set<String> has : Sets.powerSet(separators)) {
-				Set<String> hasNot = Sets.difference(separators, has);
-				
-				List<Atom> conjunction = new ArrayList<>();
-				conjunction.add(statementEDB_SIpV);
-				conjunction.add(statementEDB_OIpC);
-				conjunction.add(unequal_SO);
-				for (String hasQualifier: has) {
-					Constant hasQualifierConstant = Expressions.makeConstant(hasQualifier);
-					
-					// has_same(S, O, hasQualifierConstant)
-					Atom has_same_SOh = Expressions.makeAtom(has_same, s, o, hasQualifierConstant);
-					conjunction.add(has_same_SOh);
-				}
-				for (String hasNotQualifier: hasNot) {
-					Constant hasNotQualifierConstant = Expressions.makeConstant(hasNotQualifier);
-					
-					// does_not_have(S, hasNotQualifierConstant)
-					Atom does_not_have_Sh = Expressions.makeAtom(does_not_have, s, hasNotQualifierConstant);
-					conjunction.add(does_not_have_Sh);
-					
-					// does_not_have(O, hasNotQualifierConstant)
-					Atom does_not_have_Oh = Expressions.makeAtom(does_not_have, s, hasNotQualifierConstant);
-					conjunction.add(does_not_have_Oh);
-				}
-				
-				// violation_statement(S, I, propertyConstant, V :-
-				//	statementEDB(S, I, propertyConstant, V),
-				//	statementEDB(O, I, propertyConstant, C),
-				//	unequal(S, O),
-				//	has_same(S, O, {X}),
-				//	does_not_have(S, {Y}),
-				//	does_not_have(O, {Y})
-				Rule violation = Expressions.makeRule(violation_statement_SIpV, conjunction.toArray(new Atom[conjunction.size()]));
-				rules.add(violation);
+			// last_qualifier(O, R, C)
+			Atom last_qualifier_ORC = Expressions.makeAtom(last_qualifier, o, r, c);
+			
+			// require_qualifier(S, P, V, propertyConstant, Q)
+			Atom require_SPVpQ = Expressions.makeAtom(require_qualifier, s, p, v, propertyConstant, q);
+			
+			// require_qualifier(O, R, C, propertyConstant, Q)
+			Atom require_ORCpQ = Expressions.makeAtom(require_qualifier, o, r, c, propertyConstant, q);
+			
+			// same_or_non_existent(S, O, Q) :-
+			//	statementEDB(S, I, propertyConstant, X),
+			//	statementEDB(O, I, propertyConstant, Y),
+			//	last_qualifier(S, P, V),
+			//	require_qualifier(S, P, V, propertyConstant, Q),
+			//	last_qualifier(O, R, C),
+			//	require_qualifier(O, R, C, propertyConstant, Q)
+			Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, last_qualifier_SPV, require_SPVpQ, last_qualifier_ORC, require_ORCpQ);
+			rules.add(non_existent);
+			
+			List<Atom> body = new ArrayList<>();
+			
+			body.add(statementEDB_SIpV);
+			body.add(statementEDB_OIpX);
+			body.add(unequal_SO);
+			
+			
+			for (String separator : separators) {
+				Constant separatorConstant = Expressions.makeConstant(separator);
+				 
+				Atom same_or_non_existent_SOs = Expressions.makeAtom(same_or_non_existent, s, o, separatorConstant);
+				body.add(same_or_non_existent_SOs);
 			}
 			
+			Rule violation = Expressions.makeRule(violation_statement_SIpV, body.toArray(new Atom[body.size()]));
+			rules.add(violation);			
 		}
 
 		return rules;
