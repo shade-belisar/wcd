@@ -701,7 +701,7 @@ c = &\text{statement\_EDB}(Q, E, \text{propertyConstant}, X) \wedge{} \\
 \end{split} \\
 \begin{split}
 c = &\text{statement\_EDB}(Q, E, \text{propertyConstant}, X) \wedge{} \\
-&\text{statement\_EDB}(S, E, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+&\text{statement\_EDB}(S, E, \text{requiredPropertyConstant}, V) \wedge {\textstyle\bigwedge}_{a \in A} \text{unequal}(a, V)
 \end{split}
 \end{align}
 \begin{align}
@@ -729,7 +729,7 @@ c = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 \end{split}\\
 \begin{split}
 c = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
-&\text{statement\_EDB}(S, E, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
+&\text{statement\_EDB}(S, E, \text{requiredPropertyConstant}, V) \wedge {\textstyle\bigwedge}_{a \in A} \text{unequal}(a, V)
 \end{split}
 \end{align}
 
