@@ -33,6 +33,13 @@
 \usepackage{amsthm}
 
 \setcounter{tocdepth}{2}
+\expandafter\def\expandafter\normalsize\expandafter{%
+    \normalsize
+    \setlength\abovedisplayskip{3pt}
+    \setlength\belowdisplayskip{3pt}
+    \setlength\abovedisplayshortskip{3pt}
+    \setlength\belowdisplayshortskip{3pt}
+}
 
 \newtheorem{example}{Example}
 
@@ -293,21 +300,21 @@ The \emph{author} (P50) constraint has (among others) the \emph{conflicting prop
 
 \paragraph{Rules}
 The conflicts-with constraint is violated if another statement on the same item either has a conflicting property or a conflicting property and a conflicting value depending on specified qualifiers. It depends on a conjunction (\(O\) denoting another statement ID, \(C\) another value) and a violation for a conflicts-with constraint is thus either
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow\\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{}\\
 &\text{statement\_EDB}(O, I, \text{conflictingPropertyConstant}, C)
 \end{split}
-\end{equation*}
+\end{equation}
 for constraints with no conflicting values specified or one
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow\\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{}\\
 &\text{statement\_EDB}(O, I, \text{conflictingPropertyConstant}, \text{conflictingValueConstant})
 \end{split}
-\end{equation*}
+\end{equation}
 for each conflicting value if specified.\\
 
 \subsection{Allowed entity types (Q52004125)}
@@ -335,18 +342,18 @@ The \emph{property constraint} (P2302) property has the \emph{allowed entity typ
 
 \paragraph{Rules}
 The allowed entity types constraint is violated by a statement with the wrong entity type.  Constraints regarding the lexeme entity type can be ignored since they are not currently used. The violations depend on a simple conjunction:
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge \text{item}(I)
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge \text{property}(I)
 \end{split}
-\end{equation*}
+\end{equation}
 The first rule are created for all \emph{allowed entity type} constraints whose \emph{allowed entity type} does not contain \emph{Wikibase item}. The second rule works analogous for \emph{Wikibase property}.
 
 \subsection{None of (Q52558054)}
@@ -372,24 +379,24 @@ The \emph{license} (P31) property, denoting the license under which a work is re
 
 \paragraph{Rules}
 The none of constraint simply forbids certain values for properties, thus effectively prohibiting certain statements, qualifiers, and references. The rules, depending on nothing but specific database entries, are
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, \text{forbiddenValueConstant})
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 \text{violation\_qualifier}&(S, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
 &\text{qualifier\_EDB}(S, \text{propertyConstant}, \text{forbiddenValueConstant})
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 \text{violation\_reference}&(S, \text{propertyConstant}, \text{forbiddenValueConstant}) \leftarrow \\
 &\text{reference\_EDB}(S, H, \text{propertyConstant}, \text{forbiddenValueConstant})
 \end{split}
-\end{equation*}
+\end{equation}
 Given a specified constraint, each of the three rules is created once for each \emph{forbidden value}.
 
 \section{Constraints using Inequality}\label{sec_constraints_using_inequality}
@@ -397,25 +404,25 @@ All translatable constraints except the four covered in the previous Section req
 
 \subsection{Approaches}
 In every approach it will be necessary to load some basic inequalities into the database. To this end the predicate unequal\_EDB\([2]\) is introduced. Since the goal is to keep the number of applications of this predicate small, an IDB predicate unequal\([2]\) has to be introduced. This leads to the rule
-\begin{equation*}
+\begin{equation}
 \text{unequal}(X, Y) \leftarrow \text{unequal\_EDB}(X, Y)
-\end{equation*}
+\end{equation}
 
 Given a set of unequal constants \(U\), the task is to generate rules so that for all \( x, y \in U: x \ne y \Rightarrow \text{unequal}(x, y)\).
 
 \subsubsection{Naive}\label{subsubsec_naive}
 The naive approach would be to simply add all possible combinations:
-\begin{equation*}
+\begin{equation}
 \text{for all } x, y \in U, x \ne y \text{ add } \text{unequal\_EDB}(x, y)
-\end{equation*}
+\end{equation}
 This can be easily improved using the inverse and adding the following rule:
 \begin{equation}\label{equ_inverse}
 \text{unequal}(X, Y) \leftarrow \text{unequal}(Y, X)
 \end{equation}
 Then it is sufficient to add each combination once. To achieve this assume an arbitrary total order \(<\) has been established on the set \(E\):
-\begin{equation*}
+\begin{equation}
 \text{for all } x, y \in U, x < y \text{ add } \text{unequal\_EDB}(x, y)
-\end{equation*}
+\end{equation}
 
 \subsubsection{Encoding constant strings to establish inequality}\label{subsubsec_encoding}
 One way of determining inequality would be to take advantage of the fact that inequality is established in a set of unequal constants \(U\), which can be represented as a string. The idea is to determine the set of characters used in \(U\), set these characters as unequal as outlined in Section \ref{subsubsec_encoding} and associate each unequal constant with their characters.\\
@@ -424,36 +431,36 @@ An unequal constant \(u \in U\) can be represented a string and be written as \(
 Based on this a group of predicates letter\(_i\)\_EDB[8] is introduced where \(0 \equiv i \mod 7\), \(0 \leq i < l_{max} \). 
 
 For each unequal constant string \(u = c_0 \ldots c_{l - 1}\) and \(0 \equiv i \mod 7, 0 \leq i < len(u)\) an atom using predicate letter\(_i\)\_EDB is created as 
-\begin{equation*}
+\begin{equation}
 \text{letter}_i\text{\_EDB}(e, f(e, i), f(e, i+1), \ldots, f(e, i+6)
-\end{equation*}where
-\begin{equation*}
+\end{equation}where
+\begin{equation}
 f(e, i) = 
 \begin{cases}
       c_i & i < len(e) \\
       \text{none} & i \geq len(e)
 \end{cases}
-\end{equation*}
+\end{equation}
 
 Now that inequality between all characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates letter\(_i\)\_EDB (with \text{letters} short for \(\text{letter}_i\text{\_EDB}(X, A_i, \ldots, A_{i+6}) \wedge\text{letter}_i\text{\_EDB}(Y, B_i, \ldots, B_{i+6})\), \(i \leq j < i + 7\)):
-\begin{equation*}
+\begin{equation}
 \text{unequal}(X, Y) \leftarrow \text{letters} \wedge \text{unequal}(A_j, B_j)
-\end{equation*}
+\end{equation}
 Note that the facts fulfilling \(\text{unequal}(A_j, B_j)\) are created by using the approach outlined in Section \ref{subsubsec_naive} for the set of characters \(C\) in all unequal constants \(U\).	
 
 \subsubsection{Demand-driven materialisation}\label{subsubsec_demand-driven_materialisation}
 The approaches outlined above will always result in all inequalities between the members of \(U\) being materialised. However, the purpose of determining inequality is to assist in finding violations of specific constraints. This means that only some inequalities -- the ones that actually appear in the dataset -- have to be evaluated. The rules can then be limited by introducing a new predicate req\_inequality\([2]\) which will only be derived if a condition occurs in which the inequality must be evaluated.\\
 
 To save space and avoid redundancy, the following rules will not explicitly state the inequality requirement predicate. Instead, assume that for every premise of the form \(B_1 \wedge \ldots\wedge B_m \wedge I_1 \wedge I_n\) where \(B_1 .. B_m\) are arbitrary atoms, \(I_1 .. I_n\) are atoms of the form \(\text{unequal}(t_{n_1}, t_{n_2})\) with \(t_{n_1}, t_{n_2}\) terms and all variables amount \(t_{n_1}\) and \(t_{n_2}\) appear in at least one of \(B_1 \ldots B_m\), the rules 
-\begin{equation*}
+\begin{equation}
 \text{req\_inequality}(t_{n_1}, t_{n_2})
  \leftarrow B_1 \wedge \ldots \wedge B_m
-\end{equation*} for all \(n\) are introduced.\\
+\end{equation} for all \(n\) are introduced.\\
 
 The rules outlined in Section \ref{subsubsec_encoding} are changed to utilise this new requirement.
-\begin{equation*}
+\begin{equation}
 \text{unequal}(X, Y) \leftarrow \text{req\_inequality}	(X, Y) \wedge \text{letters} \wedge \text{unequal}(A_j, B_j)
-\end{equation*}
+\end{equation}
 
 \subsection{Distinct values (Q21502410)}\label{subsec_distinct_values}
 \paragraph{Constraint}
@@ -479,14 +486,14 @@ The \emph{ISBN-13} (P212) property has a \emph{distinct values} constraint since
 \paragraph{Rules}
 The \emph{distinct values} constraint requires two distinct constrained statements with the same value. 
 Two constrained statements with the same value can be found via a simple conjunction of two statement\_EDB atoms with the propertyConstant as predicate and a variable \(V\) as value. Since this would mark every constrained statement as a violation because it can fulfil both atoms at the same time, inequality of the statement IDs \(S\) and \(O\) must be tested as well.
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{statement\_EDB}(O, X, \text{propertyConstant}, V) \wedge{} \\
 &\text{unequal}(S, O)
 \end{split}
-\end{equation*}
+\end{equation}
 The rules for qualifiers and reference are analogous.
 
 \subsection{Allowed units (Q21514353)}\label{subsec_3_allowed_units}
@@ -519,35 +526,35 @@ To handle this constraint, inequality between all units need to be established. 
 The allowed units constraint needs to determine inequality between all allowed units and each unit on a constrained statement. To this end the units of a statement, qualifier, or reference need to be extracted during pre-processing and their inequality established. Quantities are rendered as string during pre-processing, specifying their value, bounds, and unit.
 
 To determine if a violation occurred, the unit of the constrained statement needs to be found. This is done via the unit-predicate as below
-\begin{equation*}
+\begin{equation}
 \text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge \text{unit\_EDB}(V, U)
-\end{equation*}
+\end{equation}
 with qualifiers and references treated analogous.
 
 The complete rules require multiple unequal-atoms for all allowed units. Given a set \(A\) of constants, in this case allowed units, \(\text{unequal}(\{A\}, t)\) with an arbitrary term \(t\) is short for \(\bigwedge_{a \in A} \text{unequal}(a, t)\)
 
 Violations are thus
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 \text{violation\_qualifier}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{qualifier\_EDB}(S, \text{propertyConstant}, V) \wedge{} \\
 &\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 \text{violation\_reference}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{reference\_EDB}(S, H, \text{propertyConstant}, V) \wedge{} \\
 &\text{unit}(V, U) \wedge \text{unequal}(\{A\}, U)
 \end{split}
-\end{equation*}
+\end{equation}
 
 \subsection{Allowed qualifiers (Q21510851)}
 \paragraph{Constraint}
@@ -574,13 +581,13 @@ The \emph{head of state} (P35) property has (among others) the \emph{allowed qua
 
 \paragraph{Rules}
 To represent a violation of the \emph{allowed qualifiers} constraint in datalog, inequality between all specified allowed qualifiers and the properties of qualifiers is required. The constraint is violated if a qualifier on a constrained statement exists that is unequal to all allowed qualifiers. The notation for set inequality as introduced in Section \ref{subsec_3_allowed_units} will be used. With \(A\) the set of allowed qualifiers the rule is:
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{qualifier\_EDB}(S, Q, O) \wedge \text{unequal}(\{A\}, Q)
 \end{split}
-\end{equation*}
+\end{equation}
 
 \subsection{One-of (Q21510859)}
 \paragraph{Constraint}
@@ -642,38 +649,30 @@ The \emph{flag bearer} (P3022) property, naming the person carrying a flag at a 
 
 \paragraph{Rules}
 The one-of qualifier value constraint is violated if a constrained statement has a qualifier with a value unequal to all allowed values. Inequality needs to be established between all values of qualifiers and all allowed values. With the set of allowed Values \(A\) the rules are
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
 &\text{qualifier\_EDB}(S, \text{qualifierProperty}, O) \wedge \text{unequal}(\{A\}, O)
 \end{split}
-\end{equation*}
+\end{equation}
 
  \section{Constraints using Statement non-Existence}\label{sec_constraints_using_statement_non}
 Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: first\([2]\), last\([2]\), and next\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
 
 If qualifier non-existence should be tested, the predicates have to be adapted since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property, and value have to be used. For this the predicates first\_qualifier\([3]\) and last\_qualifier\([3]\) taking the statement ID, the property, and the value, as well as next\_qualifier\([6]\) with ID, property, and value for the current and next qualifier are introduced.\\
 
-Using this pre-processed data, the approach is to apply a require-predicate to each statement or qualifier. This is require\([3]\) for statements, connecting the statement ID with the constrained property \(p\) and the required term \(t\) and require\([5]\) taking the statement ID, property, and value of a qualifier and linking this with \(p\) and \(t\).\\
+Using this pre-processed data, the approach is to apply a require-predicate to each statement or qualifier. This is require\([2]\) for statements, connecting the statement ID with an identifier unique to the declared constraint and require\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the unique identifier.\\
 
-For statements the pattern consists of two rules, both utilising the same conjunction \(c = C_1 \wedge \ldots \wedge C_m\) with atoms \(C_i\) depending on the constraint. This conjunction is used to test if the statement does not fulfil the requirement. Then rule one
-\begin{equation*}
-\text{require}(S, p, t) \leftarrow \text{first}(S, I) \wedge c
-\end{equation*}
-states that the statement requires the condition and
-\begin{equation*}
-\text{require}(S, p, t) \leftarrow \text{next}(O, S) \wedge \text{require}(O, p, t) \wedge c
-\end{equation*}
-propagates this down the statement chain.
+\todo{Move qualifier require to single value}
 
-For qualifiers the rules are
-\begin{equation*}
-\text{require}(S, P, V, p, t) \leftarrow \text{first}(S, P, V) \wedge c
-\end{equation*}
-\begin{equation*}
-\text{require}(S, P, V, p, t) \leftarrow \text{next}(O, X, C, S, P, V) \wedge \text{require}(O, X, C, p, t) \wedge c
-\end{equation*}
+For statements the pattern consists of two rules, both utilising the same conjunction \(c\) whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
+\begin{align}
+&\text{require}(S, \text{id}) \leftarrow \text{first}(S, I) \wedge c \\
+&\text{require}(S, \text{id}) \leftarrow \text{next}(O, S) \wedge \text{require}(O, \text{id}) \wedge c \\
+&\text{require}(S, P, V, \text{id}) \leftarrow \text{first}(S, P, V) \wedge c \\
+&\text{require}(S, P, V, \text{id}) \leftarrow \text{next}(O, X, C, S, P, V) \wedge \text{require}(O, X, C, \text{id}) \wedge c
+\end{align}
 
 If the last statement of an item or the last qualifier of a statement has the require-predicate the violation occurred. In the following constraints only the conjunction \(c\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
 
@@ -701,28 +700,25 @@ The \emph{professorship} (P803) property requires an additional statement with t
 \end{example}
 
 \paragraph{Rules}
-The \emph{item requires statement} constraint requires inequality between all properties of statements and the \emph{required property} as well as between all statement values and the \emph{allowed values}. The order of the item statements needs to be established. An item violates the constraint if it a) has a statement using the constrained property as predicate, b1) has no statements using the \emph{required property} as predicate, or (if \emph{allowed values} are specified) b2) has only statement using the \emph{required property} as predicate that do not use one of the \emph{allowed values} as value. The required term \(t\) is the \emph{required property}. Without separators the conjunction is
-\begin{equation*}
+The \emph{item requires statement} constraint requires inequality between all properties of statements and the \emph{required property} as well as between all statement values and the \emph{allowed values}. The order of the item statements needs to be established. An item violates the constraint if it a) has a statement using the constrained property as predicate, b1) has no statements using the \emph{required property} as predicate, or (if \emph{allowed values} are specified) b2) has only statement using the \emph{required property} as predicate that do not use one of the \emph{allowed values} as value. If no \emph{allowed values} have been specified for the declared constraint the conjunction for the require pattern is [one]. If a set of \emph{allowed values} has been specified, a second set of require-rules have to be introduced with conjunction [two]. Note that the require pattern using conjunction [one] is still required, since the preceding statements do not need to have the \emph{required property}. In both cases violations can be found with rule [three]
+
+\begin{align}
 \begin{split}
 c_1 = &\text{statement\_EDB}(Q, I, \text{propertyConstant}, X) \wedge{} \\
 &\text{statement\_EDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
-\end{split}
-\end{equation*} \(\)
-If a set of \emph{allowed values} \(A\) has been specified, a second set of require-rules have to be introduced with
-\begin{equation*}
+\end{split} \\
 \begin{split}
 c_2 = &\text{statement\_EDB}(Q, I, \text{propertyConstant}, X) \wedge{} \\
 &\text{statement\_EDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
-\end{equation*}
-Note that the first set of rules is still required, since the preceding statements do not need to have the \emph{required property}. In both cases violations can be found with
-\begin{equation*}
+\end{align}
+\begin{align}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \text{last}(O, I) \wedge{} \\
 &\text{require}(O, \text{propertyConstant}, \text{requiredPropertyConstant})
 \end{split}
-\end{equation*}
+\end{align}
 
 \subsection{Value requires statement (Q21510864)}\label{subsec_value_requires_statement}
 \paragraph{Constraint}
@@ -734,26 +730,26 @@ The \emph{list of monuments} (P1456) property requires its value to have the \em
 
 \paragraph{Rules}
 The \emph{value requires statement} constraint is syntactically very similar to the previous \emph{item requires statement} constraint. Instead of requiring a statement on the item of a constrained statement, it requires it on the value. Inequality needs to be computed between all properties and all values and the item statement order established. The conjunctions change in the first statement and are:
-\begin{equation*}
+\begin{equation}
 \begin{split}
 c_1 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 &\text{statement\_EDB}(S, I, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
 \end{split}
-\end{equation*} \(\)
-\begin{equation*}
+\end{equation} \(\)
+\begin{equation}
 \begin{split}
 c_2 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 &\text{statement\_EDB}(S, I, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
-\end{equation*}
+\end{equation}
 The final violation rule would then be:
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \text{last}(O, V) \wedge{} \\
 &\text{require}(O, \text{propertyConstant}, \text{requiredPropertyConstant})
 \end{split}
-\end{equation*}
+\end{equation}
 
 \subsection{Inverse (Q21510855)}\label{subsec_2_inverse}
 \paragraph{Constraint}
@@ -765,20 +761,20 @@ The \emph{mother} (P25) property requires values to have a statement with the \e
 
 \paragraph{Rules}
 The \emph{inverse} constraint can be modelled in almost the same way as the \emph{value requires statement} constraint. The only change is that instead of requiring inequality to all \emph{allowed values} in conjunction \(c_2\) the statement requires this constraint if its value is not the subject \(R\) of the original constrained statement, meaning \(t = R\). Inequalities have to be established between all properties and the \emph{inverse} property as well as all subjects and values of statements.
-\begin{equation*}
+\begin{equation}
 \begin{split}
 c_1 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 &\text{statement\_EDB}(S, I, P, V) \wedge{} \\
 &\text{unequal}(\text{inversePropertyConstant}, P)
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 c_2 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 &\text{statement\_EDB}(S, I, \text{inversePropertyConstant}, V) \wedge{} \\
 &\text{unequal}(R, V)
 \end{split}
-\end{equation*}
+\end{equation}
 The final violation rule remains the same.
 
 \subsection{Symmetric (Q21510862)}
@@ -813,26 +809,26 @@ The \emph{cast member} (P161) property requires an item to have multiple stateme
 
 \paragraph{Rules}
 The \emph{multi-value} constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Inequality is established between all properties of statements and the conjunction is:
-\begin{equation*}
+\begin{equation}
 \begin{split}
 c = &\text{statement\_EDB}(Q, I, \text{propertyConstant}, X) \wedge{} \\
 &\text{statement\_EDB}(S, I, P, V) \wedge \text{unequal}(\text{propertyConstant}, P)
 \end{split}
-\end{equation*}
+\end{equation}
 The predicate require\_second\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found:
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{require\_second}&(S, \text{propertyConstant}, \text{propertyConstant}) \leftarrow \\
 &\text{next}(R, S) \wedge \text{statement\_EDB}(R, I, \text{propertyConstant}, C) \wedge{} \\
 &\text{next}(Q, R) \wedge \text{require}(Q, \text{propertyConstant}, \text{propertyConstant})  \wedge c
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 \text{require\_second}&(S, \text{propertyConstant}, \text{propertyConstant}) \leftarrow \text{next}(R, S) \wedge{} \\
 &\text{require\_second}(R, \text{propertyConstant}, \text{propertyConstant}) \wedge c
 \end{split}
-\end{equation*}
+\end{equation}
 A violation would be any last statement requiring a second constrained statement.\\
 
 \subsection{Single value (Q19474404)}\label{subsec_single_value}
@@ -874,35 +870,35 @@ If the separator set is empty, the violation simply occurs if there are two cons
 \end{split}
 \end{equation}
 For qualifiers and references, there is no ID whose inequality could be checked. However, since the statement ID and the property of a possible conflict are always the same, inequality can be tested on the values.
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_qualifier}&(S, \text{propertyConstant}, V) \leftarrow \\
 &\text{qualifier\_EDB}(S, \text{propertyConstant}, V) \wedge{} \\
 &\text{qualifier\_EDB}(S, \text{propertyConstant}, X) \wedge{} \\
 &\text{unequal}(V, X)
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 \text{violation\_reference}&(S, H, \text{propertyConstant}, V) \leftarrow \\
 &\text{reference\_EDB}(S, H, \text{propertyConstant}, V) \wedge{} \\
 &\text{reference\_EDB}(S, J, \text{propertyConstant}, X) \wedge{} \\
 &\text{unequal}(V, X)
 \end{split}
-\end{equation*}
+\end{equation}
 
 \subsubsection{With separators}\label{subsubsec_single_value_with_separators}
 To find all violations under \emph{separators}, a number of things have to be considered. Only statements are eligible, since qualifiers cannot have further qualifiers. The order of qualifiers on constrained statements needs to be provided as well since qualifier non-existence is relevant. The require qualifier pattern needs to be applied to the qualifiers of constrained statements. The conjunction c is created for every \emph{separator} and the pattern applied.
-\begin{equation*}
+\begin{equation}
 \begin{split}
 c = &\text{statement\_EDB}(S, I, \text{propertyConstant}, C) \wedge{} \\
 &\text{qualifier\_EDB}(S, P, V) \wedge{} \\
 &\text{unequal}(P, \text{separatorConstant})
 \end{split}
-\end{equation*}
+\end{equation}
 
 With qualifier non-existence established, the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all values of \emph{separator} qualifiers are equal or no such \emph{separator} qualifier exist. To determine this, a number of rules have to be introduced which are based on two sets the \emph{separators} are split into: \(X\) contains the \emph{separators} that exist as qualifiers and \(Y\) the \emph{separators} that do not. The following rule is then created for every possible split of the \emph{separators} into two such sets. Note that \(\text{predicate}(\{X\})\) denotes \(\bigwedge_{x \in X} \text{predicate}(x)\) as introduced in Section \ref{subsec_3_allowed_units}.
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
@@ -910,8 +906,8 @@ With qualifier non-existence established, the violation can be found. Two statem
 &\text{unequal}(S, O) \wedge{} \\
 &\text{same\_or\_non\_existent}(S, O, \{Q\})
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 \text{same\_or\_non\_existent}&(S, O, Q) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, X) \wedge{} \\
@@ -919,8 +915,8 @@ With qualifier non-existence established, the violation can be found. Two statem
 &\text{qualifier\_EDB}(S, Q, V) \wedge{} \\
 &\text{qualifier\_EDB}(O, Q, V)
 \end{split}
-\end{equation*}
-\begin{equation*}
+\end{equation}
+\begin{equation}
 \begin{split}
 \text{same\_or\_non\_existent}&(S, O, Q) \leftarrow{} \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, X) \wedge{} \\
@@ -930,7 +926,7 @@ With qualifier non-existence established, the violation can be found. Two statem
 &\text{last\_qualifier}(O, R, C) \wedge{} \\
 &\text{require}(O, R, C, \text{propertyConstant}, Q)
 \end{split}
-\end{equation*}
+\end{equation}
 
 \subsection{Mandatory qualifier (Q21510856)}
 \paragraph{Constraint}
@@ -957,20 +953,20 @@ The \emph{head of state} (P35) property has the \emph{required property} (P2306)
 
 \paragraph{Rules}
 The \emph{mandatory qualifier} constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to Section \ref{subsubsec_single_value_with_separators}. The qualifier order needs to be provided and inequality must be established between all qualifier properties. The conjunction for the require-pattern is:
-\begin{equation*}
+\begin{equation}
 \begin{split}
 c = &\text{statement\_EDB}(S, I, \text{propertyConstant}, C) \wedge{} \\
 &\text{qualifier\_EDB}(S, P, V) \wedge \text{unequal}(P, \text{requiredPropertyConstant})
 \end{split}
-\end{equation*}
+\end{equation}
 With the usual require-pattern for qualifiers and the does\_not\_have rule as introduced in Section \ref{subsubsec_single_value_with_separators} added for brevity, the violations would be found with:
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge \\
 &\text{does\_not\_have}(S, \text{requiredPropertyConstant})
 \end{split}
-\end{equation*}
+\end{equation}
 
 \subsection{Single best value (Q52060874)}\label{subsec_single_best_value}
 \paragraph{Constraint}
@@ -1000,7 +996,7 @@ The \emph{single best value} constraint, like the \emph{single value} constraint
 
 \subsubsection{No separators}
 If the \emph{separator} set is empty, the violation simply occurs if there are two constrained statements on the same item with the preferred rank. Thus the rule \eqref{eq_no_separators_triple} is expanded to
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
@@ -1009,11 +1005,11 @@ If the \emph{separator} set is empty, the violation simply occurs if there are t
 &\text{rank\_EDB}(O, \text{preferredRankConstant}) \wedge{} \\
 &\text{unequal}(S, O)
 \end{split}
-\end{equation*}
+\end{equation}
 
 \subsubsection{With separators}
 As in the case above, the qualifier non-existence and violation rules are very similar to the \emph{single value} constraint. The only change is the addition of the rank requirements as shown below.
-\begin{equation*}
+\begin{equation}
 \begin{split}
 \text{violation\_statement}&(S, I, \text{propertyConstant}, V) \leftarrow \\
 &\text{statement\_EDB}(S, I, \text{propertyConstant}, V) \wedge{} \\
@@ -1025,7 +1021,7 @@ As in the case above, the qualifier non-existence and violation rules are very s
 &\text{does\_not\_have}(S, \{Y\}) \wedge{} \\
 &\text{does\_not\_have}(O, \{Y\})
 \end{split}
-\end{equation*}
+\end{equation}
 
 \section{Reasoning for unconsidered constraints}
 Multiple constraints have not been described above for different reasons. The most prominent of these is the \emph{format} constraint (Q21502404) which specifies a regular expression the values of the constrained property must adhere to. Evaluating these expressions would be theoretically possible but \\

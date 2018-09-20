@@ -327,7 +327,7 @@
 \fi
 
 \if@bachelorofscience%
-\renewcommand{\titleheader}[0]{Bachelorarbeit \\[1cm]\large zur Erlangung des akademischen Grades\\ Bachelor of Science}
+\renewcommand{\titleheader}[0]{Bachelor Thesis \\[1cm]\large zur Erlangung des akademischen Grades\\ Bachelor of Science}
 \def\@faculty{Informatik}
 \fi
 
@@ -515,8 +515,8 @@
 
     \bigskip
     \Large
-    \textsc{Institut f"ur Software- und Multimediatechnik\\
-    Prof. Dr. Stefan Gumhold\\
+    \textsc{International Center For Computational Logic\\
+    Prof. Dr. Markus Kr{\"{o}}tzsch\\
     $\quad$\\
     $\quad$}
     \end{center}
@@ -530,8 +530,8 @@
 
     \bigskip
     \Large
-    \textsc{Institute of Software- and Multimedia Technology\\
-    Prof. Dr. Stefan Gumhold\\
+    \textsc{International Center For Computational Logic\\
+    Prof. Dr. Markus Kr{\"{o}}tzsch\\
     $\quad$\\
     $\quad$}
     \end{center}
@@ -549,8 +549,8 @@
 	    \Large
 	    \textsc{Fakult"at Informatik\\
 	    Institut f"ur Software- und Multimediatechnik\\
-	    Professur f"ur Computergraphik und Visualisierung\\
-	    Prof. Dr. Stefan Gumhold}
+	    International Center For Computational Logic\\
+	    Prof. Dr. Markus Kr{\"{o}}tzsch}
 	    \end{center}
 	  }
 	  \else
@@ -564,8 +564,8 @@
 	    \Large
      \textsc{Faculty of Computer Science\\
 	    Institute of Software and Multimedia Technology\\
-	    Chair of Computer Graphics and Visualization\\
-	    Prof. Dr. Stefan Gumhold}
+	    International Center For Computational Logic\\
+	    Prof. Dr. Markus Kr{\"{o}}tzsch}
 	    \end{center}
 	  }
 	  \fi
