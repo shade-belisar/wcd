@@ -16,7 +16,7 @@ runtimeMaterializationLabel = "Runtime materialization"
 iterationsLabel = "Iterations"
 derivationsLabel = "Derivations"
 rulesLabel = "Rules"
-demandRulesLabel = "Demand rules"
+ondemandRulesLabel = "On-demand rules"
 totalRulesLabel = "Total rules"
 #constrainedStatementsLabel = "Constrained statements"
 #constrainedQualifiersLabel = "Constrained qualifiers"
@@ -31,7 +31,7 @@ with open(log) as log, open(out, "w") as summary:
         iterationsLabel,
         derivationsLabel,
         rulesLabel,
-        demandRulesLabel,
+        ondemandRulesLabel,
         totalRulesLabel
         #constrainedStatementsLabel,
         #constrainedQualifiersLabel,
@@ -43,7 +43,7 @@ with open(log) as log, open(out, "w") as summary:
     block = list()
 
     rules = re.compile("Created ([0-9]+) rules.")
-    demandRules = re.compile("Created ([0-9]+) additional demand-rules.")
+    demandRules = re.compile("Created ([0-9]+) additional on-demand-rules.")
     totalRules = re.compile("Added ([0-9]+) rules total.")
     iterations = re.compile("Iterations=([0-9]+)")
     runtime = re.compile("Runtime materialization = ([0-9]+).([0-9]+) milliseconds")
@@ -61,7 +61,7 @@ with open(log) as log, open(out, "w") as summary:
 
         demandRulesResult = demandRules.search(line)
         if demandRulesResult:
-            stats[demandRulesLabel] = demandRulesResult.group(1)
+            stats[ondemandRulesLabel] = demandRulesResult.group(1)
 
         totalRulesResult = totalRules.search(line)
         if totalRulesResult:
