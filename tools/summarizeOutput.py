@@ -11,8 +11,9 @@ out = outFolder + os.path.splitext(os.path.basename(log))[0] + "_summary.tsv"
 
 constraintIDLabel = "ConstraintID"
 violationsLabel = "Violations"
-totalTimeLabel = "Total time"
-runtimeMaterializationLabel = "Runtime materialization"
+loadingLabel = "Loading time"
+reasoningLabel = "Reasoning time"
+queryingLabel = "Querying time"
 iterationsLabel = "Iterations"
 derivationsLabel = "Derivations"
 rulesLabel = "Rules"
@@ -26,8 +27,9 @@ with open(log) as log, open(out, "w") as summary:
     writer = csv.DictWriter(summary, [
         constraintIDLabel,
         violationsLabel,
-        totalTimeLabel,
-        runtimeMaterializationLabel,
+        loadingLabel,
+        reasoningLabel,
+        queryingLabel,
         iterationsLabel,
         derivationsLabel,
         rulesLabel,
@@ -46,9 +48,10 @@ with open(log) as log, open(out, "w") as summary:
     demandRules = re.compile("Created ([0-9]+) additional on-demand-rules.")
     totalRules = re.compile("Added ([0-9]+) rules total.")
     iterations = re.compile("Iterations=([0-9]+)")
-    runtime = re.compile("Runtime materialization = ([0-9]+).([0-9]+) milliseconds")
     derivations = re.compile("Total # derivations: ([0-9]+)")
-    time = re.compile("Total time elapsed: ([0-9]+)ms")
+    loadingTime = re.compile("Loaded reasoner. Time elapsed: ([0-9]+)ms")
+    reasoningTime = re.compile("Reasoned reasoner. Time elapsed: ([0-9]+)ms")
+    queryingTime = re.compile("Queried reasoner. Time elapsed: ([0-9]+)ms")
     #constrainedSQR = re.compile("Constrained statements: ([0-9]+) Constrained qualifiers: ([0-9]+) Constrained references ([0-9]+)")
     constraint = re.compile("Constraint: (Q[0-9]+), violations: ([0-9]+)")
 
@@ -71,17 +74,21 @@ with open(log) as log, open(out, "w") as summary:
         if iterationsResult:
             stats[iterationsLabel] = iterationsResult.group(1)
 
-        runtimeResult = runtime.search(line)
-        if runtimeResult:
-            stats[runtimeMaterializationLabel] = runtimeResult.group(1)
+        loadingResult = loadingTime.search(line)
+        if loadingResult:
+            stats[loadingLabel] = loadingResult.group(1)
+
+        reasoningResult = reasoningTime.search(line)
+        if reasoningResult:
+            stats[reasoningLabel] = reasoningResult.group(1)
+
+        queryingResult = queryingTime.search(line)
+        if queryingResult:
+            stats[queryingLabel] = queryingResult.group(1)
 
         derivationsResult = derivations.search(line)
         if derivationsResult:
             stats[derivationsLabel] = derivationsResult.group(1)
-
-        timeResult = time.search(line)
-        if timeResult:
-            stats[totalTimeLabel] = timeResult.group(1)
 
         #constrainedSQRResult = constrainedSQR.search(line)
         #if constrainedSQRResult:

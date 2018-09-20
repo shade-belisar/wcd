@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -60,6 +61,8 @@ public abstract class ConstraintChecker {
 	protected List<PropertyConstraintChecker> propertyCheckers;
 	
 	int resultSize = 0;
+	
+	long queryTime = 0;
 	
 	int constrainedStatements = 0;
 	
@@ -206,6 +209,8 @@ public abstract class ConstraintChecker {
 		}
 		logger.info("Added " + rules.size() + " rules total.");
 		
+		StopWatch watch = new StopWatch();
+		watch.start();
 		try {
 			reasoner.load();
 		} catch (EdbIdbSeparationException e) {
@@ -215,15 +220,22 @@ public abstract class ConstraintChecker {
 			logger.error("Predicate does not match the datasource for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
-		logger.info("Loaded reasoner.");
+		watch.stop();
+		logger.info("Loaded reasoner. Time elapsed: " + watch.getTime() + "ms");
 		
+		watch.reset();
+		watch.start();
 		try {
 			reasoner.reason();
 		} catch (ReasonerStateException e) {
 			logger.error("Trying to reason in the wrong state for constraint " + constraint + ".", e);
 			throw new PrepareQueriesException(internalError);
 		}
-		logger.info("Reasoned reasoner.");
+		watch.stop();
+		logger.info("Reasoned reasoner. Time elapsed: " + watch.getTime() + "ms");
+		
+		watch.reset();
+		watch.start();
 		for (Atom query : queries) {
 	    	try (QueryResultIterator iterator = reasoner.answerQuery(query, true)) {
 	    		while (iterator.hasNext()) {
@@ -243,6 +255,9 @@ public abstract class ConstraintChecker {
 				throw new PrepareQueriesException(internalError);
 			}
 		}
+		watch.stop();
+		queryTime = watch.getTime();
+		
 	}
 	
 	int queryResultSize (Atom query) throws PrepareQueriesException {
@@ -261,6 +276,10 @@ public abstract class ConstraintChecker {
 	
 	public int getResultSize() {
 		return resultSize;
+	}
+	
+	public long getQueryTime() {
+		return queryTime;
 	}
 	
 	public int getConstrainedStatements() {

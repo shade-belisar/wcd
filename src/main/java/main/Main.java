@@ -258,11 +258,8 @@ public class Main {
 		if (!cmd.hasOption("noviolations")) {
 			try {
 				for(ConstraintChecker checker : checkers) {
-					StopWatch watch = new StopWatch();
-					watch.start();
 					checker.violations();
-					watch.stop();
-					logger.info("Total time elapsed: " + watch.getTime() + "ms");
+					logger.info("Queried reasoner. Time elapsed: " + checker.getQueryTime() + "ms");
 					logger.info(checker.identify() + ", violations: " + checker.getResultSize());
 					if (getStringResult())
 						System.out.println(checker.getResultString());
