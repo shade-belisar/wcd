@@ -652,24 +652,24 @@ The one-of qualifier value constraint is violated if a constrained statement has
 \end{align}
 
 \section{Constraints using Statement non-Existence}\label{sec_constraints_using_statement_non}
-Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: \textsc{first}\([2]\), \textsc{last}\([2]\), and \textsc{next}\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
+Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: \textsc{first}\([1]\), \textsc{last}\([2]\), and \textsc{next}\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
 
 If qualifier non-existence should be tested, the predicates have to be adapted since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property, and value have to be used. For this the predicates \textsc{first\_qualifier}\([3]\) and \textsc{last\_qualifier}\([3]\) taking the statement ID, the property, and the value, as well as \textsc{next\_qualifier}\([6]\) with ID, property, and value for the current and next qualifier are introduced.\\
 
 Using this pre-processed data, the approach is to apply a not\_found-predicate to each statement or qualifier. This is \textsc{not\_found}\([2]\) for statements, connecting the statement ID with an identifier unique to the declared constraint and \textsc{not\_found}\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the unique identifier.\\
 
-For statements the pattern consists of two rules, both utilising the same conjunction \emph{does-not-fulfil} whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
+For statements the pattern consists of two rules, both utilising the same conjunction \emph{does-not-fulfil} whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. It needs to bind the variable \(S\), denoting the current statement ID, but not bind the variable \(O\), denoting the preceding statement ID. Care must be taken that the rules presented below also utilise the variables \(C, P, V,\) and \(X\) as the value of the preceding qualifier, the property of the current qualifier, the value of the current qualifier, and the property of the preceding qualifier, respectively. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
 \begin{align}
-\textsc{not\_found}&(S, \emph{id}) \leftarrow \textsc{first}(S, I) \wedge \emph{does-not-fulfil} \\
+\textsc{not\_found}&(S, \emph{id}) \leftarrow \textsc{first}(S) \wedge \emph{does-not-fulfil} \\
 \textsc{not\_found}&(S, \emph{id}) \leftarrow \textsc{next}(O, S) \wedge \textsc{not\_found}(O, \emph{id}) \wedge \emph{does-not-fulfil} \\
 \textsc{not\_found}&(S, P, V, \emph{id}) \leftarrow \textsc{first\_qualifier}(S, P, V) \wedge \emph{does-not-fulfil} \\
 \begin{split}
-\textsc{not\_found}&(S, P, V, \emph{id}) \leftarrow \textsc{next\_qualifier}(O, X, C, S, P, V) \wedge{} \\
-&\textsc{not\_found}(O, X, C, \emph{id}) \wedge \emph{does-not-fulfil}
+\textsc{not\_found}&(S, P, V, \emph{id}) \leftarrow \textsc{next\_qualifier}(S, X, C, S, P, V) \wedge{} \\
+&\textsc{not\_found}(S, X, C, \emph{id}) \wedge \emph{does-not-fulfil}
 \end{split}
 \end{align}
 
-If the last statement of an item or the last qualifier of a statement has the require-predicate the violation occurred. In the following constraints only the conjunction \(c\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
+If the last statement of an item or the last qualifier of a statement has the \textsc{not\_found}-predicate the violation occurred. In the following constraints only the conjunction \emph{does-not-fulfil} and adjustments to this pattern will be described. The \textsc{not\_found}-propagation is regarded as given. If multiple \emph{does-not-fulfil} conjunction are specified for one constraint type the pattern is applied multiple times.
 
 \subsection{Item requires statement (Q21503247)}\label{subsec_item_requires_statement}
 \paragraph{Constraint}
