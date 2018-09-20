@@ -58,34 +58,34 @@ Since Wikidata is a very large and constantly changing resource, it is necessary
 
 \chapter{Preliminaries}\label{cha_preliminaries}
 \section{Wikidata}\label{sec_wikidata}
-Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). Triples store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P and will be referred to as Q- and P-IDs, respectively. In the future there will be a third entity type, lexeme. This is already incorporated into some constraints, but as of September 2018 they are not deployed. A value is one of several data types shown in Table \ref{tab_datatypes}, although it is also possible to use \emph{none} or \emph{some} as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
+Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple of the form subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). Triples store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P and will be referred to as Q- and P-IDs, respectively. A third entity type, lexeme, has been deployed since May 2018. This is already incorporated into some constraint type definitions, but as of September 2018 there are no constraint declarations using this. A value is one of several data types shown in Table \ref{tab_datatypes}, although it is also possible to use \emph{none} or \emph{some} as values for statements that have no value (a kind of negation) or have a currently unknown value. Values consist of components, separating different aspects of a value into separate entries. Every property determines the data type it accepts as an object. \\
 
 \begin{table}[H]
 \caption{Wikidata data types}\label{tab_datatypes}
-\begin{tabularx}{\textwidth}{llp{8.5cm}}
-Data type & Fields & Description \\
+\begin{tabularx}{\textwidth}{llp{7cm}}
+Data type & Components & Description \\
 \hline
 commons media & file (string) & name of a file in the "File" namespace on Wikimedia Commons \\
-globecoordinate & \makecell{latitude (float) \\ longitude (float) \\ precision (float) \\ globe (URI)} & coordinates on a given celestial body or geographic standard \\
+globecoordinate & \makecell{latitude (float) \\ longitude (float) \\ precision (float) \\ globe (URI)} & coordinates on a given celestial body or in a given geographic standard (specified via the globe URI) \\
 item & item (Q-ID) & the Q-ID of an item on Wikidata \\
 property & property (P-ID) & the P-ID of an item on Wikidata \\
-string & string (string) & simple string literal that does not need to be translated into different languages \\
+string & \makecell{string (string) \\ language (language code)} & simple string literal that does not need to be translated into different languages \\
 monolingual text & string (string) & simple string literal that is written in one specific language and not to be translated \\
 quantity & \makecell {amount (decimal) \\ upperBound (decimal) \\ lowerBound (decimal) \\ unit (URI or 1)} & quantity of a specified unit (or none) with uncertainty \\
-time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} & time as a string according to calendarmodel (julian or gregorian), with precision mapping to orders of magnitude (e.g.. 10 years, months) \\
+time & \makecell {time (string) \\ calendarmodel (URI) \\ precision (integer)} & time as a string according to calendarmodel (Julian or Gregorian), with precision mapping to orders of magnitude (e.g.. 10 years, months) \\
 URL & url(URL) & a general URL for an external resource \\
 mathematical expression & formula (string) & string that is formatted to display as a formula \\
-external identifier & id (string) & string representing an identifier of an external system \\
-geographic shape & map data (string) & name of a file in the "Data" namespace on Wikimedia Commons \\
-tabular data & tabular data (string) & name of a file in the "Data" namespace on Wikimedia Commons \\
+external identifier & ID (string) & string representing an identifier of an external system \\
+geographic shape & map data (string) & name of a file in the ``Data'' namespace on Wikimedia Commons \\
+tabular data & tabular data (string) & name of a file in the ``Data'' namespace on Wikimedia Commons \\
 \end{tabularx}
 \end{table}
 
-While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows to store additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Statements have one of three ranks, \emph{normal}, \emph{preferred}, and \emph{deprecated} which are used to differentiate similar statements on the same item. For example, the \emph{preferred} rank would be given to the current \emph{head of state} (P35) of a country, while all statements denoting former \emph{heads of state} have the rank \emph{normal}. \emph{Deprecated} is used on statements that where once considered correct but are not anymore, e.g., \emph{Chelsea Manning} (Q298423) having the \emph{sex or gender} (P21) \emph{male} (Q6581097).
+While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows storing additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Statements have one of three ranks, \emph{normal}, \emph{preferred}, and \emph{deprecated} which are used to differentiate similar statements on the same item. For example, the \emph{preferred} rank would be given to the current \emph{head of state} (P35) of a country, while all statements denoting former \emph{heads of state} have the rank \emph{normal}. \emph{Deprecated} is used on statements that are not correct, e.g., \emph{Chelsea Manning} (Q298423) having the \emph{sex or gender} (P21) \emph{male} (Q6581097).
 
-Every statement can have added qualifiers, which consist of the corresponding statement id, a predicate, and an object. Qualifiers provide contextual information for statements. The most common context is the time frame in which the statement was accurate, e.g., stating the \emph{start time} (P580) and \emph{end time} (P582) of the term of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. Additionally, references can be added to statements.
+Every statement can have added qualifiers, which consist of a predicate and an object. Qualifiers provide contextual information for statements. The most common context is the time frame in which the statement was accurate, e.g., stating the \emph{start time} (P580) and \emph{end time} (P582) of the term of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point.
 
-References support the claim by citing the source and additional information, e.g. when it was retrieved or when the source was published as property-value pairs. Each reference consists of multiple such pairs, and statements can have multiple references.
+Additionally, references can be added to statements. References support the claim by citing the source and additional information, e.g. when it was retrieved or when the source was published, as property-value pairs. Each reference consists of multiple such pairs, and statements can have multiple references.
 
 Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
 
@@ -99,9 +99,9 @@ Figure \ref{fig_example} is an excerpt from the entity page of the clipper \emph
 \end{example}
 
 \section{Datalog}
-Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}, which will be denoted as \emph{someConstant}. In the context of Wikidata, any item or property, e.g. \emph{Earth} (Q2) or \emph{head of government} (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\), written as \textsc{predicate}\([n]\). To stay close to Wikidata in our examples, let us take the predicate \textsc{triple}\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
-Additionally, datalog also provides \emph{variables}, which will be capitalized, like \(X\). The sets of predicates {\bf P}, constants {\bf C} and variables {\bf V} are mutually disjoint. Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form \textsc{predicate}\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
-Atoms are the building blocks of \emph{rules}, which are used to derive information in datalog. A rule is a premise that implies a conclusion, and both are conjunctions of atoms.
+Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}. In the context of Wikidata, any item or property, e.g. \emph{Earth} (Q2) or \emph{head of government} (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\). To stay close to Wikidata in our examples, let us take the predicate \textsc{triple}with arity 3 as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
+Additionally, datalog also provides \emph{variables}, which will be capitalized, like \(X\). The sets of predicates {\bf P}, constants {\bf C} and variables {\bf V} are mutually disjoint. Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form \textsc{predicate}\((t_1, \ldots , t_n)\) with \(t_1,\ldots,t_n\) being terms.\\
+Atoms are the building blocks of \emph{rules}, which are used to derive information in datalog. A rule specifies a premise that implies a conclusion, and both are conjunctions of atoms.
 Let \(P_n\) denote  premise atoms and \(C_n\) the conclusion atoms. The variables used in one rule are divided into two mutually disjoint sets \(V_p\) and \(V_r\) which are the variables occurring only in its premise atoms and occurring in conclusion atoms and premise atoms, respectively. The general from of a rule is (with \(k \in \mathbb{N}^+\), \(l \in \mathbb{N}\))
 \begin{equation}
 \forall V_p \forall V_r.(C_1 \wedge \ldots \wedge C_k \leftarrow P_1 \wedge \ldots \wedge P_l)
@@ -112,24 +112,24 @@ If \(V_c = \emptyset\) the rule is called a \emph{datalog rule} and if \(l = 0\)
 Within the rule predicates we can differentiate between two different schemas: the \emph{extensional schema} and the \emph{intensional schema}, called \textsc{edb} and \textsc{idb} (extensional/intensional database). An \textsc{edb} predicate may only occur in the premise of a rule, meaning it can never be derived. All predicates that appear in the conclusion at least once are \textsc{idb} predicates.
 
 \begin{example}
-For the following example, taken from Wikidata, descriptive names will be used instead of the IDs to increase readability. The individual entities and properties are introduced with their ID beforehand, so the example can be retraced. The species \emph{blueWhale} (Q42196) has the \emph{parentTaxon} (P171) \emph{balaenoptera} (Q133320), which in turn has the parent taxon \emph{rorqual} (Q232829). The predicates used are \textsc{triple\_edb}\([3]\) as the input and \textsc{is\_in\_taxon\_idb}\([2]\), which will be derived. The basic facts are:
-\[\textsc{triple\_edb}(\emph{blueWhale}, \emph{parentTaxon}, \emph{balaenoptera})\]
-\[\textsc{triple\_edb}(\emph{balaenoptera}, \emph{parenTaxon}, \emph{rorqual})\]
+For the following example, taken from Wikidata, descriptive names will be used instead of the IDs to increase readability. The individual entities and properties are introduced with their ID beforehand, so the example can be retraced. The species \emph{blueWhale} (Q42196) has the \emph{parentTaxon} (P171) \emph{balaenoptera} (Q133320), which in turn has the parent taxon \emph{rorqual} (Q232829). The predicates used are \textsc{triple} with arity 3 as the input and \textsc{is\_in\_taxon}with arity 2, which will be derived. The basic facts are:
+\[\textsc{triple}(\emph{blueWhale}, \emph{parentTaxon}, \emph{balaenoptera})\]
+\[\textsc{triple}(\emph{balaenoptera}, \emph{parenTaxon}, \emph{rorqual})\]
 From this we can draw conclusions. The first step is to represent the already existing facts as idb:
-\[\textsc{is\_in\_taxon\_idb}(X, Y) \leftarrow \textsc{triple\_edb}(X, \emph{parentTaxon}, Y)\]
+\[\textsc{is\_in\_taxon\_idb}(X, Y) \leftarrow \textsc{triple}(X, \emph{parentTaxon}, Y)\]
 Finally the transitive closure of this relation can be derived with
 \[\textsc{is\_in\_taxon\_idb}(X, Y) \leftarrow \textsc{is\_in\_taxon\_idb}(X, Z) \wedge \textsc{is\_in\_taxon\_idb}(Z, Y)\]
 \end{example}
 
 \chapter{Property Constraints}\label{cha_property_constraints}
 
-To improve the data quality, to help editors avoid common mistakes, and to clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are, however, not firm rules, and exceptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. that only certain values are allowed, or more complex requirements on connected parts of the data, e.g. that the value of a statement with this property should have certain statements. In Table \ref{tab_property_constraints} you can find the existing property constraints as of September 2018. Afterwards, the constraints will be explained in detail and their modelling given. For constraint that cannot be modelled, reasoning for this assessment is included.
+To improve the data quality, to help editors avoid common mistakes, and to clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are, however, not firm rules, and exceptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. that only certain values are allowed, or more complex requirements on connected parts of the data, e.g. that the value of a statement with this property should have certain statements. Table \ref{tab_property_constraints} contains the existing property constraints as of September 2018. The constraints will be explained in detail and their modelling given. For constraint that cannot be modelled, reasoning for this assessment is included.
 
-To apply a constraint to a property, a statement <property> <P2302> <constraint> is added to the properties item page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. Note that a constrained statement means a statement whose predicate is a property that has a specific constraint. A simple example for this would be \emph{distinct values} (Q21502410), stating that values of the property must be unique across all constrained statements. For this case no additional information regarding the constraint is necessary and violation could be found by surveying all constrained statements and comparing their values.\\
+To apply a constraint to a property, a statement <property> <P2302> <constraint> is added to the property's page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. A constrained statement is a statement whose predicate is a property that has a constraint declaration. A simple example for this would be \emph{distinct values} (Q21502410), stating that values of the property must be unique across all constrained statements. No additional information regarding the constraint is necessary in this case, and violation could be found by surveying all constrained statements and comparing their values.\\
 Constraints can be further specified by using qualifiers on the constraint statement. These qualifiers are either optional or mandatory, and may be applied once or multiple times. For example, the \emph{none of} constraint (Q52558054) states that values for the specific property may not be in a given set of disallowed values. This set is specified using qualifiers with property \emph{item of} (P2305), which list all the disallowed values. At least one such qualifier must be present for the statement.\\
-More complex dependencies are also possible. A constraint can depend on all constrained statements of a specific item (\emph{single value} constraint [Q19474404]), on all statements of the item specified as the value of a constrained statement (\emph{value requires statement} constraint [Q21510864]), or on all statements using the subclass of-predicate (\emph{type} constraint [Q21503250]).
+More complex dependencies are also possible. A constraint type can depend on all constrained statements of a specific item (\emph{single value} constraint [Q19474404]), on all statements of the item specified as the value of a constrained statement (\emph{value requires statement} constraint [Q21510864]), or on all statements using the subclass of-predicate (\emph{type} constraint [Q21503250]).
 
-Table \ref{tab_property_constraints} shows all constraints that are used as of September 2018. It is roughly sorted by how difficult it is to model the given constraint using logical rules, based on the required expressive features and pre-processing. These required features are conditions that cannot natively be expressed in datalog and would require some kind of pre-processing of the dataset. Four constraints do not need any pre-processing except for loading the data into datalog as ground rules. Six can be solved if constant inequality is defined. This can be easily solved with brute force but will be improved in Section \ref{sec_constraints_using_inequality}. A further seven require negation of a specific fact which can be achieved with reasonable effort. The last ten are not deemed translatable because they require a feature that cannot be reasonably emulated in datalog. The feature mostly needed is a general form of negation that would allow to test for the non-existence of a derived fact. Other features needed for these constraints are regular expressions, which could theoretically be translated, but would require large amounts of pre-processing, value comparison, and finally web requests to test if a link is valid.
+Table \ref{tab_property_constraints} shows all constraints that are used as of September 2018. It is roughly sorted by how difficult it is to model the given constraint using logical rules, based on the required expressive features and pre-processing. These required features are conditions that cannot natively be expressed in datalog and would require some kind of pre-processing of the dataset. Four constraints do not need any pre-processing except for loading the data into datalog as facts. Six can be solved if constant inequality is defined. This can be easily solved with brute force but will be improved in Section \ref{sec_constraints_using_inequality}. A further seven require negation of a specific fact which can be achieved with reasonable effort. The last ten are not deemed translatable because they require a feature that cannot be reasonably emulated in datalog. The feature mostly needed is a general form of negation that would allow to test for the non-existence of a derived fact. Other features needed for these constraints are value comparison, web requests to test if a link is valid, and regular expressions, which could theoretically be translated, but would require large amounts of pre-processing.
 
 \begin{table}[H]
 \caption{property constraints}\label{tab_property_constraints}
@@ -184,18 +184,18 @@ To represent the content of Wikidata as facts, the following predicates are intr
 \begin{tabular}{llp{8.5cm}}
 Predicate & Positions & Description \\
 \hline
-\textsc{statement\_edb} & \makecell{statementID \\ entityID \\ propertyID \\ value (entityID or string)} & represents basic statements \\
+\textsc{statement\_edb} & \makecell{statement ID \\ entity ID \\ property ID \\ value (entity ID or string)} & represents basic statements \\
 \hline
-\textsc{qualifier\_edb} & \makecell{statementID \\ propertyID \\ value} & represents qualifiers on statements \\
+\textsc{qualifier\_edb} & \makecell{statement ID \\ property ID \\ value} & represents qualifiers on statements \\
 \hline
-\textsc{reference\_edb} & \makecell{statementID \\ reference hash \\ propertyID \\ value} & represents references on statements; reference hash groups the property-value pairs belonging to one reference \\
+\textsc{reference\_edb} & \makecell{statement ID \\ reference hash \\ property ID \\ value} & represents references on statements; reference hash groups the property-value pairs belonging to one reference \\
 \hline
-\textsc{item\_edb} & entityID & marks an entity as an item \\
-\textsc{property\_edb} & entityID & marks an entity as a property \\
+\textsc{item\_edb} & entity ID & marks an entity as an item \\
+\textsc{property\_edb} & entity ID & marks an entity as a property \\
 \hline
-\textsc{unit\_edb} & \makecell{value \\ unitID} & denotes which unit a value has \\
+\textsc{unit\_edb} & \makecell{value \\ unit ID} & denotes which unit a value has \\
 \hline
-\textsc{rank\_edb} & \makecell{statementID \\ rank} & denotes the rank a statement has
+\textsc{rank\_edb} & \makecell{statement ID \\ rank} & denotes the rank a statement has
 \end{tabular}
 \end{table}
 
@@ -402,7 +402,7 @@ Given a specified constraint, each of the three rules is created once for each \
 All translatable constraints except the four covered in the previous Section require inequality in some way or another. This means it is necessary to extract additional information during pre-processing, namely the constants for which inequality needs to be stated. Each constraint will list the possible unequal entities in relation to the constrained statement. Multiple ways of implementing inequality will be discussed. Afterwards all constraints that can be translated using inequality will be explained.
 
 \subsection{Approaches}
-In every approach it will be necessary to load some basic inequalities into the database. To this end the predicate unequal\_edb\([2]\) is introduced. Since the goal is to keep the number of applications of this predicate small, an \emph{idb} predicate unequal\([2]\) has to be introduced. This leads to the rule
+In every approach it will be necessary to load some basic inequalities into the database. To this end the predicate unequal\_edbwith arity 2 is introduced. Since the goal is to keep the number of applications of this predicate small, an \emph{idb} predicate unequalwith arity 2 has to be introduced. This leads to the rule
 \begin{align}
 \textsc{unequal}(X, Y) \leftarrow \emph{unequal\_edb}(X, Y)
 \end{align}
@@ -450,7 +450,7 @@ Now that inequality between all characters and the link between entities and the
 Note that the facts fulfilling \(\textsc{unequal}(A_j, B_j)\) are created by using the approach outlined in Section \ref{subsubsec_naive} for the set of characters \(C\) in all unequal constants \(U\).	
 
 \subsubsection{Demand-driven materialisation}\label{subsubsec_demand-driven_materialisation}
-The approaches outlined above will always result in all inequalities between the members of \(U\) being materialised. However, the purpose of determining inequality is to assist in finding violations of specific constraints. This means that only some inequalities -- the ones that actually appear in the dataset -- have to be evaluated. The rules can then be limited by introducing a new predicate req\_inequality\([2]\) which will only be derived if a condition occurs in which the inequality must be evaluated.\\
+The approaches outlined above will always result in all inequalities between the members of \(U\) being materialised. However, the purpose of determining inequality is to assist in finding violations of specific constraints. This means that only some inequalities -- the ones that actually appear in the dataset -- have to be evaluated. The rules can then be limited by introducing a new predicate req\_inequalitywith arity 2 which will only be derived if a condition occurs in which the inequality must be evaluated.\\
 
 To save space and avoid redundancy, the following rules will not explicitly state the inequality requirement predicate. Instead, assume that for every premise of the form \(B_1 \wedge \ldots\wedge B_m \wedge I_1 \wedge I_n\) where \(B_1 .. B_m\) are arbitrary atoms, \(I_1 .. I_n\) are atoms of the form \(\textsc{unequal}(t_{n_1}, t_{n_2})\) with \(t_{n_1}, t_{n_2}\) terms and all variables amount \(t_{n_1}\) and \(t_{n_2}\) appear in at least one of \(B_1 \ldots B_m\), rule one is introduced for all \(n\). The rules outlined in Section \ref{subsubsec_encoding} are changed to utilise this new requirement as shown in rule two.
 \begin{align}
@@ -652,11 +652,11 @@ The one-of qualifier value constraint is violated if a constrained statement has
 \end{align}
 
 \section{Constraints using Statement non-Existence}\label{sec_constraints_using_statement_non}
-Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: \textsc{first}\([1]\), \textsc{last}\([2]\), and \textsc{next}\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
+Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: \textsc{first}with arity 1, \textsc{last}with arity 2, and \textsc{next}with arity 2, which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
 
-If qualifier non-existence should be tested, the predicates have to be adapted since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property, and value have to be used. For this the predicates \textsc{first\_qualifier}\([3]\) and \textsc{last\_qualifier}\([3]\) taking the statement ID, the property, and the value, as well as \textsc{next\_qualifier}\([6]\) with ID, property, and value for the current and next qualifier are introduced.\\
+If qualifier non-existence should be tested, the predicates have to be adapted since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property, and value have to be used. For this the predicates \textsc{first\_qualifier} with arity 3 and \textsc{last\_qualifier} with arity 3 taking the statement ID, the property, and the value, as well as \textsc{next\_qualifier}with arity 6 with ID, property, and value for the current and next qualifier are introduced.\\
 
-Using this pre-processed data, the approach is to apply a not\_found-predicate to each statement or qualifier. This is \textsc{not\_found}\([2]\) for statements, connecting the statement ID with an identifier unique to the declared constraint and \textsc{not\_found}\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the unique identifier.\\
+Using this pre-processed data, the approach is to apply a not\_found-predicate to each statement or qualifier. This is \textsc{not\_found}with arity 2 for statements, connecting the statement ID with an identifier unique to the declared constraint and \textsc{not\_found}with arity 4 taking the statement ID, property, and value of a qualifier and linking this with the unique identifier.\\
 
 For statements the pattern consists of two rules, both utilising the same conjunction \emph{does-not-fulfil} whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. It needs to bind the variable \(S\), denoting the current statement ID, but not bind the variable \(O\), denoting the preceding statement ID. Care must be taken that the rules presented below also utilise the variables \(C, P, V,\) and \(X\) as the value of the preceding qualifier, the property of the current qualifier, the value of the current qualifier, and the property of the preceding qualifier, respectively. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
 \begin{align}
@@ -807,7 +807,7 @@ The \emph{multi-value} constraint requires a limited count of constrained statem
 &\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\emph{constrainedProperty}, P)
 \end{split}
 \end{equation}
-The predicate \textsc{require\_second}\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found. A violation would be any last statement requiring a second constrained statement, analogous to the violation rule for \emph{item requires statement} (see Section \ref{subsec_item_requires_statement}).
+The predicate \textsc{require\_second}with arity 2 is introduced with the same meaning as require except that it will be applied after a required property has been found. A violation would be any last statement requiring a second constrained statement, analogous to the violation rule for \emph{item requires statement} (see Section \ref{subsec_item_requires_statement}).
 \begin{align}
 \begin{split}
 \textsc{require\_second}&(S, \emph{constrainedProperty}, \emph{constrainedProperty}) \leftarrow \\
