@@ -89,10 +89,10 @@ public class SC {
 	// inequality1, inequality2
 	public final static Predicate require_inequality = Expressions.makePredicate(REQUIRE_INEQUALITY, 2);
 	
-	// id, requiringProperty, required -> requiringProperty, required, id
-	public static final Predicate require = new PositionPredicate(REQUIRE, 3, 2, 0, 1);
-	// id, requiringProperty, required -> requiringProperty, required, id
-	public static final Predicate require_second = new PositionPredicate(REQUIRE_SECOND, 3, 2, 0, 1);
+	// id, uniqueId -> uniqueId, id
+	public static final Predicate require = new PositionPredicate(REQUIRE, 2, 1, 0);
+	// id, uniqueId -> uniqueId, id
+	public static final Predicate require_second = new PositionPredicate(REQUIRE_SECOND, 2, 1, 0);
 	
 	// id, entity
 	public static final Predicate first = Expressions.makePredicate(FIRST, 2);
@@ -101,8 +101,8 @@ public class SC {
 	// id, entity
 	public static final Predicate last = Expressions.makePredicate(LAST, 2);
 	
-	// id, property, value, requiringProperty, required -> requiringProperty, property, value, required, id
-	public static final Predicate require_qualifier = new PositionPredicate(REQUIRE_QUALIFIER, 5, 4, 1, 2, 0, 3);
+	// id, property, value, uniqueId -> property, uniqueId, value, id
+	public static final Predicate require_qualifier = new PositionPredicate(REQUIRE_QUALIFIER, 4, 3, 0, 2, 1);
 	
 	// id, property, value -> property, value, id
 	public static final Predicate first_qualifier = new PositionPredicate(FIRST_QUALIFIER, 3, 2, 0, 1);

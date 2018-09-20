@@ -48,13 +48,16 @@ public class ValueRequiresStatementPCC extends PropertyConstraintChecker {
 		// statementEDB(S, I, P, V)
 		Atom statementEDB_SIPV = Expressions.makeAtom(statementEDB, s, i, p, v);
 		
+		int uniqueID = 0;
 		for (Map.Entry<String, Set<String>> entry : configuration.entrySet()) {
 			Term requiredPropertyConstant = Utility.makeConstant(entry.getKey());
+			
+			Constant uniqueIDConstant = Expressions.makeConstant(property + String.valueOf(uniqueID));
 		
 			// unequal(requiredPropertyConstant, P)
 			Atom unequal_rP = Expressions.makeAtom(InequalityHelper.unequal, requiredPropertyConstant, p);
 		
-			rules.addAll(StatementNonExistenceHelper.initRequireStatement(propertyConstant, requiredPropertyConstant, statementEDB_QRpI, statementEDB_SIPV, unequal_rP));
+			rules.addAll(StatementNonExistenceHelper.initRequireStatement(uniqueIDConstant, statementEDB_QRpI, statementEDB_SIPV, unequal_rP));
 			
 			Set<String> allowedValues = entry.getValue();				
 			if (allowedValues.size() != 0) {
@@ -70,25 +73,22 @@ public class ValueRequiresStatementPCC extends PropertyConstraintChecker {
 					conjunction.add(Expressions.makeAtom(InequalityHelper.unequal, allowedValueConstant, v));
 				}
 				
-				rules.addAll(StatementNonExistenceHelper.initRequireStatement(propertyConstant, requiredPropertyConstant, conjunction));
-			}
-		}
-		
-		for (String requiredProperty : configuration.keySet()) {
-			Term requiredPropertyConstant = Utility.makeConstant(requiredProperty);
+				rules.addAll(StatementNonExistenceHelper.initRequireStatement(uniqueIDConstant, conjunction));
+			}	
 			
 			// last(O, V)
 			Atom last_OV = Expressions.makeAtom(last, o, v);
 			
-			// require(O, propertyConstant, requiredPropertyConstant)
-			Atom require_Orr = Expressions.makeAtom(require, o, propertyConstant, requiredPropertyConstant);
+			// require(O, uniqueIDConstant)
+			Atom require_Ou = Expressions.makeAtom(require, o, uniqueIDConstant);
 			
 			// violation_statement(S, I, propertyConstant, V) :-
 			//	statementEDB(S, I, propertyConstant, V),
 			//	last(O, V),
-			//	require(O, propertyConstant, requiredPropertyConstant)
-			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, last_OV, require_Orr);
+			//	require(O, uniqueIDConstant)
+			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, last_OV, require_Ou);
 			rules.add(violation);
+			uniqueID++;
 		}
 		
 		return rules;

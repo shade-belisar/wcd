@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.semanticweb.vlog4j.core.model.api.Atom;
+import org.semanticweb.vlog4j.core.model.api.Constant;
 import org.semanticweb.vlog4j.core.model.api.Rule;
 import org.semanticweb.vlog4j.core.model.api.Term;
 import org.semanticweb.vlog4j.core.model.implementation.Expressions;
@@ -46,13 +47,16 @@ public class InversePCC extends PropertyConstraintChecker {
 		// statementEDB(S, I, P, V)
 		Atom statementEDB_SIPV = Expressions.makeAtom(statementEDB, s, i, p, v);
 		
+		int uniqueID = 0;
 		for (String inverseProperty : configuration) {
 			Term inversePropertyConstant = Utility.makeConstant(inverseProperty);
+			
+			Constant uniqueIDConstant = Expressions.makeConstant(property + String.valueOf(uniqueID));
 		
 			// unequal(inversePropertyConstant, P)
 			Atom unequal_iP = Expressions.makeAtom(InequalityHelper.unequal, inversePropertyConstant, p);
 		
-			rules.addAll(StatementNonExistenceHelper.initRequireStatement(inversePropertyConstant, r, statementEDB_QRpI, statementEDB_SIPV, unequal_iP));
+			rules.addAll(StatementNonExistenceHelper.initRequireStatement(uniqueIDConstant, statementEDB_QRpI, statementEDB_SIPV, unequal_iP));
 			
 			// statementEDB(S, I, inversePropertyConstant, V)
 			Atom statementEDB_SIiV = Expressions.makeAtom(statementEDB, s, i, inversePropertyConstant, v);
@@ -60,26 +64,23 @@ public class InversePCC extends PropertyConstraintChecker {
 			// unequal(R, V)
 			Atom unequal_RV = Expressions.makeAtom(InequalityHelper.unequal, r, v);
 			
-			rules.addAll(StatementNonExistenceHelper.initRequireStatement(inversePropertyConstant, r, statementEDB_QRpI, statementEDB_SIiV, unequal_RV));
-		}
-		
-		for (String inverseProperty : configuration) {
-			Term inversePropertyConstant = Utility.makeConstant(inverseProperty);
-			
+			rules.addAll(StatementNonExistenceHelper.initRequireStatement(uniqueIDConstant, statementEDB_QRpI, statementEDB_SIiV, unequal_RV));
+
 			// last(O, V)
 			Atom last_OV = Expressions.makeAtom(last, o, v);
 			
-			// require(O, inverseProperty, r)
-			Atom require_OiR = Expressions.makeAtom(require, o, inversePropertyConstant, r);
+			// require(O, uniqueIDConstant)
+			Atom require_Ou = Expressions.makeAtom(require, o, uniqueIDConstant);
 			
 			// violation_statement(S, I, propertyConstant, V) :-
 			//	statementEDB(S, I, propertyConstant, V),
 			//	last(O, V),
-			//	require(O, inversePropertyConstant, R)
-			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, last_OV, require_OiR);
+			//	require(O, uniqueIDConstant)
+			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, last_OV, require_Ou);
 			rules.add(violation);
+			uniqueID++;
 		}
-		
+
 		return rules;
 	}
 }

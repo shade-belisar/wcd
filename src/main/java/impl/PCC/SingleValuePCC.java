@@ -95,12 +95,12 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			Atom qualifierEDB_SPV = Expressions.makeAtom(qualifierEDB, s, p, v);
 			
 			for (String separator : separators) {
-				Constant requiredPropertyConstant = Expressions.makeConstant(separator);
+				Constant requiredSeparatorConstant = Expressions.makeConstant(separator);
 				
 				// unequal(P, requiredPropertyConstant)
-				Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredPropertyConstant);
+				Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredSeparatorConstant);
 				
-				rules.addAll(StatementNonExistenceHelper.initRequireQualifier(propertyConstant, requiredPropertyConstant, statementEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
+				rules.addAll(StatementNonExistenceHelper.initRequireQualifier(requiredSeparatorConstant, statementEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
 			}
 			
 			// same_or_non_existent(S, O, Q)
@@ -131,20 +131,20 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			// last_qualifier(O, R, C)
 			Atom last_qualifier_ORC = Expressions.makeAtom(last_qualifier, o, r, c);
 			
-			// require_qualifier(S, P, V, propertyConstant, Q)
-			Atom require_SPVpQ = Expressions.makeAtom(require_qualifier, s, p, v, propertyConstant, q);
+			// require_qualifier(S, P, V, Q)
+			Atom require_SPVQ = Expressions.makeAtom(require_qualifier, s, p, v, q);
 			
-			// require_qualifier(O, R, C, propertyConstant, Q)
-			Atom require_ORCpQ = Expressions.makeAtom(require_qualifier, o, r, c, propertyConstant, q);
+			// require_qualifier(O, R, C, Q)
+			Atom require_ORCQ = Expressions.makeAtom(require_qualifier, o, r, c, q);
 			
 			// same_or_non_existent(S, O, Q) :-
 			//	statementEDB(S, I, propertyConstant, X),
 			//	statementEDB(O, I, propertyConstant, Y),
 			//	last_qualifier(S, P, V),
-			//	require_qualifier(S, P, V, propertyConstant, Q),
+			//	require_qualifier(S, P, V, Q),
 			//	last_qualifier(O, R, C),
-			//	require_qualifier(O, R, C, propertyConstant, Q)
-			Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, last_qualifier_SPV, require_SPVpQ, last_qualifier_ORC, require_ORCpQ);
+			//	require_qualifier(O, R, C, Q)
+			Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, last_qualifier_SPV, require_SPVQ, last_qualifier_ORC, require_ORCQ);
 			rules.add(non_existent);
 			
 			List<Atom> body = new ArrayList<>();

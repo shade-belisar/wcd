@@ -105,12 +105,12 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 			Atom qualifierEDB_SPV = Expressions.makeAtom(qualifierEDB, s, p, v);
 			
 			for (String separator : separators) {
-				Constant requiredPropertyConstant = Expressions.makeConstant(separator);
+				Constant requiredSeparatorConstant = Expressions.makeConstant(separator);
 				
 				// unequal(P, requiredPropertyConstant)
-				Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredPropertyConstant);
+				Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredSeparatorConstant);
 				
-				rules.addAll(StatementNonExistenceHelper.initRequireQualifier(propertyConstant, requiredPropertyConstant, statementEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
+				rules.addAll(StatementNonExistenceHelper.initRequireQualifier(requiredSeparatorConstant, statementEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
 			}
 			
 			// same_or_non_existent(S, O, Q)

@@ -48,24 +48,24 @@ public class MandatoryQualifierPCC extends PropertyConstraintChecker {
 		Atom qualifierEDB_SPV = Expressions.makeAtom(qualifierEDB, s, p, v);
 		
 		for (String requiredQualifier : requiredQualifiers) {
-			Constant requiredPropertyConstant = Expressions.makeConstant(requiredQualifier);
+			Constant requiredQualifierConstant = Expressions.makeConstant(requiredQualifier);
 			
-			// unequal(P, requiredPropertyConstant)
-			Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredPropertyConstant);
+			// unequal(P, requiredQualifierConstant)
+			Atom unequal_Pr = Expressions.makeAtom(InequalityHelper.unequal, p, requiredQualifierConstant);
 			
-			rules.addAll(StatementNonExistenceHelper.initRequireQualifier(propertyConstant, requiredPropertyConstant, statementEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
+			rules.addAll(StatementNonExistenceHelper.initRequireQualifier(requiredQualifierConstant, statementEDB_SIpC, qualifierEDB_SPV, unequal_Pr));
 			
 			// last_qualifier(S, Q, C)
 			Atom last_qualifier_SPV = Expressions.makeAtom(last_qualifier, s, q, c);
 			
-			// require_qualifier(S, Q, C, propertyConstant, requiredPropertyConstant)
-			Atom require_qualifier_SQCpr = Expressions.makeAtom(require_qualifier, s, q, c, propertyConstant, requiredPropertyConstant);
+			// require_qualifier(S, Q, C, requiredQualifierConstant)
+			Atom require_qualifier_SQCr = Expressions.makeAtom(require_qualifier, s, q, c, requiredQualifierConstant);
 			
 			// violation_statement(S, I, propertyConstant, V) :-
 			//	statementEDB(S, I, propertyConstant, V),
 			//	last_qualifier(S, Q, C),
-			//	require_qualifier(S, Q, C, requiredPropertyConstant)
-			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, last_qualifier_SPV, require_qualifier_SQCpr);
+			//	require_qualifier(S, Q, C, requiredQualifierConstant)
+			Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, last_qualifier_SPV, require_qualifier_SQCr);
 			rules.add(violation);
 		}
 		

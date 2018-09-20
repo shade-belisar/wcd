@@ -51,16 +51,16 @@ public class MultiValuePCC extends PropertyConstraintChecker {
 		// unequal(propertyConstant, P)
 		Atom unequal_pP = Expressions.makeAtom(InequalityHelper.unequal, propertyConstant, p);
 		
-		rules.addAll(StatementNonExistenceHelper.initRequireStatement(propertyConstant, propertyConstant, statementEDB_QIpX, statementEDB_SIPV, unequal_pP));
+		rules.addAll(StatementNonExistenceHelper.initRequireStatement(propertyConstant, statementEDB_QIpX, statementEDB_SIPV, unequal_pP));
 		
-		// require_second(S, propertyConstant, propertyConstant)
-		Atom require_second_Spp = Expressions.makeAtom(require_second, s, propertyConstant, propertyConstant);
+		// require_second(S, propertyConstant)
+		Atom require_second_Sp = Expressions.makeAtom(require_second, s, propertyConstant);
 		
 		// next(T, R)
 		Atom next_TR = Expressions.makeAtom(next, t, r);
 		
-		// require(T, propertyConstant, propertyConstant)
-		Atom require_Tpp = Expressions.makeAtom(require, t, propertyConstant, propertyConstant);
+		// require(T, propertyConstant)
+		Atom require_Tp = Expressions.makeAtom(require, t, propertyConstant);
 		
 		// next(R, S)
 		Atom next_RS = Expressions.makeAtom(next, r, s);
@@ -68,27 +68,27 @@ public class MultiValuePCC extends PropertyConstraintChecker {
 		// statementEDB(R, I, propertyConstant, C)
 		Atom statementEDB_RIpC = Expressions.makeAtom(statementEDB, r, i, propertyConstant, c);
 		
-		// require_second(S, propertyConstant, propertyConstant) :-
+		// require_second(S, propertyConstant) :-
 		//	statementEDB(Q, I, propertyConstant, X),
 		//	statementEDB(S, I, P, V),
 		//	unequal(propertyConstant, P)
 		//	next(R, S),
 		//	statementEDB(R, I, propertyConstant, C),
 		//	next(T, R),
-		//	require(T, propertyConstant, propertyConstant)
-		Rule require1 = Expressions.makeRule(require_second_Spp, statementEDB_QIpX, statementEDB_SIPV, unequal_pP, next_RS, statementEDB_RIpC, next_TR, require_Tpp);
+		//	require(T, propertyConstant)
+		Rule require1 = Expressions.makeRule(require_second_Sp, statementEDB_QIpX, statementEDB_SIPV, unequal_pP, next_RS, statementEDB_RIpC, next_TR, require_Tp);
 		rules.add(require1);
 		
-		// require_second(R, propertyConstant, propertyConstant)
-		Atom require_second_Rpp = Expressions.makeAtom(require_second, r, propertyConstant, propertyConstant);
+		// require_second(R, propertyConstant)
+		Atom require_second_Rp = Expressions.makeAtom(require_second, r, propertyConstant);
 		
-		// require_second(S, propertyConstant, propertyConstant) :-
+		// require_second(S, propertyConstant) :-
 		//	statementEDB(Q, I, propertyConstant, X),
 		//	statementEDB(S, I, P, V),
 		//	unequal(propertyConstant, P),
 		//	next(R, S),
-		//	require_second(R, propertyConstant, propertyConstant)
-		Rule require2 = Expressions.makeRule(require_second_Spp, statementEDB_QIpX, statementEDB_SIPV, unequal_pP, next_RS, require_second_Rpp);
+		//	require_second(R, propertyConstant)
+		Rule require2 = Expressions.makeRule(require_second_Sp, statementEDB_QIpX, statementEDB_SIPV, unequal_pP, next_RS, require_second_Rp);
 		rules.add(require2);
 		
 		// statementEDB(O, I, P, X)
@@ -97,14 +97,14 @@ public class MultiValuePCC extends PropertyConstraintChecker {
 		// last(O, I)
 		Atom last_OI = Expressions.makeAtom(last, o, i);
 		
-		// require_second(O, propertyConstant, propertyConstant)
-		Atom require_second_Opp = Expressions.makeAtom(require_second, o, propertyConstant, propertyConstant);
+		// require_second(O, propertyConstant)
+		Atom require_second_Op = Expressions.makeAtom(require_second, o, propertyConstant);
 		
 		// violation_statement(S, I, propertyConstant, V) :-
 		//	statementEDB(S, I, propertyConstant, V),
 		//	statementEDB(O, I, P, X), last(O, I),
-		//	require_second(O, propertyConstant, propertyConstant)
-		Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, statementEDB_OIPX, last_OI, require_second_Opp);
+		//	require_second(O, propertyConstant)
+		Rule violation = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, statementEDB_OIPX, last_OI, require_second_Op);
 		rules.add(violation);
 		
 		return rules;
