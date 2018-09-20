@@ -58,7 +58,7 @@ Since Wikidata is a very large and constantly changing resource, it is necessary
 
 \chapter{Preliminaries}\label{cha_preliminaries}
 \section{Wikidata}\label{sec_wikidata}
-Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). Triples store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P and will be referred to as Q- and P-IDs, respectively. In the future there will be a third entity type, lexeme. This is already incorporated into some constraints, but as of September 2018 they are not deployed. A value is one of several data types shown in Table \ref{tab_datatypes}, although it is also possible to use \textsc{none} or \textsc{some} as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
+Wikidata is the knowledge base sister project of Wikipedia. It is a public, open database system that, at its core, stores statements about specific items. The basic unit of information is a triple subject-predicate-object stating an item (subject) has a property (predicate) which is either another item or a value of some kind (object). Triples store the relations of entities with each other or with specific data. An entity is either an item, which represents a topic, concept or real world entity, or a property, which denotes a relation an item has to another or with a value. They have numeric identifiers that are prefixed with Q and P and will be referred to as Q- and P-IDs, respectively. In the future there will be a third entity type, lexeme. This is already incorporated into some constraints, but as of September 2018 they are not deployed. A value is one of several data types shown in Table \ref{tab_datatypes}, although it is also possible to use \emph{none} or \emph{some} as values for statements that have no value (akin to negation) or have a currently unknown value. Every property determines the data type it accepts as an object. \\
 
 \begin{table}[H]
 \caption{Wikidata data types}\label{tab_datatypes}
@@ -81,16 +81,16 @@ tabular data & tabular data (string) & name of a file in the "Data" namespace on
 \end{tabularx}
 \end{table}
 
-While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows to store additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Statements have one of three ranks, \textsc{normal}, \textsc{preferred}, and \textsc{deprecated} which are used to differentiate similar statements on the same item. For example, the \textsc{preferred} rank would be given to the current \textsc{head of state} (P35) of a country, while all statements denoting former \textsc{heads of state} have the rank \textsc{normal}. \textsc{Deprecated} is used on statements that where once considered correct but are not anymore, e.g., \textsc{Chelsea Manning} (Q298423) having the \textsc{sex or gender} (P21) \textsc{male} (Q6581097).
+While this is similar to RDF and Wikidata has in fact been exported as RDF \cite{EGKMV2014}, the data structure is more complex than simple triples. It allows to store additional information about statements. This is done via a statement ID, which is assigned to every triple storing information about an item. Statements have one of three ranks, \emph{normal}, \emph{preferred}, and \emph{deprecated} which are used to differentiate similar statements on the same item. For example, the \emph{preferred} rank would be given to the current \emph{head of state} (P35) of a country, while all statements denoting former \emph{heads of state} have the rank \emph{normal}. \emph{Deprecated} is used on statements that where once considered correct but are not anymore, e.g., \emph{Chelsea Manning} (Q298423) having the \emph{sex or gender} (P21) \emph{male} (Q6581097).
 
-Every statement can have added qualifiers, which consist of the corresponding statement id, a predicate, and an object. Qualifiers provide contextual information for statements. The most common context is the time frame in which the statement was accurate, e.g., stating the \textsc{start time} (P580) and \textsc{end time} (P582) of the term of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. Additionally, references can be added to statements.
+Every statement can have added qualifiers, which consist of the corresponding statement id, a predicate, and an object. Qualifiers provide contextual information for statements. The most common context is the time frame in which the statement was accurate, e.g., stating the \emph{start time} (P580) and \emph{end time} (P582) of the term of a head of state, but other information is possible, e.g. determination method for measurements or the elevation above sea level for the highest point. Additionally, references can be added to statements.
 
 References support the claim by citing the source and additional information, e.g. when it was retrieved or when the source was published as property-value pairs. Each reference consists of multiple such pairs, and statements can have multiple references.
 
 Other information regarding items like labels and descriptions in different languages as well as aliases and site links to other Wikimedia projects are also part of the data model but are not subject to constraints and are thus not explored further.
 
 \begin{example}
-Figure \ref{fig_example} is an excerpt from the entity page of the clipper \textsc{Cutty Sark} (Q171255) \footnote{\url{https://www.wikidata.org/wiki/Q171255}}. An entity page lists all statements with the entity as the subject. It then groups all statements by their property, in this case \textsc{length} (P2043). For the length of the Cutty Sark there is only one value, 85.4 metres, but this could include multiple values, e.g., if there were different ways to determine the length. This statement is further qualified with \textsc{criterion used} (P1013) as the qualifier property, which specifies how the value was determined. In this case the qualifier value \textsc{length overall} (Q2358152) was taken. The statement is backed up by one reference citing the property \textsc{reference URL} (P854) pointing to the reference value, which is an URL confirming the length of 85.4 metres.
+Figure \ref{fig_example} is an excerpt from the entity page of the clipper \emph{Cutty Sark} (Q171255) \footnote{\url{https://www.wikidata.org/wiki/Q171255}}. An entity page lists all statements with the entity as the subject. It then groups all statements by their property, in this case \emph{length} (P2043). For the length of the Cutty Sark there is only one value, 85.4 metres, but this could include multiple values, e.g., if there were different ways to determine the length. This statement is further qualified with \emph{criterion used} (P1013) as the qualifier property, which specifies how the value was determined. In this case the qualifier value \emph{length overall} (Q2358152) was taken. The statement is backed up by one reference citing the property \emph{reference URL} (P854) pointing to the reference value, which is an URL confirming the length of 85.4 metres.
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/cutty_sark_length.png}
@@ -99,35 +99,35 @@ Figure \ref{fig_example} is an excerpt from the entity page of the clipper \text
 \end{example}
 
 \section{Datalog}
-Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \textsc{constant}, which will be denoted as \textsc{someConstant}. In the context of Wikidata, any item or property, e.g. \textsc{Earth} (Q2) or \textsc{head of government} (P6), could be represented as a constant. Relations in datalog are expressed using \textsc{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples, let us take the predicate triple\([3]\) as an example. This would be used to express the \textsc{item}-\textsc{property}-\textsc{value} relation with each position representing one part of the triple.\\
-Additionally, datalog also provides \textsc{variables}, which will be capitalized, like \(X\). The sets of predicates {\bf P}, constants {\bf C} and variables {\bf V} are mutually disjoint. Constants and variables are collectively known as \textsc{terms} and are, together with predicates, used to form \textsc{atoms}. An atom has the form predicate\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
-Atoms are the building blocks of \textsc{rules}, which are used to derive information in datalog. A rule is a premise that implies a conclusion, and both are conjunctions of atoms.
+Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}, which will be denoted as \emph{someConstant}. In the context of Wikidata, any item or property, e.g. \emph{Earth} (Q2) or \emph{head of government} (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\), written as \textsc{predicate}\([n]\). To stay close to Wikidata in our examples, let us take the predicate \textsc{triple}\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
+Additionally, datalog also provides \emph{variables}, which will be capitalized, like \(X\). The sets of predicates {\bf P}, constants {\bf C} and variables {\bf V} are mutually disjoint. Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form \textsc{predicate}\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
+Atoms are the building blocks of \emph{rules}, which are used to derive information in datalog. A rule is a premise that implies a conclusion, and both are conjunctions of atoms.
 Let \(P_n\) denote  premise atoms and \(C_n\) the conclusion atoms. The variables used in one rule are divided into two mutually disjoint sets \(V_p\) and \(V_r\) which are the variables occurring only in its premise atoms and occurring in conclusion atoms and premise atoms, respectively. The general from of a rule is (with \(k \in \mathbb{N}^+\), \(l \in \mathbb{N}\))
 \begin{equation}
 \forall V_p \forall V_r.(C_1 \wedge \ldots \wedge C_k \leftarrow P_1 \wedge \ldots \wedge P_l)
 \end{equation}
 
-If \(V_c = \emptyset\) the rule is called a \textsc{datalog rule} and if \(l = 0\) it is called a \textsc{fact}. If a fact contains no variables but only constants, it is a \textsc{ground rule}. Since all \(V_p\) and \(V_r\) are  quantified, the preceding universal quantifiers \(\forall V_p \forall V_r\) will be omitted for the rules presented in this work.
+If \(V_c = \emptyset\) the rule is called a \emph{datalog rule} and if \(l = 0\) it is called a \emph{fact}. If a fact contains no variables but only constants, it is a \emph{ground rule}. Since all \(V_p\) and \(V_r\) are  quantified, the preceding universal quantifiers \(\forall V_p \forall V_r\) will be omitted for the rules presented in this work.
 
-Within the rule predicates we can differentiate between two different schemas: the \textsc{extensional schema} and the \textsc{intensional schema}, called \textsc{edb} and \textsc{idb} (extensional/intensional database). An \textsc{edb} predicate may only occur in the premise of a rule, meaning it can never be derived. All predicates that appear in the conclusion at least once are \textsc{idb} predicates.
+Within the rule predicates we can differentiate between two different schemas: the \emph{extensional schema} and the \emph{intensional schema}, called \textsc{edb} and \textsc{idb} (extensional/intensional database). An \textsc{edb} predicate may only occur in the premise of a rule, meaning it can never be derived. All predicates that appear in the conclusion at least once are \textsc{idb} predicates.
 
 \begin{example}
-For the following example, taken from Wikidata, descriptive names will be used instead of the IDs to increase readability. The individual entities and properties are introduced with their ID beforehand, so the example can be retraced. The species \textsc{blue whale} (Q42196) has the \textsc{parent taxon} (P171) \textsc{balaenoptera} (Q133320), which in turn has the parent taxon \textsc{rorqual} (Q232829). The predicates used are triple\_edb\([3]\) as the input and isInTaxon\_idb\([2]\), which will be derived. The basic facts are:
-\[\textsc{triple\_edb}(\textsc{blue whale}, \textsc{parent taxon}, \textsc{balaenoptera})\]
-\[\textsc{triple\_edb}(\textsc{balaenoptera}, \textsc{parent taxon}, \textsc{rorqual})\]
+For the following example, taken from Wikidata, descriptive names will be used instead of the IDs to increase readability. The individual entities and properties are introduced with their ID beforehand, so the example can be retraced. The species \emph{blueWhale} (Q42196) has the \emph{parentTaxon} (P171) \emph{balaenoptera} (Q133320), which in turn has the parent taxon \emph{rorqual} (Q232829). The predicates used are \textsc{triple\_edb}\([3]\) as the input and \textsc{is\_in\_taxon\_idb}\([2]\), which will be derived. The basic facts are:
+\[\textsc{triple\_edb}(\emph{blueWhale}, \emph{parentTaxon}, \emph{balaenoptera})\]
+\[\textsc{triple\_edb}(\emph{balaenoptera}, \emph{parenTaxon}, \emph{rorqual})\]
 From this we can draw conclusions. The first step is to represent the already existing facts as idb:
-\[\textsc{isInTaxon\_idb}(X, Y) \leftarrow \textsc{triple\_edb}(X, \textsc{parent taxon}, Y)\]
+\[\textsc{is\_in\_taxon\_idb}(X, Y) \leftarrow \textsc{triple\_edb}(X, \emph{parentTaxon}, Y)\]
 Finally the transitive closure of this relation can be derived with
-\[\textsc{isInTaxon\_idb}(X, Y) \leftarrow \textsc{isInTaxon\_idb}(X, Z) \wedge \textsc{isInTaxon\_idb}(Z, Y)\]
+\[\textsc{is\_in\_taxon\_idb}(X, Y) \leftarrow \textsc{is\_in\_taxon\_idb}(X, Z) \wedge \textsc{is\_in\_taxon\_idb}(Z, Y)\]
 \end{example}
 
 \chapter{Property Constraints}\label{cha_property_constraints}
 
 To improve the data quality, to help editors avoid common mistakes, and to clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are, however, not firm rules, and exceptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. that only certain values are allowed, or more complex requirements on connected parts of the data, e.g. that the value of a statement with this property should have certain statements. In Table \ref{tab_property_constraints} you can find the existing property constraints as of September 2018. Afterwards, the constraints will be explained in detail and their modelling given. For constraint that cannot be modelled, reasoning for this assessment is included.
 
-To apply a constraint to a property, a statement <property> <P2302> <constraint> is added to the properties item page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. Note that a constrained statement means a statement whose predicate is a property that has a specific constraint. A simple example for this would be \textsc{distinct values} (Q21502410), stating that values of the property must be unique across all constrained statements. For this case no additional information regarding the constraint is necessary and violation could be found by surveying all constrained statements and comparing their values.\\
-Constraints can be further specified by using qualifiers on the constraint statement. These qualifiers are either optional or mandatory, and may be applied once or multiple times. For example, the \textsc{none of} constraint (Q52558054) states that values for the specific property may not be in a given set of disallowed values. This set is specified using qualifiers with property \textsc{item of} (P2305), which list all the disallowed values. At least one such qualifier must be present for the statement.\\
-More complex dependencies are also possible. A constraint can depend on all constrained statements of a specific item (\textsc{single value} constraint [Q19474404]), on all statements of the item specified as the value of a constrained statement (\textsc{value requires statement} constraint [Q21510864]), or on all statements using the subclass of-predicate (\textsc{type} constraint [Q21503250]).
+To apply a constraint to a property, a statement <property> <P2302> <constraint> is added to the properties item page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. Note that a constrained statement means a statement whose predicate is a property that has a specific constraint. A simple example for this would be \emph{distinct values} (Q21502410), stating that values of the property must be unique across all constrained statements. For this case no additional information regarding the constraint is necessary and violation could be found by surveying all constrained statements and comparing their values.\\
+Constraints can be further specified by using qualifiers on the constraint statement. These qualifiers are either optional or mandatory, and may be applied once or multiple times. For example, the \emph{none of} constraint (Q52558054) states that values for the specific property may not be in a given set of disallowed values. This set is specified using qualifiers with property \emph{item of} (P2305), which list all the disallowed values. At least one such qualifier must be present for the statement.\\
+More complex dependencies are also possible. A constraint can depend on all constrained statements of a specific item (\emph{single value} constraint [Q19474404]), on all statements of the item specified as the value of a constrained statement (\emph{value requires statement} constraint [Q21510864]), or on all statements using the subclass of-predicate (\emph{type} constraint [Q21503250]).
 
 Table \ref{tab_property_constraints} shows all constraints that are used as of September 2018. It is roughly sorted by how difficult it is to model the given constraint using logical rules, based on the required expressive features and pre-processing. These required features are conditions that cannot natively be expressed in datalog and would require some kind of pre-processing of the dataset. Four constraints do not need any pre-processing except for loading the data into datalog as ground rules. Six can be solved if constant inequality is defined. This can be easily solved with brute force but will be improved in Section \ref{sec_constraints_using_inequality}. A further seven require negation of a specific fact which can be achieved with reasonable effort. The last ten are not deemed translatable because they require a feature that cannot be reasonably emulated in datalog. The feature mostly needed is a general form of negation that would allow to test for the non-existence of a derived fact. Other features needed for these constraints are regular expressions, which could theoretically be translated, but would require large amounts of pre-processing, value comparison, and finally web requests to test if a link is valid.
 
@@ -170,12 +170,12 @@ Table \ref{tab_property_constraints} shows all constraints that are used as of S
 \end{table}
 
 \section{Rules}
-Table \ref{tab_property_constraints} shows that most constraints cannot be modelled without at least some amount of preprocessing. Only \textsc{scope}, \textsc{conflicts with}, \textsc{allowed entity types} and \textsc{none of} can be modelled directly. This is due to the fact that \textsc{conflicts with} and \textsc{none of} exclude a limited and specified set of statements from validity and these cases can thus be directly taken as violations. \textsc{scope} and \textsc{allowed entity types} work very similar, since there are only three respectively two possible values and violations are simply the options that have not been allowed. The rules for these constraints are described in Section \ref{sec_simple_constraints}.\\
+Table \ref{tab_property_constraints} shows that most constraints cannot be modelled without at least some amount of preprocessing. Only \emph{scope}, \emph{conflicts with}, \emph{allowed entity types} and \emph{none of} can be modelled directly. This is due to the fact that \emph{conflicts with} and \emph{none of} exclude a limited and specified set of statements from validity and these cases can thus be directly taken as violations. \emph{scope} and \emph{allowed entity types} work very similar, since there are only three respectively two possible values and violations are simply the options that have not been allowed. The rules for these constraints are described in Section \ref{sec_simple_constraints}.\\
 
-A problem that occurs multiple times is the need to determine inequality between constants. \textsc{distinct value}, \textsc{allowed units}, \textsc{allowed qualifiers}, \textsc{one of}, \textsc{single best value} and \textsc{one-of qualifier value} each require a rule to determine if a value, unit, or property is not equal to another. To this end a certain amount of preprocessing is necessary, most notably the extraction of all constant pairs whose inequality has to be determined for finding the violations. To avoid putting and undue amount of processing outside of datalog, this extraction will not check more than that the constant is in the right position relative to the constrained statement, e.g., all values on statements constrained by \textsc{distinct value} or all qualifiers on statements constrained by \textsc{allowed qualifiers}. From this set inequality will be generated, different versions of which will be introduced in Section \ref{sec_inequality} and evaluated with regards to their performance in Section \ref{sec_constraints_using_inequality}.\\
+A problem that occurs multiple times is the need to determine inequality between constants. \emph{distinct value}, \emph{allowed units}, \emph{allowed qualifiers}, \emph{one of}, \emph{single best value} and \emph{one-of qualifier value} each require a rule to determine if a value, unit, or property is not equal to another. To this end a certain amount of preprocessing is necessary, most notably the extraction of all constant pairs whose inequality has to be determined for finding the violations. To avoid putting and undue amount of processing outside of datalog, this extraction will not check more than that the constant is in the right position relative to the constrained statement, e.g., all values on statements constrained by \emph{distinct value} or all qualifiers on statements constrained by \emph{allowed qualifiers}. From this set inequality will be generated, different versions of which will be introduced in Section \ref{sec_inequality} and evaluated with regards to their performance in Section \ref{sec_constraints_using_inequality}.\\
 
-Negation as a general problem cannot be solved in datalog. One could pre-process every necessary fact to be negated and add this to the ground facts, but this is not the purpose of this work. However, not all constraints require a general negation. \textsc{item requires statement}, \textsc{value requires statement}, \textsc{inverse }and \textsc{symmetric} are all violated if a statement does not exist on a specific item. This problem can be solved with limited amounts of preprocessing by leveraging a preprocessed statement order per item and 'iterating' through the statements until the required conditions are met.\\
-A similar approach can be taken to find items with exactly one statement matching certain criteria, required for 	\textsc{multi-value}. The idea is to ask the question if a second statement exists, then evaluating it as above. Both methods will be explained in Section \ref{sec_constraints_using_statement_non}.
+Negation as a general problem cannot be solved in datalog. One could pre-process every necessary fact to be negated and add this to the ground facts, but this is not the purpose of this work. However, not all constraints require a general negation. \emph{item requires statement}, \emph{value requires statement}, \emph{inverse }and \emph{symmetric} are all violated if a statement does not exist on a specific item. This problem can be solved with limited amounts of preprocessing by leveraging a preprocessed statement order per item and 'iterating' through the statements until the required conditions are met.\\
+A similar approach can be taken to find items with exactly one statement matching certain criteria, required for 	\emph{multi-value}. The idea is to ask the question if a second statement exists, then evaluating it as above. Both methods will be explained in Section \ref{sec_constraints_using_statement_non}.
 
 \subsection{Representation of Wikidata as Facts}\label{subsec_representation}
 To represent the content of Wikidata as facts, the following predicates are introduced:
@@ -217,9 +217,9 @@ value statement & statement on the value of a constrained statement
 \subsection{Task}\label{subsec_task}
 Each property constraint will be modelled and evaluated as one set of rules per property per constraint, meaning each violating statement will be of a form similar to
 \begin{align*}
-&\textsc{violation\_statement}(S, E, \textsc{propertyConstant}, V) &\leftarrow \textsc{atoms determining the violation} \\
-&\textsc{violation\_qualifier}(S, \textsc{propertyConstant}, V) &\leftarrow \textsc{atoms determining the violation} \\
-&\textsc{violation\_reference}(S, H, \textsc{propertyConstant}, V) &\leftarrow \textsc{atoms determining the violation}
+&\textsc{violation\_statement}(S, E, \emph{constrainedProperty}, V) &\leftarrow \emph{atoms determining the violation} \\
+&\textsc{violation\_qualifier}(S, \emph{constrainedProperty}, V) &\leftarrow \emph{atoms determining the violation} \\
+&\textsc{violation\_reference}(S, H, \emph{constrainedProperty}, V) &\leftarrow \emph{atoms determining the violation}
 \end{align*}
 where propertyConstant denotes the constrained property. The variables \(S\), \(I\), \(V\), and \(H\) are used for statement ID, entity ID, value and reference hash, respectively.
 
@@ -237,7 +237,7 @@ The constraints are described based on the Wikidata Property constraints portal\
 
 Every Section describing a constraint will consist of two subsections: the constraint explanation and the rules.
 
-{\bf Constraint:} This subsection starts with a table showing basic properties of the constraint. These include the required data, relevant qualifiers, and possible violations of the constraint. The required data states which part of the data in relation to the constrained statement are restricted or need to exist. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The first constraint, \textsc{property scope}, will be used as an example to explain the table in detail.
+{\bf Constraint:} This subsection starts with a table showing basic properties of the constraint. These include the required data, relevant qualifiers, and possible violations of the constraint. The required data states which part of the data in relation to the constrained statement are restricted or need to exist. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The first constraint, \emph{property scope}, will be used as an example to explain the table in detail.
 
 {\bf Rules:} Most constraints require more data than just the statements, qualifiers, and references. This can include additional data from Wikidata to be provided as facts using the introduced predicates (see Table \ref{tab_predicates}), inequalities to be established as a pre-processing step (see Section \ref{sec_constraints_using_inequality}), or preparations to determine specific kinds of negation (see Section \ref{sec_constraints_using_statement_non}). Afterwards, the rules necessary to determine violations are described.
 
@@ -246,14 +246,14 @@ This Section contains constraints that do not require any additional features an
 
 \subsection{Property scope (Q53869507)}
 \paragraph{Constraint}
-The \textsc{property scope} constraint specifies if a property may be used as predicate in a statement, qualifier, or reference.
+The \emph{property scope} constraint specifies if a property may be used as predicate in a statement, qualifier, or reference.
 \begin{table}[H]
 \caption{property scope constraint (Q53869507)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
 Required data & constrained statement, qualifier and reference \\
 \hline
-Qualifiers & \makecell{\textsc{property scope} (P5314) -- 1..3 \\ must be \textsc{as main value} (Q54828448), \textsc{as qualifier} (Q54828449), \\ or \textsc{as reference} (Q54828450) \\ specifies allowed use in statements, qualifiers, or references} \\
+Qualifiers & \makecell{\emph{property scope} (P5314) -- 1..3 \\ must be \emph{as main value} (Q54828448), \emph{as qualifier} (Q54828449), \\ or \emph{as reference} (Q54828450) \\ specifies allowed use in statements, qualifiers, or references} \\
 \hline
 Violation & constrained property in a position that is not allowed \\
 \hline
@@ -261,42 +261,42 @@ Violation & constrained property in a position that is not allowed \\
 \end{table}
 
 The required data specifies which data, in relation to the constrained statement, needs to be evaluated to conclude if the constraint was violated. The used abbreviations are listed in Table \ref{tab_abbreviations}. In this case, this is simply each statement, qualifier, or reference whose predicate is the constrained property.\\
-The \textsc{property scope} constraint requires the scope, meaning statement, qualifier, or reference, to be set via qualifier \textsc{property scope} (P5314). The cardinality is 1..3 because it is mandatory and has only three possible values.\\
-It is violated if a statement, qualifier, or reference has a predicate with the \textsc{property scope} constraint that does not allow this scope.\\
+The \emph{property scope} constraint requires the scope, meaning statement, qualifier, or reference, to be set via qualifier \emph{property scope} (P5314). The cardinality is 1..3 because it is mandatory and has only three possible values.\\
+It is violated if a statement, qualifier, or reference has a predicate with the \emph{property scope} constraint that does not allow this scope.\\
 
 \begin{example}
-The \textsc{reference URL} (P854) property is restricted to the \textsc{property scope} (P5314) \textsc{as reference} (Q54828450), because it is to be used to mark a URL that substantiates a statement.
+The \emph{reference URL} (P854) property is restricted to the \emph{property scope} (P5314) \emph{as reference} (Q54828450), because it is to be used to mark a URL that substantiates a statement.
 \end{example}
 
 \paragraph{Rules}
-The \textsc{property scope} constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough. This means violations can be found using these rules:
+The \emph{property scope} constraint requires no context information to be violated; the triple, qualifier, or reference with the constrained property is enough. This means violations can be found using these rules:
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V)\\
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V)\\
 \end{split}\\
 \begin{split}
-\textsc{violation\_qualifier}&(S, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{qualifier\_edb}(S, \textsc{propertyConstant}, V)\\
+\textsc{violation\_qualifier}&(S, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{qualifier\_edb}(S, \emph{constrainedProperty}, V)\\
 \end{split}\\
 \begin{split}
-\textsc{violation\_reference}&(S, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{reference\_edb}(S, H, \textsc{propertyConstant}, V)\\
+\textsc{violation\_reference}&(S, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{reference\_edb}(S, H, \emph{constrainedProperty}, V)\\
 \end{split}
 \end{align}
-Which of these rules need to be used depends on the values of the \textsc{property scope} qualifier. If a concrete constrained on a property does not have \textsc{as main value} as a value of the qualifier, the first rule is used. The case for \textsc{as qualifier} and \textsc{as reference} is analogous with the second and third rule, respectively.
+Which of these rules need to be used depends on the values of the \emph{property scope} qualifier. If a concrete constrained on a property does not have \emph{as main value} as a value of the qualifier, the first rule is used. The case for \emph{as qualifier} and \emph{as reference} is analogous with the second and third rule, respectively.
 
 \subsection{Conflicts with (Q21502838)}
 \paragraph{Constraint}
-The \textsc{conflicts with} constraint forbids statements on constrained entities whose predicate is a specified \textsc{conflicting property}. If \textsc{conflicting values} have been specified as well, the constraint is weakened and only violated by statements if in addition to the predicate being a \textsc{conflicting property}, the object is one of the \textsc{conflicting values}.
+The \emph{conflicts with} constraint forbids statements on constrained entities whose predicate is a specified \emph{conflicting property}. If \emph{conflicting values} have been specified as well, the constraint is weakened and only violated by statements if in addition to the predicate being a \emph{conflicting property}, the object is one of the \emph{conflicting values}.
 \begin{table}[H]
 \caption{Conflicts-with constraint (Q21502838)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
 Required data & entity statements \\
 \hline
-Qualifiers & \makecell{\textsc{conflicting property} (P2306) -- 1 \\ property that may not be predicate of entity statements \\
-\textsc{conflicting values} (P2305) -- 0..* \\ values that may not be objects of entity statements with the \textsc{conflicting property}} \\
+Qualifiers & \makecell{\emph{conflicting property} (P2306) -- 1 \\ property that may not be predicate of entity statements \\
+\emph{conflicting values} (P2305) -- 0..* \\ values that may not be objects of entity statements with the \emph{conflicting property}} \\
 \hline
 Violation & \makecell{entity statement with the conflicting property \\ entity statement with the conflicting property and one of the conflicting values} \\
 \hline
@@ -304,27 +304,27 @@ Violation & \makecell{entity statement with the conflicting property \\ entity s
 \end{table}
 
 \begin{example}
-The \textsc{author} (P50) constraint has (among others) the \textsc{conflicting property} (P2306) \textsc{instance of} (P31) with the \textsc{conflicting value} (P2305) \textsc{Wikimedia disambiguation page} (Q4167410). It is set because editors might easily confuse a work of art with a specific title, e.g., \textsc{Tempest} (Q86440) by \textsc{author} \textsc{William Shakespear} (Q692) with the Wikimedia disambiguation page \textsc{Tempest} (Q1589529).
+The \emph{author} (P50) constraint has (among others) the \emph{conflicting property} (P2306) \emph{instance of} (P31) with the \emph{conflicting value} (P2305) \emph{Wikimedia disambiguation page} (Q4167410). It is set because editors might easily confuse a work of art with a specific title, e.g., \emph{Tempest} (Q86440) by \emph{author} \emph{William Shakespear} (Q692) with the Wikimedia disambiguation page \emph{Tempest} (Q1589529).
 \end{example}
 
 \paragraph{Rules}
 The conflicts-with constraint is violated if another statement on the same item either has a conflicting property or a conflicting property and a conflicting value depending on specified qualifiers. It depends on a conjunction (\(O\) denoting another statement ID, \(C\) another value) and a violation for a conflicts-with constraint is thus either rule one for constraints with no conflicting values specified or one instance of rule two for each conflicting value if specified.
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow\\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{}\\
-&\textsc{statement\_edb}(O, E, \textsc{conflictingPropertyConstant}, C)
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow\\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{}\\
+&\textsc{statement\_edb}(O, E, \emph{conflictingProperty}, C)
 \end{split}\\
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow\\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{}\\
-&\textsc{statement\_edb}(O, E, \textsc{conflictingPropertyConstant}, \textsc{conflictingValueConstant})
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow\\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{}\\
+&\textsc{statement\_edb}(O, E, \emph{conflictingProperty}, \emph{conflictingValue})
 \end{split}
 \end{align}
 
 \subsection{Allowed entity types (Q52004125)}
 \paragraph{Constraint}
-The \textsc{allowed entity types} constraint limits if a property may be used in a statement whose subject is an item, a property, or a lexeme, although as of September 2018 lexemes are not deployed.
+The \emph{allowed entity types} constraint limits if a property may be used in a statement whose subject is an item, a property, or a lexeme, although as of September 2018 lexemes are not deployed.
 
 \begin{table}[H]
 \caption{Allowed entity types constraint (Q52004125)}
@@ -332,32 +332,32 @@ The \textsc{allowed entity types} constraint limits if a property may be used in
 \hline
 Required data & constrained statements and entity types\\
 \hline
-Qualifiers & \makecell{allowed entity type (P2305) -- 1..3 \\ must be \textsc{Wikibase item} (Q29934200), \textsc{Wikibase property} (Q29934218), \\ or lexeme (Q51885771); \\ specifies the entity type the property may be used on} \\
+Qualifiers & \makecell{allowed entity type (P2305) -- 1..3 \\ must be \emph{Wikibase item} (Q29934200), \emph{Wikibase property} (Q29934218), \\ or lexeme (Q51885771); \\ specifies the entity type the property may be used on} \\
 \hline
 Violation & \makecell{constrained statement on an entity of a type unequal to all allowed types} \\
 \hline
 \end{tabularx}
 \end{table}
 
-Since there are only three options (and only two in use), violations can be found without inequality by finding the \textsc{statement\_edb} with the constrained property whose subject is of the type that is not allowed, meaning either \textsc{Wikibase item} or \textsc{Wikibase property}.
+Since there are only three options (and only two in use), violations can be found without inequality by finding the \textsc{statement\_edb} with the constrained property whose subject is of the type that is not allowed, meaning either \emph{Wikibase item} or \emph{Wikibase property}.
 
 \begin{example}
-The \textsc{property constraint} (P2302) property has the \textsc{allowed entity type} (P2305) \textsc{Wikibase property} (Q29934218) because non-properties cannot be subject to a property constraint.
+The \emph{property constraint} (P2302) property has the \emph{allowed entity type} (P2305) \emph{Wikibase property} (Q29934218) because non-properties cannot be subject to a property constraint.
 \end{example}
 
 \paragraph{Rules}
 The allowed entity types constraint is violated by a statement with the wrong entity type.  Constraints regarding the lexeme entity type can be ignored since they are not currently used. The violations depend on a simple conjunction:
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge \textsc{item}(I)
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge \textsc{item\_edb}(I)
 \end{split}\\
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge \textsc{property}(I)
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge \textsc{property\_edb}(I)
 \end{split}
 \end{align}
-The first rule is created for all \textsc{allowed entity type} constraints whose \textsc{allowed entity type} does not contain \textsc{Wikibase item}. The second rule works analogous for \textsc{Wikibase property}.
+The first rule is created for all \emph{allowed entity type} constraints whose \emph{allowed entity type} does not contain \emph{Wikibase item}. The second rule works analogous for \emph{Wikibase property}.
 
 \subsection{None of (Q52558054)}
 \paragraph{Constraint}
@@ -369,7 +369,7 @@ The none of constraint restricts the values that the property may refer to by li
 \hline
 Required data & constrained statements, qualifiers and references \\
 \hline
-Qualifiers & \makecell{\textsc{forbidden value} (P2305) -- 1..* \\ values that may not be object of a constraint statement, qualifier, or reference} \\
+Qualifiers & \makecell{\emph{forbidden value} (P2305) -- 1..* \\ values that may not be object of a constraint statement, qualifier, or reference} \\
 \hline
 Violation & \makecell{constrained statement, qualifier, or reference with a forbidden value} \\
 \hline
@@ -377,34 +377,34 @@ Violation & \makecell{constrained statement, qualifier, or reference with a forb
 \end{table}
 
 \begin{example}
-The \textsc{license} (P31) property, denoting the license under which a work is released, has the \textsc{forbidden value} (P2305) \textsc{proprietary software} (Q218616), since it is often confused with \textsc{proprietary license} (Q3238057).
+The \emph{license} (P31) property, denoting the license under which a work is released, has the \emph{forbidden value} (P2305) \emph{proprietary software} (Q218616), since it is often confused with \emph{proprietary license} (Q3238057).
 \end{example}
 
 \paragraph{Rules}
 The none of constraint simply forbids certain values for properties, thus effectively prohibiting certain statements, qualifiers, and references. The rules, depending on nothing but specific database entries, are
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, \textsc{forbiddenValueConstant}) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, \textsc{forbiddenValueConstant})
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, \emph{forbiddenValue}) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, \emph{forbiddenValue})
 \end{split}\\
 \begin{split}
-\textsc{violation\_qualifier}&(S, \textsc{propertyConstant}, \textsc{forbiddenValueConstant}) \leftarrow \\
-&\textsc{qualifier\_edb}(S, \textsc{propertyConstant}, \textsc{forbiddenValueConstant})
+\textsc{violation\_qualifier}&(S, \emph{constrainedProperty}, \emph{forbiddenValue}) \leftarrow \\
+&\textsc{qualifier\_edb}(S, \emph{constrainedProperty}, \emph{forbiddenValue})
 \end{split}\\
 \begin{split}
-\textsc{violation\_reference}&(S, \textsc{propertyConstant}, \textsc{forbiddenValueConstant}) \leftarrow \\
-&\textsc{reference\_edb}(S, H, \textsc{propertyConstant}, \textsc{forbiddenValueConstant})
+\textsc{violation\_reference}&(S, \emph{constrainedProperty}, \emph{forbiddenValue}) \leftarrow \\
+&\textsc{reference\_edb}(S, H, \emph{constrainedProperty}, \emph{forbiddenValue})
 \end{split}
 \end{align}
-Given a specified constraint, each of the three rules is created once for each \textsc{forbidden value}.
+Given a specified constraint, each of the three rules is created once for each \emph{forbidden value}.
 
 \section{Constraints using Inequality}\label{sec_constraints_using_inequality}
 All translatable constraints except the four covered in the previous Section require inequality in some way or another. This means it is necessary to extract additional information during pre-processing, namely the constants for which inequality needs to be stated. Each constraint will list the possible unequal entities in relation to the constrained statement. Multiple ways of implementing inequality will be discussed. Afterwards all constraints that can be translated using inequality will be explained.
 
 \subsection{Approaches}
-In every approach it will be necessary to load some basic inequalities into the database. To this end the predicate unequal\_edb\([2]\) is introduced. Since the goal is to keep the number of applications of this predicate small, an \textsc{idb} predicate unequal\([2]\) has to be introduced. This leads to the rule
+In every approach it will be necessary to load some basic inequalities into the database. To this end the predicate unequal\_edb\([2]\) is introduced. Since the goal is to keep the number of applications of this predicate small, an \emph{idb} predicate unequal\([2]\) has to be introduced. This leads to the rule
 \begin{align}
-\textsc{unequal}(X, Y) \leftarrow \textsc{unequal\_edb}(X, Y)
+\textsc{unequal}(X, Y) \leftarrow \emph{unequal\_edb}(X, Y)
 \end{align}
 
 Given a set of unequal constants \(U\), the task is to generate rules so that for all \( x, y \in U: x \ne y \Rightarrow \textsc{unequal}(x, y)\).
@@ -412,7 +412,7 @@ Given a set of unequal constants \(U\), the task is to generate rules so that fo
 \subsubsection{Naive}\label{subsubsec_naive}
 The naive approach would be to simply add all possible combinations:
 \begin{align}
-\textsc{for all } x, y \in U, x \ne y \textsc{ add } \textsc{unequal\_edb}(x, y)
+\emph{for all } x, y \in U, x \ne y \emph{ add } \emph{unequal\_edb}(x, y)
 \end{align}
 This can be easily improved using the inverse and adding the following rule:
 \begin{align}\label{equ_inverse}
@@ -420,7 +420,7 @@ This can be easily improved using the inverse and adding the following rule:
 \end{align}
 Then it is sufficient to add each combination once. To achieve this assume an arbitrary total order \(<\) has been established on the set \(E\):
 \begin{align}
-\textsc{for all } x, y \in U, x < y \textsc{ add } \textsc{unequal\_edb}(x, y)
+\emph{for all } x, y \in U, x < y \emph{ add } \emph{unequal\_edb}(x, y)
 \end{align}
 
 \subsubsection{Encoding constant strings to establish inequality}\label{subsubsec_encoding}
@@ -429,23 +429,23 @@ One way of determining inequality would be to take advantage of the fact that in
 An unequal constant \(u \in U\) can be represented a string and be written as \(c_0 \ldots c_{l - 1}\) with \(l = len(u)\) being the length of the string. Denote the set \(C\) as the set of characters occurring in unequal strings. Then \(l_{\max} = \max\limits_{\forall u \in U}(len(u))\) is the length of the longest entity string that occurs in the given data.
 Based on this a group of predicates letter\(_i\)\_edb[8] is introduced where \(0 \equiv i \mod 7\), \(0 \leq i < l_{max} \). 
 
-For each unequal constant string \(u = c_0 \ldots c_{l - 1}\) and \(0 \equiv i \mod 7, 0 \leq i < len(u)\) an atom using predicate \textsc{letter\(_i\)\_edb} is created as 
+For each unequal constant string \(u = c_0 \ldots c_{l - 1}\) and \(0 \equiv i \mod 7, 0 \leq i < len(u)\) an atom using predicate \emph{letter\(_i\)\_edb} is created as 
 \begin{align}
 \begin{split}
-\textsc{letter}_i\textsc{\_edb}(e, f(e, i), f(e, i+1), \ldots, f(e, i+6)
+\emph{letter}_i\emph{\_edb}(e, f(e, i), f(e, i+1), \ldots, f(e, i+6)
 \end{split}
 \begin{split}
 f(e, i) = 
 \begin{cases}
       c_i & i < len(e) \\
-      \textsc{none} & i \geq len(e)
+      \emph{none} & i \geq len(e)
 \end{cases}
 \end{split}
 \end{align}
 
-Now that inequality between all characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates \textsc{letter\(_i\)\_edb} (with \textsc{letters} short for \(\textsc{letter}_i\textsc{\_edb}(X, A_i, \ldots, A_{i+6}) \wedge\textsc{letter}_i\textsc{\_edb}(Y, B_i, \ldots, B_{i+6})\), \(i \leq j < i + 7\)):
+Now that inequality between all characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates \emph{letter\(_i\)\_edb} (with \emph{letters} short for \(\emph{letter}_i\emph{\_edb}(X, A_i, \ldots, A_{i+6}) \wedge\emph{letter}_i\emph{\_edb}(Y, B_i, \ldots, B_{i+6})\), \(i \leq j < i + 7\)):
 \begin{align}
-\textsc{unequal}(X, Y) \leftarrow \textsc{letters} \wedge \textsc{unequal}(A_j, B_j)
+\textsc{unequal}(X, Y) \leftarrow \emph{letters} \wedge \textsc{unequal}(A_j, B_j)
 \end{align}
 Note that the facts fulfilling \(\textsc{unequal}(A_j, B_j)\) are created by using the approach outlined in Section \ref{subsubsec_naive} for the set of characters \(C\) in all unequal constants \(U\).	
 
@@ -459,13 +459,13 @@ To save space and avoid redundancy, the following rules will not explicitly stat
  \leftarrow B_1 \wedge \ldots \wedge B_m
 \end{split}\\
 \begin{split}
-\textsc{unequal}(X, Y) \leftarrow \textsc{req\_inequality}	(X, Y) \wedge \textsc{letters} \wedge \textsc{unequal}(A_j, B_j)
+\textsc{unequal}(X, Y) \leftarrow \textsc{req\_inequality}	(X, Y) \wedge \emph{letters} \wedge \textsc{unequal}(A_j, B_j)
 \end{split}
 \end{align}
 
 \subsection{Distinct values (Q21502410)}\label{subsec_distinct_values}
 \paragraph{Constraint}
-The \textsc{distinct values} constraint forbids the existence of two constrained statements with the same object.
+The \emph{distinct values} constraint forbids the existence of two constrained statements with the same object.
 \begin{table}[H]
 \caption{distinct values constraint (Q21502410)}
 \begin{tabularx}{\textwidth}{ ll X}
@@ -478,27 +478,27 @@ Rule features & inequality \\
 \hline
 \end{tabularx}
 \end{table}
-The constraint can be expanded to cover qualifiers and references as well by setting a \textsc{constraint scope} (P4680) qualifier with the respective value. However, as of September 2018 there is no constraint making use of this.
+The constraint can be expanded to cover qualifiers and references as well by setting a \emph{constraint scope} (P4680) qualifier with the respective value. However, as of September 2018 there is no constraint making use of this.
 
 \begin{example}
-The \textsc{ISBN-13} (P212) property has a \textsc{distinct values} constraint since an ISBN is supposed to be a unique identifier for a book and should not be shared between two items.
+The \emph{ISBN-13} (P212) property has a \emph{distinct values} constraint since an ISBN is supposed to be a unique identifier for a book and should not be shared between two items.
 \end{example}
 
 \paragraph{Rules}
-The \textsc{distinct values} constraint requires two distinct constrained statements with the same value. 
+The \emph{distinct values} constraint requires two distinct constrained statements with the same value. 
 Two constrained statements with the same value can be found via a simple conjunction of two \textsc{statement\_edb} atoms with the propertyConstant as predicate and a variable \(V\) as value. Since this would mark every constrained statement as a violation because it can fulfil both atoms at the same time, inequality of the statement IDs \(S\) and \(O\) must be tested as well. The rules for qualifiers and reference are analogous.
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{statement\_edb}(O, X, \textsc{propertyConstant}, V) \wedge{} \\
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{statement\_edb}(O, X, \emph{constrainedProperty}, V) \wedge{} \\
 &\textsc{unequal}(S, O)
 \end{split}
 \end{align}
 
 \subsection{Allowed units (Q21514353)}\label{subsec_3_allowed_units}
 \paragraph{Constraint}
-The \textsc{allowed units} constraint specifies that the value of a constrained statement may only have a unit that is in a set of specific units.
+The \emph{allowed units} constraint specifies that the value of a constrained statement may only have a unit that is in a set of specific units.
 
 \begin{table}[H]
 \caption{Allowed units constraint (Q21514353)}
@@ -506,7 +506,7 @@ The \textsc{allowed units} constraint specifies that the value of a constrained 
 \hline
 Required data & constrained statements \\
 \hline
-Qualifiers & \makecell{\textsc{allowed unit} (P2305) -- 1..* \\ units that are allowed on values of constrained statements (\textsc{none} for dimensionless units)} \\
+Qualifiers & \makecell{\emph{allowed unit} (P2305) -- 1..* \\ units that are allowed on values of constrained statements (\emph{none} for dimensionless units)} \\
 \hline
 Violation & \makecell{constrained statement with a unit unequal to all allowed units} \\
 \hline
@@ -515,10 +515,10 @@ Rule features & inequality \\
 \end{tabularx}
 \end{table}
 
-By setting the \textsc{constraint scope} (P4680) qualifier on the constraint, it can be limited to only affect a subset of statement, qualifier, and reference. As of September 2018 this is not done on any constraint.
+By setting the \emph{constraint scope} (P4680) qualifier on the constraint, it can be limited to only affect a subset of statement, qualifier, and reference. As of September 2018 this is not done on any constraint.
 
 \begin{example}
-The \textsc{length} (P2043) property has (among others) the \textsc{allowed unit} (P2305) \textsc{metre} (Q11573). This helps avoid confusing it for \textsc{duration} (P2047), which denotes the length of time of an event.
+The \emph{length} (P2043) property has (among others) the \emph{allowed unit} (P2305) \emph{metre} (Q11573). This helps avoid confusing it for \emph{duration} (P2047), which denotes the length of time of an event.
 \end{example}
 
 \paragraph{Rules}
@@ -528,25 +528,25 @@ The allowed units constraint needs to determine inequality between all allowed u
 The rules require multiple unequal-atoms for all allowed units in the set \(A\) of allowed units. Violations are thus
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{unit}(V, U)  {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, U)
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{unit\_edb}(V, U)  {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, U)
 \end{split}\\
 \begin{split}
-\textsc{violation\_qualifier}&(S, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{qualifier\_edb}(S, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{unit}(V, U) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, U)
+\textsc{violation\_qualifier}&(S, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{qualifier\_edb}(S, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{unit\_edb}(V, U) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, U)
 \end{split}\\
 \begin{split}
-\textsc{violation\_reference}&(S, H, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{reference\_edb}(S, H, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{unit}(V, U) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, U)
+\textsc{violation\_reference}&(S, H, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{reference\_edb}(S, H, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{unit\_edb}(V, U) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, U)
 \end{split}
 \end{align}
 
 \subsection{Allowed qualifiers (Q21510851)}
 \paragraph{Constraint}
-The \textsc{allowed qualifiers} constraint specifies that only a limited set of properties may be used as predicates of qualifiers on a constrained statement.
+The \emph{allowed qualifiers} constraint specifies that only a limited set of properties may be used as predicates of qualifiers on a constrained statement.
 
 \begin{table}[H]
 \caption{Allowed qualifiers constraint (Q21510851)}
@@ -554,7 +554,7 @@ The \textsc{allowed qualifiers} constraint specifies that only a limited set of 
 \hline
 Required data & qualifiers on constrained statements \\
 \hline
-Qualifiers & \makecell{\textsc{allowed qualifier} (P2306) -- 1..* \\ properties that may appear in predicates of qualifiers on constrained statements} \\
+Qualifiers & \makecell{\emph{allowed qualifier} (P2306) -- 1..* \\ properties that may appear in predicates of qualifiers on constrained statements} \\
 \hline
 Violation & \makecell{constrained statement with a qualifier unequal to all allowed qualifiers} \\
 \hline
@@ -564,22 +564,22 @@ Rule features & inequality \\
 \end{table}
 
 \begin{example}
-The \textsc{head of state} (P35) property has (among others) the \textsc{allowed qualifiers} (P2306) \textsc{start time} (P580) and \textsc{end time} (P582) properties, used to describe the time frame the person held that office.
+The \emph{head of state} (P35) property has (among others) the \emph{allowed qualifiers} (P2306) \emph{start time} (P580) and \emph{end time} (P582) properties, used to describe the time frame the person held that office.
 \end{example}
 
 \paragraph{Rules}
-To represent a violation of the \textsc{allowed qualifiers} constraint in datalog, inequality between all specified allowed qualifiers and the properties of qualifiers is required. The constraint is violated if a qualifier on a constrained statement exists that is unequal to all allowed qualifiers. The notation for set inequality as introduced in Section \ref{subsec_3_allowed_units} will be used. With \(A\) the set of allowed qualifiers the rule is:
+To represent a violation of the \emph{allowed qualifiers} constraint in datalog, inequality between all specified allowed qualifiers and the properties of qualifiers is required. The constraint is violated if a qualifier on a constrained statement exists that is unequal to all allowed qualifiers. The notation for set inequality as introduced in Section \ref{subsec_3_allowed_units} will be used. With \(A\) the set of allowed qualifiers the rule is:
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \\
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
 &\textsc{qualifier\_edb}(S, Q, O) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, Q)
 \end{split}
 \end{align}
 
 \subsection{One-of (Q21510859)}
 \paragraph{Constraint}
-The \textsc{one-of} constraint limits the values of a constraint statement, qualifier, or reference to a set of given values.
+The \emph{one-of} constraint limits the values of a constraint statement, qualifier, or reference to a set of given values.
 
 \begin{table}[H]
 \caption{One-of constraint (Q21510859)}
@@ -587,7 +587,7 @@ The \textsc{one-of} constraint limits the values of a constraint statement, qual
 \hline
 Required data & constrained statements, qualifiers, and references \\
 \hline
-Qualifiers & \makecell{\textsc{allowed values} (P2305) -- 1..* \\ values that may be used as objects of a constrained statement} \\
+Qualifiers & \makecell{\emph{allowed values} (P2305) -- 1..* \\ values that may be used as objects of a constrained statement} \\
 \hline
 Violation & \makecell{constrained statement with a value unequal to all allowed values} \\
 \hline
@@ -597,29 +597,29 @@ Rule features & inequality \\
 \end{table}
 
 \begin{example}
-The \textsc{wheelchair accessibility} (P2846) property, which describes the accessibility of an location or event, has the three \textsc{allowed values} (P2305) \textsc{wheelchair accessible} (Q24192067), \textsc{wheelchair accessible with help} (Q24192068), and \textsc{wheelchair inaccessible} (Q24192069).
+The \emph{wheelchair accessibility} (P2846) property, which describes the accessibility of an location or event, has the three \emph{allowed values} (P2305) \emph{wheelchair accessible} (Q24192067), \emph{wheelchair accessible with help} (Q24192068), and \emph{wheelchair inaccessible} (Q24192069).
 \end{example}
 
 \paragraph{Rules}
-The one-of constraint fits the pattern established by the previous two constraints and disallows certain property-value combinations in statements, qualifiers, and references. Inequality is established between all \textsc{allowed values} and the values of statements, qualifiers, and references, respectively. With \(A\) the set of allowed values the rules for triple, qualifier, and reference are:
+The one-of constraint fits the pattern established by the previous two constraints and disallows certain property-value combinations in statements, qualifiers, and references. Inequality is established between all \emph{allowed values} and the values of statements, qualifiers, and references, respectively. With \(A\) the set of allowed values the rules for triple, qualifier, and reference are:
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}\\
 \begin{split}
-\textsc{violation\_qualifier}&(S, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{qualifier\_edb}(S, \textsc{propertyConstant}, V) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
+\textsc{violation\_qualifier}&(S, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{qualifier\_edb}(S, \emph{constrainedProperty}, V) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}\\
 \begin{split}
-\textsc{violation\_reference}&(S, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{reference\_edb}(S, H, \textsc{propertyConstant}, V) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
+\textsc{violation\_reference}&(S, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{reference\_edb}(S, H, \emph{constrainedProperty}, V) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}
 \end{align}
 
 \subsection{One-of qualifier value (Q52712340)}
 \paragraph{Constraint}
-The \textsc{one-of qualifier value} constraint restricts which \textsc{qualifier values} may be used on a qualifier with a given \textsc{qualifier property} on a constrained statement.
+The \emph{one-of qualifier value} constraint restricts which \emph{qualifier values} may be used on a qualifier with a given \emph{qualifier property} on a constrained statement.
 
 \begin{table}[H]
 \caption{One-of qualifier value constraint (Q52712340)}
@@ -627,8 +627,8 @@ The \textsc{one-of qualifier value} constraint restricts which \textsc{qualifier
 \hline
 Required data & constrained statements and their qualifiers \\
 \hline
-Qualifiers: & \makecell{\textsc{qualifier property} (P2306) -- 1 \\ property that, if used as predicate, constrains a qualifier \\
-\textsc{qualifier values} (P2305) -- 1..* \\ values that are allowed for qualifiers on constrained statements \\ with the \textsc{qualifier property} as predicate}\\
+Qualifiers: & \makecell{\emph{qualifier property} (P2306) -- 1 \\ property that, if used as predicate, constrains a qualifier \\
+\emph{qualifier values} (P2305) -- 1..* \\ values that are allowed for qualifiers on constrained statements \\ with the \emph{qualifier property} as predicate}\\
 \hline
 Violation & \makecell{constrained statement with a qualifier with the qualifier property \\ and a value unequal to all qualifier values} \\
 \hline
@@ -638,47 +638,50 @@ Rule features & inequality \\
 \end{table}
 
 \begin{example}
-The \textsc{flag bearer} (P3022) property, naming the person carrying a flag at a ceremony, has the \textsc{qualifier property} (P2306) \textsc{of} (P642) with the \textsc{qualifier values} (P2305) \textsc{opening ceremony} (Q3010369) and \textsc{closing ceremony} (Q13454063).
+The \emph{flag bearer} (P3022) property, naming the person carrying a flag at a ceremony, has the \emph{qualifier property} (P2306) \emph{of} (P642) with the \emph{qualifier values} (P2305) \emph{opening ceremony} (Q3010369) and \emph{closing ceremony} (Q13454063).
 \end{example}
 
 \paragraph{Rules}
 The one-of qualifier value constraint is violated if a constrained statement has a qualifier with a value unequal to all allowed values. Inequality needs to be established between all values of qualifiers and all allowed values. With the set of allowed Values \(A\) the rules are
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{qualifier\_edb}(S, \textsc{qualifierProperty}, O) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, O)
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{qualifier\_edb}(S, \emph{qualifierProperty}, O) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, O)
 \end{split}
 \end{align}
 
 \section{Constraints using Statement non-Existence}\label{sec_constraints_using_statement_non}
-Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: first\([2]\), last\([2]\), and next\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
+Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: \textsc{first}\([2]\), \textsc{last}\([2]\), and \textsc{next}\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
 
-If qualifier non-existence should be tested, the predicates have to be adapted since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property, and value have to be used. For this the predicates first\_qualifier\([3]\) and last\_qualifier\([3]\) taking the statement ID, the property, and the value, as well as next\_qualifier\([6]\) with ID, property, and value for the current and next qualifier are introduced.\\
+If qualifier non-existence should be tested, the predicates have to be adapted since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property, and value have to be used. For this the predicates \textsc{first\_qualifier}\([3]\) and \textsc{last\_qualifier}\([3]\) taking the statement ID, the property, and the value, as well as \textsc{next\_qualifier}\([6]\) with ID, property, and value for the current and next qualifier are introduced.\\
 
-Using this pre-processed data, the approach is to apply a require-predicate to each statement or qualifier. This is require\([2]\) for statements, connecting the statement ID with an identifier unique to the declared constraint and require\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the unique identifier.\\
+Using this pre-processed data, the approach is to apply a not\_found-predicate to each statement or qualifier. This is \textsc{not\_found}\([2]\) for statements, connecting the statement ID with an identifier unique to the declared constraint and \textsc{not\_found}\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the unique identifier.\\
 
-For statements the pattern consists of two rules, both utilising the same conjunction \(\textsc{doesNotFulfil}\) whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
+For statements the pattern consists of two rules, both utilising the same conjunction \(\emph{doesNotFulfil}\) whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
 \begin{align}
-&\textsc{require}(S, \textsc{id}) \leftarrow \textsc{first}(S, I) \wedge \textsc{doesNotFulfil} \\
-&\textsc{require}(S, \textsc{id}) \leftarrow \textsc{next}(O, S) \wedge \textsc{require}(O, \textsc{id}) \wedge \textsc{doesNotFulfil} \\
-&\textsc{require}(S, P, V, \textsc{id}) \leftarrow \textsc{first}(S, P, V) \wedge \textsc{doesNotFulfil} \\
-&\textsc{require}(S, P, V, \textsc{id}) \leftarrow \textsc{next}(O, X, C, S, P, V) \wedge \textsc{require}(O, X, C, \textsc{id}) \wedge \textsc{doesNotFulfil}
+\textsc{not\_found}&(S, \emph{id}) \leftarrow \textsc{first}(S, I) \wedge \emph{doesNotFulfil} \\
+\textsc{not\_found}&(S, \emph{id}) \leftarrow \textsc{next}(O, S) \wedge \textsc{not\_found}(O, \emph{id}) \wedge \emph{doesNotFulfil} \\
+\textsc{not\_found}&(S, P, V, \emph{id}) \leftarrow \textsc{first\_qualifier}(S, P, V) \wedge \emph{doesNotFulfil} \\
+\begin{split}
+\textsc{not\_found}&(S, P, V, \emph{id}) \leftarrow \textsc{next\_qualifier}(O, X, C, S, P, V) \wedge{} \\
+&\textsc{not\_found}(O, X, C, \emph{id}) \wedge \emph{doesNotFulfil}
+\end{split}
 \end{align}
 
 If the last statement of an item or the last qualifier of a statement has the require-predicate the violation occurred. In the following constraints only the conjunction \(c\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
 
 \subsection{Item requires statement (Q21503247)}\label{subsec_item_requires_statement}
 \paragraph{Constraint}
-The \textsc{item requires statement} constraint requires an additional statement on an item with a statement using the constrained property. It can be even more restrictive by also requiring the value of said additional statement to be in a set of \textsc{allowed values}.
+The \emph{item requires statement} constraint requires an additional statement on an item with a statement using the constrained property. It can be even more restrictive by also requiring the value of said additional statement to be in a set of \emph{allowed values}.
 \begin{table}[H]
 \caption{item requires statement constraint (Q21503247)}\label{tab_item_requires_statements}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
 Required data & item statements \\
 \hline
-Qualifiers & \makecell{\textsc{required property} (P2306) -- 1 \\ property that must be predicate of an item statement \\
-\textsc{allowed value} (P2305) -- 0..* \\ value that must be object of the item statement} \\
+Qualifiers & \makecell{\emph{required property} (P2306) -- 1 \\ property that must be predicate of an item statement \\
+\emph{allowed value} (P2305) -- 0..* \\ value that must be object of the item statement} \\
 \hline
 Violation & \makecell{no item statement with required property \\ all item statements with required property have no allowed value} \\
 \hline
@@ -688,93 +691,93 @@ Rule features & negation \\
 \end{table}
 
 \begin{example}
-The \textsc{professorship} (P803) property requires an additional statement with the \textsc{required property} (P2306) \textsc{occupation} (P106) and the \textsc{allowed value} (P2305) \textsc{university teacher} (Q1622272).
+The \emph{professorship} (P803) property requires an additional statement with the \emph{required property} (P2306) \emph{occupation} (P106) and the \emph{allowed value} (P2305) \emph{university teacher} (Q1622272).
 \end{example}
 
 \paragraph{Rules}
-The \textsc{item requires statement} constraint requires inequality between all properties of statements and the \textsc{required property} as well as between all statement values and the \textsc{allowed values}. The order of the item statements needs to be established. An item violates the constraint if it a) has a statement using the constrained property as predicate, b1) has no statements using the \textsc{required property} as predicate, or (if \textsc{allowed values} are specified) b2) has only statement using the \textsc{required property} as predicate that do not use one of the \textsc{allowed values} as value. If no \textsc{allowed values} have been specified for the declared constraint the conjunction for the require pattern is one. If a set of \textsc{allowed values} has been specified, a second set of require-rules have to be introduced with conjunction two. Note that the require pattern using conjunction one is still required, since the preceding statements do not need to have the \textsc{required property}. In both cases violations can be found with rule three
+The \emph{item requires statement} constraint requires inequality between all properties of statements and the \emph{required property} as well as between all statement values and the \emph{allowed values}. The order of the item statements needs to be established. An item violates the constraint if it a) has a statement using the constrained property as predicate, b1) has no statements using the \emph{required property} as predicate, or (if \emph{allowed values} are specified) b2) has only statement using the \emph{required property} as predicate that do not use one of the \emph{allowed values} as value. If no \emph{allowed values} have been specified for the declared constraint the conjunction for the not-found-pattern is one. If a set of \emph{allowed values} has been specified, a second set of require-rules have to be introduced with conjunction two. Note that the not-found-pattern using conjunction one is still required, since the preceding statements do not need to have the \emph{required property}. In both cases violations can be found with rule three
 
 \begin{align}
 \begin{split}
-c = &\textsc{statement\_edb}(Q, E, \textsc{propertyConstant}, X) \wedge{} \\
-&\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\textsc{requiredPropertyConstant}, P)
+c = &\textsc{statement\_edb}(Q, E, \emph{constrainedProperty}, X) \wedge{} \\
+&\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\emph{requiredProperty}, P)
 \end{split} \\
 \begin{split}
-c = &\textsc{statement\_edb}(Q, E, \textsc{propertyConstant}, X) \wedge{} \\
-&\textsc{statement\_edb}(S, E, \textsc{requiredPropertyConstant}, V) \wedge {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
+c = &\textsc{statement\_edb}(Q, E, \emph{constrainedProperty}, X) \wedge{} \\
+&\textsc{statement\_edb}(S, E, \emph{requiredProperty}, V) \wedge {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}
 \end{align}
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \textsc{last}(O, I) \wedge{} \\
-&\textsc{require}(O, \textsc{propertyConstant}, \textsc{requiredPropertyConstant})
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \textsc{last}(O, I) \wedge{} \\
+&\textsc{not\_found}(O, \emph{constrainedProperty}, \emph{requiredProperty})
 \end{split}
 \end{align}
 
 \subsection{Value requires statement (Q21510864)}\label{subsec_value_requires_statement}
 \paragraph{Constraint}
-The \textsc{value requires statement} constraint requires an additional statement on the value of the constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- Table \ref{tab_item_requires_statements} is not repeated.
+The \emph{value requires statement} constraint requires an additional statement on the value of the constrained statement, possibly also using a specific value from the list of allowed values. Since the constraint works very similar to item requires statement (see \ref{subsec_item_requires_statement}) --- requiring a statement on the value of the constrained statement instead of on the item --- Table \ref{tab_item_requires_statements} is not repeated.
 
 \begin{example}
-The \textsc{list of monuments} (P1456) property requires its value to have the \textsc{required property} (P2306) \textsc{is a list of} (P360).
+The \emph{list of monuments} (P1456) property requires its value to have the \emph{required property} (P2306) \emph{is a list of} (P360).
 \end{example}
 
 \paragraph{Rules}
-The \textsc{value requires statement} constraint is syntactically very similar to the previous \textsc{item requires statement} constraint. Instead of requiring a statement on the item of a constrained statement, it requires it on the value. Inequality needs to be computed between all properties and all values and the item statement order established. The conjunctions change in the first statement and rule one and two. The final violation rule would be rule three:
+The \emph{value requires statement} constraint is syntactically very similar to the previous \emph{item requires statement} constraint. Instead of requiring a statement on the item of a constrained statement, it requires it on the value. Inequality needs to be computed between all properties and all values and the item statement order established. The conjunctions change in the first statement and rule one and two. The final violation rule would be rule three:
 \begin{align}
 \begin{split}
-c = &\textsc{statement\_edb}(Q, R, \textsc{propertyConstant}, I) \wedge{} \\
-&\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\textsc{requiredPropertyConstant}, P)
+c = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
+&\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\emph{requiredProperty}, P)
 \end{split}\\
 \begin{split}
-c = &\textsc{statement\_edb}(Q, R, \textsc{propertyConstant}, I) \wedge{} \\
-&\textsc{statement\_edb}(S, E, \textsc{requiredPropertyConstant}, V) \wedge {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
+c = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
+&\textsc{statement\_edb}(S, E, \emph{requiredProperty}, V) \wedge {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}
 \end{align}
 
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \textsc{last}(O, V) \wedge{} \\
-&\textsc{require}(O, \textsc{propertyConstant}, \textsc{requiredPropertyConstant})
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \textsc{last}(O, V) \wedge{} \\
+&\textsc{not\_found}(O, \emph{constrainedProperty}, \emph{requiredProperty})
 \end{split}
 \end{align}
 
 \subsection{Inverse (Q21510855)}\label{subsec_2_inverse}
 \paragraph{Constraint}
-The \textsc{inverse} constraint requires an additional statement on the value of a constrained statement with an \textsc{inverse property} and the constrained item as value. It is very similar to \textsc{value requires statement} (see \ref{subsec_value_requires_statement}), although it does not specify allowed values, since the required statement needs to have one specific value: the item of the constrained statement.
+The \emph{inverse} constraint requires an additional statement on the value of a constrained statement with an \emph{inverse property} and the constrained item as value. It is very similar to \emph{value requires statement} (see \ref{subsec_value_requires_statement}), although it does not specify allowed values, since the required statement needs to have one specific value: the item of the constrained statement.
 
 \begin{example}
-The \textsc{mother} (P25) property requires values to have a statement with the \textsc{inverse property} (P2306) \textsc{child} (P40) and the original item as value.
+The \emph{mother} (P25) property requires values to have a statement with the \emph{inverse property} (P2306) \emph{child} (P40) and the original item as value.
 \end{example}
 
 \paragraph{Rules}
-The \textsc{inverse} constraint can be modelled in almost the same way as the \textsc{value requires statement} constraint. The only change is that instead of requiring inequality to all \textsc{allowed values} in conjunction \(c_2\) the statement requires this constraint if its value is not the subject \(R\) of the original constrained statement, meaning \(t = R\). Inequalities have to be established between all properties and the \textsc{inverse} property as well as all subjects and values of statements. The final violation rule remains the same.
+The \emph{inverse} constraint can be modelled in almost the same way as the \emph{value requires statement} constraint. The only change is that instead of requiring inequality to all \emph{allowed values} in conjunction \(c_2\) the statement requires this constraint if its value is not the subject \(R\) of the original constrained statement, meaning \(t = R\). Inequalities have to be established between all properties and the \emph{inverse} property as well as all subjects and values of statements. The final violation rule remains the same.
 \begin{align}
 \begin{split}
-c = &\textsc{statement\_edb}(Q, R, \textsc{propertyConstant}, I) \wedge{} \\
+c = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
 &\textsc{statement\_edb}(S, E, P, V) \wedge{} \\
-&\textsc{unequal}(\textsc{inversePropertyConstant}, P)
+&\textsc{unequal}(\emph{inverseProperty}, P)
 \end{split}\\
 \begin{split}
-c = &\textsc{statement\_edb}(Q, R, \textsc{propertyConstant}, I) \wedge{} \\
-&\textsc{statement\_edb}(S, E, \textsc{inversePropertyConstant}, V) \wedge{} \\
+c = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
+&\textsc{statement\_edb}(S, E, \emph{inverseProperty}, V) \wedge{} \\
 &\textsc{unequal}(R, V)
 \end{split}
 \end{align}
 
 
 \subsection{Symmetric (Q21510862)}
-The \textsc{symmetric} constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an \textsc{inverse} constraint (see \ref{subsec_2_inverse}) with the same property as constrained property and inverse property. It can be translated exactly as the inverse constraint if the inverse property were set to the same as the constrained property.
+The \emph{symmetric} constraint requires an additional statement on the value of a constrained statement with the constrained property and the constrained item as value. It is thus equal to an \emph{inverse} constraint (see \ref{subsec_2_inverse}) with the same property as constrained property and inverse property. It can be translated exactly as the inverse constraint if the inverse property were set to the same as the constrained property.
 
 \begin{example}
-The \textsc{sibling} (P3373) property requires a statement on the value with the same property and the original item as the value.
+The \emph{sibling} (P3373) property requires a statement on the value with the same property and the original item as the value.
 \end{example}
 
 \subsection{Multi-value (Q21510857)}
 \paragraph{Constraint}
-The \textsc{multi-value} constraint specifies that the constrained property should appear in multiple statements of an item or none.
+The \emph{multi-value} constraint specifies that the constrained property should appear in multiple statements of an item or none.
 
 \begin{table}[H]
 \caption{Multi-value constraint (Q21510857)}
@@ -792,40 +795,40 @@ Rule features & count \\
 \end{table}
 
 \begin{example}
-The \textsc{cast member} (P161) property requires an item to have multiple statements using this property, since most plays or films have multiple cast members. This is an example for a constraint from which exceptions can and should be made and is only meant to point to possibly missing data.
+The \emph{cast member} (P161) property requires an item to have multiple statements using this property, since most plays or films have multiple cast members. This is an example for a constraint from which exceptions can and should be made and is only meant to point to possibly missing data.
 \end{example}
 
 \paragraph{Rules}
-The \textsc{multi-value} constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Inequality is established between all properties of statements and the conjunction is:
+The \emph{multi-value} constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Inequality is established between all properties of statements and the conjunction is:
 \begin{equation}
 \begin{split}
-c = &\textsc{statement\_edb}(Q, E, \textsc{propertyConstant}, X) \wedge{} \\
-&\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\textsc{propertyConstant}, P)
+c = &\textsc{statement\_edb}(Q, E, \emph{constrainedProperty}, X) \wedge{} \\
+&\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\emph{constrainedProperty}, P)
 \end{split}
 \end{equation}
-The predicate require\_second\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found. A violation would be any last statement requiring a second constrained statement, analogous to the violation rule for \textsc{item requires statement} (see Section \ref{subsec_item_requires_statement}).
+The predicate \textsc{require\_second}\([2]\) is introduced with the same meaning as require except that it will be applied after a required property has been found. A violation would be any last statement requiring a second constrained statement, analogous to the violation rule for \emph{item requires statement} (see Section \ref{subsec_item_requires_statement}).
 \begin{align}
 \begin{split}
-\textsc{require\_second}&(S, \textsc{propertyConstant}, \textsc{propertyConstant}) \leftarrow \\
-&\textsc{next}(R, S) \wedge \textsc{statement\_edb}(R, E, \textsc{propertyConstant}, C) \wedge{} \\
-&\textsc{next}(Q, R) \wedge \textsc{require}(Q, \textsc{propertyConstant}, \textsc{propertyConstant})  \wedge c
+\textsc{require\_second}&(S, \emph{constrainedProperty}, \emph{constrainedProperty}) \leftarrow \\
+&\textsc{next}(R, S) \wedge \textsc{statement\_edb}(R, E, \emph{constrainedProperty}, C) \wedge{} \\
+&\textsc{next}(Q, R) \wedge \textsc{not\_found}(Q, \emph{constrainedProperty}, \emph{constrainedProperty})  \wedge c
 \end{split}\\
 \begin{split}
-\textsc{require\_second}&(S, \textsc{propertyConstant}, \textsc{propertyConstant}) \leftarrow \textsc{next}(R, S) \wedge{} \\
-&\textsc{require\_second}(R, \textsc{propertyConstant}, \textsc{propertyConstant}) \wedge c
+\textsc{require\_second}&(S, \emph{constrainedProperty}, \emph{constrainedProperty}) \leftarrow \textsc{next}(R, S) \wedge{} \\
+&\textsc{require\_second}(R, \emph{constrainedProperty}, \emph{constrainedProperty}) \wedge c
 \end{split}
 \end{align}
 
 \subsection{Single value (Q19474404)}\label{subsec_single_value}
 \paragraph{Constraint}
-The \textsc{single value} constraint states that the constrained property may only be used once per item. A constrained statement marked with the single value constraint can have \textsc{separators}, which define exceptions under specific circumstances.
+The \emph{single value} constraint states that the constrained property may only be used once per item. A constrained statement marked with the single value constraint can have \emph{separators}, which define exceptions under specific circumstances.
 \begin{table}[H]
 \caption{single value constraint (Q19474404)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
 Required data & constrained statements and their qualifiers, constrained qualifiers and references \\
 \hline
-Qualifiers & \makecell{\textsc{separator} (P4155) -- 0..* \\ qualifiers that, when used on constrained statements, can warrant an exception} \\
+Qualifiers & \makecell{\emph{separator} (P4155) -- 0..* \\ qualifiers that, when used on constrained statements, can warrant an exception} \\
 \hline
 Violation & \makecell{two constrained statements with same item and value \\ (exception: statements with separators as qualifiers with different values)} \\
 \hline
@@ -838,7 +841,7 @@ If no separators are specified, two statements form a violation of this constrai
 If separators are specified, a violation as above can be ignored if the statements each have at least one qualifier with the same separator as predicate and different values or an unequal number of separator qualifiers.
 
 \begin{example}
-The \textsc{capital} (P36) property should only have one single value per item. If conflicts exist, it is not a violation of this constraint if one of the values for the \textsc{separators} (P4155) \textsc{start time} (P580), \textsc{point in time} (P585), \textsc{end time} (P582), and \textsc{determination method} (P459) are unequal.
+The \emph{capital} (P36) property should only have one single value per item. If conflicts exist, it is not a violation of this constraint if one of the values for the \emph{separators} (P4155) \emph{start time} (P580), \emph{point in time} (P585), \emph{end time} (P582), and \emph{determination method} (P459) are unequal.
 \end{example}
 
 \paragraph{Rules}
@@ -850,65 +853,65 @@ If the separator set is empty, the violation simply occurs if there are two cons
 For qualifiers and references, there is no ID whose inequality could be checked. However, since the statement ID and the property of a possible conflict are always the same, inequality can be tested on the values.
 \begin{align}
 \begin{split}\label{eq_no_separators_triple}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{statement\_edb}(O, E, \textsc{propertyConstant}, X) \wedge{} \\
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{statement\_edb}(O, E, \emph{constrainedProperty}, X) \wedge{} \\
 &\textsc{unequal}(S, O)
 \end{split}\\
 \begin{split}
-\textsc{violation\_qualifier}&(S, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{qualifier\_edb}(S, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{qualifier\_edb}(S, \textsc{propertyConstant}, X) \wedge{} \\
+\textsc{violation\_qualifier}&(S, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{qualifier\_edb}(S, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{qualifier\_edb}(S, \emph{constrainedProperty}, X) \wedge{} \\
 &\textsc{unequal}(V, X)
 \end{split}\\
 \begin{split}
-\textsc{violation\_reference}&(S, H, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{reference\_edb}(S, H, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{reference\_edb}(S, J, \textsc{propertyConstant}, X) \wedge{} \\
+\textsc{violation\_reference}&(S, H, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{reference\_edb}(S, H, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{reference\_edb}(S, J, \emph{constrainedProperty}, X) \wedge{} \\
 &\textsc{unequal}(V, X)
 \end{split}
 \end{align}
 
 \subsubsection{With separators}\label{subsubsec_single_value_with_separators}
-To find all violations under \textsc{separators}, a number of things have to be considered. Only statements are eligible, since qualifiers cannot have further qualifiers. The order of qualifiers on constrained statements needs to be provided as well since qualifier non-existence is relevant. The require qualifier pattern needs to be applied to the qualifiers of constrained statements. The conjunction \(\textsc{doesNotFulfil}\) is created for every \textsc{separator} and the pattern applied.
+To find all violations under \emph{separators}, a number of things have to be considered. Only statements are eligible, since qualifiers cannot have further qualifiers. The order of qualifiers on constrained statements needs to be provided as well since qualifier non-existence is relevant. The require qualifier pattern needs to be applied to the qualifiers of constrained statements. The conjunction \(\emph{doesNotFulfil}\) is created for every \emph{separator} and the pattern applied.
 \begin{equation}
 \begin{split}
-c = &\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, C) \wedge{} \\
+c = &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, C) \wedge{} \\
 &\textsc{qualifier\_edb}(S, P, V) \wedge{} \\
-&\textsc{unequal}(P, \textsc{separatorConstant})
+&\textsc{unequal}(P, \emph{separator})
 \end{split}
 \end{equation}
 
-With qualifier non-existence established, the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all values of \textsc{separator} qualifiers are equal or no such \textsc{separator} qualifier exist. To determine this, a number of rules have to be introduced which are based on two sets the \textsc{separators} are split into: \(X\) contains the \textsc{separators} that exist as qualifiers and \(Y\) the \textsc{separators} that do not. The following rule is then created for every possible split of the \textsc{separators} into two such sets. Note that \(\textsc{predicate}(\{X\})\) denotes \(\bigwedge_{x \in X} \textsc{predicate}(x)\) as introduced in Section \ref{subsec_3_allowed_units}.
+With qualifier non-existence established, the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all values of \emph{separator} qualifiers are equal or no such \emph{separator} qualifier exist. To determine this, a number of rules have to be introduced which are based on two sets the \emph{separators} are split into: \(X\) contains the \emph{separators} that exist as qualifiers and \(Y\) the \emph{separators} that do not. The following rule is then created for every possible split of the \emph{separators} into two such sets.
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{statement\_edb}(O, E, \textsc{propertyConstant}, X) \wedge{} \\
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{statement\_edb}(O, E, \emph{constrainedProperty}, X) \wedge{} \\
 &\textsc{unequal}(S, O) \wedge{} \\
 &\textsc{same\_or\_non\_existent}(S, O, \{Q\})
 \end{split}\\
 \begin{split}
 \textsc{same\_or\_non\_existent}&(S, O, Q) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, X) \wedge{} \\
-&\textsc{statement\_edb}(O, E, \textsc{propertyConstant}, Y) \wedge{} \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, X) \wedge{} \\
+&\textsc{statement\_edb}(O, E, \emph{constrainedProperty}, Y) \wedge{} \\
 &\textsc{qualifier\_edb}(S, Q, V) \wedge{} \\
 &\textsc{qualifier\_edb}(O, Q, V)
 \end{split}\\
 \begin{split}
 \textsc{same\_or\_non\_existent}&(S, O, Q) \leftarrow{} \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, X) \wedge{} \\
-&\textsc{statement\_edb}(O, E, \textsc{propertyConstant}, Y) \wedge{} \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, X) \wedge{} \\
+&\textsc{statement\_edb}(O, E, \emph{constrainedProperty}, Y) \wedge{} \\
 &\textsc{last\_qualifier}(S, P, V) \wedge{} \\
-&\textsc{require}(S, P, V, \textsc{propertyConstant}, Q) \wedge{} \\
+&\textsc{not\_found}(S, P, V, \emph{constrainedProperty}, Q) \wedge{} \\
 &\textsc{last\_qualifier}(O, R, C) \wedge{} \\
-&\textsc{require}(O, R, C, \textsc{propertyConstant}, Q)
+&\textsc{not\_found}(O, R, C, \emph{constrainedProperty}, Q)
 \end{split}
 \end{align}
 
 \subsection{Mandatory qualifier (Q21510856)}
 \paragraph{Constraint}
-The \textsc{mandatory qualifier} constraint requires that a constrained statement has a qualifier with a \textsc{required property}.
+The \emph{mandatory qualifier} constraint requires that a constrained statement has a qualifier with a \emph{required property}.
 
 \begin{table}[H]
 \caption{Mandatory qualifier constraint (Q21510856)}
@@ -916,7 +919,7 @@ The \textsc{mandatory qualifier} constraint requires that a constrained statemen
 \hline
 Required data & constrained statements and their qualifiers \\
 \hline
-Qualifiers & \makecell{\textsc{required property} (P2306) -- 1 \\ property that must appear as predicate of a qualifier on the constrained statement} \\
+Qualifiers & \makecell{\emph{required property} (P2306) -- 1 \\ property that must appear as predicate of a qualifier on the constrained statement} \\
 \hline
 Violation & \makecell{constrained statement without a qualifier with the required property} \\
 \hline
@@ -926,26 +929,28 @@ Rule features & negation \\
 \end{table}
 
 \begin{example}
-The \textsc{head of state} (P35) property has the \textsc{required property} (P2306) \textsc{start time} (P580), meaning every \textsc{head of state} must have assumed that position at some time.
+The \emph{head of state} (P35) property has the \emph{required property} (P2306) \emph{start time} (P580), meaning every \emph{head of state} must have assumed that position at some time.
 \end{example}
 
 \paragraph{Rules}
-The \textsc{mandatory qualifier} constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to Section \ref{subsubsec_single_value_with_separators}. The qualifier order needs to be provided and inequality must be established between all qualifier properties. The conjunction for the require-pattern is rule one. With the usual require-pattern for qualifiers and the does\_not\_have rule as introduced in Section \ref{subsubsec_single_value_with_separators} added for brevity, the violations would be found with rule two.
+The \emph{mandatory qualifier} constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to Section \ref{subsubsec_single_value_with_separators}. The qualifier order needs to be provided and inequality must be established between all qualifier properties. The conjunction for the not-found-pattern is rule one. With the usual not-found-pattern for qualifiers the violations would be found with rule two.
 \begin{align}
 \begin{split}
-c = &\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, C) \wedge{} \\
-&\textsc{qualifier\_edb}(S, P, V) \wedge \textsc{unequal}(P, \textsc{requiredPropertyConstant})
-\end{split}\\
+c = &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, C) \wedge{} \\
+&\textsc{qualifier\_edb}(S, P, V) \wedge \textsc{unequal}(P, \emph{requiredProperty})
+\end{split}
+\end{align}
+\begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge \\
-&\textsc{does\_not\_have}(S, \textsc{requiredPropertyConstant})
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge \\
+&\textsc{last\_qualifier}(S, P, V) \wedge \textsc{not\_found}(S, P, V, \emph{requiredProperty})
 \end{split}
 \end{align}
 
 \subsection{Single best value (Q52060874)}\label{subsec_single_best_value}
 \paragraph{Constraint}
-The \textsc{single best value} constraint requires that only one constrained statement per item has the rank preferred.
+The \emph{single best value} constraint requires that only one constrained statement per item has the rank preferred.
 
 \begin{table}[H]
 \caption{Single best value constraint (Q52060874)}
@@ -953,7 +958,7 @@ The \textsc{single best value} constraint requires that only one constrained sta
 \hline
 Required data & item statements and ranks \\
 \hline
-Qualifiers & \makecell{\textsc{separator} (P4155) -- 0..* \\ qualifiers that, when used on constrained statements, can warrant an exception } \\
+Qualifiers & \makecell{\emph{separator} (P4155) -- 0..* \\ qualifiers that, when used on constrained statements, can warrant an exception } \\
 \hline
 Violation & \makecell{items with two constrained statements with rank preferred \\ (exception: statements with separators as qualifiers with different values)} \\
 \hline
@@ -963,34 +968,34 @@ Rule features & inequality, partially negation \\
 \end{table}
 
 \begin{example}
-The \textsc{property proposal discussion} (P3254) property, denoting the URL of a web page where the creation of a Wikidata property was discussed should only have one best value. Since a discussion might have been moved to a different page at some point, the best value should be the page the discussion was last moved to.
+The \emph{property proposal discussion} (P3254) property, denoting the URL of a web page where the creation of a Wikidata property was discussed should only have one best value. Since a discussion might have been moved to a different page at some point, the best value should be the page the discussion was last moved to.
 \end{example}
 
 \paragraph{Rules}
-The \textsc{single best value} constraint, like the \textsc{single value} constraint (Section \ref{subsec_single_value}), differentiates between the set of \textsc{separators} \(S\) being empty or not. Since the constraint depends on the rank of statements, this needs to be provided. Qualifiers and references are not affected since they do not have ranks. For this constraint all inequality needs to be established between the statement IDs and the qualifier values as well as the order of the qualifiers given.\\
+The \emph{single best value} constraint, like the \emph{single value} constraint (Section \ref{subsec_single_value}), differentiates between the set of \emph{separators} \(S\) being empty or not. Since the constraint depends on the rank of statements, this needs to be provided. Qualifiers and references are not affected since they do not have ranks. For this constraint all inequality needs to be established between the statement IDs and the qualifier values as well as the order of the qualifiers given.\\
 
 \subsubsection{No separators}
-If the \textsc{separator} set is empty, the violation simply occurs if there are two constrained statements on the same item with the preferred rank. Thus the rule \eqref{eq_no_separators_triple} is expanded to
+If the \emph{separator} set is empty, the violation simply occurs if there are two constrained statements on the same item with the preferred rank. Thus the rule \eqref{eq_no_separators_triple} is expanded to
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{rank\_edb}(S, \textsc{preferredRankConstant}) \wedge{} \\
-&\textsc{statement\_edb}(O, E, \textsc{propertyConstant}, X) \wedge{} \\
-&\textsc{rank\_edb}(O, \textsc{preferredRankConstant}) \wedge{} \\
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{rank\_edb}(S, \emph{preferredRank}) \wedge{} \\
+&\textsc{statement\_edb}(O, E, \emph{constrainedProperty}, X) \wedge{} \\
+&\textsc{rank\_edb}(O, \emph{preferredRank}) \wedge{} \\
 &\textsc{unequal}(S, O)
 \end{split}
 \end{align}
 
 \subsubsection{With separators}
-As in the case above, the qualifier non-existence and violation rules are very similar to the \textsc{single value} constraint. The only change is the addition of the rank requirements as shown below.
+As in the case above, the qualifier non-existence and violation rules are very similar to the \emph{single value} constraint. The only change is the addition of the rank requirements as shown below.
 \begin{align}
 \begin{split}
-\textsc{violation\_statement}&(S, E, \textsc{propertyConstant}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \textsc{propertyConstant}, V) \wedge{} \\
-&\textsc{rank\_edb}(S, \textsc{preferredRankConstant}) \wedge{} \\
-&\textsc{statement\_edb}(O, E, \textsc{propertyConstant}, W) \wedge{} \\
-&\textsc{rank\_edb}(O, \textsc{preferredRankConstant}) \wedge{} \\
+\textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{rank\_edb}(S, \emph{preferredRank}) \wedge{} \\
+&\textsc{statement\_edb}(O, E, \emph{constrainedProperty}, W) \wedge{} \\
+&\textsc{rank\_edb}(O, \emph{preferredRank}) \wedge{} \\
 &\textsc{unequal}(S, O) \wedge{} \\
 &\textsc{has\_same}(S, O, \{X\}) \wedge{} \\
 &\textsc{does\_not\_have}(S, \{Y\}) \wedge{} \\
@@ -999,22 +1004,22 @@ As in the case above, the qualifier non-existence and violation rules are very s
 \end{align}
 
 \section{Reasoning for unconsidered constraints}
-Multiple constraints have not been described above for different reasons. The most prominent of these is the \textsc{format} constraint (Q21502404) which specifies a regular expression the values of the constrained property must adhere to. Evaluating these expressions would be theoretically possible but \\
+Multiple constraints have not been described above for different reasons. The most prominent of these is the \emph{format} constraint (Q21502404) which specifies a regular expression the values of the constrained property must adhere to. Evaluating these expressions would be theoretically possible but \\
 \begin{enumerate}[a)]
 \item primarily results in a large amount of preprocessing and
 \item does not solve the question of negation, since violations would be values that do not conform to their required regular expression
 \end{enumerate}
 
-The two type constraints \textsc{type} (Q21503250) and \textsc{value type} (Q21510865) require an entity to have a certain type. This is defined transitively via the properties \textsc{instance of} (P31) and \textsc{subclass of} (P279), which have to form a statement chain to the entity given as the type. Evaluating these constraints would require pre-processing to compute all types of an entity transitively, add these as statements to the data and establish their order to allow testing for the non-existence of a type. Since the constraint could easily be checked when computing the types of an entity (is the required type in the types it has), this does not make sense in datalog.
+The two type constraints \emph{type} (Q21503250) and \emph{value type} (Q21510865) require an entity to have a certain type. This is defined transitively via the properties \emph{instance of} (P31) and \emph{subclass of} (P279), which have to form a statement chain to the entity given as the type. Evaluating these constraints would require pre-processing to compute all types of an entity transitively, add these as statements to the data and establish their order to allow testing for the non-existence of a type. Since the constraint could easily be checked when computing the types of an entity (is the required type in the types it has), this does not make sense in datalog.
 
-The \textsc{integer} constraint (Q52848401), which requires values of a constrained property be integers (notably a quantity without decimal places), could easily be seen as a specific format constraint. While precomputing if a value is an integer or not could be done, it would mean that no actually relevant rules would be needed for the evaluation in datalog.
+The \emph{integer} constraint (Q52848401), which requires values of a constrained property be integers (notably a quantity without decimal places), could easily be seen as a specific format constraint. While precomputing if a value is an integer or not could be done, it would mean that no actually relevant rules would be needed for the evaluation in datalog.
 
-Another problem that could not be sensibly solved is the comparison of values, needed for \textsc{range} (Q21510860), \textsc{difference within range} (Q21510854) and \textsc{contemporary} constraint (Q25796498). \textsc{Range} restricts the values of a constrained property within a certain range, \textsc{difference within range} specifies that the values of two item statements should be within a certain range and \textsc{contemporary} constraint specifies that subject and object of a constrained statement have to have coexisted at some point in time. While it would be possible to extract all values that might need to be compared and precompute the comparison, it would make most of the work precomputing and leave little to be done in datalog.
+Another problem that could not be sensibly solved is the comparison of values, needed for \emph{range} (Q21510860), \emph{difference within range} (Q21510854) and \emph{contemporary} constraint (Q25796498). \emph{Range} restricts the values of a constrained property within a certain range, \emph{difference within range} specifies that the values of two item statements should be within a certain range and \emph{contemporary} constraint specifies that subject and object of a constrained statement have to have coexisted at some point in time. While it would be possible to extract all values that might need to be compared and precompute the comparison, it would make most of the work precomputing and leave little to be done in datalog.
 
-\textsc{Citation needed} constraint (Q54554025), stating that constraint statements must have one or more references, requires a negation that cannot be concluded except by explicitly precomputing it, which makes the evaluation unnecessary. \\
-A similar situation is the \textsc{no bounds} constraint (Q51723761), which requires that quantity values have neither upper nor lower bound. While it would be possible to precompute if a statement has no upper or lower bound, this would shift basically all evaluation logic into precomputing.
+\emph{Citation needed} constraint (Q54554025), stating that constraint statements must have one or more references, requires a negation that cannot be concluded except by explicitly precomputing it, which makes the evaluation unnecessary. \\
+A similar situation is the \emph{no bounds} constraint (Q51723761), which requires that quantity values have neither upper nor lower bound. While it would be possible to precompute if a statement has no upper or lower bound, this would shift basically all evaluation logic into precomputing.
 
-And finally \textsc{commons link} constraint (Q21510852) requires that values for a property should be valid links to to Wikimedia Commons. This validity cannot be tested from within datalog since there is no way to query the web for information.
+And finally \emph{commons link} constraint (Q21510852) requires that values for a property should be valid links to to Wikimedia Commons. This validity cannot be tested from within datalog since there is no way to query the web for information.
 
 \chapter{Evaluation}\label{cha_evaluation}
 
@@ -1058,7 +1063,7 @@ Several statistics about the executed runs are reported.
 
 Because of a bug in VLog\footnote{\url{https://github.com/knowsys/vlog4j/issues/43}}, the largest dataset that could be completely evaluated contained 100,000 entities. With datasets of larger size, more than half of the constraints were affected by this bug, meaning the analysis could not be conducted. All further statistics describe the results on the 100,000 entity set unless specifically noted otherwise. Since inequality could only be computed in on-demand mode (see Section  \ref{sec_inequality_evaluation}), all statistics will show the results attained in this mode.
 
-Most constraints could be evaluated in under a minute. The exceptions are \textsc{distinct values} (1.22 hours), \textsc{item requires statement} (2.38 hours) and \textsc{single value} (4.22 hours). In part this is expected behaviour, since these three constraints are applied to an order of magnitude more properties than all other properties with the exception of \textsc{property scope}, which is described in very simple rules. However, also seen in Figure \ref{fig_runtime}, the runtimes of these three constraints are multiple orders of magnitude higher than those of other constraints. The following Sections will thus focus on the comparison of these three constraints to identify bottlenecks and reasons for this huge difference in performance. They will be marked with a border in every figure.
+Most constraints could be evaluated in under a minute. The exceptions are \emph{distinct values} (1.22 hours), \emph{item requires statement} (2.38 hours) and \emph{single value} (4.22 hours). In part this is expected behaviour, since these three constraints are applied to an order of magnitude more properties than all other properties with the exception of \emph{property scope}, which is described in very simple rules. However, also seen in Figure \ref{fig_runtime}, the runtimes of these three constraints are multiple orders of magnitude higher than those of other constraints. The following Sections will thus focus on the comparison of these three constraints to identify bottlenecks and reasons for this huge difference in performance. They will be marked with a border in every figure.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{images/runtime100,000.pdf}
@@ -1078,7 +1083,7 @@ Figure \ref{fig_facts} shows the number of facts loaded into VLog per constraint
 \caption{Number of input facts per constraint}\label{fig_facts}
 \end{figure}
 
-The long runtimes of \textsc{distinct values}, \textsc{item requires statement}, and \textsc{single value} cannot be explained through the size of the input data. While all of them have more than 10 million input facts, this is also the case for other constraints that do not take nearly as much runtime. \textsc{One-of}, \textsc{symmetric}, and \textsc{inverse} have even more input facts than the three long-runtime constraints. The reason for the performance difference must be found elsewhere.
+The long runtimes of \emph{distinct values}, \emph{item requires statement}, and \emph{single value} cannot be explained through the size of the input data. While all of them have more than 10 million input facts, this is also the case for other constraints that do not take nearly as much runtime. \emph{One-of}, \emph{symmetric}, and \emph{inverse} have even more input facts than the three long-runtime constraints. The reason for the performance difference must be found elsewhere.
 
 \subsection{Inequality evaluation}\label{sec_inequality_evaluation}
 Inequality computation was implemented in three variants outlined in Section \ref{sec_constraints_using_inequality}: naive, encoded, and on-demand. Naive and encoded could not terminate for any dataset other than the smallest with 1,000 entities. Naive failed because the disk space needed for the precomputed inequality facts was not available. Encoded, while improving on the disk space needed, still failed due to out of memory errors. This behaviour is expected, since for an input of size \(n\), the number of inequalities that have to be materialized is \(n^2\). The runtimes for this dataset, presented in Figure \ref{fig_inequality}, show a clear improvement when using the on-demand approach. This shows that the overhead in rules introduced to enable the on-demand approach, seen in Figure \ref{fig_rules}, is worth the improvements in performance gained through it.
@@ -1089,7 +1094,7 @@ Inequality computation was implemented in three variants outlined in Section \re
 \end{figure}
 
 \subsection{Additional Derivations}
-One possible bottleneck are the additional derivations necessary to identify violations. This includes the inequalities, demands for inequalities, requirements to determine statement non-existence as well as other helper rules introduced in Chapter \ref{cha_wikidata_constraints_explained}. Note that the four simple constraints described in Section \ref{sec_simple_constraints} do not generate any additional facts and are excluded from the chart. Figure \ref{fig_add_derivations} shows that the three performance-heavy constraints do generate by far the most additional derivations. The constraint with the smallest number of additional derivations, \textsc{distinct values}, is almost an order of magnitude higher than the next highest, \textsc{one-of}.
+One possible bottleneck are the additional derivations necessary to identify violations. This includes the inequalities, demands for inequalities, requirements to determine statement non-existence as well as other helper rules introduced in Chapter \ref{cha_wikidata_constraints_explained}. Note that the four simple constraints described in Section \ref{sec_simple_constraints} do not generate any additional facts and are excluded from the chart. Figure \ref{fig_add_derivations} shows that the three performance-heavy constraints do generate by far the most additional derivations. The constraint with the smallest number of additional derivations, \emph{distinct values}, is almost an order of magnitude higher than the next highest, \emph{one-of}.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{images/additionalDerivations100,000.pdf}
@@ -1097,7 +1102,7 @@ One possible bottleneck are the additional derivations necessary to identify vio
 \end{figure}
 
 \section{Findings}
-Most constraints could be evaluated within a very short timeframe (< 1 minute). While the dataset does not include the entire database of Wikidata, which with 50m entities is about 500 times bigger, the runtimes for the entire dataset should still be within a reasonable frame. The exception are the three constraints focused on in Section \ref{sec_results}. As shown in that Section, the main difference between \textsc{distinct values}, \textsc{item requires statement}, and \textsc{single value} and other constraints is
+Most constraints could be evaluated within a very short timeframe (< 1 minute). While the dataset does not include the entire database of Wikidata, which with 50m entities is about 500 times bigger, the runtimes for the entire dataset should still be within a reasonable frame. The exception are the three constraints focused on in Section \ref{sec_results}. As shown in that Section, the main difference between \emph{distinct values}, \emph{item requires statement}, and \emph{single value} and other constraints is
 \begin{enumerate}[a)]
 \item a larger amount of constrained properties (with a corresponding larger amount of rules) and
 \item a larger amount of additional derivations
@@ -1105,27 +1110,27 @@ Most constraints could be evaluated within a very short timeframe (< 1 minute). 
 The rules for these three constraints will now be analysed and possible reasons for this huge difference in performance outlined.
 
 \subsection{Distinct values}
-While the rules for the \textsc{distinct values} constraint (see Section \ref{subsec_distinct_values}) are relatively simple in writing, they do require a large amount of processing. Distinct values requires the comparison of every constrained statement with every other constrained statement, meaning its evaluation would scale badly due to the quadratic growth of statements to be compared. Additionally, the number of inequalities that have to be evaluated according to the on-demand approach (see Section \ref{sec_constraints_using_statement_non}) grows accordingly. Due to the nature of the constraint -- requiring distinct values for a property across all of Wikidata -- this is in all likelihood unavoidable.
+While the rules for the \emph{distinct values} constraint (see Section \ref{subsec_distinct_values}) are relatively simple in writing, they do require a large amount of processing. Distinct values requires the comparison of every constrained statement with every other constrained statement, meaning its evaluation would scale badly due to the quadratic growth of statements to be compared. Additionally, the number of inequalities that have to be evaluated according to the on-demand approach (see Section \ref{sec_constraints_using_statement_non}) grows accordingly. Due to the nature of the constraint -- requiring distinct values for a property across all of Wikidata -- this is in all likelihood unavoidable.
 
 \subsection{Item requires statement}\label{subsec_findings_item_requires_statement}
-The \textsc{item requires statement} constraint (see Section \ref{subsec_item_requires_statement}) creates additional facts about every statement on an entity with a constrained statement (if the constraint was violated on that entity). Of interest to note is that the \textsc{value requires statement} constraint (see Section \ref{subsec_value_requires_statement}), which works almost identically, does not show a performance nearly as bad as \textsc{item requires statement}. \textsc{Value requires statement} has, however, only 244 constrained properties, while \textsc{item requires statement} has 4265. This shows that the require approach scales badly with increasing number of require rules.
+The \emph{item requires statement} constraint (see Section \ref{subsec_item_requires_statement}) creates additional facts about every statement on an entity with a constrained statement (if the constraint was violated on that entity). Of interest to note is that the \emph{value requires statement} constraint (see Section \ref{subsec_value_requires_statement}), which works almost identically, does not show a performance nearly as bad as \emph{item requires statement}. \emph{Value requires statement} has, however, only 244 constrained properties, while \emph{item requires statement} has 4265. This shows that the require approach scales badly with increasing number of require rules.
 
 \subsection{Single value}
-The \textsc{single value} constraint (see Section \ref{subsec_single_value}) has to be analysed with regards to the two cases: without separators (Section \ref{subsubsec_single_value_no_separators}) and with separators (Section \ref{subsubsec_single_value_with_separators}.
+The \emph{single value} constraint (see Section \ref{subsec_single_value}) has to be analysed with regards to the two cases: without separators (Section \ref{subsubsec_single_value_no_separators}) and with separators (Section \ref{subsubsec_single_value_with_separators}.
 
 \paragraph{No separators}
-If no separators were given, the rules simply compare every statement on an entity with a constrained statement to said constrained statement. Since entity size does not increase with dataset size, this should not be the reason for \textsc{single values} bad performance.
+If no separators were given, the rules simply compare every statement on an entity with a constrained statement to said constrained statement. Since entity size does not increase with dataset size, this should not be the reason for \emph{single values} bad performance.
 
 \paragraph{With separators}
-The \textsc{single value} constraint, like the \textsc{item requires statement} constraint, uses a require approach to determine non-existence. For \textsc{single value} this is qualifier non-existence on constrained statements. As seen in Section \ref{subsec_findings_item_requires_statement}, this could be a reason for the bad performance of the analysis for this constraint. Another source of processing time for \textsc{single value} are the has\_same facts, which need to compare all constrained statements on the same item and all their qualifiers. Of interest to note is that the \textsc{single best value} constraint (see Section \ref{subsec_single_best_value}) works in almost the same way but does not suffer from the same performance. Again, the number of constrained properties is significantly lower for \textsc{single best value} (203) compared to \textsc{single value} (2909).
+The \emph{single value} constraint, like the \emph{item requires statement} constraint, uses a require approach to determine non-existence. For \emph{single value} this is qualifier non-existence on constrained statements. As seen in Section \ref{subsec_findings_item_requires_statement}, this could be a reason for the bad performance of the analysis for this constraint. Another source of processing time for \emph{single value} are the has\_same facts, which need to compare all constrained statements on the same item and all their qualifiers. Of interest to note is that the \emph{single best value} constraint (see Section \ref{subsec_single_best_value}) works in almost the same way but does not suffer from the same performance. Again, the number of constrained properties is significantly lower for \emph{single best value} (203) compared to \emph{single value} (2909).
 
 \subsection{Adaptations to VLog - Sorting facts for column-based storage}
 VLog uses a column-based storage format where the first column is fully sorted and all following columns are sorted w.r.t. the preceding column. These columns are then run-length encoded. To minimize memory requirements and maximize access speed, predicates should be sorted in such a way that each entry has a smaller number of unique constants than the next entry.
 
 \begin{example}
-The predicate \textsc{statement\_edb} lists the \textsc{statement ID}, \textsc{entity ID}, \textsc{property ID} and \textsc{value}. To optimize this for VLog, a new order must be created. \textsc{property ID} should be the first entry, because there are only \todo{number of properties and link} different properties on Wikidata as of September 2018. The \textsc{statement ID} needs to be moved to the last position since it is unique for all statements, meaning for any data source with \(n\) statements there would be \(n\) unique \textsc{statement IDs}. Finally \textsc{entity ID} should be before \textsc{value}, because every \textsc{entity ID} could also be a \textsc{value}, but value can take additional string values.
+The predicate \textsc{statement\_edb} lists the \emph{statement ID}, \emph{entity ID}, \emph{property ID} and \emph{value}. To optimize this for VLog, a new order must be created. \emph{property ID} should be the first entry, because there are only \todo{number of properties and link} different properties on Wikidata as of September 2018. The \emph{statement ID} needs to be moved to the last position since it is unique for all statements, meaning for any data source with \(n\) statements there would be \(n\) unique \emph{statement IDs}. Finally \emph{entity ID} should be before \emph{value}, because every \emph{entity ID} could also be a \emph{value}, but value can take additional string values.
 
-The final, optimized order is then: \textsc{property ID}, \textsc{entity ID}, \textsc{value}, \textsc{statement ID}.
+The final, optimized order is then: \emph{property ID}, \emph{entity ID}, \emph{value}, \emph{statement ID}.
 \end{example}
 
 This order is, however, not easily readable and, if taken as presented, would likely cause implementation errors because the different positions are confused for each other. To prevent this the datasets imported from Wikidata and created during preprocessing as well as the rules outlined in Chapter \ref{cha_wikidata_constraints_explained} are sorted afterwards. Thus the rules can be kept in a readable form while still optimizing for VLog. 
