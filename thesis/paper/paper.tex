@@ -1028,13 +1028,13 @@ The evaluation aims to document how suitable Datalog and VLog in particular are 
 \section{Software structure}
 The evaluation software\cite{wcd} was written in Java and utilises WDTK and VLog4J to evaluate the violation rules on the content of Wikidata. Figure \ref{fig_pipeline} illustrates the steps undertaken to evaluate the constraints.
 
-At the beginning the content of the Wikidata JSON-Dump, read via WDKT, is transformed into facts readable by VLog4J. These take the form of comma-separated value files, which are created for each predicate in Section \ref{subsec_representation}, denoted as "Facts" in the diagram.
+At the beginning the content of the Wikidata JSON-Dump, read via WDKT, is transformed into facts readable by VLog4J. These take the form of comma-separated value files, one for each predicate in Section \ref{subsec_representation}, denoted as "Facts" in the diagram.
 
-At the same time the Inequaliy Helper, receiving the Facts from WDTK, creates all files necessary to establish inequality as described in Section \ref{sec_constraints_using_inequality}, based on which approach was chosen.
+At the same time the Inequaliy Helper, receiving the Facts from WDTK, creates all files necessary to establish inequality as described in Section \ref{sec_constraints_using_inequality}, based on which approach was chosen. These files are constraint type specific, whereas the "Facts" are not.
 
 The rules determining violations are created by the Constraint Checker, which uses the Wikidata Query Service (WDQS)\footnote{\url{query.wikidata.org}} to fetch the current constraint configurations, which are the set constraints and their qualifiers as described in Chapter \ref{cha_property_constraints}. Based on these configurations the rules are created as described in Chapter \ref{cha_wikidata_constraints_explained}.
 
-Computing all violations based on the provided (inequality)-facts and violations rules is done per constraint type. All facts pertaining to the constraint, as well as the rules, are loaded into VLog, which creates an in-memory database from the provided .csv-files. Once this is done, the reasoning engine materializes all possible facts. Afterwards, all violations are extracted by querying the database for the queries described in Section \ref{subsec_task}.
+Computing all violations based on the provided (inequality)-facts and violations rules is done per constraint type. All facts pertaining to the constraint, as well as the rules, are loaded into VLog, which creates an in-memory database from the provided .csv-files. For example, Once this is done, the reasoning engine materializes all possible facts. Afterwards, all violations are extracted by querying the database for the queries described in Section \ref{subsec_task}.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{images/Pipeline.pdf}
@@ -1119,12 +1119,7 @@ If no separators were given, the rules simply compare every statement on an enti
 \paragraph{With separators}
 The \emph{single value} constraint, like the \emph{item requires statement} constraint, uses a require approach to determine non-existence. For \emph{single value} this is qualifier non-existence on constrained statements. As seen in Section \ref{subsec_findings_item_requires_statement}, this could be a reason for the bad performance of the analysis for this constraint. Another source of processing time for \emph{single value} are the has\_same facts, which need to compare all constrained statements on the same item and all their qualifiers. Of interest to note is that the \emph{single best value} constraint (see Section \ref{subsec_single_best_value}) works in almost the same way but does not suffer from the same performance. Again, the number of constrained properties is significantly lower for \emph{single best value} (203) compared to \emph{single value} (2909).
 
-\subsection{Possible adaptations}
-Since the problematic performance of \emph{item requires statement} and \emph{single value} are not visible in \emph{value requires statement} and \emph{single best value}, which are very similar in their rule modelling, a possible adaptation would be to not evaluate all constrained properties for these constraints in bulk but split them into smaller sets, evaluating each set individually to combat the problematic scaling of the require pattern. The precomputed datasets could be kept, meaning only the reasoning step would have to be repeated.
-
-\subsection{Adaptations to VLog}
-
-\subsubsection{Sorting facts for column-based storage}
+\subsection{Adaptations to VLog - Sorting facts for column-based storage}
 VLog uses a column-based storage format where the first column is fully sorted and all following columns are sorted w.r.t. the preceding column. These columns are then run-length encoded. To minimize memory requirements and maximize access speed, predicates should be sorted in such a way that each entry has a smaller number of unique constants than the next entry.
 
 \begin{example}
@@ -1133,10 +1128,7 @@ The predicate \emph{statement\_EDB} lists the \emph{statement ID}, \emph{entity 
 The final, optimized order is then: \emph{property ID}, \emph{entity ID}, \emph{value}, \emph{statement ID}.
 \end{example}
 
-This order is, however, not easily readable and, if taken as presented, would likely cause implementation errors because the different positions are confused for each other. To prevent this the datasets imported from Wikidata and created during preprocessing as well as the rules outlined in Chapter \ref{cha_wikidata_constraints_explained} are sorted afterwards. Thus the rules can be kept in a readable form while still optimizing for VLog.
-
-\subsubsection{Sorting conjunctions for left-to-right evaluation}
-Conjunctions in VLog are evaluated from left to right, meaning the engine computes the matches of the first atom and, based on those findings, proceeds with the next atom. The rules as presented are not optimal regarding this process. Ideally, atoms should be sorted by the size of the intermediate results they incur. 
+This order is, however, not easily readable and, if taken as presented, would likely cause implementation errors because the different positions are confused for each other. To prevent this the datasets imported from Wikidata and created during preprocessing as well as the rules outlined in Chapter \ref{cha_wikidata_constraints_explained} are sorted afterwards. Thus the rules can be kept in a readable form while still optimizing for VLog. 
 
 \subsubsection{Results}
 
