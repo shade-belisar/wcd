@@ -658,14 +658,14 @@ If qualifier non-existence should be tested, the predicates have to be adapted s
 
 Using this pre-processed data, the approach is to apply a not\_found-predicate to each statement or qualifier. This is \textsc{not\_found}\([2]\) for statements, connecting the statement ID with an identifier unique to the declared constraint and \textsc{not\_found}\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the unique identifier.\\
 
-For statements the pattern consists of two rules, both utilising the same conjunction \(\emph{doesNotFulfil}\) whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
+For statements the pattern consists of two rules, both utilising the same conjunction \emph{does-not-fulfil} whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
 \begin{align}
-\textsc{not\_found}&(S, \emph{id}) \leftarrow \textsc{first}(S, I) \wedge \emph{doesNotFulfil} \\
-\textsc{not\_found}&(S, \emph{id}) \leftarrow \textsc{next}(O, S) \wedge \textsc{not\_found}(O, \emph{id}) \wedge \emph{doesNotFulfil} \\
-\textsc{not\_found}&(S, P, V, \emph{id}) \leftarrow \textsc{first\_qualifier}(S, P, V) \wedge \emph{doesNotFulfil} \\
+\textsc{not\_found}&(S, \emph{id}) \leftarrow \textsc{first}(S, I) \wedge \emph{does-not-fulfil} \\
+\textsc{not\_found}&(S, \emph{id}) \leftarrow \textsc{next}(O, S) \wedge \textsc{not\_found}(O, \emph{id}) \wedge \emph{does-not-fulfil} \\
+\textsc{not\_found}&(S, P, V, \emph{id}) \leftarrow \textsc{first\_qualifier}(S, P, V) \wedge \emph{does-not-fulfil} \\
 \begin{split}
 \textsc{not\_found}&(S, P, V, \emph{id}) \leftarrow \textsc{next\_qualifier}(O, X, C, S, P, V) \wedge{} \\
-&\textsc{not\_found}(O, X, C, \emph{id}) \wedge \emph{doesNotFulfil}
+&\textsc{not\_found}(O, X, C, \emph{id}) \wedge \emph{does-not-fulfil}
 \end{split}
 \end{align}
 
@@ -699,18 +699,19 @@ The \emph{item requires statement} constraint requires inequality between all pr
 
 \begin{align}
 \begin{split}
-c = &\textsc{statement\_edb}(Q, E, \emph{constrainedProperty}, X) \wedge{} \\
+\emph{does-not-fulfil} = &\textsc{statement\_edb}(Q, E, \emph{constrainedProperty}, X) \wedge{} \\
 &\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\emph{requiredProperty}, P)
 \end{split} \\
 \begin{split}
-c = &\textsc{statement\_edb}(Q, E, \emph{constrainedProperty}, X) \wedge{} \\
+\emph{does-not-fulfil} = &\textsc{statement\_edb}(Q, E, \emph{constrainedProperty}, X) \wedge{} \\
 &\textsc{statement\_edb}(S, E, \emph{requiredProperty}, V) \wedge {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}
 \end{align}
 \begin{align}
 \begin{split}
 \textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \textsc{last}(O, I) \wedge{} \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{last}(O, I) \wedge{} \\
 &\textsc{not\_found}(O, \emph{constrainedProperty}, \emph{requiredProperty})
 \end{split}
 \end{align}
@@ -727,19 +728,19 @@ The \emph{list of monuments} (P1456) property requires its value to have the \em
 The \emph{value requires statement} constraint is syntactically very similar to the previous \emph{item requires statement} constraint. Instead of requiring a statement on the item of a constrained statement, it requires it on the value. Inequality needs to be computed between all properties and all values and the item statement order established. The conjunctions change in the first statement and rule one and two. The final violation rule would be rule three:
 \begin{align}
 \begin{split}
-c = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
+\emph{does-not-fulfil} = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
 &\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\emph{requiredProperty}, P)
 \end{split}\\
 \begin{split}
-c = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
+\emph{does-not-fulfil} = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
 &\textsc{statement\_edb}(S, E, \emph{requiredProperty}, V) \wedge {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}
 \end{align}
-
 \begin{align}
 \begin{split}
 \textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \textsc{last}(O, V) \wedge{} \\
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
+&\textsc{last}(O, V) \wedge{} \\
 &\textsc{not\_found}(O, \emph{constrainedProperty}, \emph{requiredProperty})
 \end{split}
 \end{align}
@@ -753,15 +754,15 @@ The \emph{mother} (P25) property requires values to have a statement with the \e
 \end{example}
 
 \paragraph{Rules}
-The \emph{inverse} constraint can be modelled in almost the same way as the \emph{value requires statement} constraint. The only change is that instead of requiring inequality to all \emph{allowed values} in conjunction \(c_2\) the statement requires this constraint if its value is not the subject \(R\) of the original constrained statement, meaning \(t = R\). Inequalities have to be established between all properties and the \emph{inverse} property as well as all subjects and values of statements. The final violation rule remains the same.
+The \emph{inverse} constraint can be modelled in almost the same way as the \emph{value requires statement} constraint. The only change is that instead of requiring inequality to all \emph{allowed values} in conjunction \(c_2\) the statement requires this constraint if its value is not the subject \(R\) of the original constrained statement. Inequalities have to be established between all properties and the \emph{inverse} property as well as all subjects and values of statements. The final violation rule remains the same.
 \begin{align}
 \begin{split}
-c = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
+\emph{does-not-fulfil} = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
 &\textsc{statement\_edb}(S, E, P, V) \wedge{} \\
 &\textsc{unequal}(\emph{inverseProperty}, P)
 \end{split}\\
 \begin{split}
-c = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
+\emph{does-not-fulfil} = &\textsc{statement\_edb}(Q, R, \emph{constrainedProperty}, I) \wedge{} \\
 &\textsc{statement\_edb}(S, E, \emph{inverseProperty}, V) \wedge{} \\
 &\textsc{unequal}(R, V)
 \end{split}
@@ -802,7 +803,7 @@ The \emph{cast member} (P161) property requires an item to have multiple stateme
 The \emph{multi-value} constraint requires a limited count of constrained statements. Alternatively, it could be said that if the item requires a second statement, the constraint is violated. Inequality is established between all properties of statements and the conjunction is:
 \begin{equation}
 \begin{split}
-c = &\textsc{statement\_edb}(Q, E, \emph{constrainedProperty}, X) \wedge{} \\
+\emph{does-not-fulfil} = &\textsc{statement\_edb}(Q, E, \emph{constrainedProperty}, X) \wedge{} \\
 &\textsc{statement\_edb}(S, E, P, V) \wedge \textsc{unequal}(\emph{constrainedProperty}, P)
 \end{split}
 \end{equation}
@@ -811,11 +812,14 @@ The predicate \textsc{require\_second}\([2]\) is introduced with the same meanin
 \begin{split}
 \textsc{require\_second}&(S, \emph{constrainedProperty}, \emph{constrainedProperty}) \leftarrow \\
 &\textsc{next}(R, S) \wedge \textsc{statement\_edb}(R, E, \emph{constrainedProperty}, C) \wedge{} \\
-&\textsc{next}(Q, R) \wedge \textsc{not\_found}(Q, \emph{constrainedProperty}, \emph{constrainedProperty})  \wedge c
+&\textsc{next}(Q, R) \wedge{} \\
+&\textsc{not\_found}(Q, \emph{constrainedProperty}, \emph{constrainedProperty})  \wedge{} \\
+&\emph{does-not-fulfil}
 \end{split}\\
 \begin{split}
 \textsc{require\_second}&(S, \emph{constrainedProperty}, \emph{constrainedProperty}) \leftarrow \textsc{next}(R, S) \wedge{} \\
-&\textsc{require\_second}(R, \emph{constrainedProperty}, \emph{constrainedProperty}) \wedge c
+&\textsc{require\_second}(R, \emph{constrainedProperty}, \emph{constrainedProperty}) \wedge{} \\
+&\emph{does-not-fulfil}
 \end{split}
 \end{align}
 
@@ -876,20 +880,20 @@ For qualifiers and references, there is no ID whose inequality could be checked.
 To find all violations under \emph{separators}, a number of things have to be considered. Only statements are eligible, since qualifiers cannot have further qualifiers. The order of qualifiers on constrained statements needs to be provided as well since qualifier non-existence is relevant. The require qualifier pattern needs to be applied to the qualifiers of constrained statements. The conjunction \(\emph{doesNotFulfil}\) is created for every \emph{separator} and the pattern applied.
 \begin{equation}
 \begin{split}
-c = &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, C) \wedge{} \\
+\emph{does-not-fulfil} = &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, C) \wedge{} \\
 &\textsc{qualifier\_edb}(S, P, V) \wedge{} \\
 &\textsc{unequal}(P, \emph{separator})
 \end{split}
 \end{equation}
 
-With qualifier non-existence established, the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all values of \emph{separator} qualifiers are equal or no such \emph{separator} qualifier exist. To determine this, a number of rules have to be introduced which are based on two sets the \emph{separators} are split into: \(X\) contains the \emph{separators} that exist as qualifiers and \(Y\) the \emph{separators} that do not. The following rule is then created for every possible split of the \emph{separators} into two such sets.
+With qualifier non-existence established, the violation can be found. Two statements form a violation if they are distinct as per equation \ref{eq_no_separators_triple} and additionally fulfil the condition that all values of \emph{separator} qualifiers are equal or no such \emph{separator} qualifier exist on both statements. To determine this, a number of rules have to be introduced which are based on the \emph{separators}-set \(Q\). Rule one is created and uses the auxiliary rules two and three. 
 \begin{align}
 \begin{split}
 \textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
 &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
 &\textsc{statement\_edb}(O, E, \emph{constrainedProperty}, X) \wedge{} \\
 &\textsc{unequal}(S, O) \wedge{} \\
-&\textsc{same\_or\_non\_existent}(S, O, \{Q\})
+&{\textstyle\bigwedge}_{q \in Q} \textsc{same\_or\_non\_existent}(S, O, q)
 \end{split}\\
 \begin{split}
 \textsc{same\_or\_non\_existent}&(S, O, Q) \leftarrow \\
@@ -936,7 +940,7 @@ The \emph{head of state} (P35) property has the \emph{required property} (P2306)
 The \emph{mandatory qualifier} constraint needs to determine qualifier non-existence on constrained statements to find violations, which is similar to Section \ref{subsubsec_single_value_with_separators}. The qualifier order needs to be provided and inequality must be established between all qualifier properties. The conjunction for the not-found-pattern is rule one. With the usual not-found-pattern for qualifiers the violations would be found with rule two.
 \begin{align}
 \begin{split}
-c = &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, C) \wedge{} \\
+\emph{does-not-fulfil} = &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, C) \wedge{} \\
 &\textsc{qualifier\_edb}(S, P, V) \wedge \textsc{unequal}(P, \emph{requiredProperty})
 \end{split}
 \end{align}
@@ -944,7 +948,8 @@ c = &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, C) \wedge{} \\
 \begin{split}
 \textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
 &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge \\
-&\textsc{last\_qualifier}(S, P, V) \wedge \textsc{not\_found}(S, P, V, \emph{requiredProperty})
+&\textsc{last\_qualifier}(S, P, V) \wedge{} \\
+&\textsc{not\_found}(S, P, V, \emph{requiredProperty})
 \end{split}
 \end{align}
 
@@ -994,12 +999,10 @@ As in the case above, the qualifier non-existence and violation rules are very s
 \textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
 &\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \wedge{} \\
 &\textsc{rank\_edb}(S, \emph{preferredRank}) \wedge{} \\
-&\textsc{statement\_edb}(O, E, \emph{constrainedProperty}, W) \wedge{} \\
+&\textsc{statement\_edb}(O, E, \emph{constrainedProperty}, X) \wedge{} \\
 &\textsc{rank\_edb}(O, \emph{preferredRank}) \wedge{} \\
 &\textsc{unequal}(S, O) \wedge{} \\
-&\textsc{has\_same}(S, O, \{X\}) \wedge{} \\
-&\textsc{does\_not\_have}(S, \{Y\}) \wedge{} \\
-&\textsc{does\_not\_have}(O, \{Y\})
+&{\textstyle\bigwedge}_{q \in Q} \textsc{same\_or\_non\_existent}(S, O, q)
 \end{split}
 \end{align}
 
