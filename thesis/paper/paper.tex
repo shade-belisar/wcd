@@ -102,12 +102,12 @@ Figure \ref{fig_example} is an excerpt from the entity page of the clipper \emph
 Datalog is a logic query language. It is fully declarative and uses rules to derive additional knowledge from given facts. The most basic domain element in datalog is a \emph{constant}, which will be denoted as \emph{someConstant}. In the context of Wikidata, any item or property, e.g. \emph{Earth} (Q2) or \emph{head of government} (P6), could be represented as a constant. Relations in datalog are expressed using \emph{predicates} with a specified arity \(n\), written as predicate\([n]\). To stay close to Wikidata in our examples, let us take the predicate triple\([3]\) as an example. This would be used to express the \emph{item}-\emph{property}-\emph{value} relation with each position representing one part of the triple.\\
 Additionally, datalog also provides \emph{variables}, which will be capitalized, like \(X\). The sets of predicates {\bf P}, constants {\bf C} and variables {\bf V} are mutually disjoint. Constants and variables are collectively known as \emph{terms} and are, together with predicates, used to form \emph{atoms}. An atom has the form predicate\((t_1, \ldots , t_n)\) with \(n\) as the arity of the predicate and \(t_1,\ldots,t_n\) terms.\\
 Atoms are the building blocks of \emph{rules}, which are used to derive information in datalog. A rule is a premise that implies a conclusion, and both are conjunctions of atoms.
-Let \(P_n\) denote  premise atoms and \(C_n\) the conclusion atoms. The variables used in one rule are divided into three mutually disjoint sets \(V_p\), \(V_c\), and \(V_r\) which are the variables occurring only in its premise atoms, only in its conclusion atoms, and occurring in both, respectively. The general from of an existential rule is (with \(k \in \mathbb{N}^+\), \(l \in \mathbb{N}\))
+Let \(P_n\) denote  premise atoms and \(C_n\) the conclusion atoms. The variables used in one rule are divided into two mutually disjoint sets \(V_p\) and \(V_r\) which are the variables occurring only in its premise atoms and occurring in conclusion atoms and premise atoms, respectively. The general from of a rule is (with \(k \in \mathbb{N}^+\), \(l \in \mathbb{N}\))
 \begin{equation}
-\forall V_p \forall V_r.(\exists V_c.C_1 \wedge \ldots \wedge C_k \leftarrow P_1 \wedge \ldots \wedge P_l)
+\forall V_p \forall V_r.(C_1 \wedge \ldots \wedge C_k \leftarrow P_1 \wedge \ldots \wedge P_l)
 \end{equation}
 
-\(V_c\) are called existential variables. If \(V_c = \emptyset\) the rule is called a \emph{datalog rule} and if \(l = 0\) it is called a \emph{fact}. If a fact contains no variables but only constants, it is a \emph{ground rule}. Since all \(V_p\) and \(V_r\) are  quantified, the preceding universal quantifiers \(\forall V_p \forall V_r\) will be omitted for the rules presented in this work.
+If \(V_c = \emptyset\) the rule is called a \emph{datalog rule} and if \(l = 0\) it is called a \emph{fact}. If a fact contains no variables but only constants, it is a \emph{ground rule}. Since all \(V_p\) and \(V_r\) are  quantified, the preceding universal quantifiers \(\forall V_p \forall V_r\) will be omitted for the rules presented in this work.
 
 Within the rule predicates we can differentiate between two different schemas: the \emph{extensional schema} and the \emph{intensional schema}, called EDB and IDB (extensional/intensional database). An EDB predicate may only occur in the premise of a rule, meaning it can never be derived. All predicates that appear in the conclusion at least once are IDB predicates.
 
@@ -651,19 +651,19 @@ The one-of qualifier value constraint is violated if a constrained statement has
 \end{split}
 \end{align}
 
- \section{Constraints using Statement non-Existence}\label{sec_constraints_using_statement_non}
+\section{Constraints using Statement non-Existence}\label{sec_constraints_using_statement_non}
 Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: first\([2]\), last\([2]\), and next\([2]\), which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
 
 If qualifier non-existence should be tested, the predicates have to be adapted since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property, and value have to be used. For this the predicates first\_qualifier\([3]\) and last\_qualifier\([3]\) taking the statement ID, the property, and the value, as well as next\_qualifier\([6]\) with ID, property, and value for the current and next qualifier are introduced.\\
 
 Using this pre-processed data, the approach is to apply a require-predicate to each statement or qualifier. This is require\([2]\) for statements, connecting the statement ID with an identifier unique to the declared constraint and require\([4]\) taking the statement ID, property, and value of a qualifier and linking this with the unique identifier.\\
 
-For statements the pattern consists of two rules, both utilising the same conjunction \(c\) whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
+For statements the pattern consists of two rules, both utilising the same conjunction \(\text{doesNotFulfil}\) whose atoms depend on the constraint type. This conjunction is used to test if the statement does not fulfil the requirement. Then rule one states that the statement requires the condition and rule two propagates this down the statement chain. For qualifiers the rules three and four apply.
 \begin{align}
-&\text{require}(S, \text{id}) \leftarrow \text{first}(S, I) \wedge c \\
-&\text{require}(S, \text{id}) \leftarrow \text{next}(O, S) \wedge \text{require}(O, \text{id}) \wedge c \\
-&\text{require}(S, P, V, \text{id}) \leftarrow \text{first}(S, P, V) \wedge c \\
-&\text{require}(S, P, V, \text{id}) \leftarrow \text{next}(O, X, C, S, P, V) \wedge \text{require}(O, X, C, \text{id}) \wedge c
+&\text{require}(S, \text{id}) \leftarrow \text{first}(S, I) \wedge \text{doesNotFulfil} \\
+&\text{require}(S, \text{id}) \leftarrow \text{next}(O, S) \wedge \text{require}(O, \text{id}) \wedge \text{doesNotFulfil} \\
+&\text{require}(S, P, V, \text{id}) \leftarrow \text{first}(S, P, V) \wedge \text{doesNotFulfil} \\
+&\text{require}(S, P, V, \text{id}) \leftarrow \text{next}(O, X, C, S, P, V) \wedge \text{require}(O, X, C, \text{id}) \wedge \text{doesNotFulfil}
 \end{align}
 
 If the last statement of an item or the last qualifier of a statement has the require-predicate the violation occurred. In the following constraints only the conjunction \(c\) and adjustments to this pattern will be described. The require-propagation is regarded as given.
@@ -696,11 +696,11 @@ The \emph{item requires statement} constraint requires inequality between all pr
 
 \begin{align}
 \begin{split}
-c_1 = &\text{statement\_EDB}(Q, E, \text{propertyConstant}, X) \wedge{} \\
+c = &\text{statement\_EDB}(Q, E, \text{propertyConstant}, X) \wedge{} \\
 &\text{statement\_EDB}(S, E, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
 \end{split} \\
 \begin{split}
-c_2 = &\text{statement\_EDB}(Q, E, \text{propertyConstant}, X) \wedge{} \\
+c = &\text{statement\_EDB}(Q, E, \text{propertyConstant}, X) \wedge{} \\
 &\text{statement\_EDB}(S, E, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
 \end{align}
@@ -724,11 +724,11 @@ The \emph{list of monuments} (P1456) property requires its value to have the \em
 The \emph{value requires statement} constraint is syntactically very similar to the previous \emph{item requires statement} constraint. Instead of requiring a statement on the item of a constrained statement, it requires it on the value. Inequality needs to be computed between all properties and all values and the item statement order established. The conjunctions change in the first statement and rule one and two. The final violation rule would be rule three:
 \begin{align}
 \begin{split}
-c_1 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
+c = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 &\text{statement\_EDB}(S, E, P, V) \wedge \text{unequal}(\text{requiredPropertyConstant}, P)
 \end{split}\\
 \begin{split}
-c_2 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
+c = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 &\text{statement\_EDB}(S, E, \text{requiredPropertyConstant}, V) \wedge \text{unequal}(\{A\}, V)
 \end{split}
 \end{align}
@@ -753,12 +753,12 @@ The \emph{mother} (P25) property requires values to have a statement with the \e
 The \emph{inverse} constraint can be modelled in almost the same way as the \emph{value requires statement} constraint. The only change is that instead of requiring inequality to all \emph{allowed values} in conjunction \(c_2\) the statement requires this constraint if its value is not the subject \(R\) of the original constrained statement, meaning \(t = R\). Inequalities have to be established between all properties and the \emph{inverse} property as well as all subjects and values of statements. The final violation rule remains the same.
 \begin{align}
 \begin{split}
-c_1 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
+c = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 &\text{statement\_EDB}(S, E, P, V) \wedge{} \\
 &\text{unequal}(\text{inversePropertyConstant}, P)
 \end{split}\\
 \begin{split}
-c_2 = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
+c = &\text{statement\_EDB}(Q, R, \text{propertyConstant}, I) \wedge{} \\
 &\text{statement\_EDB}(S, E, \text{inversePropertyConstant}, V) \wedge{} \\
 &\text{unequal}(R, V)
 \end{split}
@@ -870,7 +870,7 @@ For qualifiers and references, there is no ID whose inequality could be checked.
 \end{align}
 
 \subsubsection{With separators}\label{subsubsec_single_value_with_separators}
-To find all violations under \emph{separators}, a number of things have to be considered. Only statements are eligible, since qualifiers cannot have further qualifiers. The order of qualifiers on constrained statements needs to be provided as well since qualifier non-existence is relevant. The require qualifier pattern needs to be applied to the qualifiers of constrained statements. The conjunction c is created for every \emph{separator} and the pattern applied.
+To find all violations under \emph{separators}, a number of things have to be considered. Only statements are eligible, since qualifiers cannot have further qualifiers. The order of qualifiers on constrained statements needs to be provided as well since qualifier non-existence is relevant. The require qualifier pattern needs to be applied to the qualifiers of constrained statements. The conjunction \(\text{doesNotFulfil}\) is created for every \emph{separator} and the pattern applied.
 \begin{equation}
 \begin{split}
 c = &\text{statement\_EDB}(S, E, \text{propertyConstant}, C) \wedge{} \\
