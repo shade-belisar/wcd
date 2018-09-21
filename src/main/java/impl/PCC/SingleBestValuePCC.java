@@ -129,9 +129,10 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 			Atom qualifierEDB_OQV = Expressions.makeAtom(qualifierEDB, o, q, v);
 			
 			// same_or_non_existent(S, O, Q) :-
+			//	statementEDB(S, I, propertyConstant, X),
+			//	statementEDB(O, I, propertyConstant, Y),
 			//	qualifierEDB(S, Q, V), qualifierEDB(O, Q, V)
-			//Rule same = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, qualifierEDB_SQV, qualifierEDB_OQV);
-			Rule same = Expressions.makeRule(same_or_non_existent_SOQ, qualifierEDB_SQV, qualifierEDB_OQV);
+			Rule same = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, qualifierEDB_SQV, qualifierEDB_OQV);
 			rules.add(same);
 			
 			// last_qualifier(S, P, V)
@@ -147,12 +148,13 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 			Atom require_ORCpQ = Expressions.makeAtom(require_qualifier, o, r, c, propertyConstant, q);
 			
 			// same_or_non_existent(S, O, Q) :-
+			//	statementEDB(S, I, propertyConstant, X),
+			//	statementEDB(O, I, propertyConstant, Y),
 			//	last_qualifier(S, P, V),
 			//	require_qualifier(S, P, V, propertyConstant, Q),
 			//	last_qualifier(O, R, C),
 			//	require_qualifier(O, R, C, propertyConstant, Q)
-			//Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, last_qualifier_SPV, require_SPVpQ, last_qualifier_ORC, require_ORCpQ);
-			Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, last_qualifier_SPV, require_SPVpQ, last_qualifier_ORC, require_ORCpQ);
+			Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, last_qualifier_SPV, require_SPVpQ, last_qualifier_ORC, require_ORCpQ);
 			rules.add(non_existent);
 			
 			List<Atom> body = new ArrayList<>();
