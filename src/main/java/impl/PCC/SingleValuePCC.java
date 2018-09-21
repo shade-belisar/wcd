@@ -6,6 +6,7 @@ import static utility.SC.i;
 import static utility.SC.last_qualifier;
 import static utility.SC.o;
 import static utility.SC.p;
+import static utility.SC.possible_violation;
 import static utility.SC.q;
 import static utility.SC.qualifierEDB;
 import static utility.SC.r;
@@ -66,17 +67,25 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 		// referenceEDB(S, G, propertyConstant, X)
 		Atom referenceEDB_SGpX = Expressions.makeAtom(referenceEDB, s, g, propertyConstant, x);
 		
+		// possible_violation(S, O)
+		Atom possible_violations_SO = Expressions.makeAtom(possible_violation, s, o);
+		
+		// possible_violation(S, O) :-
+		//	statementEDB(S, I, propertyConstant, V),
+		//	statementEDB(O, I, propertyConstant, X)
+		Rule possibleViolations = Expressions.makeRule(possible_violations_SO, statementEDB_SIpV, statementEDB_OIpX);
+		
 		if (separators.size() == 0) {
 			// violation_statement(S, I, propertyConstant, V) :-
-			//	statementEDB(S, I, propertyConstant, V),
-			//	statementEDB(O, I, propertyConstant, X),
-			//	unequal (S, O)
-			Rule violationStatement = Expressions.makeRule(violation_statement_SIpV, statementEDB_SIpV, statementEDB_OIpX, unequal_SO);
+			//	possible_violation(S, O),
+			//	unequal (S, O),
+			//	statementEDB(S, I, propertyConstant, V)
+			Rule violationStatement = Expressions.makeRule(violation_statement_SIpV, possible_violations_SO, unequal_SO, statementEDB_SIpV);
 			rules.add(violationStatement);
 			
 			// violation_qualifier(S, propertyConstant, V) :-
 			//	qualifierEDB(S, propertyConstant, V),
-			//	qualifierEDB(S, propertyConstant, X,
+			//	qualifierEDB(S, propertyConstant, X),
 			// 	unequal(V, X)
 			Rule violationQualifier = Expressions.makeRule(violation_qualifier_SpV, qualifierEDB_SpV, qualifierEDB_SpX, unequal_VX);
 			rules.add(violationQualifier);
@@ -119,10 +128,9 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			Atom qualifierEDB_OQV = Expressions.makeAtom(qualifierEDB, o, q, v);
 			
 			// same_or_non_existent(S, O, Q) :-
-			//	statementEDB(S, I, propertyConstant, X),
-			//	statementEDB(O, I, propertyConstant, Y),
+			//	possible_violation(S, O),
 			//	qualifierEDB(S, Q, V), qualifierEDB(O, Q, V)
-			Rule same = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, qualifierEDB_SQV, qualifierEDB_OQV);
+			Rule same = Expressions.makeRule(same_or_non_existent_SOQ, possible_violations_SO, qualifierEDB_SQV, qualifierEDB_OQV);
 			rules.add(same);
 			
 			// last_qualifier(S, P, V)
@@ -138,13 +146,12 @@ public class SingleValuePCC extends PropertyConstraintChecker {
 			Atom require_ORCQ = Expressions.makeAtom(require_qualifier, o, r, c, q);
 			
 			// same_or_non_existent(S, O, Q) :-
-			//	statementEDB(S, I, propertyConstant, X),
-			//	statementEDB(O, I, propertyConstant, Y),
+			//	possible_violation(S, O),
 			//	last_qualifier(S, P, V),
 			//	require_qualifier(S, P, V, Q),
 			//	last_qualifier(O, R, C),
 			//	require_qualifier(O, R, C, Q)
-			Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, statementEDB_SIpX, statementEDB_OIpY, last_qualifier_SPV, require_SPVQ, last_qualifier_ORC, require_ORCQ);
+			Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, possible_violations_SO, last_qualifier_SPV, require_SPVQ, last_qualifier_ORC, require_ORCQ);
 			rules.add(non_existent);
 			
 			List<Atom> body = new ArrayList<>();

@@ -55,6 +55,7 @@ public class SC {
 	public final static String RANK = "rank";
 	
 	public final static String SAME_OR_NON_EXISTENT = "same_or_non_existent";
+	public final static String POSSIBLE_VIOLATION = "possible_violation";
 	
 	public final static Variable h = Expressions.makeVariable(H);
 	public final static Variable g = Expressions.makeVariable(G);
@@ -123,6 +124,9 @@ public class SC {
 	
 	// id1, id2, qualifier -> qualifier, id1, id2
 	public final static Predicate same_or_non_existent = new PositionPredicate(SAME_OR_NON_EXISTENT, 3, 1, 2, 0);
+	
+	// id1, id2
+	public final static Predicate possible_violation = Expressions.makePredicate(POSSIBLE_VIOLATION, 2);
 	
 	public final static Atom violation_statement_query = Expressions.makeAtom(violation_statement, s, i, p, v);
 	public final static Atom violation_qualifier_query = Expressions.makeAtom(violation_qualifier, s, p, v);
