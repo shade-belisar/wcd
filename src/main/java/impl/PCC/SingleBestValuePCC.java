@@ -1,6 +1,7 @@
 package impl.PCC;
 
 import static utility.SC.c;
+import static utility.SC.does_not_have;
 import static utility.SC.g;
 import static utility.SC.i;
 import static utility.SC.last_qualifier;
@@ -65,18 +66,6 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 		// unequal(S, O)
 		Atom unequal_SO = Expressions.makeAtom(InequalityHelper.unequal, s, o);
 		
-		// qualifierEDB(S, propertyConstant, V)
-		Atom qualifierEDB_SpV = Expressions.makeAtom(qualifierEDB, s, propertyConstant, v);
-		
-		// qualifierEDB(S, propertyConstant, X)
-		Atom qualifierEDB_SpX = Expressions.makeAtom(qualifierEDB, s, propertyConstant, x);
-		
-		// unequal(V, X)
-		Atom unequal_VX = Expressions.makeAtom(InequalityHelper.unequal, v, x);
-		
-		// referenceEDB(S, G, propertyConstant, X)
-		Atom referenceEDB_SGpX = Expressions.makeAtom(referenceEDB, s, g, propertyConstant, x);
-		
 		// possible_violation(S, O)
 		Atom possible_violations_SO = Expressions.makeAtom(possible_violation, s, o);
 		
@@ -127,22 +116,26 @@ public class SingleBestValuePCC extends PropertyConstraintChecker {
 			// last_qualifier(S, P, V)
 			Atom last_qualifier_SPV = Expressions.makeAtom(last_qualifier, s, p, v);
 			
-			// last_qualifier(O, R, C)
-			Atom last_qualifier_ORC = Expressions.makeAtom(last_qualifier, o, r, c);
+			// require_qualifier(S, P, V, Q)
+			Atom require_SPVQ = Expressions.makeAtom(require_qualifier, s, p, v, q);
 			
-			// require_qualifier(S, P, V, propertyConstant, Q)
-			Atom require_SPVpQ = Expressions.makeAtom(require_qualifier, s, p, v, propertyConstant, q);
+			// does_not_have(S, Q)
+			Atom does_not_have_SQ = Expressions.makeAtom(does_not_have, s, q);
 			
-			// require_qualifier(O, R, C, propertyConstant, Q)
-			Atom require_ORCpQ = Expressions.makeAtom(require_qualifier, o, r, c, propertyConstant, q);
+			// does_not_have(S, Q) :-
+			//	last_qualifier(S, P, V),
+			//	require_qualifier(S, P, V, Q)
+			Rule doesNotHave = Expressions.makeRule(does_not_have_SQ, last_qualifier_SPV, require_SPVQ);
+			rules.add(doesNotHave);
+			
+			// does_not_have(O, Q)
+			Atom does_not_have_OQ = Expressions.makeAtom(does_not_have, o, q);
 			
 			// same_or_non_existent(S, O, Q) :-
 			//	possible_violations(S, O),
-			//	last_qualifier(S, P, V),
-			//	require_qualifier(S, P, V, propertyConstant, Q),
-			//	last_qualifier(O, R, C),
-			//	require_qualifier(O, R, C, propertyConstant, Q)
-			Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, possible_violations_SO, last_qualifier_SPV, require_SPVpQ, last_qualifier_ORC, require_ORCpQ);
+			//	does_not_have(S, Q),
+			//	does_not_have(O, Q)
+			Rule non_existent = Expressions.makeRule(same_or_non_existent_SOQ, possible_violations_SO, does_not_have_SQ, does_not_have_OQ);
 			rules.add(non_existent);
 			
 			List<Atom> body = new ArrayList<>();
