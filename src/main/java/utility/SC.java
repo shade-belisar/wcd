@@ -55,6 +55,7 @@ public class SC {
 	public final static String RANK = "rank";
 	
 	public final static String DOES_NOT_HAVE = "does_not_have";
+	public final static String HAS_SAME = "has_same";
 	public final static String SAME_OR_NON_EXISTENT = "same_or_non_existent";
 	public final static String POSSIBLE_VIOLATION = "possible_violation";
 	
@@ -125,6 +126,9 @@ public class SC {
 	
 	// id, property -> property, id
 	public final static Predicate does_not_have = new PositionPredicate(DOES_NOT_HAVE, 2, 1, 0);
+	
+	// id1, id2, property -> property, id1, id2
+	public final static Predicate has_same = new PositionPredicate(HAS_SAME, 3, 1, 2, 0);
 	
 	// id1, id2, qualifier -> qualifier, id1, id2
 	public final static Predicate same_or_non_existent = new PositionPredicate(SAME_OR_NON_EXISTENT, 3, 1, 2, 0);
