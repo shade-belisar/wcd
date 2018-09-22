@@ -123,50 +123,50 @@ Finally the transitive closure of this relation can be derived with
 
 \chapter{Property Constraints}\label{cha_property_constraints}
 
-To improve the data quality, to help editors avoid common mistakes, and to clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are, however, not firm rules, and exceptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. that only certain values are allowed, or more complex requirements on connected parts of the data, e.g. that the value of a statement with this property should have certain statements. Table \ref{tab_property_constraints} contains the existing property constraints as of September 2018. The constraints will be explained in detail and their modelling given. For constraint that cannot be modelled, reasoning for this assessment is included.
+To improve the data quality, to help editors avoid common mistakes, and to clarify the usage of properties, Wikidata allows constraints to be defined on properties. They are, however, not firm rules, and exceptions can and should be made if necessary. A property constraint says something about the way a property may or may not be used. This can mean simple restrictions on the statement a property is part of, e.g. that only certain values are allowed, or more complex requirements on connected parts of the data, e.g. that the value of a statement with this property should have certain statements. Table \ref{tab_property_constraints} contains the existing constraint types as of September 2018. The constraint types will be explained in detail and their modelling given. For constraint that cannot be modelled, reasoning for this assessment is included.
 
 To apply a constraint to a property, a statement <property> <P2302> <constraint> is added to the property's page, where <property> is the property that should be constrained, <P2302> (property constraint) denotes that the property has a constraint and <constraint> is the specific constraint. A constrained statement is a statement whose predicate is a property that has a constraint declaration. A simple example for this would be \emph{distinct values} (Q21502410), stating that values of the property must be unique across all constrained statements. No additional information regarding the constraint is necessary in this case, and violation could be found by surveying all constrained statements and comparing their values.\\
 Constraints can be further specified by using qualifiers on the constraint statement. These qualifiers are either optional or mandatory, and may be applied once or multiple times. For example, the \emph{none of} constraint (Q52558054) states that values for the specific property may not be in a given set of disallowed values. This set is specified using qualifiers with property \emph{item of} (P2305), which list all the disallowed values. At least one such qualifier must be present for the statement.\\
 More complex dependencies are also possible. A constraint type can depend on all constrained statements of a specific item (\emph{single value} constraint [Q19474404]), on all statements of the item specified as the value of a constrained statement (\emph{value requires statement} constraint [Q21510864]), or on all statements using the subclass of-predicate (\emph{type} constraint [Q21503250]).
 
-Table \ref{tab_property_constraints} shows all constraints that are used as of September 2018. It is roughly sorted by how difficult it is to model the given constraint using logical rules, based on the required expressive features and pre-processing. These required features are conditions that cannot natively be expressed in datalog and would require some kind of pre-processing of the dataset. Four constraints do not need any pre-processing except for loading the data into datalog as facts. Six can be solved if constant inequality is defined. This can be easily solved with brute force but will be improved in Section \ref{sec_constraints_using_inequality}. A further seven require negation of a specific fact which can be achieved with reasonable effort. The last ten are not deemed translatable because they require a feature that cannot be reasonably emulated in datalog. The feature mostly needed is a general form of negation that would allow to test for the non-existence of a derived fact. Other features needed for these constraints are value comparison, web requests to test if a link is valid, and regular expressions, which could theoretically be translated, but would require large amounts of pre-processing.
+Table \ref{tab_property_constraints} shows all constraints that are used as of September 2018. It contains the name of the constraint and its Q-ID, followed by the number of constraint declarations and the features required to model the constraint type. The table is roughly sorted by how difficult it is to model the given constraint using logical rules, based on the required expressive features and pre-processing. The horizontal lines group  These required features are conditions that cannot natively be expressed in datalog and would require some kind of pre-processing of the dataset. Four constraints do not need any pre-processing except for loading the data into datalog as facts. Six can be solved if constant inequality is defined. This can be easily solved with brute force but will be improved in Section \ref{sec_constraints_using_inequality}. A further seven require negation of a specific fact which can be achieved with reasonable effort. The last ten are not deemed translatable because they require a feature that cannot be reasonably emulated in datalog. The feature mostly needed is a general form of negation that would allow to test for the non-existence of a derived fact. Other features needed for these constraints are value comparison, web requests to test if a link is valid, and regular expressions, which could theoretically be translated, but would require large amounts of pre-processing.
 
 \begin{table}[H]
 \caption{property constraints}\label{tab_property_constraints}
-\begin{tabularx}{\textheight}{rlll}
-\makecell{\# constrained\\ properties} & Identifier & Name & Required Features \\
+\begin{tabular}{llrp{6.5cm}}
+Name & Identifier & \makecell{\# constrained \\ properties} & Required Features \\
 \hline
-1410 & Q53869507 & Scope &  \\
-781 & Q21502838 & Conflicts with &  \\
-27 & Q52004125 & Allowed entity types &  \\
-17 & Q52558054 & None of &  \\
+Scope & Q53869507 & 1410 & \\
+Conflicts with & Q21502838 & 781 & \\
+Allowed entity types & Q52004125 & 27 & \\
+None of & Q52558054 & 17 & \\
 \hline
-2843 & Q21502410 & Distinct value & Inequality \\
-343 & Q21514353 & Allowed units & Inequality \\
-303 & Q21510851 & Allowed qualifiers & Inequality \\
-116 & Q21510859 & One of & Inequality \\
-3 & Q52060874 & Single best value & Inequality \\
-1 & Q52712340 & One-of qualifier value & Inequality \\
+Distinct value & Q21502410 & 2843 & Inequality \\
+Allowed units & Q21514353 & 343 & Inequality \\
+Allowed qualifiers & Q21510851 & 303 & Inequality \\
+One of & Q21510859 & 116 & Inequality \\
+Single best value & Q52060874 & 3 & Inequality \\
+One-of qualifier value & Q52712340 & 1 & Inequality \\
 \hline
-4265 & Q21503247 & Item requires statement & Negation (statement non-existence) \\
-244 & Q21510864 & Value requires statement & Negation (statement non-existence) \\
-119 & Q21510855 & Inverse & Negation (statement non-existence) \\
-33 & Q21510862 & Symmetric & Negation (statement non-existence) \\
-13 & Q21510857 & Multi-value & Negation, Count (up to two) \\
-2909 & Q19474404 & Single value & Inequality, Negation (qualifier non-existence) \\
-203 & Q21510856 & Mandatory qualifier & Negation (qualifier non-existence) \\
+Item requires statement & Q21503247 & 4265 & Negation (statement non-existence) \\
+Value requires statement & Q21510864 & 244 & Negation (statement non-existence) \\
+Inverse & Q21510855 & 119 & Negation (statement non-existence) \\
+Symmetric & Q21510862 & 33 & Negation (statement non-existence) \\
+Multi-value & Q21510857 & 13 & Negation, Count (up to two)  \\
+Single value & Q19474404 & 2909 & Inequality, Negation (qualifier non-existence) \\
+Mandatory qualifier & Q21510856 & 203 & Negation (qualifier non-existence) \\
 \hline
-2613 & Q21503250 & Type & Negation (derived fact negation) \\
-707 & Q21510865 & Value type & Negation (derived fact negation) \\
-3021 & Q21502404 & Format & Regular expressions \\
-188 & Q21510860 & Range & Value comparison \\
-106 & Q52848401 & Integer & Regular expressions \\
-65 & Q51723761 & No bounds & Negation \\
-53 & Q21510852 & Commons link & Web request \\
-10 & Q54554025 & Citation needed & Negation \\
-6 & Q21510854 & Difference within range & Value comparison \\
-1 & Q25796498 & Contemporary constraint & Negation \\
-\end{tabularx}
+Type & Q21503250 & 2613 & Negation (derived fact negation) \\
+Value type & Q21510865 & 707 & Negation (derived fact negation) \\
+Format & Q21502404 & 3021 & Regular expressions \\
+Range & Q21510860 & 188 & Value comparison \\
+Integer & Q52848401 & 106 & Regular expressions \\
+No bounds & Q51723761 & 65 & Negation  \\
+Commons link & Q21510852 & 53 & Web request \\
+Citation needed & Q54554025 & 10 & Negation \\
+Difference within range & Q21510854 & 6 & Value comparison \\
+Contemporary constraint & Q25796498 & 1 & Negation  \\
+\end{tabular}
 \end{table}
 
 \section{Rules}
@@ -181,7 +181,7 @@ A similar approach can be taken to find items with exactly one statement matchin
 To represent the content of Wikidata as facts, the following predicates are introduced:
 \begin{table}[H]
 \caption{\textsc{edb} predicates}\label{tab_predicates}
-\begin{tabular}{llp{8.5cm}}
+\begin{tabular}{llp{8cm}}
 Predicate & Positions & Description \\
 \hline
 \textsc{statement\_edb} & \makecell{statement ID \\ entity ID \\ property ID \\ value (entity ID or string)} & represents basic statements \\
@@ -237,9 +237,9 @@ The constraints are described based on the Wikidata Property constraints portal\
 
 Every Section describing a constraint will consist of two subsections: the constraint explanation and the rules.
 
-{\bf Constraint:} This subsection starts with a table showing basic properties of the constraint. These include the required data, relevant qualifiers, and possible violations of the constraint. The required data states which part of the data in relation to the constrained statement are restricted or need to exist. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The first constraint, \emph{property scope}, will be used as an example to explain the table in detail.
+{\bf Constraint:} This subsection starts with a table showing basic properties of the constraint. These include the required data, relevant qualifiers, and possible violations of the constraint. The required data states which facts need to be loaded. The qualifiers list their cardinality, meaning if they are required and if they may be used multiple times, and a short description. The violations list the conflicting (part of a) statement in relation to the constrained statement. The first constraint, \emph{property scope}, will be used as an example to explain the table in detail.
 
-{\bf Rules:} Most constraints require more data than just the statements, qualifiers, and references. This can include additional data from Wikidata to be provided as facts using the introduced predicates (see Table \ref{tab_predicates}), inequalities to be established as a pre-processing step (see Section \ref{sec_constraints_using_inequality}), or preparations to determine specific kinds of negation (see Section \ref{sec_constraints_using_statement_non}). Afterwards, the rules necessary to determine violations are described.
+{\bf Rules:} Most constraints require more data than just the statements, qualifiers, and references. This can include inequalities to be established as a pre-processing step (see Section \ref{sec_constraints_using_inequality}) or preparations to determine specific kinds of negation (see Section \ref{sec_constraints_using_statement_non}). Afterwards, the rules necessary to determine violations are described.
 
 \section{Simple Constraints}\label{sec_simple_constraints}
 This Section contains constraints that do not require any additional features and can be translated into rules directly based on the facts introduced from Wikidata.
@@ -251,7 +251,7 @@ The \emph{property scope} constraint specifies if a property may be used as pred
 \caption{property scope constraint (Q53869507)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statement, qualifier and reference \\
+Required data & statements, qualifiers, and references\\
 \hline
 Qualifiers & \makecell{\emph{property scope} (P5314) -- 1..3 \\ must be \emph{as main value} (Q54828448), \emph{as qualifier} (Q54828449), \\ or \emph{as reference} (Q54828450) \\ specifies allowed use in statements, qualifiers, or references} \\
 \hline
@@ -293,7 +293,7 @@ The \emph{conflicts with} constraint forbids statements on constrained entities 
 \caption{Conflicts-with constraint (Q21502838)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & entity statements \\
+Required data & statements \\
 \hline
 Qualifiers & \makecell{\emph{conflicting property} (P2306) -- 1 \\ property that may not be predicate of entity statements \\
 \emph{conflicting values} (P2305) -- 0..* \\ values that may not be objects of entity statements with the \emph{conflicting property}} \\
@@ -330,7 +330,7 @@ The \emph{allowed entity types} constraint limits if a property may be used in a
 \caption{Allowed entity types constraint (Q52004125)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statements and entity types\\
+Required data & statements, entity type (item or property)\\
 \hline
 Qualifiers & \makecell{allowed entity type (P2305) -- 1..3 \\ must be \emph{Wikibase item} (Q29934200), \emph{Wikibase property} (Q29934218), \\ or lexeme (Q51885771); \\ specifies the entity type the property may be used on} \\
 \hline
@@ -367,7 +367,7 @@ The none of constraint restricts the values that the property may refer to by li
 \caption{None of constraint (Q52558054)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statements, qualifiers and references \\
+Required data & statements, qualifiers, and references \\
 \hline
 Qualifiers & \makecell{\emph{forbidden value} (P2305) -- 1..* \\ values that may not be object of a constraint statement, qualifier, or reference} \\
 \hline
@@ -424,15 +424,17 @@ Then it is sufficient to add each combination once. To achieve this assume an ar
 \end{align}
 
 \subsubsection{Encoding constant strings to establish inequality}\label{subsubsec_encoding}
-One way of determining inequality would be to take advantage of the fact that inequality is established in a set of unequal constants \(U\), which can be represented as a string. The idea is to determine the set of characters used in \(U\), set these characters as unequal as outlined in Section \ref{subsubsec_encoding} and associate each unequal constant with their characters.\\
+One way of determining inequality would be to take advantage of the fact that inequality is established in a set of constants \(U\), which can be represented as a string. The idea is to determine the set of characters used in \(U\), set these characters as unequal as outlined in Section \ref{subsubsec_encoding} and associate each unequal constant with their characters. One possibility would be to create one predicate to associate all characters of a string with said string. This predicates arity would likely be very large and thus not efficient to handle. If each position was described with its own binary predicate, this could be avoided. It would however require the string to be saved to disk repeatedly, once for each position in the string.\\
 
-An unequal constant \(u \in U\) can be represented a string and be written as \(c_0 \ldots c_{l - 1}\) with \(l = len(u)\) being the length of the string. Denote the set \(C\) as the set of characters occurring in unequal strings. Then \(l_{\max} = \max\limits_{\forall u \in U}(len(u))\) is the length of the longest entity string that occurs in the given data.
-Based on this a group of predicates letter\(_i\)\_edb[8] is introduced where \(0 \equiv i \mod 7\), \(0 \leq i < l_{max} \). 
+The approach chosen here thus splits the constant string into chunks of length \(c\) and saves these with one predicate per chunk. Varying the chunk length allows balancing the disk space requirements with potential performance increases gained through shorter predicates.
 
-For each unequal constant string \(u = c_0 \ldots c_{l - 1}\) and \(0 \equiv i \mod 7, 0 \leq i < len(u)\) an atom using predicate \emph{letter\(_i\)\_edb} is created as 
+A constant \(u \in U\) can be represented a string and be written as \(c_0 \ldots c_{l - 1}\) with \(l = len(u)\) being the length of the string. Denote the set \(C\) as the set of characters occurring in strings. Then \(l_{\max} = \max\limits_{\forall u \in U}(len(u))\) is the length of the longest entity string that occurs in the given data.
+Based on this a group of predicates letter\(_i\)\_edb[c+1] is introduced where \(0 \equiv i \mod c\), \(0 \leq i < l_{max} \). 
+
+For each constant string \(u = c_0 \ldots c_{l - 1}\) and \(0 \equiv i \mod c, 0 \leq i < len(u)\) an atom using predicate \emph{letter\(_i\)\_edb} is created as 
 \begin{align}
 \begin{split}
-\emph{letter}_i\emph{\_edb}(e, f(e, i), f(e, i+1), \ldots, f(e, i+6)
+\emph{letter}_i\emph{\_edb}(e, f(e, i), f(e, i+1), \ldots, f(e, i+c-1)
 \end{split}
 \begin{split}
 f(e, i) = 
@@ -443,11 +445,13 @@ f(e, i) =
 \end{split}
 \end{align}
 
-Now that inequality between all characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates \emph{letter\(_i\)\_edb} (with \emph{letters} short for \(\emph{letter}_i\emph{\_edb}(X, A_i, \ldots, A_{i+6}) \wedge\emph{letter}_i\emph{\_edb}(Y, B_i, \ldots, B_{i+6})\), \(i \leq j < i + 7\)):
+Now that inequality between all characters and the link between entities and their characters are introduced, the inequality between two entities can be derived by creating the following rules for all predicates \emph{letter\(_i\)\_edb} (with \emph{letters} short for \(\emph{letter}_i\emph{\_edb}(X, A_i, \ldots, A_{i+6}) \wedge\emph{letter}_i\emph{\_edb}(Y, B_i, \ldots, B_{i+c-1})\), \(i \leq j < i + c\)):
 \begin{align}
 \textsc{unequal}(X, Y) \leftarrow \emph{letters} \wedge \textsc{unequal}(A_j, B_j)
 \end{align}
-Note that the facts fulfilling \(\textsc{unequal}(A_j, B_j)\) are created by using the approach outlined in Section \ref{subsubsec_naive} for the set of characters \(C\) in all unequal constants \(U\).	
+Note that the facts fulfilling \(\textsc{unequal}(A_j, B_j)\) are created by using the approach outlined in Section \ref{subsubsec_naive} for the set of characters \(C\) in all constants \(U\).
+
+Another possibility to apply this approach would be to encode inequality for the string hashes instead of the strings themselves. The string and its hash would then be associated via another predicate. Since generating these hashes is no trivial task and the additional step from constant to hash would complicate the rules presented below, this was not done here.
 
 \subsubsection{Demand-driven materialisation}\label{subsubsec_demand-driven_materialisation}
 The approaches outlined above will always result in all inequalities between the members of \(U\) being materialised. However, the purpose of determining inequality is to assist in finding violations of specific constraints. This means that only some inequalities -- the ones that actually appear in the dataset -- have to be evaluated. The rules can then be limited by introducing a new predicate req\_inequalitywith arity 2 which will only be derived if a condition occurs in which the inequality must be evaluated.\\
@@ -470,7 +474,8 @@ The \emph{distinct values} constraint forbids the existence of two constrained s
 \caption{distinct values constraint (Q21502410)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statements \\
+Required data & \makecell{statements; \\
+inequality for statement IDs} \\
 \hline
 Violations & two constrained statements with same value \\
 \hline
@@ -504,9 +509,10 @@ The \emph{allowed units} constraint specifies that the value of a constrained st
 \caption{Allowed units constraint (Q21514353)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statements \\
+Required data & \makecell{statements, qualifiers, and references; \\
+inequality for units} \\
 \hline
-Qualifiers & \makecell{\emph{allowed unit} (P2305) -- 1..* \\ units that are allowed on values of constrained statements (\emph{none} for dimensionless units)} \\
+Qualifiers & \makecell{\emph{allowed unit} (P2305) -- 1..* \\ units that are allowed on values of constrained statements \\ (\emph{none} for dimensionless units)} \\
 \hline
 Violation & \makecell{constrained statement with a unit unequal to all allowed units} \\
 \hline
@@ -552,7 +558,8 @@ The \emph{allowed qualifiers} constraint specifies that only a limited set of pr
 \caption{Allowed qualifiers constraint (Q21510851)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & qualifiers on constrained statements \\
+Required data & \makecell{statements and qualifiers; \\
+inequality for qualifier properties} \\
 \hline
 Qualifiers & \makecell{\emph{allowed qualifier} (P2306) -- 1..* \\ properties that may appear in predicates of qualifiers on constrained statements} \\
 \hline
@@ -585,7 +592,8 @@ The \emph{one-of} constraint limits the values of a constraint statement, qualif
 \caption{One-of constraint (Q21510859)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statements, qualifiers, and references \\
+Required data & \makecell{statements, qualifiers, and references; \\
+inequality for values of statements, qualifiers, and references} \\
 \hline
 Qualifiers & \makecell{\emph{allowed values} (P2305) -- 1..* \\ values that may be used as objects of a constrained statement} \\
 \hline
@@ -605,15 +613,18 @@ The one-of constraint fits the pattern established by the previous two constrain
 \begin{align}
 \begin{split}
 \textsc{violation\_statement}&(S, E, \emph{constrainedProperty}, V) \leftarrow \\
-&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
+&\textsc{statement\_edb}(S, E, \emph{constrainedProperty}, V) \\
+&{\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}\\
 \begin{split}
 \textsc{violation\_qualifier}&(S, \emph{constrainedProperty}, V) \leftarrow \\
-&\textsc{qualifier\_edb}(S, \emph{constrainedProperty}, V) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
+&\textsc{qualifier\_edb}(S, \emph{constrainedProperty}, V) \\
+&{\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}\\
 \begin{split}
 \textsc{violation\_reference}&(S, \emph{constrainedProperty}, V) \leftarrow \\
-&\textsc{reference\_edb}(S, H, \emph{constrainedProperty}, V) {\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
+&\textsc{reference\_edb}(S, H, \emph{constrainedProperty}, V) \\
+&{\textstyle\bigwedge}_{a \in A} \textsc{unequal}(a, V)
 \end{split}
 \end{align}
 
@@ -625,7 +636,8 @@ The \emph{one-of qualifier value} constraint restricts which \emph{qualifier val
 \caption{One-of qualifier value constraint (Q52712340)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statements and their qualifiers \\
+Required data & \makecell{statements and qualifiers; \\
+inequality for values of qualifiers} \\
 \hline
 Qualifiers: & \makecell{\emph{qualifier property} (P2306) -- 1 \\ property that, if used as predicate, constrains a qualifier \\
 \emph{qualifier values} (P2305) -- 1..* \\ values that are allowed for qualifiers on constrained statements \\ with the \emph{qualifier property} as predicate}\\
@@ -651,7 +663,7 @@ The one-of qualifier value constraint is violated if a constrained statement has
 \end{split}
 \end{align}
 
-\section{Constraints using Statement non-Existence}\label{sec_constraints_using_statement_non}
+\section{Constraints Using Statement Non-Existence}\label{sec_constraints_using_statement_non}
 Several constraints are violated if specific statements do not exist in relation to constrained statements. It is not possible to simply negate said statements and pre-processing every required statement would defeat the purpose of implementing them in datalog. However, non-existence can be derived utilising the order of statements. Three predicates are introduced: \textsc{first}with arity 1, \textsc{last}with arity 2, and \textsc{next}with arity 2, which denote the first and last statement of an item and the following statement to another using their statement IDs.\\
 
 If qualifier non-existence should be tested, the predicates have to be adapted since qualifiers do not have a unique identifier. To assign them a unique identity, statement ID, property, and value have to be used. For this the predicates \textsc{first\_qualifier} with arity 3 and \textsc{last\_qualifier} with arity 3 taking the statement ID, the property, and the value, as well as \textsc{next\_qualifier}with arity 6 with ID, property, and value for the current and next qualifier are introduced.\\
@@ -678,7 +690,9 @@ The \emph{item requires statement} constraint requires an additional statement o
 \caption{item requires statement constraint (Q21503247)}\label{tab_item_requires_statements}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & item statements \\
+Required data & \makecell{statements; \\
+inequality for statement properties and values; \\
+statement order} \\
 \hline
 Qualifiers & \makecell{\emph{required property} (P2306) -- 1 \\ property that must be predicate of an item statement \\
 \emph{allowed value} (P2305) -- 0..* \\ value that must be object of the item statement} \\
@@ -784,7 +798,9 @@ The \emph{multi-value} constraint specifies that the constrained property should
 \caption{Multi-value constraint (Q21510857)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & item statements \\
+Required data & \makecell{statements; \\
+inequality for statement properties; \\
+statement order} \\
 \hline
 Violation & \makecell{constrained item with exactly one constrained statement} \\
 \hline
@@ -830,7 +846,9 @@ The \emph{single value} constraint states that the constrained property may only
 \caption{single value constraint (Q19474404)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statements and their qualifiers, constrained qualifiers and references \\
+Required data & \makecell{statements, qualifiers, and references; \\
+inequality for statement IDs and qualifier values; \\
+qualifier order} \\
 \hline
 Qualifiers & \makecell{\emph{separator} (P4155) -- 0..* \\ qualifiers that, when used on constrained statements, can warrant an exception} \\
 \hline
@@ -921,7 +939,9 @@ The \emph{mandatory qualifier} constraint requires that a constrained statement 
 \caption{Mandatory qualifier constraint (Q21510856)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & constrained statements and their qualifiers \\
+Required data & \makecell{statements and qualifiers; \\
+inequality between qualifier properties; \\
+qualifier order} \\
 \hline
 Qualifiers & \makecell{\emph{required property} (P2306) -- 1 \\ property that must appear as predicate of a qualifier on the constrained statement} \\
 \hline
@@ -953,7 +973,7 @@ The \emph{mandatory qualifier} constraint needs to determine qualifier non-exist
 \end{split}
 \end{align}
 
-\subsection{Single best value (Q52060874)}\label{subsec_single_best_value}
+ \subsection{Single best value (Q52060874)}\label{subsec_single_best_value}
 \paragraph{Constraint}
 The \emph{single best value} constraint requires that only one constrained statement per item has the rank preferred.
 
@@ -961,7 +981,9 @@ The \emph{single best value} constraint requires that only one constrained state
 \caption{Single best value constraint (Q52060874)}
 \begin{tabularx}{\textwidth}{ ll X}
 \hline
-Required data & item statements and ranks \\
+Required data & \makecell{statements, qualifiers, references, and ranks; \\
+inequality for statement IDs and qualifier values; \\
+qualifier order} \\
 \hline
 Qualifiers & \makecell{\emph{separator} (P4155) -- 0..* \\ qualifiers that, when used on constrained statements, can warrant an exception } \\
 \hline
@@ -1036,13 +1058,13 @@ The evaluation aims to document how suitable Datalog and VLog in particular are 
 \section{Software structure}
 The evaluation software\cite{wcd} was written in Java and utilises WDTK and VLog4J to evaluate the violation rules on the content of Wikidata. Figure \ref{fig_pipeline} illustrates the steps undertaken to evaluate the constraints.
 
-At the beginning the content of the Wikidata JSON-Dump, read via WDKT, is transformed into facts readable by VLog4J. These take the form of comma-separated value files, one for each predicate in Section \ref{subsec_representation}, denoted as "Facts" in the diagram.
+At the beginning the content of the Wikidata JSON-Dump, read via WDKT, is transformed into facts readable by VLog4J. These take the form of comma-separated value files, one for each predicate in Section \ref{subsec_representation}, denoted as "Facts" in the diagram. The statement and qualifier orders are generated as well. These consist of three files each for the first, next, and last predicate.
 
-At the same time the Inequaliy Helper, receiving the Facts from WDTK, creates all files necessary to establish inequality as described in Section \ref{sec_constraints_using_inequality}, based on which approach was chosen. These files are constraint type specific, whereas the "Facts" are not.
+At the same time the Inequality Helper, receiving the Facts from WDTK, creates all files necessary to establish inequality as described in Section \ref{sec_constraints_using_inequality}, based on which approach was chosen. These files are constraint type specific, whereas the "Facts" are not.
 
-The rules determining violations are created by the Constraint Checker, which uses the Wikidata Query Service (WDQS)\footnote{\url{query.wikidata.org}} to fetch the current constraint configurations, which are the set constraints and their qualifiers as described in Chapter \ref{cha_property_constraints}. Based on these configurations the rules are created as described in Chapter \ref{cha_wikidata_constraints_explained}.
+The rules determining violations are created by the Constraint Checker, which uses the Wikidata Query Service (WDQS)\footnote{\url{query.wikidata.org}} to fetch the constraint declarations. Based on these declarations the rules are created as described in Chapter \ref{cha_wikidata_constraints_explained}.
 
-Computing all violations based on the provided (inequality)-facts and violations rules is done per constraint type. All facts pertaining to the constraint, as well as the rules, are loaded into VLog, which creates an in-memory database from the provided .csv-files. For example, Once this is done, the reasoning engine materializes all possible facts. Afterwards, all violations are extracted by querying the database for the queries described in Section \ref{subsec_task}.
+Computing all violations based on the provided (inequality)-facts and violations rules is done per constraint type. All facts pertaining to the constraint, as well as the rules, are loaded into VLog, which creates an in-memory database from the provided .csv-files. Once this is done, the reasoning engine materializes all possible facts. Afterwards, all violations are extracted by querying the database for the queries described in Section \ref{subsec_task}.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{images/Pipeline.pdf}
@@ -1056,9 +1078,13 @@ The experiments where carried out on a server with a 3.50GHz Intel Xeon CPU, 1 T
 \subsection{Statistics}
 Several statistics about the executed runs are reported.
 
-{\bf Runtime materialization} is the time taken by the VLog engine to compute all facts that can be derived from the given input.
+{\bf Total time} is the time taken to evaluate one constraint type on the given data. The preparation of the facts from the JSON-Dump is not reported in this figure, since it is constraint type independent and not executed by VLog.
 
-{\bf Additional Derivations} counts how many new facts were created during materialization, excluding the violations themselves. 
+{\bf Loading time} is the time taken to load the data from the .csv-files into memory by VLog. It is expected that this correlates with the number of input facts.
+
+{\bf Reasoning time}  is the time taken to reason on the given facts and materialize all possible conclusions.
+
+{\bf Querying time} is the time taken to query for all violations and count them. For this experiment the violations where not written to a file or the console. In a production setup the querying time would be higher since it would depend on disk I/O.
 
 {\bf Total Rules} states how many rules were created to establish the violations. They are split into two subfields: {\bf Demand rules}, which are additional rules created to satisfy the requirements outlined in Section \ref{subsubsec_demand-driven_materialisation}, and {\bf Base Rules}, which are the rules created without accounting for the demand-driven scheme.
 
@@ -1066,42 +1092,61 @@ Several statistics about the executed runs are reported.
 
 Because of a bug in VLog\footnote{\url{https://github.com/knowsys/vlog4j/issues/43}}, the largest dataset that could be completely evaluated contained 100,000 entities. With datasets of larger size, more than half of the constraints were affected by this bug, meaning the analysis could not be conducted. All further statistics describe the results on the 100,000 entity set unless specifically noted otherwise. Since inequality could only be computed in on-demand mode (see Section  \ref{sec_inequality_evaluation}), all statistics will show the results attained in this mode.
 
-Most constraints could be evaluated in under a minute. The exceptions are \emph{distinct values} (1.22 hours), \emph{item requires statement} (2.38 hours) and \emph{single value} (4.22 hours). In part this is expected behaviour, since these three constraints are applied to an order of magnitude more properties than all other properties with the exception of \emph{property scope}, which is described in very simple rules. However, also seen in Figure \ref{fig_runtime}, the runtimes of these three constraints are multiple orders of magnitude higher than those of other constraints. The following Sections will thus focus on the comparison of these three constraints to identify bottlenecks and reasons for this huge difference in performance. They will be marked with a border in every figure.
+Most constraints could be evaluated in under a minute. The exceptions are \emph{distinct values} (1.26 hours), \emph{item requires statement} (2.27 hours) and \emph{single value} (4.22 hours). In part this is expected behaviour, since these three constraints are applied to an order of magnitude more properties than all other properties with the exception of \emph{property scope}, which is described in very simple rules. However, also seen in Figure \ref{fig_runtime}, the runtimes of these three constraints are multiple orders of magnitude higher than those of other constraints. The following Sections will thus focus on the comparison of these three constraints to identify bottlenecks and reasons for this huge difference in performance.
 
 \begin{figure}
-\includegraphics[width=\linewidth]{images/runtime100,000.pdf}
-\caption{Runtime materialization for 100,000 entities}\label{fig_runtime}
+\includegraphics[width=\linewidth]{images/TotalTime.pdf}
+\caption{Total time for each constraint type}\label{fig_runtime}
+\end{figure}
+
+\subsection{Inequality evaluation}\label{sec_inequality_evaluation}
+Inequality computation was implemented in three variants outlined in Section \ref{sec_constraints_using_inequality}: naive, encoded, and on-demand. Naive and encoded could not terminate for any dataset other than the smallest with 1,000 entities. Naive failed because the disk space needed for the precomputed inequality facts was not available. Encoded, while improving on the disk space needed, still failed due to out of memory errors. This behaviour is expected, since for an input of size \(n\), the number of inequalities that have to be materialized is \(n^2\). The reasoning times for this dataset, presented in Figure \ref{fig_inequality}, show a clear improvement when using the on-demand approach. This shows that the overhead in rules introduced to enable the on-demand approach, seen in Figure \ref{fig_rules}, is worth the improvements in performance gained through it.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/inequality1000.pdf}
+\caption{Reasoning time for 1,000 entities (encoded and on-demand)}\label{fig_inequality}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=\linewidth]{images/rules.pdf}
-\caption{Number of rules and on-demand rules}\label{fig_rules}
+\includegraphics[width=\linewidth]{images/Rules.pdf}
+\caption{Rules per constraint type}\label{fig_inequality}
 \end{figure}
+
+\subsection{Runtime}
+Runtime was dominated by reasoning time, which took close to 8 hours for all constraint types combined. Data extraction as well as loading time and querying time for all constraint types took less than 5 minutes each.
+
+Figure \ref{fig_loading_time} shows the loading times as bars, aligned with the left axis, and the number of input facts as diamonds, aligned with the right axis. As expected, the loading times are directly correlated with the number of input facts.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/LoadingTime.pdf}
+\caption{Loading time and input size for each constraint type}\label{fig_loading_time}
+\end{figure}
+
+Figure \ref{fig_querying_time} shows the querying times as bars, aligned with the left axis, and the number of violations as well as total derivations, aligned with the right axis. While the querying time roughly aligns with the number of violations, with the constraints after \emph{allowed qualifiers} having higher querying times than expected from the number of violations. This is likely because of additional facts for inequality and not-found-pattern that were materialized putting a greater strain on the system.
+
+\begin{figure}
+\includegraphics[width=\linewidth]{images/QueryingTime.pdf}
+\caption{Querying time, violations and derivations for each constraint type}\label{fig_querying_time}
+\end{figure}
+
+\subsubsection{Reasoning time}
 
 \subsection{Facts}
 Figure \ref{fig_facts} shows the number of facts loaded into VLog per constraint. Base facts denote those directly extracted from the JSON-Dump and corresponding to one of the predicates listed in Section \ref{subsec_representation}. Inequality are the letter\(_i\) facts created to establish inequality as described in Section \ref{sec_constraints_using_inequality}. Note that in the on-demand (and encoded) mode, every entry for which inequality should be established is usually split into multiple letter\(_i\) facts based on its length, which is why the number of inequality facts can be up to ten times the number of base facts. Require facts list the order of statements or qualifiers as described in Section \ref{sec_constraints_using_statement_non}.
 
 \begin{figure}
-\includegraphics[width=\linewidth]{images/facts100,000.pdf}
+\includegraphics[width=\linewidth]{images/Facts.pdf}
 \caption{Number of input facts per constraint}\label{fig_facts}
 \end{figure}
 
 The long runtimes of \emph{distinct values}, \emph{item requires statement}, and \emph{single value} cannot be explained through the size of the input data. While all of them have more than 10 million input facts, this is also the case for other constraints that do not take nearly as much runtime. \emph{One-of}, \emph{symmetric}, and \emph{inverse} have even more input facts than the three long-runtime constraints. The reason for the performance difference must be found elsewhere.
 
-\subsection{Inequality evaluation}\label{sec_inequality_evaluation}
-Inequality computation was implemented in three variants outlined in Section \ref{sec_constraints_using_inequality}: naive, encoded, and on-demand. Naive and encoded could not terminate for any dataset other than the smallest with 1,000 entities. Naive failed because the disk space needed for the precomputed inequality facts was not available. Encoded, while improving on the disk space needed, still failed due to out of memory errors. This behaviour is expected, since for an input of size \(n\), the number of inequalities that have to be materialized is \(n^2\). The runtimes for this dataset, presented in Figure \ref{fig_inequality}, show a clear improvement when using the on-demand approach. This shows that the overhead in rules introduced to enable the on-demand approach, seen in Figure \ref{fig_rules}, is worth the improvements in performance gained through it.
+\subsection{Derivations}
+One possible bottleneck are the derivations necessary to identify violations. This includes the inequalities, demands for inequalities, requirements to determine statement non-existence as well as other helper rules introduced in Chapter \ref{cha_wikidata_constraints_explained}. Figure \ref{fig_derivations} shows that the three performance-heavy constraint types do generate by far the most derivations. The performance-heavy constraint type with the smallest number of derivations, \emph{distinct values}, is almost an order of magnitude higher than the next highest, \emph{one-of}.
 
 \begin{figure}
-\includegraphics[width=\linewidth]{images/inequality1000.pdf}
-\caption{Runtime materialization for 1,000 entities (encoded and on-demand)}\label{fig_inequality}
-\end{figure}
-
-\subsection{Additional Derivations}
-One possible bottleneck are the additional derivations necessary to identify violations. This includes the inequalities, demands for inequalities, requirements to determine statement non-existence as well as other helper rules introduced in Chapter \ref{cha_wikidata_constraints_explained}. Note that the four simple constraints described in Section \ref{sec_simple_constraints} do not generate any additional facts and are excluded from the chart. Figure \ref{fig_add_derivations} shows that the three performance-heavy constraints do generate by far the most additional derivations. The constraint with the smallest number of additional derivations, \emph{distinct values}, is almost an order of magnitude higher than the next highest, \emph{one-of}.
-
-\begin{figure}
-\includegraphics[width=\linewidth]{images/additionalDerivations100,000.pdf}
-\caption{Additional derivations for 100,000 entities}\label{fig_add_derivations}
+\includegraphics[width=\linewidth]{images/Derivations.pdf}
+\caption{Derivations for each constraint type}\label{fig_derivations}
 \end{figure}
 
 \section{Findings}
@@ -1113,10 +1158,10 @@ Most constraints could be evaluated within a very short timeframe (< 1 minute). 
 The rules for these three constraints will now be analysed and possible reasons for this huge difference in performance outlined.
 
 \subsection{Distinct values}
-While the rules for the \emph{distinct values} constraint (see Section \ref{subsec_distinct_values}) are relatively simple in writing, they do require a large amount of processing. Distinct values requires the comparison of every constrained statement with every other constrained statement, meaning its evaluation would scale badly due to the quadratic growth of statements to be compared. Additionally, the number of inequalities that have to be evaluated according to the on-demand approach (see Section \ref{sec_constraints_using_statement_non}) grows accordingly. Due to the nature of the constraint -- requiring distinct values for a property across all of Wikidata -- this is in all likelihood unavoidable.
+While the rules for the \emph{distinct values} constraint (see Section \ref{subsec_distinct_values}) are relatively simple in writing, they do require a large amount of processing. Distinct values requires the comparison of every constrained statement with every other constrained statement, meaning its evaluation would scale badly due to the growth of statements to be compared. Additionally, the number of inequalities that have to be evaluated according to the on-demand approach (see Section \ref{sec_constraints_using_statement_non}) grows accordingly. Due to the nature of the constraint -- requiring distinct values for a property across all of Wikidata -- this is in all likelihood unavoidable. Nevertheless, the current approach could be improved upon. One possibility is to reorder the \textsc{statement\_edb}-predicate to have the value in the first position. This could allow a quicker join of constrained statements with the same value, reducing the reasoning time. The downside is having to recreate the \textsc{statement\_edb} facts for this constraint type. This is likely to be offset by even small improvements in reasoning time, since the data extraction only took 5 minutes, compared to the 1.26 hours of reasoning time for \emph{distinct values}.
 
 \subsection{Item requires statement}\label{subsec_findings_item_requires_statement}
-The \emph{item requires statement} constraint (see Section \ref{subsec_item_requires_statement}) creates additional facts about every statement on an entity with a constrained statement (if the constraint was violated on that entity). Of interest to note is that the \emph{value requires statement} constraint (see Section \ref{subsec_value_requires_statement}), which works almost identically, does not show a performance nearly as bad as \emph{item requires statement}. \emph{Value requires statement} has, however, only 244 constrained properties, while \emph{item requires statement} has 4265. This shows that the require approach scales badly with increasing number of require rules.
+The \emph{item requires statement} constraint (see Section \ref{subsec_item_requires_statement}) creates additional facts about every statement on an entity with a constrained statement (if the constraint was violated on that entity). Of interest to note is that the \emph{value requires statement} constraint (see Section \ref{subsec_value_requires_statement}), which works almost identically, does not show a performance nearly as bad as \emph{item requires statement}. \emph{Value requires statement} has, however, only 244 constrained properties, while \emph{item requires statement} has 4265. This shows that the not-found-pattern scales badly with increasing number of require rules.
 
 \subsection{Single value}
 The \emph{single value} constraint (see Section \ref{subsec_single_value}) has to be analysed with regards to the two cases: without separators (Section \ref{subsubsec_single_value_no_separators}) and with separators (Section \ref{subsubsec_single_value_with_separators}.
@@ -1136,10 +1181,14 @@ The predicate \textsc{statement\_edb} lists the \emph{statement ID}, \emph{entit
 The final, optimized order is then: \emph{property ID}, \emph{entity ID}, \emph{value}, \emph{statement ID}.
 \end{example}
 
-This order is, however, not easily readable and, if taken as presented, would likely cause implementation errors because the different positions are confused for each other. To prevent this the datasets imported from Wikidata and created during preprocessing as well as the rules outlined in Chapter \ref{cha_wikidata_constraints_explained} are sorted afterwards. Thus the rules can be kept in a readable form while still optimizing for VLog. 
+This order is, however, not easily readable and, if taken as presented, would likely cause implementation errors because the different positions are confused for each other. To prevent this the datasets imported from Wikidata and created during preprocessing as well as the rules outlined in Chapter \ref{cha_wikidata_constraints_explained} are sorted afterwards. Thus the rules can be kept in a readable form while still optimizing for VLog.
 
-\subsubsection{Results}
+Figure \ref{fig_ps_comparision} shows the difference in runtime between the normal approach and the approach with predicate sorting. Predicate sorting does not seem to have any effect on the total runtimes, with differences both up and down and generally very close to the normal approach.
 
+\begin{figure}
+\includegraphics[width=\linewidth]{images/PredicateSortingComparison.pdf}
+\caption{Comparison of total time with and without predicate sorting}\label{fig_ps_comparision}
+\end{figure}
 
 \chapter{Conclusion}
 
